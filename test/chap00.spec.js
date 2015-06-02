@@ -1,12 +1,12 @@
 /* #@range_begin(sample_test) */
 var assert = require("assert");
 
-describe('Assertモジュール', function(){
-  describe('add', function(){
+describe('assertによる表明', function(){
+  describe('add関数', function(){
     var add = (x,y) => {
       return x + y;
     };
-    it('should return 2 when add(1,1)', function(){
+    it('add(1,1)は 2 を返す', function(){
       assert.equal(2, add(1,1));
     });
   });
@@ -16,9 +16,9 @@ describe('Assertモジュール', function(){
 /* #@range_begin(sample_test_expect) */
 var expect = require('expect.js');
 
-describe('Expectモジュール', function(){
-  describe('add', function(){
-    it('should return 3 when add(1,2)', function(){
+describe('expectによる表明', function(){
+  describe('add関数', function(){
+    it('add(1,1)は 3 を返す', function(){
       var add = (x,y) => {
         return x + y;
       };

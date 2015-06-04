@@ -2,6 +2,15 @@
   "author": "Akimichi Tatsukawa",
   "name": "functionaljs",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akimichi/functionaljs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/akimichi/functionaljs/issues"
+  },
+  "homepage": "https://github.com/akimichi/functionaljs",
+  "license": "MIT",
   "scripts": {
     "unit-tests": "mocha -R spec --recursive",
     "test": "npm run unit-tests"
@@ -15,6 +24,8 @@
     "node": "0.12.x"
   },
   "devDependencies": {
+    "docco": "^0.7.0",
+    "gulp-docco": "0.0.4",
     "gulp-coffee": "^2.3.1",
     "gulp-foreach": "^0.1.0",
     "gulp-jasmine": "^2.0.0",

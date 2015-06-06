@@ -214,4 +214,29 @@ describe('なぜ関数型プログラミングが重要か', () => {
       });
     });
   });
+  describe('副作用の種類', () => {
+    describe('副作用としての代入', () => {
+      it('配列は参照透明性を破壊する', (next) => {
+        /* #@range_begin(array_destroys_referential_transparency) */
+        var add = (n,m) => {
+            return n + m;
+        };
+        var array = [];
+        array.push(1);
+        expect(
+          add(array.pop(),2)
+        ).to.eql(
+          3
+        );
+        array.push(2);
+        expect(
+          add(array.pop(),2)
+        ).to.eql(
+          4
+        );
+        /* #@range_end(array_destroys_referential_transparency) */
+        next();
+      });
+    });
+  });
 });

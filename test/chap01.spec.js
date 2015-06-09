@@ -124,82 +124,120 @@ describe('「計算」とは', () => {
       });
     });
   });
-  describe('置換モデル', function() {
-    it('sumsquaresとsquareの簡約', (next) => {
-      /* #@range_begin(sumsquares) */
-      var sumsquares = (x,y) => {
-        return square(x) + square(y);
-      };
-      var square = (x) => {
-        return x * x;
-      };
-      /* #@range_end(sumsquares) */
-      expect(
-        sumsquares(3,4)
-      ).to.eql(
-        25
-      );
-      next();
-    });
-    it('チャーチ数', (next) => {
-      /* #@range_begin(church_numeral) */
-      var zero = (f) => {
-        return (x) => {
-          return x;
+  describe('関数型モデル', function() {
+    describe('置換モデル', function() {
+      it('単純なλ式の簡約', (next) => {
+        /* #@range_begin(succ) */
+        var succ = (n) => {
+          return n + 1;
         };
-      };
-      var one = (f) => {
-        return (x) => {
-          return f(x);
+        /* #@range_end(succ) */
+        expect(
+          succ(1)
+        ).to.eql(
+          2
+        );
+        next();
+      });
+      it('sumsquaresとsquareの簡約', (next) => {
+        /* #@range_begin(sumsquares) */
+        var sumsquares = (x,y) => {
+          return square(x) + square(y);
         };
-      };
-      var two = (f) => {
-        return (x) => {
-          return f(f(x));
+        var square = (x) => {
+          return x * x;
         };
-      };
-      var three = (f) => {
-        return (x) => {
-          return f(f(f(x)));
+        /* #@range_end(sumsquares) */
+        expect(
+          sumsquares(3,4)
+        ).to.eql(
+          25
+        );
+        next();
+      });
+      it('足し算 add の簡約', (next) => {
+        /* #@range_begin(add) */
+        var succ = (n) => {
+          return n + 1;
         };
-      };
-      var succ = (n) => {
-        return (f) => {
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x,y) => { // add関数の定義
+          if(y < 1){
+            return x;
+          } else {
+            return add(succ(x), prev(y)); // add関数の再帰呼び出し
+          }
+        };
+        /* #@range_end(add) */
+        expect(
+          add(2,1)
+        ).to.eql(
+          3
+        );
+        next();
+      });
+      it('チャーチ数', (next) => {
+        /* #@range_begin(church_numeral) */
+        var zero = (f) => {
           return (x) => {
-            return f(n(f)(x));
+            return x;
           };
         };
-      };
-      var add = (m) => {
-        return (n) => {
+        var one = (f) => {
+          return (x) => {
+            return f(x);
+          };
+        };
+        var two = (f) => {
+          return (x) => {
+            return f(f(x));
+          };
+        };
+        var three = (f) => {
+          return (x) => {
+            return f(f(f(x)));
+          };
+        };
+        var succ = (n) => {
           return (f) => {
-            return (x) =>{
-              return m(f)(n(f)(x));
+            return (x) => {
+              return f(n(f)(x));
             };
           };
         };
-      };
-      /*#@range_end(church_numeral) */
-
-      /* #@range_begin(closure_as_counter) */
-      var counter = (init) => {
-        var _init = init;
-        return (dummy) => {
-          _init = _init + 1;
-          return _init;
+        var add = (m) => {
+          return (n) => {
+            return (f) => {
+              return (x) =>{
+                return m(f)(n(f)(x));
+              };
+            };
+          };
         };
-      };
-      expect(one(counter(0))()).to.eql(1);
-      expect(two(counter(0))()).to.eql(2);
-      expect(three(counter(0))()).to.eql(3);
-      expect(succ(one)(counter(0))()).to.eql(2);
-      expect(succ(two)(counter(0))()).to.eql(3);
-      expect(add(zero)(one)(counter(0))()).to.eql(1);
-      expect(add(one)(one)(counter(0))()).to.eql(2);
-      expect(add(one)(two)(counter(0))()).to.eql(3);
-      expect(add(two)(three)(counter(0))()).to.eql(5);
-      /* #@range_end(closure_as_counter) */
-      next();
+        /*#@range_end(church_numeral) */
+
+        /* #@range_begin(closure_as_counter) */
+        var counter = (init) => {
+          var _init = init;
+          return (dummy) => {
+            _init = _init + 1;
+            return _init;
+          };
+        };
+        expect(one(counter(0))()).to.eql(1);
+        expect(two(counter(0))()).to.eql(2);
+        expect(three(counter(0))()).to.eql(3);
+        expect(succ(one)(counter(0))()).to.eql(2);
+        expect(succ(two)(counter(0))()).to.eql(3);
+        expect(add(zero)(one)(counter(0))()).to.eql(1);
+        expect(add(one)(one)(counter(0))()).to.eql(2);
+        expect(add(one)(two)(counter(0))()).to.eql(3);
+        expect(add(two)(three)(counter(0))()).to.eql(5);
+        /* #@range_end(closure_as_counter) */
+        next();
+      });
     });
   });
 });

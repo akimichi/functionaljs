@@ -63,7 +63,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
             return n + 1;
           };
           expect(
-            succ(1)
+            succ(1) // 変数succを用いてλ式を呼びだす
           ).to.eql(
             2
           );
@@ -88,8 +88,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
       });
       it('Array.reduceによるsumの定義', (next) => {
         /* #@range_begin(sum_in_array_reduce) */
-        var add = (accumulator, currentItem) => {
-          return currentItem + accumulator;
+        var add = (x, y) => {
+          return x + y;
         };
         var sum = (array) => {
           return array.reduce(add,0); // reduceにadd関数を渡している
@@ -210,6 +210,11 @@ describe('なぜ関数型プログラミングが重要か', () => {
           ).to.eql(
             square(b)
           );
+          expect(
+            square(b)
+          ).to.eql(
+            square(a)
+          );
           /* #@range_end(equals_replacement)  */
           next();
         });
@@ -217,25 +222,58 @@ describe('なぜ関数型プログラミングが重要か', () => {
     });
     describe('副作用の種類', () => {
       describe('副作用としての代入', () => {
-        it('配列は参照透明性を破壊する', (next) => {
-          /* #@range_begin(array_destroys_referential_transparency) */
-          var add = (n,m) => {
-            return n + m;
+        it('代入操作は参照透明性を破壊する', function(next) {
+          /* #@range_begin(assignment_breaks_referential_transparency) */
+          var add = (x, y) => {
+            return x + y;
           };
-          var array = [];
-          array.push(1);
+          var x = 1;
           expect(
-            add(array.pop(),2)
+            add(x, 2)
           ).to.eql(
             3
           );
-          array.push(2);
+          x = 2; // ここで変数xに2を代入している
           expect(
-            add(array.pop(),2)
+            add(x, 2)
           ).to.eql(
             4
           );
+          /* #@range_end(assignment_breaks_referential_transparency)  */
+          next();
+        });
+        it('配列は参照透明性を破壊する', (next) => {
+          /* #@range_begin(array_destroys_referential_transparency) */
+          var array = [];
+          array.push(1);
+          expect(
+            array.pop()
+          ).to.eql(
+            1
+          );
+          array.push(2);
+          expect(
+            array.pop()
+          ).to.eql(
+            2
+          );
           /* #@range_end(array_destroys_referential_transparency) */
+          // var add = (n,m) => {
+          //   return n + m;
+          // };
+          // var array = [];
+          // array.push(1);
+          // expect(
+          //   add(array.pop(),2)
+          // ).to.eql(
+          //   3
+          // );
+          // array.push(2);
+          // expect(
+          //   add(array.pop(),2)
+          // ).to.eql(
+          //   4
+          // );
           next();
         });
         it('配列の状態を表示する', (next) => {
@@ -259,6 +297,34 @@ describe('なぜ関数型プログラミングが重要か', () => {
             4
           );
           /* #@range_end(array_destroys_referential_transparency_log) */
+          next();
+        });
+      });
+      describe('副作用と入出力', () => {
+        it('ファイル入出力が参照透明性を破壊する例', (next) => {
+          /* #@range_begin(fileio_breaks_referential_transparency)  */
+          var fs = require('fs');
+          var read = (path) => {
+            var readValue = fs.readFileSync(path, 'utf8');
+            return parseInt(readValue);
+          };
+          var write = (path, n) => {
+            fs.writeFileSync(path, n);
+            return n;
+          };
+          write('/tmp/io.txt', 1);
+          expect(
+            read('/tmp/io.txt')
+          ).to.eql(
+            1
+          );
+          write('/tmp/io.txt', 2); // ここでファイルに値を書きこむ
+          expect(
+            read('/tmp/io.txt')
+          ).to.eql(
+            2
+          );
+          /* #@range_end(fileio_breaks_referential_transparency)  */
           next();
         });
       });

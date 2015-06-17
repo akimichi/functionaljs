@@ -305,7 +305,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           /* #@range_begin(fileio_breaks_referential_transparency)  */
           var fs = require('fs');
           var read = (path) => {
-            var readValue = fs.readFileSync(path, 'utf8');
+            var readValue = fs.readFileSync(path);
             return parseInt(readValue);
           };
           var write = (path, n) => {
@@ -325,6 +325,54 @@ describe('なぜ関数型プログラミングが重要か', () => {
             2
           );
           /* #@range_end(fileio_breaks_referential_transparency)  */
+          next();
+        });
+      });
+      describe('副作用への対処', () => {
+        it('命令型プログラミングによる乗算', function(next) {
+          /* #@range_begin(imperative_addition) */
+          var add = function(x,y){
+            var times = 0;
+            while(times < y){
+              x = x + 1;
+              times = times + 1;
+            };
+            return x;
+          };
+          expect(
+            add(2,3)
+          ).to.eql(
+            5
+          );
+          /* #@range_end(imperative_addition) */
+          var x = 4;
+          var y = 5;
+          expect(
+            add(x,y)
+          ).to.eql(
+            9
+          );
+          expect(
+            x
+          ).to.eql(
+            4
+          );
+          next();
+        });
+        it('関数型プログラミングによる乗算', function(next) {
+          /* #@range_begin(functional_addition) */
+          var add = function(x,y){
+            if(y < 1){
+              return x;
+            } else {
+              return add(x + 1, y - 1);
+            }
+          };
+          /* #@range_end(functional_addition) */
+          expect(add(2,1)).to.eql(3);
+          expect(add(2,2)).to.eql(4);
+          expect(add(3,2)).to.eql(5);
+          expect(add(12,5)).to.eql(17);
           next();
         });
       });

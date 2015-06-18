@@ -18,4 +18,4 @@ gulp.task('doc', function() {
     .pipe(gulp.dest('./docs'));
 });
 
-gulp.task('default', ['test']);
+gulp.task('default', ['test','doc']);

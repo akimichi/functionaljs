@@ -159,12 +159,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
           /*  #@range_end(square_definition) */
           /* #@range_begin(square_is_transparent) */
           expect(
-            square(2)
+            square(2) // 1回目の実行
           ).to.eql(
             4
           );
           expect(
-            square(2)
+            square(2) // 2回目の実行
           ).to.eql(
             4
           );
@@ -198,31 +198,115 @@ describe('なぜ関数型プログラミングが重要か', () => {
           /* #@range_end(multiply_is_transparent) */
           next();
         });
-        it('参照透明性な関数では同値なものは置換可能である', (next) => {
-          /* #@range_begin(equals_replacement)  */
-          var square = (n) => {
-            return n * n;
+        it('Date.now関数は参照透明性を持たない', (next) => {
+          /* #@range_begin(datenow_is_not_transparent) */
+          var a = Date.now();
+
+          /* 時間を1秒進める */
+          var sleep = require('sleep');
+          sleep.sleep(1);
+
+          expect(
+            a
+          ).to.not.eql( /* 等しくないことをテストしている */
+            Date.now()
+          );
+          /* #@range_end(datenow_is_not_transparent) */
+          next();
+        });
+        // it('console.log関数は参照透明性を持たない', (next) => {
+        //   /* #@range_begin(consolelog_is_not_transparent) */
+        //   var a = console.log();
+        //   expect(
+        //     a
+        //   ).to.eql( /* 等しくないことをテストしている */
+        //     console.log()
+        //   );
+        //   /* #@range_end(consolelog_is_not_transparent) */
+        //   next();
+        // });
+        describe('参照透明な関数では同値なものは置換可能である', () => {
+          it('同じ引数のsquare関数は置換可能である', (next) => {
+            /* #@range_begin(equals_replacement)  */
+            var square = (n) => {
+              return n * n;
+            };
+            var b = 1;
+            var a = b;
+            expect(
+              square(a)
+            ).to.eql(
+              square(b)
+            );
+            expect(
+              square(b)
+            ).to.eql(
+              square(a)
+            );
+            expect(
+              square(a)
+            ).to.eql(
+              square(a)
+            );
+            expect(
+              square(b)
+            ).to.eql(
+              square(b)
+            );
+            /* #@range_end(equals_replacement)  */
+            next();
+          });
+        });
+        it('参照不透明な関数では同値なものは置換できない', (next) => {
+          /* #@range_begin(unequals_replacement)  */
+          var wrapper = (f) => {
+            return (args) => {
+              return f.call(f, args);
+            };
+          };
+          var now = (_) => {
+            return Date.now();
           };
           var b = 1;
           var a = b;
           expect(
-            square(a)
-          ).to.eql(
-            square(b)
+            wrapper(now)(a)
+          ).to.not.eql(
+            wrapper(now)(b)
           );
+          /* #@range_end(unequals_replacement)  */
+          next();
+        });
+      });
+      describe('変数の参照透明性', () => {
+        it('値は参照透明性を持つ', (next) => {
+          /* #@range_begin(any_value_has_referential_transparency) */
           expect(
-            square(b)
+            2
           ).to.eql(
-            square(a)
+            2
           );
-          /* #@range_end(equals_replacement)  */
+          /* #@range_end(any_value_has_referential_transparency) */
+          next();
+        });
+        it('変数は参照透明性を持つとは限らない', (next) => {
+          /* #@range_begin(variable_isnt_referential_transparent) */
+          var foo = 2;
+          var bar = foo;
+          foo = 3;
+          expect(
+            foo
+          ).to.not.eql(
+            bar
+          );
+          /* #@range_end(variable_isnt_referential_transparent) */
           next();
         });
       });
     });
     describe('副作用の種類', () => {
       describe('副作用としての代入', () => {
-        it('代入操作は参照透明性を破壊する', function(next) {
+        it('代入操作は参照透明性を破壊する', (next) => {
           /* #@range_begin(assignment_breaks_referential_transparency) */
           var add = (x, y) => {
             return x + y;

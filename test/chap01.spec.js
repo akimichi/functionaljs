@@ -238,6 +238,30 @@ describe('「計算」とは', () => {
         /* #@range_end(closure_as_counter) */
         next();
       });
+      it('変数の置換規則', (next) => {
+        /* #@range_begin(variable_reduction) */
+        var foo = 3;
+        expect(
+          foo
+        ).to.eql(
+          3
+        );
+        /* #@range_end(variable_reduction) */
+        next();
+      });
+      it('変数の置換規則', (next) => {
+        /* #@range_begin(variable_and_function) */
+        var foo = () => {
+          return 3;
+        };
+        expect(
+          foo()
+        ).to.eql(
+          3
+        );
+        /* #@range_end(variable_and_function) */
+        next();
+      });
     });
   });
 });

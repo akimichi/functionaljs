@@ -459,6 +459,360 @@ describe('なぜ関数型プログラミングが重要か', () => {
           expect(add(12,5)).to.eql(17);
           next();
         });
+        describe('不変なデータ', () =>  {
+          describe('命令的なstackの実装', () => {
+            /* #@range_begin(imperative_stack) */
+            var stack = [];
+            var add = (stack) => {
+              var x = stack.pop();
+              var y = stack.pop();
+              return stack.push(x+y);
+            };
+            var subtract = (stack) => {
+              var x = stack.pop();
+              var y = stack.pop();
+              return stack.push(x-y);
+            };
+            /* #@range_end(imperative_stack) */
+            it('(2 + 3) * 2', function(next) {
+              /* #@range_begin(imperative_stack_test) */
+              stack.push(2);
+              stack.push(3);
+              add(stack);
+              stack.push(2);
+              add(stack);
+              expect(
+                stack.pop()
+              ).to.eql(
+                7
+              );
+              /* #@range_end(imperative_stack_test) */
+              next();
+            });
+            it('(2 + 3) + 2 logged', function(next) {
+              var stack = [];
+              /* #@range_begin(imperative_stack_log) */
+              stack.push(2);
+              console.log(stack); // [ 2 ]
+              stack.push(3);
+              console.log(stack); // [ 2, 3 ]
+              add(stack);
+              console.log(stack); // [ 5 ]
+              stack.push(2);
+              console.log(stack); // [ 5, 2 ]
+              add(stack);
+              console.log(stack); // [ 7 ]
+              expect(
+                stack.pop()
+              ).to.eql(
+                7
+              );
+              console.log(stack); // []
+              /* #@range_end(imperative_stack_log) */
+              next();
+            });
+          });
+          describe('関数的なstackの実装', () => {
+            /* #@range_begin(functional_stack) */
+            var push = (n, stack) => {
+              return [n].concat(stack);
+            };
+            var pop = (stack) => {
+              return {
+                value: stack[0],
+                rest: stack.slice(1,stack.length)
+              };
+            };
+            var empty = [];
+            var add = (stack) => {
+              var x = stack[0];
+              var y = stack[1];
+              var rest = stack.slice(2,stack.length);
+              return push(x+y,rest);
+            };
+            var subtract = (stack) => {
+              var x = stack[0];
+              var y = stack[1];
+              var rest = stack.slice(2,stack.length);
+              return push(x-y,rest);
+            };
+            var multiply = (stack) => {
+              var x = stack[0];
+              var y = stack[1];
+              var rest = stack.slice(2,stack.length);
+              return push(x*y,rest);
+            };
+            var divide = (stack) => {
+              var x = stack[0];
+              var y = stack[1];
+              var rest = stack.slice(2,stack.length);
+              return push(x/y,rest);
+            };
+            /* #@range_end(functional_stack) */
+            it('(2 + 3) * 4', function(next) {
+              /* #@range_begin(functional_stack_test) */
+              var s0 = empty;
+              var s1 = push(2, s0);
+              var s2 = push(3, s1);
+              var s3 = add(s2);
+              var s4 = push(2,s3);
+              var s5 = multiply(s4);
+              expect(
+                pop(s5).value
+              ).to.eql(
+                10
+              );
+              /* #@range_end(functional_stack_test) */
+              next();
+            });
+          });
+        });
+        describe('副作用への対処', () =>  {
+          describe('モナド', () => {
+            it('状態を明示化する', (next) =>{
+              var push = (n, state) => {
+                return {
+                  value: undefined,
+                  stack: [n].concat(state.stack)
+                };
+              };
+              var pop = (state) => {
+                return {
+                  value: state.stack[0],
+                  stack: state.stack.slice(1,state.stack.length)
+                };
+              };
+              var empty = [];
+              var state1 = push(2, empty);
+              var state2 = push(3, state1);
+              var state3 = pop(state2);
+              var state4 = pop(state3);
+              expect(
+                state4.value
+              ).to.eql(
+                2
+              );
+              next();
+            });
+            it('継続を用いる', (next) =>{
+              var bind = (state, continues) => {
+                return continues(state);
+              };
+              var push = (n, state) => {
+                return {
+                  value: undefined,
+                  stack: [n].concat(state.stack)
+                };
+              };
+              var pop = (state) => {
+                return {
+                  value: state.stack[0],
+                  stack: state.stack.slice(1,state.stack.length)
+                };
+              };
+              var empty = {
+                value: undefined,
+                stack: []
+              };
+              expect(
+                bind(push(2,empty), (state1) => {
+                  return bind(push(3, state1), (state2) =>{
+                    return bind(pop(state2), (state3) => {
+                      return bind(pop(state3), (state4) => {
+                        return state4;
+                      });
+                    });
+                  });
+                })
+              ).to.eql(
+                {
+                  value: 2,
+                  stack: []
+                }
+              );
+              next();
+            });
+            it('push,popのシグネチャを変更', (next) =>{
+              var bind = (state, continues) => {
+                return continues(state);
+              };
+              var push = (n, stack) => {
+                return {
+                  value: undefined,
+                  stack: [n].concat(stack)
+                };
+              };
+              var pop = (stack) => {
+                return {
+                  value: stack[0],
+                  stack: stack.slice(1,stack.length)
+                };
+              };
+              var empty =  [];
+              expect(
+                bind(push(2,empty), (state1) => {
+                  return bind(push(3, state1.stack), (state2) =>{
+                    return bind(pop(state2.stack), (state3) => {
+                      return bind(pop(state3.stack), (state4) => {
+                        return state4;
+                      });
+                    });
+                  });
+                })
+              ).to.eql(
+                {
+                  value: 2,
+                  stack: []
+                }
+              );
+              next();
+            });
+            it('push,popのシグネチャを変更(2)', (next) =>{
+              var bind = (state, continues) => {
+                return continues(state);
+              };
+              var unit = (n) => {
+                return (stack) => {
+                  return {
+                    value: n,
+                    stack: stack
+                  };
+                };
+              };
+              var push = (n) => {
+                return (state) => {
+                  return unit(undefined)([n].concat(state.stack));
+                };
+              };
+              var pop = () => {
+                return (state) => {
+                  return unit(state.stack[0])(state.stack.slice(1,state.stack.length));
+                };
+              };
+              var empty = unit(undefined)([]);
+              expect(
+                bind(push(2)(empty), (state1) => {
+                  return bind(push(3)(state1), (state2) =>{
+                    return bind(pop()(state2), (state3) => {
+                      return bind(pop()(state3), (state4) => {
+                        return state4;
+                      });
+                    });
+                  });
+                })
+              ).to.eql(
+                {
+                  value: 2,
+                  stack: []
+                }
+              );
+              next();
+            });
+            it('bindを改良する', (next) =>{
+              var bind = (operate, continues) => {
+                // n ->
+                return (stack) => {
+                  var newState = operate(stack);
+                  return continues(newState)(newState.stack);
+                };
+              };
+              var unit = (n) => {
+                return (stack) => {
+                  return {
+                    value: n,
+                    stack: stack
+                  };
+                };
+              };
+              var push = (n) => {
+                return (stack) => {
+                  return unit(undefined)([n].concat(stack));
+                };
+              };
+              var pop = () => {
+                return (stack) => {
+                  return unit(stack[0])(stack.slice(1,stack.length));
+                };
+              };
+              var empty = [];
+              expect(
+                bind(push(2), (state1) => {
+                  return bind(push(3), (state2) =>{
+                    return bind(pop(), (state3) => {
+                      return bind(pop(), (state4) => {
+                        return (stack) => {
+                          return unit(state4.value)(stack);
+                        };
+                      });
+                    });
+                  });
+                })(empty)
+              ).to.eql(
+                {
+                  value: 2,
+                  stack: []
+                }
+              );
+              next();
+            });
+            it('中間状態を隠蔽する', (next) =>{
+              var bind = (operate, continues) => {
+                return (stack) => {
+                  var newState = operate(stack);
+                  return continues(newState.value)(newState.stack);
+                };
+              };
+              var unit = (n) => {
+                return (stack) => {
+                  return {
+                    value: n,
+                    stack: stack
+                  };
+                };
+              };
+              var push = (n) => {
+                return (stack) => {
+                  return unit(undefined)([n].concat(stack));
+                };
+              };
+              var pop = () => {
+                return (stack) => {
+                  return unit(stack[0])(stack.slice(1,stack.length));
+                };
+              };
+              var empty = [];
+              var computation = bind(push(2), () => {
+                return bind(push(3), () =>{
+                  return bind(pop(), (state3) => {
+                    return bind(pop(), (state4) => {
+                      return unit(state4);
+                    });
+                  });
+                });
+              });
+              expect(
+                computation(empty)
+              ).to.eql(
+                {
+                  value: 2,
+                  stack: []
+                }
+              );
+              var run = (operate, initState) => {
+                return operate(initState);
+              };
+              expect(
+                run(computation, [])
+              ).to.eql(
+                {
+                  value: 2,
+                  stack: []
+                }
+              );
+              next();
+            });
+          });
+        });
       });
     });
   });

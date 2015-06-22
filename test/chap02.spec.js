@@ -569,74 +569,38 @@ describe('なぜ関数型プログラミングが重要か', () => {
         });
         describe('副作用への対処', () =>  {
           describe('モナド', () => {
+            var bind = (operate, continues) => {
+              return (stack) => {
+                var newState = operate(stack);
+                return continues(newState.value)(newState.stack);
+              };
+            };
+            var unit = (n) => {
+              return (stack) => {
+                return {
+                  value: n,
+                  stack: stack
+                };
+              };
+            };
+            var push = (n) => {
+              return (stack) => {
+                return unit(undefined)([n].concat(stack));
+              };
+            };
+            var pop = () => {
+              return (stack) => {
+                return unit(stack[0])(stack.slice(1,stack.length));
+              };
+            };
+            var run = (operate, initState) => {
+              return operate(initState);
+            };
+            var empty = [];
+
             it('状態を明示化する', (next) =>{
-              var push = (n, state) => {
-                return {
-                  value: undefined,
-                  stack: [n].concat(state.stack)
-                };
-              };
-              var pop = (state) => {
-                return {
-                  value: state.stack[0],
-                  stack: state.stack.slice(1,state.stack.length)
-                };
-              };
-              var empty = [];
-              var state1 = push(2, empty);
-              var state2 = push(3, state1);
-              var state3 = pop(state2);
-              var state4 = pop(state3);
-              expect(
-                state4.value
-              ).to.eql(
-                2
-              );
-              next();
-            });
-            it('継続を用いる', (next) =>{
-              var bind = (state, continues) => {
-                return continues(state);
-              };
-              var push = (n, state) => {
-                return {
-                  value: undefined,
-                  stack: [n].concat(state.stack)
-                };
-              };
-              var pop = (state) => {
-                return {
-                  value: state.stack[0],
-                  stack: state.stack.slice(1,state.stack.length)
-                };
-              };
-              var empty = {
-                value: undefined,
-                stack: []
-              };
-              expect(
-                bind(push(2,empty), (state1) => {
-                  return bind(push(3, state1), (state2) =>{
-                    return bind(pop(state2), (state3) => {
-                      return bind(pop(state3), (state4) => {
-                        return state4;
-                      });
-                    });
-                  });
-                })
-              ).to.eql(
-                {
-                  value: 2,
-                  stack: []
-                }
-              );
-              next();
-            });
-            it('push,popのシグネチャを変更', (next) =>{
-              var bind = (state, continues) => {
-                return continues(state);
-              };
-              var push = (n, stack) => {
+              /* #@range_begin(explicit_state) */
+              var push = (n,stack) => {
                 return {
                   value: undefined,
                   stack: [n].concat(stack)
@@ -648,7 +612,31 @@ describe('なぜ関数型プログラミングが重要か', () => {
                   stack: stack.slice(1,stack.length)
                 };
               };
-              var empty =  [];
+              var empty = [];
+              var state1 = push(2, empty);
+              var state2 = push(3, state1.stack);
+              var state3 = pop(state2.stack);
+              var state4 = pop(state3.stack);
+              expect(
+                state4.value
+              ).to.eql(
+                2
+              );
+              /* #@range_end(explicit_state) */
+              next();
+            });
+            it('継続を用いる', (next) =>{
+              var push = (n,stack) => {
+                  return unit(undefined)([n].concat(stack));
+              };
+              var pop = (stack) => {
+                  return unit(stack[0])(stack.slice(1,stack.length));
+              };
+
+              /* #@range_begin(bind_defined_by_continuation) */
+              var bind = (state, continues) => {
+                return continues(state);
+              };
               expect(
                 bind(push(2,empty), (state1) => {
                   return bind(push(3, state1.stack), (state2) =>{
@@ -665,52 +653,88 @@ describe('なぜ関数型プログラミングが重要か', () => {
                   stack: []
                 }
               );
+              /* #@range_end(bind_defined_by_continuation) */
               next();
             });
-            it('push,popのシグネチャを変更(2)', (next) =>{
-              var bind = (state, continues) => {
-                return continues(state);
-              };
-              var unit = (n) => {
-                return (stack) => {
-                  return {
-                    value: n,
-                    stack: stack
-                  };
-                };
-              };
-              var push = (n) => {
-                return (state) => {
-                  return unit(undefined)([n].concat(state.stack));
-                };
-              };
-              var pop = () => {
-                return (state) => {
-                  return unit(state.stack[0])(state.stack.slice(1,state.stack.length));
-                };
-              };
-              var empty = unit(undefined)([]);
-              expect(
-                bind(push(2)(empty), (state1) => {
-                  return bind(push(3)(state1), (state2) =>{
-                    return bind(pop()(state2), (state3) => {
-                      return bind(pop()(state3), (state4) => {
-                        return state4;
-                      });
-                    });
-                  });
-                })
-              ).to.eql(
-                {
-                  value: 2,
-                  stack: []
-                }
-              );
-              next();
-            });
-            it('bindを改良する', (next) =>{
+            // it('push,popのシグネチャを変更', (next) =>{
+            //   var bind = (state, continues) => {
+            //     return continues(state);
+            //   };
+            //   var push = (n, stack) => {
+            //     return {
+            //       value: undefined,
+            //       stack: [n].concat(stack)
+            //     };
+            //   };
+            //   var pop = (stack) => {
+            //     return {
+            //       value: stack[0],
+            //       stack: stack.slice(1,stack.length)
+            //     };
+            //   };
+            //   var empty =  [];
+            //   expect(
+            //     bind(push(2,empty), (state1) => {
+            //       return bind(push(3, state1.stack), (state2) =>{
+            //         return bind(pop(state2.stack), (state3) => {
+            //           return bind(pop(state3.stack), (state4) => {
+            //             return state4;
+            //           });
+            //         });
+            //       });
+            //     })
+            //   ).to.eql(
+            //     {
+            //       value: 2,
+            //       stack: []
+            //     }
+            //   );
+            //   next();
+            // });
+            // it('push,popのシグネチャを変更(2)', (next) =>{
+            //   var bind = (state, continues) => {
+            //     return continues(state);
+            //   };
+            //   var unit = (n) => {
+            //     return (stack) => {
+            //       return {
+            //         value: n,
+            //         stack: stack
+            //       };
+            //     };
+            //   };
+            //   var push = (n) => {
+            //     return (state) => {
+            //       return unit(undefined)([n].concat(state.stack));
+            //     };
+            //   };
+            //   var pop = () => {
+            //     return (state) => {
+            //       return unit(state.stack[0])(state.stack.slice(1,state.stack.length));
+            //     };
+            //   };
+            //   var empty = unit(undefined)([]);
+            //   expect(
+            //     bind(push(2)(empty), (state1) => {
+            //       return bind(push(3)(state1), (state2) =>{
+            //         return bind(pop()(state2), (state3) => {
+            //           return bind(pop()(state3), (state4) => {
+            //             return state4;
+            //           });
+            //         });
+            //       });
+            //     })
+            //   ).to.eql(
+            //     {
+            //       value: 2,
+            //       stack: []
+            //     }
+            //   );
+            //   next();
+            // });
+            it('カリー化', (next) =>{
+              /* #@range_begin(curring) */
               var bind = (operate, continues) => {
-                // n ->
                 return (stack) => {
                   var newState = operate(stack);
                   return continues(newState)(newState.stack);
@@ -734,7 +758,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
                   return unit(stack[0])(stack.slice(1,stack.length));
                 };
               };
-              var empty = [];
               expect(
                 bind(push(2), (state1) => {
                   return bind(push(3), (state2) =>{
@@ -753,34 +776,17 @@ describe('なぜ関数型プログラミングが重要か', () => {
                   stack: []
                 }
               );
+              /* #@range_end(curring) */
               next();
             });
             it('中間状態を隠蔽する', (next) =>{
+              /* #@range_begin(hide_internal_state) */
               var bind = (operate, continues) => {
                 return (stack) => {
                   var newState = operate(stack);
                   return continues(newState.value)(newState.stack);
                 };
               };
-              var unit = (n) => {
-                return (stack) => {
-                  return {
-                    value: n,
-                    stack: stack
-                  };
-                };
-              };
-              var push = (n) => {
-                return (stack) => {
-                  return unit(undefined)([n].concat(stack));
-                };
-              };
-              var pop = () => {
-                return (stack) => {
-                  return unit(stack[0])(stack.slice(1,stack.length));
-                };
-              };
-              var empty = [];
               var computation = bind(push(2), () => {
                 return bind(push(3), () =>{
                   return bind(pop(), (state3) => {
@@ -798,17 +804,72 @@ describe('なぜ関数型プログラミングが重要か', () => {
                   stack: []
                 }
               );
-              var run = (operate, initState) => {
-                return operate(initState);
+              /* #@range_end(hide_internal_state) */
+              next();
+            });
+            it('計算を合成する', (next) =>{
+              /* #@range_begin(combining_monad) */
+              var computation1 = bind(push(2), () => {
+                return bind(push(3), () => {
+                  return bind(push(4), () => {
+                    return unit();
+                  });
+                });
+              });
+              var computation2 = bind(pop(), (state1) => {
+                return bind(pop(), (state2) => {
+                  return unit(state2);
+                });
+              });
+              var combine = (a, b) => {
+                return (stack) => {
+                  var initialState = unit(undefined)(stack);
+                  var newState = a(stack);
+                  return b(newState.stack);
+                };
               };
               expect(
-                run(computation, [])
+                combine(computation1,computation2)(empty)
               ).to.eql(
                 {
-                  value: 2,
+                  value: 3,
+                  stack: [2]
+                }
+              );
+              /* #@range_end(combining_monad) */
+              next();
+            });
+            it('逆ポーランド電卓', (next) =>{
+              /* #@range_begin(revserse_polish) */
+              var add = bind(pop(), (state1) => {
+                return bind(pop(), (state2) => {
+                  return unit(state1 + state2);
+                });
+              });
+              var subtract = bind(pop(), (state1) => {
+                return bind(pop(), (state2) => {
+                  return unit(state1 - state2);
+                });
+              });
+              var multiply = bind(pop(), (state1) => {
+                return bind(pop(), (state2) => {
+                  return unit(state1 * state2);
+                });
+              });
+              var divide = bind(pop(), (state1) => {
+                return bind(pop(), (state2) => {
+                  return unit(state1 / state2);
+                });
+              });
+              expect(
+                add([1,2])
+              ).to.eql(
+                {
+                  value: 3,
                   stack: []
                 }
               );
+              /* #@range_end(revserse_polish) */
               next();
             });
           });

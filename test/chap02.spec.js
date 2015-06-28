@@ -656,41 +656,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
               /* #@range_end(bind_defined_by_continuation) */
               next();
             });
-            // it('push,popのシグネチャを変更', (next) =>{
-            //   var bind = (state, continues) => {
-            //     return continues(state);
-            //   };
-            //   var push = (n, stack) => {
-            //     return {
-            //       value: undefined,
-            //       stack: [n].concat(stack)
-            //     };
-            //   };
-            //   var pop = (stack) => {
-            //     return {
-            //       value: stack[0],
-            //       stack: stack.slice(1,stack.length)
-            //     };
-            //   };
-            //   var empty =  [];
-            //   expect(
-            //     bind(push(2,empty), (state1) => {
-            //       return bind(push(3, state1.stack), (state2) =>{
-            //         return bind(pop(state2.stack), (state3) => {
-            //           return bind(pop(state3.stack), (state4) => {
-            //             return state4;
-            //           });
-            //         });
-            //       });
-            //     })
-            //   ).to.eql(
-            //     {
-            //       value: 2,
-            //       stack: []
-            //     }
-            //   );
-            //   next();
-            // });
             // it('push,popのシグネチャを変更(2)', (next) =>{
             //   var bind = (state, continues) => {
             //     return continues(state);

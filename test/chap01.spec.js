@@ -5,20 +5,29 @@ var util = require('util');
 
 describe('「計算」とは', () => {
   describe('チューリング機械', () => {
-    describe('チューリング機械 turing machine', function() {
+    describe('チューリング機械 turing machine', () => {
       // c.f. http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069
       /* #@range_begin(turing) */
       var machine = (code,tape,initState, endState) => {
         var position = 0;                          // ヘッドの位置
         var state = initState;                     // 機械の状態
+        var currentInstruction = undefined;        // 実行する命令
+        /*
+         以下のwhileループにて、現在の状態が最終状態に到達するまで命令を繰り返す
+         */
         while(state != endState) {
           var cell = tape[String(position)];
-          var currentInstruction = (cell) ? code[state][cell] : code[state].B;
-          if(!currentInstruction)
+          if (cell)
+            currentInstruction = code[state][cell];
+          else
+            currentInstruction = code[state].B;
+          if (!currentInstruction) {
             return false;
-          tape[String(position)] = currentInstruction.write; // テープに印字する
-          position += currentInstruction.move;                // ヘッドを動かす
-          state = currentInstruction.next;                    // 次の状態に移る
+          } else {
+            tape[String(position)] = currentInstruction.write; // テープに印字する
+            position += currentInstruction.move;                // ヘッドを動かす
+            state = currentInstruction.next;                    // 次の状態に移る
+          }
         }
         return tape;
       };

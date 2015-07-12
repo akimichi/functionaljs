@@ -219,7 +219,7 @@ describe('「計算」とは', () => {
         var add = (m) => {
           return (n) => {
             return (f) => {
-              return (x) =>{
+              return (x) => {
                 return m(f)(n(f)(x));
               };
             };
@@ -247,17 +247,17 @@ describe('「計算」とは', () => {
         /* #@range_end(closure_as_counter) */
         next();
       });
-      it('変数の置換規則', (next) => {
-        /* #@range_begin(variable_reduction) */
-        var foo = 3;
-        expect(
-          foo
-        ).to.eql(
-          3
-        );
-        /* #@range_end(variable_reduction) */
-        next();
-      });
+      // it('変数の置換規則', (next) => {
+      //   /* #@range_begin(variable_reduction) */
+      //   var foo = 3; // 変数fooを3に束縛する
+      //   expect(
+      //     foo        // 束縛にもとづいて変数fooを評価する
+      //   ).to.eql(
+      //     3
+      //   );
+      //   /* #@range_end(variable_reduction) */
+      //   next();
+      // });
       it('変数の置換規則', (next) => {
         /* #@range_begin(variable_and_function) */
         var foo = () => {
@@ -269,6 +269,20 @@ describe('「計算」とは', () => {
           3
         );
         /* #@range_end(variable_and_function) */
+        /* #@range_begin(variable_and_closure) */
+        var bar = () => {
+          var foo = 3; // 変数fooに値3を束縛する
+          return foo * 2;
+        };
+        var baz = ((foo) => {
+          return foo * 2;
+        })(3);         // 仮引数fooに値3を束縛する
+        expect(
+          bar()
+        ).to.eql(
+          baz
+        );
+        /* #@range_end(variable_and_closure) */
         next();
       });
     });

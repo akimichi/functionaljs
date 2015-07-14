@@ -285,6 +285,92 @@ describe('「計算」とは', () => {
         /* #@range_end(variable_and_closure) */
         next();
       });
+      it('関数の置換規則', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x, y) => { // add関数の定義
+          if(y < 1){
+            return x;
+          } else {
+            return add(succ(x),prev(y)); // add関数の再帰呼び出し
+          }
+        };
+        /* #@range_begin(multiply) */
+        var times = (count,fun,arg, memo) => {
+          if(count > 1) {
+            return times(count-1,fun,arg, fun(arg,memo)); // times関数を再帰呼出し
+          } else {
+            return fun(arg,memo);
+          }
+        };
+        var multiply = (n,m) => {
+          return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
+        };
+        expect(
+          multiply(2,3)
+        ).to.eql(
+          6
+        );
+        /* #@range_end(multiply) */
+        expect(
+          multiply(4,6)
+        ).to.eql(
+          24
+        );
+        expect(
+          multiply(1,1)
+        ).to.eql(
+          1
+        );
+        expect(
+          multiply(0,1)
+        ).to.eql(
+          0
+        );
+        next();
+      });
+    });
+    describe('置換モデル', function() {
+      it('べき乗の定義', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x, y) => {
+          if(y < 1){
+            return x;
+          } else {
+            return add(succ(x),prev(y));
+          }
+        };
+        var times = (count,fun,arg, memo) => {
+          if(count > 1) {
+            return times(count-1,fun,arg, fun(arg,memo));
+          } else {
+            return fun(arg,memo);
+          }
+        };
+        var multiply = (n,m) => {
+          return times(m, add, n, 0);
+        };
+        /* #@range_begin(exponential) */
+        var exponential = (n,m) => {
+          return times(m, multiply, n, 1);
+        };
+        expect(
+          exponential(2,3)
+        ).to.eql(
+          8
+        );
+        /* #@range_end(exponential) */
+        next();
+      });
     });
   });
 });

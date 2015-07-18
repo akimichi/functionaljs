@@ -48,7 +48,6 @@ describe('「計算」とは', () => {
             'q4': {"1": {"write": "B", "move": 1, "next": 'q1'},
                    "0": {"write": "0", "move": 1, "next": 'q5'}}
           };
-          //var tape = ['1','1','1'];
           var tape = {
             '0': '1',
             '1':'1',
@@ -92,7 +91,6 @@ describe('「計算」とは', () => {
         });
         it('succ関数を実装する', (next) => {
           /* #@range_begin(turing_example_succ) */
-          //var tape = ['1','0'];
           var tape = {
             '0':'1',
             '1':'0'

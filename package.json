@@ -18,7 +18,8 @@
   "dependencies": {
     "expect.js": "^0.3.1",
     "gulp": "^3.8.11",
-    "mocha": "^1.12.1"
+    "mocha": "^1.12.1",
+    "sleep-async": "^1.0.1"
   },
   "engines": {
     "node": "0.12.x"
@@ -35,7 +36,6 @@
     "gulp-util": "^3.0.4",
     "npm": "^2.7.3",
     "random-js": "^1.0.4",
-    "seedrandom": "^2.3.11",
-    "sleep": "^2.0.0"
+    "seedrandom": "^2.3.11"
   }
 }

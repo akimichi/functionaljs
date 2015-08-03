@@ -267,18 +267,29 @@ describe('「計算」とは', () => {
           3
         );
         /* #@range_end(variable_and_function) */
-        /* #@range_begin(variable_and_closure) */
+        /* #@range_begin(local_variable_usage_example) */
         var bar = () => {
-          var foo = 3; // 変数fooに値3を束縛する
-          return foo * 2;
+          var foo = 3;     // 変数fooに値3を束縛する
+          return foo * 10; // 変数fooの値を10倍にする
         };
-        var baz = ((foo) => {
-          return foo * 2;
-        })(3);         // 仮引数fooに値3を束縛する
         expect(
           bar()
         ).to.eql(
-          baz
+          30
+        );
+        /* #@range_end(local_variable_usage_example) */
+        /* #@range_begin(variable_and_closure) */
+        var bar = () => {
+          var foo = 3;
+          return foo * 10;
+        };
+        var baz = ((foo) => {
+          return foo * 10;
+        });
+        expect(
+          bar()
+        ).to.eql(
+          baz(3)          // 仮引数fooに値3を束縛する
         );
         /* #@range_end(variable_and_closure) */
         next();

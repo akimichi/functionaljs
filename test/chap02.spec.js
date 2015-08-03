@@ -203,14 +203,17 @@ describe('なぜ関数型プログラミングが重要か', () => {
           var a = Date.now();
 
           /* 時間を1秒進める */
-          var sleep = require('sleep');
-          sleep.sleep(1);
+          var sleep = require('sleep-async')();
+          //var sleep = require('sleep');
+          //sleep.sleep(1);
+          sleep.sleep(2000, () => {
+            expect(
+              a
+            ).to.not.eql( /* 等しくないことをテストしている */
+              Date.now()
+            );
+          });
 
-          expect(
-            a
-          ).to.not.eql( /* 等しくないことをテストしている */
-            Date.now()
-          );
           /* #@range_end(datenow_is_not_transparent) */
           next();
         });
@@ -269,8 +272,9 @@ describe('なぜ関数型プログラミングが重要か', () => {
           };
           var b = 1;
           var a = b;
+		  var aResult = wrapper(now)(a);
           expect(
-            wrapper(now)(a)
+            aResult
           ).to.not.eql(
             wrapper(now)(b)
           );

@@ -1,3 +1,5 @@
+.emacs.desktop*
+
 # Logs
 logs
 *.log

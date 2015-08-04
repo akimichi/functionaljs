@@ -131,8 +131,8 @@ describe('「計算」とは', () => {
       });
     });
   });
-  describe('関数型モデル', function() {
-    describe('置換モデル', function() {
+  describe('関数型モデル', () => {
+    describe('置換モデル', () => {
       it('単純なλ式の簡約', (next) => {
         /* #@range_begin(succ) */
         var succ = (n) => {
@@ -182,6 +182,33 @@ describe('「計算」とは', () => {
           add(2,1)
         ).to.eql(
           3
+        );
+        next();
+      });
+      it('再帰と漸化式', (next) => {
+        /* #@range_begin(recursion) */
+		var a = (n) => {
+		  if(n === 1) {
+			return 1;
+		  } else {
+			return a(n-1) + 3;
+		  }
+		};
+        /* #@range_end(recursion) */
+        expect(
+          a(1)
+        ).to.eql(
+          1
+        );
+        expect(
+          a(2)
+        ).to.eql(
+          4
+        );
+        expect(
+          a(3)
+        ).to.eql(
+          7
         );
         next();
       });
@@ -343,43 +370,41 @@ describe('「計算」とは', () => {
         next();
       });
     });
-    describe('置換モデル', function() {
-      it('べき乗の定義', (next) => {
-        var succ = (n) => {
-          return n + 1;
-        };
-        var prev = (n) => {
-          return n - 1;
-        };
-        var add = (x, y) => {
-          if(y < 1){
-            return x;
-          } else {
-            return add(succ(x),prev(y));
-          }
-        };
-        var times = (count,fun,arg, memo) => {
-          if(count > 1) {
-            return times(count-1,fun,arg, fun(arg,memo));
-          } else {
-            return fun(arg,memo);
-          }
-        };
-        var multiply = (n,m) => {
-          return times(m, add, n, 0);
-        };
-        /* #@range_begin(exponential) */
-        var exponential = (n,m) => {
-          return times(m, multiply, n, 1);
-        };
-        expect(
-          exponential(2,3)
-        ).to.eql(
-          8
-        );
-        /* #@range_end(exponential) */
-        next();
-      });
+    it('べき乗の定義', (next) => {
+      var succ = (n) => {
+        return n + 1;
+      };
+      var prev = (n) => {
+        return n - 1;
+      };
+      var add = (x, y) => {
+        if(y < 1){
+          return x;
+        } else {
+          return add(succ(x),prev(y));
+        }
+      };
+      var times = (count,fun,arg, memo) => {
+        if(count > 1) {
+          return times(count-1,fun,arg, fun(arg,memo));
+        } else {
+          return fun(arg,memo);
+        }
+      };
+      var multiply = (n,m) => {
+        return times(m, add, n, 0);
+      };
+      /* #@range_begin(exponential) */
+      var exponential = (n,m) => {
+        return times(m, multiply, n, 1);
+      };
+      expect(
+        exponential(2,3)
+      ).to.eql(
+        8
+      );
+      /* #@range_end(exponential) */
+      next();
     });
   });
 });

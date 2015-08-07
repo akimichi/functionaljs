@@ -187,13 +187,13 @@ describe('「計算」とは', () => {
       });
       it('再帰と漸化式', (next) => {
         /* #@range_begin(recursion) */
-		var a = (n) => {
-		  if(n === 1) {
-			return 1;
-		  } else {
-			return a(n-1) + 3;
-		  }
-		};
+        var a = (n) => {
+          if(n === 1) {
+            return 1;
+          } else {
+            return a(n-1) + 3;
+          }
+        };
         /* #@range_end(recursion) */
         expect(
           a(1)

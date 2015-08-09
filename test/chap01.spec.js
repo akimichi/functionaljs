@@ -123,7 +123,6 @@ describe('「計算」とは', () => {
               '1': '1',
               '2': 'B'
             }
-            //['1','1','B']
           );
           /* #@range_end(turing_example_succ_test) */
           next();
@@ -299,12 +298,12 @@ describe('「計算」とは', () => {
           var foo = 3;     // 変数fooに値3を束縛する
           return foo * 10; // 変数fooの値を10倍にする
         };
+        /* #@range_end(local_variable_usage_example) */
         expect(
           bar()
         ).to.eql(
           30
         );
-        /* #@range_end(local_variable_usage_example) */
         /* #@range_begin(variable_and_closure) */
         var bar = () => {
           var foo = 3;

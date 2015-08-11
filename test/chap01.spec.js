@@ -110,21 +110,24 @@ describe('「計算」とは', () => {
                    "B": {"write": "B", "move": 1, "next": 'q4'}}
           };
           /* #@range_end(turing_example_succ) */
-          /* #@range_begin(turing_example_succ_test) */
+          
           expect(
+			/* #@range_begin(turing_example_succ_test) */
             machine(code,// 命令コード
                     tape,        // テープ
                     'q0',        // 初期状態
                     'q4')       // 終了状態
+			/* #@range_end(turing_example_succ_test) */
           ).to.eql(
+			/* #@range_begin(turing_example_succ_test_result) */
             {
               '-1': 'B',
               '0': '1',
               '1': '1',
               '2': 'B'
             }
+			/* #@range_end(turing_example_succ_test_result) */
           );
-          /* #@range_end(turing_example_succ_test) */
           next();
         });
       });
@@ -312,12 +315,12 @@ describe('「計算」とは', () => {
         var baz = ((foo) => {
           return foo * 10;
         });
+        /* #@range_end(variable_and_closure) */
         expect(
           bar()
         ).to.eql(
           baz(3)          // 仮引数fooに値3を束縛する
         );
-        /* #@range_end(variable_and_closure) */
         next();
       });
       it('関数の置換規則', (next) => {
@@ -345,12 +348,12 @@ describe('「計算」とは', () => {
         var multiply = (n,m) => {
           return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
         };
+        /* #@range_end(multiply) */
         expect(
           multiply(2,3)
         ).to.eql(
           6
         );
-        /* #@range_end(multiply) */
         expect(
           multiply(4,6)
         ).to.eql(
@@ -397,12 +400,12 @@ describe('「計算」とは', () => {
       var exponential = (n,m) => {
         return times(m, multiply, n, 1);
       };
+      /* #@range_end(exponential) */
       expect(
         exponential(2,3)
       ).to.eql(
         8
       );
-      /* #@range_end(exponential) */
       next();
     });
   });

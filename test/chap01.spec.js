@@ -134,6 +134,44 @@ describe('「計算」とは', () => {
     });
   });
   describe('関数型モデル', () => {
+    describe('さまざまなバインド関数 ', () => {
+      it('JavaScriptのbind関数', (next) => {
+        /* #@range_begin(bind_in_javascript) */
+		var foo = (y) => {
+		  return this.x + y; 
+		};
+		var object = { x : 1 };
+		var bar = foo.bind(object);
+        /* #@range_end(bind_in_javascript) */
+        expect(
+          bar(2)
+		).to.eql(
+          3
+        );
+        next();
+	  });
+      it('monadのbind関数', (next) => {
+        /* #@range_begin(bind_in_monad) */
+        var bind = (instance) => {
+          return (transform) => {
+            return transform(instance);
+          };
+        }
+        /* #@range_end(bind_in_monad) */
+		expect(
+          /* #@range_begin(bind_in_monad_usage) */
+          bind(2 * 3)((n) => {
+            return n * 4;
+          })
+          /* #@range_end(bind_in_monad_usage) */
+		).to.eql(
+          /* #@range_begin(bind_in_monad_usage_answer) */
+            24 
+          /* #@range_end(bind_in_monad_usage_answer) */
+		);
+        next();
+	  });
+    });
     describe('置換モデル', () => {
       it('単純なλ式の簡約', (next) => {
         /* #@range_begin(succ) */

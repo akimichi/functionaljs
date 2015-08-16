@@ -43,7 +43,7 @@ describe('心の準備', () => {
       );
       next();
     });
-    it('DRYの例', (next) => {
+    it('DRYを適用する', (next) => {
       /* #@range_begin(dry_code) */
       var times = (count,fun,arg, memo) => {
         if(count > 1) {
@@ -72,8 +72,53 @@ describe('心の準備', () => {
       ).to.eql(
         8
       );
+      expect(
+        multiply(-2,3)
+      ).to.eql(
+        -6
+      );
       next();
     });
+    // it('リファクタリング', (next) => {
+    //   var times = (count,fun,arg, memo) => {
+    //     if(count > 1) {
+    //       return times(count-1,fun,arg, fun(arg,memo));
+    //     } else if (count < 0) {
+    //       return times(count+1,fun,arg, fun(arg,memo));
+    //     } else {
+    //       return fun(arg,memo);
+    //     }
+    //   };
+    //   var multiply = (n,m) => {
+    //     var add = (n, m) => {
+    //       return n + m;
+    //     };
+    //     var subtract = (n, m) => {
+    //       return n - m;
+    //     };
+    //     var sign = (n,m, memo) => {
+    //       if(n>0 && m >0) {
+    //         return memo;
+    //       } else {
+    //         return subtract(0, memo);
+    //       };
+    //     };
+    //     return sign(n,m,times(m, add, n, 0));
+    //   };
+    //   expect(
+    //     multiply(-2,3)
+    //   ).to.eql(
+    //     -6
+    //   );
+    //   next();
+    //   /*
+    //    multiply(2,-3)
+    //    times(-3, add, 2, 0);
+    //    times(-2, add, 2, add(2,0));
+    //    times(-2, add, 2, add(2,0));
+    //    */
+
+    // });
     // var movies = [
     //   {title: "2001年宇宙の旅", year: 1968, director: "スタンリー・キューブリック"},
     //   {title: "時計じかけのオレンジ", year: 1971, director: "スタンリー・キューブリック"},

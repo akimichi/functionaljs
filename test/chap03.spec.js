@@ -132,4 +132,14 @@ describe('心の準備', () => {
 
     // };
   });
+  describe('抽象化への指向', () => {
+    it('関数抽象の例', (next) => {
+      /* #@range_begin(function_abstraction_example) */
+      var succ = (n) => {
+        return n + 1;
+      };
+      /* #@range_end(function_abstraction_example) */
+      next();
+    });
+  });
 });

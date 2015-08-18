@@ -142,4 +142,35 @@ describe('心の準備', () => {
       next();
     });
   });
+  describe('意味論の存在', () => {
+    it('環境の例', (next) => {
+      var merge = (obj1,obj2) => {
+        var mergedObject = {};
+        for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
+        for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
+        return mergedObject;
+      };
+      /* #@range_begin(environment_example) */
+      var emptyEnv = {};
+      var extendEnv = (binding, oldEnv) => {
+        return merge(binding, oldEnv); // merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする
+      };
+      var lookupEnv = (name, env) => {
+        return env[name];
+      };
+      /* #@range_end(environment_example) */
+      expect(((_) => {
+        /* #@range_begin(environment_example_usage) */
+        var initEnv = emptyEnv;
+        var firstEnv = extendEnv({"a": 1}, initEnv);  // var a = 1;
+        var secondEnv = extendEnv({"b": 3}, initEnv); // var b = 3;
+        return lookupEnv("b",secondEnv);                 // b
+        /* #@range_end(environment_example_usage) */
+      })()).to.eql(
+        3
+      );
+
+      next();
+    });
+  });
 });

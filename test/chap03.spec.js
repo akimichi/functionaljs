@@ -79,6 +79,214 @@ describe('心の準備', () => {
       );
       next();
     });
+    describe('add関数のリファクタリング', () => {
+      it('リファクタリング前', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x,y) => { // add関数の定義
+          if(y < 1){
+            return x;
+          } else {
+            return add(succ(x), prev(y)); // add関数の再帰呼び出し
+          }
+        };
+        expect(
+          add(0,2)
+        ).to.eql(
+          2
+        );
+        expect(
+          add(-1,2)
+        ).to.eql(
+          1
+        );
+        expect(
+          add(1,-2)
+        ).to.not.eql(
+          -1
+        );
+        next();
+      });
+      it('リファクタリング後', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x,y) => {
+          if(y === 0){
+            return x;
+          } else {
+            if(y < 0){
+              return add(prev(x), succ(y));
+            } else {
+              return add(succ(x), prev(y));
+            }
+          }
+        };
+        expect(
+          add(0,2)
+        ).to.eql(
+          2
+        );
+        expect(
+          add(-1,2)
+        ).to.eql(
+          1
+        );
+        expect(
+          add(1,-2)
+        ).to.eql(
+          -1
+        );
+        expect(
+          add(0,-2)
+        ).to.eql(
+          -2
+        );
+        expect(
+          add(-2,0)
+        ).to.eql(
+          -2
+        );
+        expect(
+          add(0,0)
+        ).to.eql(
+          0
+        );
+        next();
+      });
+    });
+    describe('multiply関数のリファクタリング', () => {
+      it('リファクタリング前', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x,y) => {
+          if(y === 0){
+            return x;
+          } else {
+            if(y < 0){
+              return add(prev(x), succ(y));
+            } else {
+              return add(succ(x), prev(y));
+            }
+          }
+        };
+        var times = (count,fun,arg, memo) => {
+          if(count > 1) {
+            return times(count-1,fun,arg, fun(arg,memo)); // times関数を再帰呼出し
+          } else {
+            return fun(arg,memo);
+          }
+        };
+        var multiply = (n,m) => {
+          return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
+        };
+        expect(
+          multiply(2,3)
+        ).to.eql(
+          6
+        );
+        expect(
+          multiply(-2,3)
+        ).to.eql(
+          -6
+        );
+        expect(
+          multiply(-2,-3)
+        ).to.not.eql(
+          6
+        );
+        expect(
+          multiply(2,-3)
+        ).to.not.eql(
+          -6
+        );
+        next();
+      });
+      it('リファクタリング後', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        var prev = (n) => {
+          return n - 1;
+        };
+        var add = (x,y) => {
+          if(y === 0){
+            return x;
+          } else {
+            if(y < 0){
+              return add(prev(x), succ(y));
+            } else {
+              return add(succ(x), prev(y));
+            }
+          }
+        };
+        var subtract = (n,m) => {
+          return add(n, -m);
+        };
+        var times = (count,fun,arg, memo) => {
+          if(count > 1) {
+            return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
+          } else {
+            return fun(memo, arg);
+          }
+        };
+        var multiply = (n,m) => {
+          if(m === 0) {
+            return 0;
+          } else {
+            if(m < 0) {
+              return times(-m, subtract, n, 0);
+            } else {
+              return times(m, add, n, 0);
+            }
+          }
+        };
+        expect(
+          multiply(3,0)
+        ).to.eql(
+          0
+        );
+        expect(
+          multiply(0,3)
+        ).to.eql(
+          0
+        );
+        // -2 * -3 = ((0 - (-2)) - (-2)) - (-2)
+        expect(
+          multiply(-2,-3)
+        ).to.eql(
+          6
+        );
+        // 2 * -3 = ((0 - 2) - 2) -2
+        expect(
+          multiply(2,-3)
+        ).to.eql(
+          -6
+        );
+        expect(
+          multiply(2,3)
+        ).to.eql(
+          6
+        );
+        expect(
+          multiply(-2,3)
+        ).to.eql(
+          -6
+        );
+        next();
+      });
+    });
     // it('リファクタリング', (next) => {
     //   var times = (count,fun,arg, memo) => {
     //     if(count > 1) {

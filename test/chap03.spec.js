@@ -56,10 +56,10 @@ describe('心の準備', () => {
         return n + m;
       };
       var multiply = (n,m) => {
-        return times(m, add, n, 0);
+        return times(m, add, n, 0); // add関数を渡す
       };
       var exponential = (n,m) => {
-        return times(m, multiply, n, 1);
+        return times(m, multiply, n, 1); // multiply関数を渡す
       };
       /* #@range_end(dry_code) */
       expect(

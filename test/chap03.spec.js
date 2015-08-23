@@ -79,6 +79,283 @@ describe('心の準備', () => {
       );
       next();
     });
+    // it('リファクタリング', (next) => {
+    //   var times = (count,fun,arg, memo) => {
+    //     if(count > 1) {
+    //       return times(count-1,fun,arg, fun(arg,memo));
+    //     } else if (count < 0) {
+    //       return times(count+1,fun,arg, fun(arg,memo));
+    //     } else {
+    //       return fun(arg,memo);
+    //     }
+    //   };
+    //   var multiply = (n,m) => {
+    //     var add = (n, m) => {
+    //       return n + m;
+    //     };
+    //     var subtract = (n, m) => {
+    //       return n - m;
+    //     };
+    //     var sign = (n,m, memo) => {
+    //       if(n>0 && m >0) {
+    //         return memo;
+    //       } else {
+    //         return subtract(0, memo);
+    //       };
+    //     };
+    //     return sign(n,m,times(m, add, n, 0));
+    //   };
+    //   expect(
+    //     multiply(-2,3)
+    //   ).to.eql(
+    //     -6
+    //   );
+    //   next();
+    //   /*
+    //    multiply(2,-3)
+    //    times(-3, add, 2, 0);
+    //    times(-2, add, 2, add(2,0));
+    //    times(-2, add, 2, add(2,0));
+    //    */
+
+    // });
+    // var movies = [
+    //   {title: "2001年宇宙の旅", year: 1968, director: "スタンリー・キューブリック"},
+    //   {title: "時計じかけのオレンジ", year: 1971, director: "スタンリー・キューブリック"},
+    //   {title: "スターウォーズ:新たなる希望", year: 1977, director: "ジョージ・ルーカス"},
+    //   {title: "E.T.", year: 1982, director: "スティーブン・スピルバーグ"},
+    //   {title: "ターミネーター", year: 1984, director: "ジェームズ・キャメロン"},
+    //   {title: "マトリックス", year: 1999, director: "ウォシャウスキー兄弟"},
+    //   {title: "マイノリティ・リポート", year: 2002, director: "スティーブン・スピルバーグ"}
+    // ];
+    // var sort_by_director = (movies) => {
+
+    // };
+  });
+  describe('抽象化への指向', () => {
+    it('関数抽象の例', (next) => {
+      /* #@range_begin(function_abstraction_example) */
+      var succ = (n) => {
+        return n + 1;
+      };
+      /* #@range_end(function_abstraction_example) */
+      next();
+    });
+  });
+  describe('意味論の存在', () => {
+    it('環境の例', (next) => {
+      var merge = (obj1,obj2) => {
+        var mergedObject = {};
+        for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
+        for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
+        return mergedObject;
+      };
+      /* #@range_begin(environment_example) */
+      // 空の環境
+      var emptyEnv = {};
+      // 環境を拡張する
+      var extendEnv = (binding, oldEnv) => {
+        return merge(binding, oldEnv); // merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする
+      };
+      // 変数名に対応する値を環境から取りだす
+      var lookupEnv = (name, env) => {
+        return env[name];
+      };
+      /* #@range_end(environment_example) */
+      expect(((_) => {
+        /* #@range_begin(environment_example_usage) */
+        var initEnv = emptyEnv;
+        var firstEnv = extendEnv({"a": 1}, initEnv);  // var a = 1;
+        var secondEnv = extendEnv({"b": 3}, firstEnv); // var b = 3;
+        return lookupEnv("b",secondEnv);                 // b
+        /* #@range_end(environment_example_usage) */
+      })()).to.eql(
+        3
+      );
+
+      next();
+    });
+  });
+  describe('テストに親しむ', () => {
+    it('add,multiply,exponential関数再び', (next) => {
+      var succ = (n) => {
+        return n + 1;
+      };
+      var prev = (n) => {
+        return n - 1;
+      };
+      /* #@range_begin(arithmetic_again) */
+      var add = (x, y) => {
+        if(y < 1){
+          return x;
+        } else {
+          return add(succ(x),prev(y));
+        }
+      };
+      var times = (count,fun,arg, memo) => {
+        if(count > 1) {
+          return times(count-1,fun,arg, fun(memo,arg));
+        } else {
+          return fun(memo,arg);
+        }
+      };
+      var multiply = (n,m) => {
+        return times(m, add, n, 0);
+      };
+      var exponential = (n,m) => {
+        return times(m, multiply, n, 1);
+      };
+      /* #@range_end(arithmetic_again) */
+      /* #@range_begin(multiply_test_example) */
+      expect(
+        multiply(2,3) // テストする対象を書く
+      ).to.eql(
+        6        // 期待する値を書く
+      );
+      // expect(
+      //   multiply(-2,3)
+      // ).to.eql(
+      //   -6
+      // );
+      /* #@range_end(multiply_test_example) */
+      next();
+    });
+    // it('multiply関数のテストの例', (next) => {
+    //   var succ = (n) => {
+    //     return n + 1;
+    //   };
+    //   var prev = (n) => {
+    //     return n - 1;
+    //   };
+    //   var add = (x,y) => { // add関数の定義
+    //     if(y < 1){
+    //       return x;
+    //     } else {
+    //         return add(succ(x), prev(y)); // add関数の再帰呼び出し
+    //     }
+    //   };
+    //   next();
+    // });
+    describe('テストによるコードの改良', () => {
+      var succ = (n) => {
+        return n + 1;
+      };
+      var prev = (n) => {
+        return n - 1;
+      };
+      var add = (x, y) => {
+        if(y < 1){
+          return x;
+        } else {
+          return add(succ(x),prev(y));
+        }
+      };
+      var times = (count,fun,arg, memo) => {
+        if(count > 1) {
+          return times(count-1,fun,arg, fun(arg,memo));
+        } else {
+          return fun(arg,memo);
+        }
+      };
+      var multiply = (n,m) => {
+        return times(m, add, n, 0);
+      };
+      var exponential = (n,m) => {
+        return times(m, multiply, n, 1);
+      };
+      it('multiply関数が失敗する例', (next) => {
+        /* #@range_begin(multiply_failed_test) */
+        expect(
+          multiply(2,3)
+        ).to.eql(
+          6
+        );
+        expect(
+          multiply(-2,3)
+        ).to.not.eql(
+          -6  // -6になるはずが、-6ではない
+        );
+        expect(
+          multiply(2,-3)
+        ).to.not.eql(
+          -6 // -6になるはずが、-6ではない
+        );
+        expect(
+          multiply(-2,-3)
+        ).to.not.eql(
+          6 // 6になるはずが、6ではない
+        );
+        /* #@range_end(multiply_failed_test) */
+        next();
+      });
+      it('multiplyの改良後', (next) => {
+        var add = (x,y) => {
+          if(y === 0){
+            return x;
+          } else {
+            if(y < 0){
+              return add(prev(x), succ(y));
+            } else {
+              return add(succ(x), prev(y));
+            }
+          }
+        };
+        var subtract = (n,m) => {
+          return add(n, -m);
+        };
+        var times = (count,fun,arg, memo) => {
+          if(count > 1) {
+            return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
+          } else {
+            return fun(memo, arg);
+          }
+        };
+        var multiply = (n,m) => {
+          if(m === 0) {
+            return 0;
+          } else {
+            if(m < 0) {
+              return times(-m, subtract, n, 0);
+            } else {
+              return times(m, add, n, 0);
+            }
+          }
+        };
+        expect(
+          multiply(3,0)
+        ).to.eql(
+          0
+        );
+        expect(
+          multiply(0,3)
+        ).to.eql(
+          0
+        );
+        // -2 * -3 = ((0 - (-2)) - (-2)) - (-2)
+        expect(
+          multiply(-2,-3)
+        ).to.eql(
+          6
+        );
+        // 2 * -3 = ((0 - 2) - 2) -2
+        expect(
+          multiply(2,-3)
+        ).to.eql(
+          -6
+        );
+        expect(
+          multiply(2,3)
+        ).to.eql(
+          6
+        );
+        expect(
+          multiply(-2,3)
+        ).to.eql(
+          -6
+        );
+        next();
+      });
+    });
     describe('add関数のリファクタリング', () => {
       it('リファクタリング前', (next) => {
         var succ = (n) => {
@@ -94,6 +371,7 @@ describe('心の準備', () => {
             return add(succ(x), prev(y)); // add関数の再帰呼び出し
           }
         };
+        /* #@range_begin(add_failed_test) */
         expect(
           add(0,2)
         ).to.eql(
@@ -107,8 +385,9 @@ describe('心の準備', () => {
         expect(
           add(1,-2)
         ).to.not.eql(
-          -1
+          -1 // -1 になるべきが、-1ではない
         );
+        /* #@range_end(add_failed_test) */
         next();
       });
       it('リファクタリング後', (next) => {
@@ -118,22 +397,20 @@ describe('心の準備', () => {
         var prev = (n) => {
           return n - 1;
         };
+        /* #@range_begin(add_improved) */
         var add = (x,y) => {
           if(y === 0){
             return x;
           } else {
             if(y < 0){
-              return add(prev(x), succ(y));
+              return add(prev(x), succ(y)); // yが負の場合
             } else {
-              return add(succ(x), prev(y));
+              return add(succ(x), prev(y)); // yが正の場合
             }
           }
         };
-        expect(
-          add(0,2)
-        ).to.eql(
-          2
-        );
+        /* #@range_end(add_improved) */
+        /* #@range_begin(add_improved_test) */
         expect(
           add(-1,2)
         ).to.eql(
@@ -145,6 +422,12 @@ describe('心の準備', () => {
           -1
         );
         expect(
+          add(-1,-2)
+        ).to.eql(
+          -3
+        );
+        /* #@range_end(add_improved_test) */
+        expect(
           add(0,-2)
         ).to.eql(
           -2
@@ -153,6 +436,11 @@ describe('心の準備', () => {
           add(-2,0)
         ).to.eql(
           -2
+        );
+        expect(
+          add(0,2)
+        ).to.eql(
+          2
         );
         expect(
           add(0,0)
@@ -286,99 +574,6 @@ describe('心の準備', () => {
         );
         next();
       });
-    });
-    // it('リファクタリング', (next) => {
-    //   var times = (count,fun,arg, memo) => {
-    //     if(count > 1) {
-    //       return times(count-1,fun,arg, fun(arg,memo));
-    //     } else if (count < 0) {
-    //       return times(count+1,fun,arg, fun(arg,memo));
-    //     } else {
-    //       return fun(arg,memo);
-    //     }
-    //   };
-    //   var multiply = (n,m) => {
-    //     var add = (n, m) => {
-    //       return n + m;
-    //     };
-    //     var subtract = (n, m) => {
-    //       return n - m;
-    //     };
-    //     var sign = (n,m, memo) => {
-    //       if(n>0 && m >0) {
-    //         return memo;
-    //       } else {
-    //         return subtract(0, memo);
-    //       };
-    //     };
-    //     return sign(n,m,times(m, add, n, 0));
-    //   };
-    //   expect(
-    //     multiply(-2,3)
-    //   ).to.eql(
-    //     -6
-    //   );
-    //   next();
-    //   /*
-    //    multiply(2,-3)
-    //    times(-3, add, 2, 0);
-    //    times(-2, add, 2, add(2,0));
-    //    times(-2, add, 2, add(2,0));
-    //    */
-
-    // });
-    // var movies = [
-    //   {title: "2001年宇宙の旅", year: 1968, director: "スタンリー・キューブリック"},
-    //   {title: "時計じかけのオレンジ", year: 1971, director: "スタンリー・キューブリック"},
-    //   {title: "スターウォーズ:新たなる希望", year: 1977, director: "ジョージ・ルーカス"},
-    //   {title: "E.T.", year: 1982, director: "スティーブン・スピルバーグ"},
-    //   {title: "ターミネーター", year: 1984, director: "ジェームズ・キャメロン"},
-    //   {title: "マトリックス", year: 1999, director: "ウォシャウスキー兄弟"},
-    //   {title: "マイノリティ・リポート", year: 2002, director: "スティーブン・スピルバーグ"}
-    // ];
-    // var sort_by_director = (movies) => {
-
-    // };
-  });
-  describe('抽象化への指向', () => {
-    it('関数抽象の例', (next) => {
-      /* #@range_begin(function_abstraction_example) */
-      var succ = (n) => {
-        return n + 1;
-      };
-      /* #@range_end(function_abstraction_example) */
-      next();
-    });
-  });
-  describe('意味論の存在', () => {
-    it('環境の例', (next) => {
-      var merge = (obj1,obj2) => {
-        var mergedObject = {};
-        for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
-        for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
-        return mergedObject;
-      };
-      /* #@range_begin(environment_example) */
-      var emptyEnv = {};
-      var extendEnv = (binding, oldEnv) => {
-        return merge(binding, oldEnv); // merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする
-      };
-      var lookupEnv = (name, env) => {
-        return env[name];
-      };
-      /* #@range_end(environment_example) */
-      expect(((_) => {
-        /* #@range_begin(environment_example_usage) */
-        var initEnv = emptyEnv;
-        var firstEnv = extendEnv({"a": 1}, initEnv);  // var a = 1;
-        var secondEnv = extendEnv({"b": 3}, initEnv); // var b = 3;
-        return lookupEnv("b",secondEnv);                 // b
-        /* #@range_end(environment_example_usage) */
-      })()).to.eql(
-        3
-      );
-
-      next();
     });
   });
 });

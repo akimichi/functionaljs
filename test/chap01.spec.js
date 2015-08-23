@@ -374,19 +374,25 @@ describe('「計算」とは', () => {
           } else {
             return add(succ(x),prev(y)); // add関数の再帰呼び出し
           }
+		  // return times(y, succ, null, x);
         };
         /* #@range_begin(multiply) */
         var times = (count,fun,arg, memo) => {
           if(count > 1) {
-            return times(count-1,fun,arg, fun(arg,memo)); // times関数を再帰呼出し
+            return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
           } else {
-            return fun(arg,memo);
+            return fun(memo,arg);
           }
         };
         var multiply = (n,m) => {
           return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
         };
         /* #@range_end(multiply) */
+        expect(
+          add(2,3)
+        ).to.eql(
+          5
+        );
         expect(
           multiply(2,3)
         ).to.eql(

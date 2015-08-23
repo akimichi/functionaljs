@@ -310,6 +310,7 @@ describe('心の準備', () => {
             return fun(memo, arg);
           }
         };
+        /* #@range_begin(multiply_improved) */
         var multiply = (n,m) => {
           if(m === 0) {
             return 0;
@@ -321,6 +322,7 @@ describe('心の準備', () => {
             }
           }
         };
+        /* #@range_end(multiply_improved) */
         expect(
           multiply(3,0)
         ).to.eql(
@@ -331,6 +333,7 @@ describe('心の準備', () => {
         ).to.eql(
           0
         );
+        /* #@range_begin(multiply_improved_test) */
         // -2 * -3 = ((0 - (-2)) - (-2)) - (-2)
         expect(
           multiply(-2,-3)
@@ -353,6 +356,7 @@ describe('心の準備', () => {
         ).to.eql(
           -6
         );
+        /* #@range_end(multiply_improved_test) */
         next();
       });
     });

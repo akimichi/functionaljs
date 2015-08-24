@@ -212,12 +212,12 @@ describe('心の準備', () => {
       ).to.eql(
         6        // 期待する値を書く
       );
+      /* #@range_end(multiply_test_example) */
       // expect(
       //   multiply(-2,3)
       // ).to.eql(
       //   -6
       // );
-      /* #@range_end(multiply_test_example) */
       next();
     });
     // it('multiply関数のテストの例', (next) => {
@@ -300,9 +300,6 @@ describe('心の準備', () => {
             }
           }
         };
-        var subtract = (n,m) => {
-          return add(n, -m);
-        };
         var times = (count,fun,arg, memo) => {
           if(count > 1) {
             return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
@@ -311,14 +308,17 @@ describe('心の準備', () => {
           }
         };
         /* #@range_begin(multiply_improved) */
-        var multiply = (n,m) => {
-          if(m === 0) {
+        var subtract = (n,m) => {
+          return add(n, -m);
+        };
+        var multiply = (x,y) => {
+          if(y === 0) {
             return 0;
           } else {
-            if(m < 0) {
-              return times(-m, subtract, n, 0);
+            if(y < 0) {
+              return times(-y, subtract, x, 0);
             } else {
-              return times(m, add, n, 0);
+              return times(y, add, x, 0);
             }
           }
         };
@@ -386,6 +386,11 @@ describe('心の準備', () => {
         ).to.eql(
           1
         );
+        // expect(
+        //   add(3,-2)
+        // ).to.eql(
+        //   1
+        // );
         expect(
           add(1,-2)
         ).to.not.eql(

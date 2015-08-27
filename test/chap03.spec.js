@@ -164,15 +164,14 @@ describe('心の準備', () => {
       /* #@range_end(environment_example) */
       expect(((_) => {
         /* #@range_begin(environment_example_usage) */
-        var initEnv = emptyEnv;
-        var firstEnv = extendEnv({"a": 1}, initEnv);  // var a = 1;
-        var secondEnv = extendEnv({"b": 3}, firstEnv); // var b = 3;
-        return lookupEnv("b",secondEnv);                 // b
+        var initEnv = emptyEnv;                       // 空の辞書を作成する
+        var firstEnv = extendEnv({"a": 1}, initEnv);  // var a = 1 を実行して、辞書を拡張する
+        var secondEnv = extendEnv({"b": 3}, firstEnv); // var b = 3 を実行して、辞書を拡張する
+        return lookupEnv("b",secondEnv);                 // 辞書から b の値を参照する
         /* #@range_end(environment_example_usage) */
       })()).to.eql(
         3
       );
-
       next();
     });
   });
@@ -213,29 +212,8 @@ describe('心の準備', () => {
         6        // 期待する値を書く
       );
       /* #@range_end(multiply_test_example) */
-      // expect(
-      //   multiply(-2,3)
-      // ).to.eql(
-      //   -6
-      // );
       next();
     });
-    // it('multiply関数のテストの例', (next) => {
-    //   var succ = (n) => {
-    //     return n + 1;
-    //   };
-    //   var prev = (n) => {
-    //     return n - 1;
-    //   };
-    //   var add = (x,y) => { // add関数の定義
-    //     if(y < 1){
-    //       return x;
-    //     } else {
-    //         return add(succ(x), prev(y)); // add関数の再帰呼び出し
-    //     }
-    //   };
-    //   next();
-    // });
     describe('テストによるコードの改良', () => {
       var succ = (n) => {
         return n + 1;

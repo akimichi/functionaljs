@@ -330,22 +330,15 @@ describe('心の準備', () => {
           0
         );
         /* #@range_begin(multiply_improved_test) */
-        // -2 * -3 = ((0 - (-2)) - (-2)) - (-2)
         expect(
           multiply(-2,-3)
         ).to.eql(
           6
         );
-        // 2 * -3 = ((0 - 2) - 2) -2
         expect(
           multiply(2,-3)
         ).to.eql(
           -6
-        );
-        expect(
-          multiply(2,3)
-        ).to.eql(
-          6
         );
         expect(
           multiply(-2,3)
@@ -405,7 +398,7 @@ describe('心の準備', () => {
         /* #@range_begin(add_improved) */
         var add = (x,y) => {
           if(y === 0){
-            return x;
+            return x;                       // yが0の場合
           } else {
             if(y < 0){
               return add(prev(x), succ(y)); // yが負の場合

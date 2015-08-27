@@ -3,7 +3,7 @@
 var expect = require('expect.js');
 var util = require('util');
 
-it('依然、負のかけ算で失敗する', (next) => {
+it('依然、かけ算は失敗する', (next) => {
   var succ = (n) => {
     return n + 1;
   };
@@ -41,7 +41,7 @@ it('依然、負のかけ算で失敗する', (next) => {
       -6
   );
   expect(
-    multiply(2,3)
+    multiply(2,-3)
   ).to.eql(
       -6
   );

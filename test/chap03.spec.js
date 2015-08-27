@@ -176,6 +176,24 @@ describe('心の準備', () => {
     });
   });
   describe('テストに親しむ', () => {
+    describe('アサーション', () => {
+      it('assertによる表明', function(){
+        /* #@range_begin(assert_assertion) */
+        var assert = require("assert");
+        assert.equal(1 + 2, 3);
+        /* #@range_end(assert_assertion) */
+      });
+      it('expectによる表明', function(){
+        /* #@range_begin(expect_assertion) */
+        var expect = require('expect.js');
+        expect(
+          1+2
+        ).to.eql(
+          3
+        );
+        /* #@range_end(expect_assertion) */
+      });
+    });
     it('add,multiply,exponential関数再び', (next) => {
       var succ = (n) => {
         return n + 1;

@@ -133,13 +133,90 @@ describe('心の準備', () => {
     // };
   });
   describe('抽象化への指向', () => {
-    it('関数抽象の例', (next) => {
+    it('関数抽象の例としてのλ式', (next) => {
       /* #@range_begin(function_abstraction_example) */
       var succ = (n) => {
         return n + 1;
       };
       /* #@range_end(function_abstraction_example) */
       next();
+    });
+    describe('関数抽象の例としての高階関数', () => {
+
+      var sequence = [2,3,5,7,11,13];
+      it('for文によるsum', (next) => {
+        /* #@range_begin(sum_for) */
+        var sequence = [2,3,5,7,11,13];
+        var sum = (seq) => {
+          var result = 0;
+          for(var i=0; i < seq.length; i++){
+            result = result + seq[i];
+          }
+          return result;
+        };
+        /* #@range_end(sum_for) */
+        expect(
+          sum(sequence)
+        ).to.eql(
+          41
+        );
+        next();
+      });
+      it('forEach関数によるsum', (next) => {
+        /* #@range_begin(sum_forEach) */
+        var sum = (seq) => {
+          var result = 0;
+          seq.forEach((item) => {
+            result = result + item;
+          });
+          return result;
+        };
+        /* #@range_end(sum_forEach) */
+        expect(
+          sum(sequence)
+        ).to.eql(
+          41
+        );
+        next();
+      });
+      it('reduce関数によるsum', (next) => {
+        /* #@range_begin(sum_reduce) */
+        var sum = (seq) => {
+          return seq.reduce((x,y) => {
+            return x + y;
+          });
+        };
+        /* #@range_end(sum_reduce) */
+        expect(
+          sum(sequence)
+        ).to.eql(
+          41
+        );
+        next();
+      });
+      // it('times関数によるsum', (next) => {
+      //   var times = (count,fun,arg, memo) => {
+      //     if(count > 1) {
+      //       return times(count-1,fun,arg, fun(memo,arg));
+      //     } else {
+      //       return fun(memo,arg);
+      //     }
+      //   };
+
+      //   var sum = (seq) => {
+      //     var add = (seq) => {
+      //       return (index,memo)  => {
+      //       return seq[index] + memo;
+      //     };
+      //     return times(seq.length, add(seq), 0,0);
+      //   };
+      //   expect(
+      //     sum(sequence)
+      //   ).to.eql(
+      //     41
+      //   );
+      //   next();
+      // });
     });
   });
   describe('意味論の存在', () => {
@@ -310,12 +387,10 @@ describe('心の準備', () => {
         var multiply = (x,y) => {
           if(y === 0) {
             return 0;
+          } else if(y < 0) {
+            return times(-y, subtract, x, 0); // (0 - (x - (x - ... )))
           } else {
-            if(y < 0) {
-              return times(-y, subtract, x, 0);
-            } else {
-              return times(y, add, x, 0);
-            }
+            return times(y, add, x, 0);       // (0 + (x + (x + ... )))
           }
         };
         /* #@range_end(multiply_improved) */

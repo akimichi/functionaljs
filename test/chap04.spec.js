@@ -93,8 +93,65 @@ describe('値、型、変数', () => {
 		/* ##@range_end(for_in_object)     */
 		next();
 	  });
+	  it('値に関数をいれる', (next) => {
+		/* ##@range_begin(object_can_embed_function) */
+		var natural = {
+		  zero: 0,
+		  succ: (n) => {
+			return n + 1;
+		  }
+		};
+		expect(
+		  natural.succ(natural.zero)
+		).to.eql(
+		  1
+		);
+		/* ##@range_end(object_can_embed_function) */
+		next();
+	  });
+	  it('オブジェクト型の入れ子', (next) => {
+		/* ##@range_begin(object_can_embed_object) */
+		var expression = {
+		  add: {
+			x: 1,
+			y: {
+			  multiply: {
+				x: 2,
+				y: 3
+			  }
+			}
+		  }
+		};
+		expect(
+		  expression.add.y.multiply.x
+		).to.eql(
+		  2
+		);
+		/* ##@range_end(object_can_embed_object) */
+		next();
+	  });
 	});
 	describe('抽象データ型', () => {
+	  it('抽象データ型としてのスタック', (next) => {
+        var push = (n, stack) => {
+          return [n].concat(stack);
+        };
+		var top = (stack) => {
+		  return stack[0];
+		}
+        var pop = (stack) => {
+		  return stack.slice(1,stack.length);
+        };
+        var empty = [];
+		/* #@range_begin(stack_as_abstract_type) */
+		expect(
+		  top(pop(pop(push(3,push(2,push(1,empty))))))
+		).to.eql(
+		  1
+		);
+		/* #@range_end(stack_as_abstract_type) */
+		next();
+	  });
 	  it('抽象データ型としてのオブジェクト型', (next) => {
 		/* #@range_begin(object_as_abstract_type) */
 		var objects = {
@@ -214,6 +271,9 @@ describe('値、型、変数', () => {
 	  )
       /* #@range_end(algebraic_datatype) */
 	  next();
+	});
+	describe('関数型', () => {
+	  
 	});
   });
 });

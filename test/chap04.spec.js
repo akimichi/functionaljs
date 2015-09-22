@@ -23,6 +23,33 @@ describe('データ', () => {
       /* #@range_end(integer_construction) */
       next();
     });
+    // describe('型決定のタイミング', () => {
+    //   it('NaNはエラーの場所を発見しにくくする', (next) => {
+	// 	var one = 1;
+	// 	var two = 2;
+	// 	var three = "three";
+	// 	var four = 4;
+	// 	expect(
+	// 	  one * two * (three + four)
+	// 	).to.eql(
+	// 	  11   /* 1 * 2 + (3 + 4) = 10 を期待する */
+	// 	);
+	// 	next();
+    //   });
+	// }
+  });
+  describe('基本型', () => {
+    it('未定義の変数', (next) => {
+      /* #@range_begin(undefined_variable) */
+      var variable;
+      expect(
+        variable
+      ).to.be(
+        undefined
+      );
+      /* #@range_end(undefined_variable) */
+      next();
+    });
     it('真理値型は不変である', (next) => {
       /* #@range_begin(truth_is_immutable) */
       var truth = true;
@@ -70,6 +97,31 @@ describe('データ', () => {
         "to be, or not to be"
       );
       /* #@range_end(string_is_immutable)  */
+      next();
+    });
+    it('==比較演算子', (next) => {
+      /* #@range_begin(equality_operator) */
+      expect(
+        null == undefined
+      ).to.be(
+        true
+      );
+      expect(
+        false == ''
+      ).to.be(
+        true
+      );
+      expect(
+        true == '1'
+      ).to.be(
+        true
+      );
+      expect(
+        1 == '1'
+      ).to.be(
+        true
+      );
+      /* #@range_end(equality_operator)  */
       next();
     });
   });
@@ -212,7 +264,7 @@ describe('データ', () => {
         next();
       });
     });
-      
+    
     it('代数的データ型', (next) => {
       /* #@range_begin(algebraic_datatype) */
       var match = (exp, pattern) => {
@@ -325,8 +377,8 @@ describe('データ', () => {
     describe('合成型の可変性', () => {
       it('配列は可変である', (next) => {
         /* #@range_begin(array_is_mutable) */
-		var array = [0,1,2,3];
-		array[0] = 7;
+        var array = [0,1,2,3];
+        array[0] = 7;
         expect(
           array
         ).to.eql(
@@ -335,42 +387,42 @@ describe('データ', () => {
         /* #@range_end(array_is_mutable) */
         next();
       });
-	  it('Array.reverseは破壊的操作である', (next) => {
-		/* #@range_begin(destructive_reverse) */
-		var array = [1,2,3,4,5];
-		expect(
-		  array.reverse()
-		).to.eql(
-		  [5,4,3,2,1]
-		);
-		expect(
-		  array
-		).to.eql(
-		  [5,4,3,2,1] // array変数の中身が変更されている
-		);
-		/* #@range_end(destructive_reverse) */
+      it('Array.reverseは破壊的操作である', (next) => {
+        /* #@range_begin(destructive_reverse) */
+        var array = [1,2,3,4,5];
+        expect(
+          array.reverse()
+        ).to.eql(
+          [5,4,3,2,1]
+        );
+        expect(
+          array
+        ).to.eql(
+          [5,4,3,2,1] // array変数の中身が変更されている
+        );
+        /* #@range_end(destructive_reverse) */
         next();
-	  });
-	  it('不変なreverse関数', (next) => {
-		/* #@range_begin(immutable_reverse) */
-		var reverse = (array) => {
-		  return array.reduce((accumulator, item) => {
-			return [item].concat(accumulator);
-		  }, []);
-		};
-		var array = [0,1,2];
-		expect(
-		  reverse(array)
-		).to.eql([2,1,0,]);
-		expect(
-		  array
-		).to.eql(
-		  [0,1,2]
-		); 
-		/* #@range_end(immutable_reverse) */
+      });
+      it('不変なreverse関数', (next) => {
+        /* #@range_begin(immutable_reverse) */
+        var reverse = (array) => {
+          return array.reduce((accumulator, item) => {
+            return [item].concat(accumulator);
+          }, []);
+        };
+        var array = [0,1,2];
+        expect(
+          reverse(array)
+        ).to.eql([2,1,0,]);
+        expect(
+          array
+        ).to.eql(
+          [0,1,2]
+        ); 
+        /* #@range_end(immutable_reverse) */
         next();
-	  });
-	});
+      });
+    });
   });
   describe('同値性', () => {
     describe('値としてのデータ', () => {
@@ -394,7 +446,7 @@ describe('データ', () => {
         /* #@range_end(basic_type_is_value_type) */
         next();
       });
-      it('合成型は値である', (next) => {
+      it('合成型は参照である', (next) => {
         /* #@range_begin(complex_type_is_reference) */
         expect(
           [0,1,2,3]
@@ -453,15 +505,15 @@ describe('データ', () => {
         ).to.be(
           "outer"
         )
-		// var outer = 1;
-		// var f = (_) => {
-		//   var middle = 2;
-		//   var g = (_) => {
-		// 	var inner = 3;
-		// 	return outer + middle + inner;
-		//   };
-		//   return g();
-		// };
+        // var outer = 1;
+        // var f = (_) => {
+        //   var middle = 2;
+        //   var g = (_) => {
+        //  var inner = 3;
+        //  return outer + middle + inner;
+        //   };
+        //   return g();
+        // };
         // expect(
         //   f()
         // ).to.be(
@@ -487,17 +539,6 @@ describe('データ', () => {
           26
         );
         /* #@range_end(variable_binding_value) */
-        next();
-      });
-      it('未定義の変数', (next) => {
-        /* #@range_begin(undefined_variable) */
-        var variable;
-        expect(
-          variable
-        ).to.be(
-          undefined
-        );
-        /* #@range_end(undefined_variable) */
         next();
       });
       it('環境の実装', (next) => {
@@ -555,13 +596,13 @@ describe('データ', () => {
     describe('記憶域と参照', () => {
       it('変数への代入', (next) => {
         /* #@range_begin(assign_to_variable) */
-		var age = 29;
+        var age = 29;
         expect(
           age
         ).to.be(
           29
         );
-		age = 30;
+        age = 30;
         expect(
           age
         ).to.be(
@@ -570,84 +611,34 @@ describe('データ', () => {
         /* #@range_end(assign_to_variable) */
         next();
       });
-    });
-  });
-  describe('不変なデータ型を作る', () => {
-    it('不変なオブジェクト型', (next) => {
-      /* #@range_begin(immutable_object_type) */
-      var objects = {
-        empty: {
-        },
-        set: (key,value,obj) => {
-          expect(obj).to.an('object');
-          obj[key] = value;
-          return obj;
-        },
-        get: (key,obj) => {
-          expect(obj).to.an('object');
-          return obj[key];
-        },
-        isEmpty: (obj) => {
-          expect(obj).to.an('object');
-          var hasOwnProperty = Object.prototype.hasOwnProperty;
-          for(var key in obj){
-            if(hasOwnProperty.call(obj, key))
-              return false;
-          }
-        },
-        isNotEmpty: (obj) => {
-          expect(obj).to.an('object');
-          return ! this.objects.isEmpty(obj);
-        },
-      };
-      expect(
-        objects.set("HAL9000","2001: a space odessay",objects.empty)
-      ).to.eql(
-        {
-          "HAL9000": "2001: a space odessay"
-        }
-      )
-      /* #@range_end(immutable_object_type) */
-      next();
-    });
-    it('不変な配列型', (next) => {
-      /* #@range_begin(immutable_array_type) */
-      var arrays = {
-        empty: [],
-        cons: (any,array) => {
-          expect(array).to.an('array');
-          return [any].concat(array);
-        },
-        head: (ary) => {
-          expect(ary).to.an('array');
-          return ary[0];
-        },
-        tail: (ary) => {
-          expect(ary).to.an('array');
-          expect(self.isNonEmpty(ary)).to.be.ok();
-          return ary.slice(1,ary.length);
-        },
-        get: (index,ary) => {
-          expect(index).to.be.a('number');
-          expect(ary).to.an('array');
-          return ary[index];
-        },
-        isEmpty: (ary) => {
-          expect(ary).to.an('array');
-          return self.equal.call(self,ary.length)(0);
-        },
-        isNotEmpty: (ary) => {
-          expect(ary).to.an('array');
-          return self.not.call(self,self.arrays.isEmpty(ary));
-        }
-      };
-      expect(
-        arrays.cons(1,arrays.empty)
-      ).to.eql(
-        [1]
-      )
-      /* #@range_end(immutable_array_type) */
-      next();
+      it('変数は参照を保持する', (next) => {
+        /* #@range_begin(variables_hold_reference) */
+        expect(() => {
+          var x = 1;
+		  var y = x;
+		  y = 2;
+		  return x;
+        }()).to.be(
+          1
+        )
+        expect(() => {
+          var x = 1;
+		  var y = x;
+		  x = 2;
+		  return y;
+        }()).to.be(
+          1
+        )
+        expect(() => {
+          var x = [0,1,2,3];
+		  var y = x;
+		  return x === y;
+        }()).to.be(
+          true
+        )
+        /* #@range_end(variables_hold_reference) */
+        next();
+      });
     });
   });
 });

@@ -25,18 +25,18 @@ describe('データ', () => {
     });
     // describe('型決定のタイミング', () => {
     //   it('NaNはエラーの場所を発見しにくくする', (next) => {
-	// 	var one = 1;
-	// 	var two = 2;
-	// 	var three = "three";
-	// 	var four = 4;
-	// 	expect(
-	// 	  one * two * (three + four)
-	// 	).to.eql(
-	// 	  11   /* 1 * 2 + (3 + 4) = 10 を期待する */
-	// 	);
-	// 	next();
+    //  var one = 1;
+    //  var two = 2;
+    //  var three = "three";
+    //  var four = 4;
+    //  expect(
+    //    one * two * (three + four)
+    //  ).to.eql(
+    //    11   /* 1 * 2 + (3 + 4) = 10 を期待する */
+    //  );
+    //  next();
     //   });
-	// }
+    // }
   });
   describe('基本型', () => {
     it('未定義の変数', (next) => {
@@ -130,19 +130,19 @@ describe('データ', () => {
       it('オブジェクトのインスタンスの例', (next) => {
         /* #@range_begin(object_instance_example) */
         var object = {
-          "ID0001": "Alan Turing",
-          "ID0002": "Haskell Curry",
-          "ID0003": "Alonzo Church"
+          "No1": "Alan Turing",
+          "No2": "Haskell Curry",
+          "No3": "Alonzo Church"
         };
         /* #@range_end(object_instance_example) */
         /* #@range_begin(object_access) */
         expect(
-          object.ID0001
+          object.No1     // オブジェクト.キー記法
         ).to.be(
           "Alan Turing"
         );
         expect(
-          object["ID0001"]
+          object["No1"]  // オブジェクト[キー]記法
         ).to.be(
           "Alan Turing"
         );
@@ -223,6 +223,25 @@ describe('データ', () => {
         /* ##@range_end(object_can_embed_object) */
         next();
       });
+      it('アドレス帳の例', (next) => {
+        /* #@range_begin(addressboook_example) */
+        var addressboook = {
+          "No1": {
+            "name": "Alan Turing",
+            "birthDay": "1912/6/23"
+          },
+          "No2": {
+            "name": "Haskell Curry",
+            "birthDay": "1900/9/12"
+          },
+          "No3": {
+            "name": "Alonzo Church",
+            "birthDay": "1903/6/14"
+          }
+        };
+        /* #@range_end(addressboook_example) */
+        next();
+      });
     });
     describe('配列型', () => {
       /* #@range_begin(forEach_in_array) */
@@ -261,6 +280,26 @@ describe('データ', () => {
           1
         );
         /* #@range_end(stack_as_abstract_type) */
+        next();
+      });
+      it('配列によるアドレス帳の例', (next) => {
+        /* #@range_begin(addressboook_example_in_array) */
+        var addressboook = 
+          [
+            {
+              "name": "Alan Turing",
+              "birthDay": "1912/6/23"
+            },
+            {
+              "name": "Haskell Curry",
+              "birthDay": "1900/9/12"
+            },
+            {
+              "name": "Alonzo Church",
+              "birthDay": "1903/6/14"
+            }
+          ]
+        /* #@range_end(addressboook_example_in_array) */
         next();
       });
     });
@@ -615,24 +654,24 @@ describe('データ', () => {
         /* #@range_begin(variables_hold_reference) */
         expect(() => {
           var x = 1;
-		  var y = x;
-		  y = 2;
-		  return x;
+          var y = x;
+          y = 2;
+          return x;
         }()).to.be(
           1
         )
         expect(() => {
           var x = 1;
-		  var y = x;
-		  x = 2;
-		  return y;
+          var y = x;
+          x = 2;
+          return y;
         }()).to.be(
           1
         )
         expect(() => {
           var x = [0,1,2,3];
-		  var y = x;
-		  return x === y;
+          var y = x;
+          return x === y;
         }()).to.be(
           true
         )

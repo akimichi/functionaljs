@@ -374,48 +374,6 @@ describe('データ', () => {
       });
     });
     
-    it('代数的データ型', (next) => {
-      /* #@range_begin(algebraic_datatype) */
-      var match = (exp, pattern) => {
-        return exp.call(pattern, pattern);
-      };
-      var num = (n) => {
-        return (pattern) => {
-          return pattern.num(n);
-        };
-      };
-      var add = (x, y) => {
-        return (pattern) => {
-          return pattern.add(x, y);
-        };
-      };
-      var mul = (x, y) => {
-        return (pattern) => {
-          return pattern.mul(x, y);
-        };
-      };
-      var exp = add(num(1), mul(num(2), num(3)));
-      var evaluate = (exp) => {
-        return match(exp, {
-          num: (x) => {
-            return x;
-          },
-          add: (x, y) => {
-            return evaluate(x) + evaluate(y);
-          },
-          mul: (x, y) => {
-            return evaluate(x) * evaluate(y);
-          }
-        });
-      };
-      expect(
-        evaluate(exp)
-      ).to.eql(
-        7
-      )
-      /* #@range_end(algebraic_datatype) */
-      next();
-    });
     describe('関数型', () => {
       it('関数はオブジェクト型である', (next) => {
         /* #@range_begin(function_is_object_type) */

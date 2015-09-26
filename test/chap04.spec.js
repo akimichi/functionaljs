@@ -565,11 +565,11 @@ describe('データ', () => {
       it('内側のスコープから外側のスコープの参照', (next) => {
         /* #@range_begin(function_scope_nesting) */
         var scope = "outer";
-        var checkScope = (_) =>  {
+        var func = (_) =>  {
           return scope;
         }
         expect(
-          scope
+          func()
         ).to.be(
           "outer"
         )
@@ -594,19 +594,47 @@ describe('データ', () => {
     describe('環境と値', () => {
       it('変数のバインディング', (next) => {
         /* #@range_begin(variable_binding_value) */
-        var name = "Alan Turing";
+        var bound = "バインドされた値";
         expect(
-          name
+          bound
         ).to.be(
-          "Alan Turing"
+          "バインドされた値"
         );
-        var age = 26;
+        var free;
         expect(
-          age
+          free
         ).to.be(
-          26
+          undefined
         );
         /* #@range_end(variable_binding_value) */
+        next();
+      });
+      it('関数の束縛変数', (next) => {
+        /* #@range_begin(bound_variable_in_function) */
+        var adder = (outerArgument,innerArgument) => {
+		  return outerArgument + innerArgument;
+		};
+        /* #@range_end(bound_variable_in_function) */
+		expect(
+          adder(2,3)
+        ).to.be(
+          5
+        );
+        next();
+      });
+      it('クロージャーの変数バインディング', (next) => {
+        /* #@range_begin(free_variable_in_closure) */
+        var adder = (outerArgument) => {
+		  return (innerArgument) => {
+			return outerArgument + innerArgument;
+		  };
+		}
+        /* #@range_end(free_variable_in_closure) */
+		expect(
+          adder(2)(3)
+        ).to.be(
+          5
+        );
         next();
       });
       it('環境の実装', (next) => {
@@ -648,14 +676,18 @@ describe('データ', () => {
         expect(((_) => {
           // 空の辞書を作成する
           var initEnv = emptyEnv;                       
-          // var a = 1 を実行して、辞書を拡張する
-          var outerEnv = extendEnv("a", 1, initEnv);    
-          // 内部のスコープで var a = 3 を実行して、辞書を拡張する
-          var innerEnv = extendEnv("a",2, outerEnv);    
-          // 一番内側のスコープから a の値を参照する
-          return lookupEnv("a",innerEnv);               
+          // var x = 1 を実行して、辞書を拡張する
+          var xEnv = extendEnv("x", 1, initEnv);    
+          // var z = 2 を実行して、辞書を拡張する
+          var zEnv = extendEnv("z", 2, xEnv);    
+          // 内部のスコープで var x = 3 を実行して、辞書を拡張する
+          var xEnvInner = extendEnv("x",3, zEnv);    
+          // 内部のスコープで var y = 4 を実行して、辞書を拡張する
+          var innerMostEnv = extendEnv("y",4, xEnvInner);    
+          // 一番内側のスコープを利用して x + y + z を計算する
+          return lookupEnv("x",innerMostEnv) + lookupEnv("y",innerMostEnv) + lookupEnv("z",innerMostEnv) ;
         })()).to.eql(
-          2
+          3 + 4 + 2
         );
         /* #@range_end(environment_implemented_shadowing_usage) */
         next();

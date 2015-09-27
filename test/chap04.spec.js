@@ -299,7 +299,7 @@ describe('データ', () => {
       });
     });
     describe('配列型', () => {
-      it("forEach文", (next) => {
+      it("Array.forEach文", (next) => {
         /* #@range_begin(forEach_in_array) */
         var array = [1,2,3,4,5];
         var sum = 0;
@@ -314,7 +314,20 @@ describe('データ', () => {
         /* #@range_end(forEach_in_array) */
         next();
       });
-      it("配列のソート", (next) => {
+      it("Array.sort文", (next) => {
+        /* #@range_begin(sort_in_array) */
+        var array = [5,3,4,1,2];
+        expect(
+          array.sort((n,m) => {
+            return n > m;
+          })
+        ).to.eql(
+          [1,2,3,4,5]
+        );
+        /* #@range_end(sort_in_array) */
+        next();
+      });
+      it("アドレス帳の配列表現", (next) => {
         /* #@range_begin(addressbook_example_in_array) */
         var addressbook = [ // 配列に要素を格納する
           {

@@ -131,9 +131,9 @@ describe('データ', () => {
         it('オブジェクトのインスタンスの例', (next) => {
           /* #@range_begin(object_instance_example) */
           var object = {
-            "No1": "Alan Turing",
-            "No2": "Haskell Curry",
-            "No3": "Alonzo Church"
+            No1: "Alan Turing",
+            No2: "Haskell Curry",
+            No3: "Alonzo Church"
           };
           /* #@range_end(object_instance_example) */
           /* #@range_begin(object_access) */
@@ -227,17 +227,17 @@ describe('データ', () => {
         it('オブジェクト型の入れ子', (next) => {
           /* ##@range_begin(object_can_embed_object) */
           var addressbook = {
-            "No1": {
-              "name": "Alan Turing",
-              "birthDay": "1912/6/23"
+            No1: {
+              name: "Alan Turing",
+              birthDay: "1912/6/23"
             },
-            "No2": {
-              "name": "Haskell Curry",
-              "birthDay": "1900/9/12"
+            No2: {
+              name: "Haskell Curry",
+              birthDay: "1900/9/12"
             },
-            "No3": {
-              "name": "Alonzo Church",
-              "birthDay": "1903/6/14"
+            No3: {
+              name: "Alonzo Church",
+              birthDay: "1903/6/14"
             }
           };
           /* ##@range_end(object_can_embed_object) */
@@ -679,11 +679,11 @@ describe('データ', () => {
         };
         // 環境を拡張する
         var extendEnv = (variable, value, env) => {
-          return (innerVariable) => {
-            if(variable === innerVariable) {
+          return (queryVariable) => {
+            if(variable === queryVariable) {
               return value;
             } else {
-              return lookupEnv(innerVariable,env)
+              return lookupEnv(queryVariable,env)
             }
           }
         };

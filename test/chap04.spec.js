@@ -515,7 +515,7 @@ describe('データ', () => {
           var reversed = reverse(array);
           return array
         })()).to.be(
-          array
+          array // 元の配列と同じ
         );
         /* #@range_end(immutable_reverse) */
         next();

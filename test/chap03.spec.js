@@ -79,58 +79,6 @@ describe('心の準備', () => {
       );
       next();
     });
-    // it('リファクタリング', (next) => {
-    //   var times = (count,fun,arg, memo) => {
-    //     if(count > 1) {
-    //       return times(count-1,fun,arg, fun(arg,memo));
-    //     } else if (count < 0) {
-    //       return times(count+1,fun,arg, fun(arg,memo));
-    //     } else {
-    //       return fun(arg,memo);
-    //     }
-    //   };
-    //   var multiply = (n,m) => {
-    //     var add = (n, m) => {
-    //       return n + m;
-    //     };
-    //     var subtract = (n, m) => {
-    //       return n - m;
-    //     };
-    //     var sign = (n,m, memo) => {
-    //       if(n>0 && m >0) {
-    //         return memo;
-    //       } else {
-    //         return subtract(0, memo);
-    //       };
-    //     };
-    //     return sign(n,m,times(m, add, n, 0));
-    //   };
-    //   expect(
-    //     multiply(-2,3)
-    //   ).to.eql(
-    //     -6
-    //   );
-    //   next();
-    //   /*
-    //    multiply(2,-3)
-    //    times(-3, add, 2, 0);
-    //    times(-2, add, 2, add(2,0));
-    //    times(-2, add, 2, add(2,0));
-    //    */
-
-    // });
-    // var movies = [
-    //   {title: "2001年宇宙の旅", year: 1968, director: "スタンリー・キューブリック"},
-    //   {title: "時計じかけのオレンジ", year: 1971, director: "スタンリー・キューブリック"},
-    //   {title: "スターウォーズ:新たなる希望", year: 1977, director: "ジョージ・ルーカス"},
-    //   {title: "E.T.", year: 1982, director: "スティーブン・スピルバーグ"},
-    //   {title: "ターミネーター", year: 1984, director: "ジェームズ・キャメロン"},
-    //   {title: "マトリックス", year: 1999, director: "ウォシャウスキー兄弟"},
-    //   {title: "マイノリティ・リポート", year: 2002, director: "スティーブン・スピルバーグ"}
-    // ];
-    // var sort_by_director = (movies) => {
-
-    // };
   });
   describe('抽象化への指向', () => {
     it('関数抽象の例としてのλ式', (next) => {
@@ -149,8 +97,8 @@ describe('心の準備', () => {
         var sequence = [2,3,5,7,11,13];
         var sum = (seq) => {
           var result = 0;
-          for(var i=0; i < seq.length; i++){
-            result = result + seq[i];
+          for(var index = 0; index < seq.length; index++){
+            result = result + seq[index];
           }
           return result;
         };
@@ -302,7 +250,7 @@ describe('心の準備', () => {
       /* #@range_end(arithmetic_again) */
       /* #@range_begin(multiply_test_example) */
       expect(
-        multiply(2,3) // テストする対象を書く
+        multiply(2,3) // テストする式を書く
       ).to.eql(
         6        // 期待する値を書く
       );

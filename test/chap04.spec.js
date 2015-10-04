@@ -130,58 +130,94 @@ describe('データ', () => {
       describe('アドレス帳の例', () => {
         it('オブジェクトのインスタンスの例', (next) => {
           /* #@range_begin(object_instance_example) */
-          var object = {
+          var addressbook = {
             No1: "Alan Turing",
-            No2: "Haskell Curry",
-            No3: "Alonzo Church"
+            No2: "Jane Austen",
+            No3: "Fyodor Dostoyevsky",
+            No4: "Ada Lovelace"
           };
           /* #@range_end(object_instance_example) */
           /* #@range_begin(object_access) */
           expect(
-            object.No1     // オブジェクト.キー記法
+            addressbook.No1     // オブジェクト.キー記法
           ).to.be(
             "Alan Turing"
           );
           expect(
-            object["No1"]  // オブジェクト[キー]記法
+            addressbook["No1"]  // オブジェクト[キー]記法
           ).to.be(
             "Alan Turing"
           );
           /* #@range_end(object_access) */
            next();
         });
-        it('オブジェクトに関数をいれる', (next) => {
-          /* ##@range_begin(object_can_embed_function) */
+        it('オブジェクト型の入れ子', (next) => {
+          /* ##@range_begin(object_can_embed_object) */
           var addressbook = {
-            turing: {
+            No1: {
               name: "Alan Turing",
-              weight: 65,
-              height: 175
+			  gender: "male",
+              birthDay: "1912/6/23"
             },
-            BMI: (weight, height) => {
-              expect(weight).to.be.a('number');
-              expect(height).to.be.a('number');
-              return weight / ((height / 100.0) * (height / 100.0));
+            No2: {
+              name: "Jane Austen",
+			  gender: "female",
+              birthDay: "1775/12/16"
+            },
+            No3: {
+              name: "Fyodor Dostoyevsky",
+			  gender: "male",
+              birthDay: "1821/11/11"
+            },
+            No4: {
+              name: "Ada Lovelace",
+			  gender: "female",
+              birthDay: "1815/12/10"
             }
           };
-          /* ##@range_end(object_can_embed_function) */
-          /* ##@range_begin(embeded_function_invocation) */
+          /* ##@range_end(object_can_embed_object) */
+          var addressbook_nested = {
+			/* ##@range_begin(object_can_embed_object_nested) */
+            No1: {
+              name: "Alan Turing",
+			  gender: "male",
+              birthDay: {
+				year: 1912,
+				month: 6,
+				day: 23
+			  }
+            }
+			/* ##@range_end(object_can_embed_object_nested) */
+          };
+		  // hasOwnPropertyでプロパティの有無を調べる
+          /* ##@range_begin(hasOwnProperty_can_check_property) */
           expect(
-            addressbook.BMI(addressbook.turing.weight, addressbook.turing.height)
-          ).to.within(21.0,22,0);
-          /* ##@range_end(embeded_function_invocation) */
-          // it('値に関数をいれる', (next) => {
-          //   var natural = {
-          //     zero: 0,
-          //     succ: (n) => {
-          //       return n + 1;
+			addressbook.hasOwnProperty("No1")
+          ).to.eql(
+			true
+          );
+          expect(
+			addressbook.hasOwnProperty("No9")
+          ).to.eql(
+			false
+          );
+          /* ##@range_end(hasOwnProperty_can_check_property)     */
+          // var expression = {
+          //   add: {
+          //     x: 1,
+          //     y: {
+          //       multiply: {
+          //         x: 2,
+          //         y: 3
+          //       }
           //     }
-          //   };
-          //   expect(
-          //     natural.succ(natural.zero)
-          //   ).to.eql(
-          //     1
-          //   );
+          //   }
+          // };
+          // expect(
+          //   expression.add.y.multiply.x
+          // ).to.eql(
+          //   2
+          // );
           next();
         });
         it('オブジェクト型によるアドレス帳の表現', (next) => {
@@ -224,60 +260,6 @@ describe('データ', () => {
           /* #@range_end(addressbook_example) */
           next();
         });
-        it('オブジェクト型の入れ子', (next) => {
-          /* ##@range_begin(object_can_embed_object) */
-          var addressbook = {
-            No1: {
-              name: "Alan Turing",
-              birthDay: "1912/6/23"
-            },
-            No2: {
-              name: "Haskell Curry",
-              birthDay: "1900/9/12"
-            },
-            No3: {
-              name: "Alonzo Church",
-              birthDay: "1903/6/14"
-            }
-          };
-          /* ##@range_end(object_can_embed_object) */
-          // var expression = {
-          //   add: {
-          //     x: 1,
-          //     y: {
-          //       multiply: {
-          //         x: 2,
-          //         y: 3
-          //       }
-          //     }
-          //   }
-          // };
-          // expect(
-          //   expression.add.y.multiply.x
-          // ).to.eql(
-          //   2
-          // );
-          next();
-        });
-      });
-      it('hasOwnPropertyでプロパティの有無を調べる', (next) => {
-        /* ##@range_begin(hasOwnProperty_can_check_property) */
-        var obj = {
-          one: 1,
-          two: 2
-        };
-        expect(
-          obj.hasOwnProperty("one")
-        ).to.eql(
-          true
-        );
-        expect(
-          obj.hasOwnProperty("three")
-        ).to.eql(
-          false
-        );
-        /* ##@range_end(hasOwnProperty_can_check_property)     */
-        next();
       });
       it('for in で反復処理する', (next) => {
         /* ##@range_begin(for_in_object) */
@@ -299,6 +281,27 @@ describe('データ', () => {
       });
     });
     describe('配列型', () => {
+      it("配列の基本操作", (next) => {
+        /* #@range_begin(array_access) */
+		var array = [10,11,12];
+        expect(
+          array[0]
+        ).to.eql(
+          10
+        );
+        expect(
+          array[2]
+        ).to.eql(
+          12
+        );
+        expect(
+          array[100]
+        ).to.eql(
+          undefined
+        );
+        /* #@range_end(array_access) */
+        next();
+      });
       it("Array.forEach文", (next) => {
         /* #@range_begin(forEach_in_array) */
         var array = [1,2,3,4,5];
@@ -329,27 +332,49 @@ describe('データ', () => {
       });
       it("アドレス帳の配列表現", (next) => {
         /* #@range_begin(addressbook_example_in_array) */
-        var addressbook = [ // 配列に要素を格納する
-          {
-            name: "Alan Turing",
-            birthDay: "1912/6/23",
-            weight: 62,
-            height: 175
-          },
-          {
-            name: "Haskell Curry",
-            birthDay: "1900/9/12",
-            weight: 62,
-            height: 180
-          },
-          {
-            name: "Alonzo Church",
-            birthDay: "1903/6/14",
-            weight: 75,
-            height: 168
-          }
-        ];
+          var addressbook = [ // 配列に要素を格納する
+            {
+              name: "Alan Turing",
+              gender: "male",
+              birthDay: "1912/6/23"
+            },
+            {
+              name: "Jane Austen",
+              gender: "female",
+              birthDay: "1775/12/16"
+            },
+            {
+              name: "Fyodor Dostoyevsky",
+              gender: "male",
+              birthDay: "1821/11/11"
+            },
+            {
+              name: "Ada Lovelace",
+              gender: "female",
+              birthDay: "1815/12/10"
+            }
+          ];
         /* #@range_end(addressbook_example_in_array) */
+        // var addressbook = [ // 配列に要素を格納する
+        //   {
+        //     name: "Alan Turing",
+        //     birthDay: "1912/6/23",
+        //     weight: 62,
+        //     height: 175
+        //   },
+        //   {
+        //     name: "Haskell Curry",
+        //     birthDay: "1900/9/12",
+        //     weight: 62,
+        //     height: 180
+        //   },
+        //   {
+        //     name: "Alonzo Church",
+        //     birthDay: "1903/6/14",
+        //     weight: 75,
+        //     height: 168
+        //   }
+        // ];
         /* #@range_begin(sorting_array) */
         expect(
           addressbook.sort((onePerson,anotherPerson) => {
@@ -358,22 +383,24 @@ describe('データ', () => {
         ).to.eql(
           [
             {
+              name: "Ada Lovelace",
+              gender: "female",
+              birthDay: "1815/12/10"
+            },
+            {
               name: "Alan Turing",
-              birthDay: "1912/6/23",
-              weight: 62,
-              height: 175
+              gender: "male",
+              birthDay: "1912/6/23"
             },
             {
-              name: "Alonzo Church",
-              birthDay: "1903/6/14",
-              weight: 75,
-              height: 168
+              name: "Fyodor Dostoyevsky",
+              gender: "male",
+              birthDay: "1821/11/11"
             },
             {
-              name: "Haskell Curry",
-              birthDay: "1900/9/12",
-              weight: 62,
-              height: 180
+              name: "Jane Austen",
+              gender: "female",
+              birthDay: "1775/12/16"
             }
           ]
         );
@@ -382,6 +409,29 @@ describe('データ', () => {
       });
     });
     describe('抽象データ型', () => {
+      it('抽象データ型としてのリスト', (next) => {
+        var cons = (n, list) => {
+          return [n].concat(list);
+        };
+        var head = (list) => {
+          return list[0];
+        };
+        var tail = (list) => {
+          return list.slice(1,list.length);
+        };
+        var empty = [];
+        var isEmpty = (list) => {
+          return list.length === 0;
+        };
+        /* #@range_begin(list_as_abstract_type) */
+        expect(
+          head(tail(cons(1,cons(2,empty))))
+        ).to.eql(
+          2
+        );
+        /* #@range_end(list_as_abstract_type) */
+        next();
+      });
       it('抽象データ型としてのスタック', (next) => {
         var push = (n, stack) => {
           return [n].concat(stack);
@@ -421,6 +471,58 @@ describe('データ', () => {
           true
         )
         /* #@range_end(function_is_object_type) */
+        next();
+      });
+      it('オブジェクトに関数をいれる', (next) => {
+        /* ##@range_begin(object_can_embed_function) */
+        var addressbook = [
+		  {
+            name: "Alan Turing",
+			gender: "male",
+            birthDay: "1912/6/23",
+			age: (now) => {
+			  expect(now).to.be.a('object');
+			  var birthDayObject = new Date(this.birthDay);
+			  return (now.getFullYear() - birthDayObject.getFullYear());
+			}
+          },
+          {
+            name: "Jane Austen",
+			gender: "female",
+            birthDay: "1775/12/16"
+          },
+          {
+            name: "Fyodor Dostoyevsky",
+			gender: "male",
+            birthDay: "1821/11/11"
+          },
+          {
+            name: "Ada Lovelace",
+			gender: "female",
+            birthDay: "1815/12/10"
+          }
+        ];
+        expect(
+          addressbook[0].age(new Date())
+        ).to.be(103);
+        /* ##@range_end(object_can_embed_function) */
+        /* ##@range_begin(embeded_function_invocation) */
+        // expect(
+        //   addressbook.BMI(addressbook.turing.weight, addressbook.turing.height)
+        // ).to.within(21.0,22,0);
+        /* ##@range_end(embeded_function_invocation) */
+        // it('値に関数をいれる', (next) => {
+        //   var natural = {
+        //     zero: 0,
+        //     succ: (n) => {
+        //       return n + 1;
+        //     }
+        //   };
+        //   expect(
+        //     natural.succ(natural.zero)
+        //   ).to.eql(
+        //     1
+        //   );
         next();
       });
       it('関数はデータと類似している', (next) => {
@@ -510,7 +612,9 @@ describe('データ', () => {
         var array = [0,1,2];
         expect(
           reverse(array)
-        ).to.eql([2,1,0,]);
+        ).to.eql(
+		  [2,1,0]
+		);
         expect(((_) => {
           var reversed = reverse(array);
           return array
@@ -518,6 +622,15 @@ describe('データ', () => {
           array // 元の配列と同じ
         );
         /* #@range_end(immutable_reverse) */
+        /* #@range_begin(immutable_reverse_is_not_immutable) */
+		var reversed = reverse(array);
+		reversed[0] = 0;
+        expect(
+          reversed
+        ).to.eql(
+		  [0,1,0]
+		);
+        /* #@range_end(immutable_reverse_is_not_immutable) */
         next();
       });
     });
@@ -630,25 +743,32 @@ describe('データ', () => {
         ).to.be(
           "バインドされた値"
         );
-        var free;
+        var unbound;
         expect(
-          free
+          unbound
         ).to.be(
           undefined
         );
         /* #@range_end(variable_binding_value) */
         next();
       });
-      it('関数の束縛変数', (next) => {
+      it('関数本体での束縛変数', (next) => {
         /* #@range_begin(bound_variable_in_function) */
-        var adder = (outerArgument,innerArgument) => {
-          return outerArgument + innerArgument;
+        var add = (x,y) => {
+          return x + y;
         };
         /* #@range_end(bound_variable_in_function) */
         expect(
-          adder(2,3)
+          add(2,3)
         ).to.be(
           5
+        );
+        expect(
+          add(2,3)
+        ).to.be(
+          ((x,y) => {
+			return x + y;
+		  })(2,3)
         );
         next();
       });

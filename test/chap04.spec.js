@@ -473,6 +473,30 @@ describe('データ', () => {
         /* #@range_end(function_is_object_type) */
         next();
       });
+      it('引数のない関数', (next) => {
+        /* #@range_begin(function_without_argument) */
+        var three = () => {
+          return 3;
+        };
+        expect(
+          three()
+        ).to.eql(
+          3
+        )
+        /* #@range_end(function_without_argument) */
+        next();
+      });
+      it('関数と変数の類似', (next) => {
+        /* #@range_begin(function_resembles_variable) */
+        var three = 3;
+        expect(
+          three
+        ).to.eql(
+          3
+        )
+        /* #@range_end(function_resembles_variable) */
+        next();
+      });
       it('オブジェクトに関数をいれる', (next) => {
         /* ##@range_begin(object_can_embed_function) */
         var addressbook = [
@@ -577,7 +601,7 @@ describe('データ', () => {
       it('配列は可変である', (next) => {
         /* #@range_begin(array_is_mutable) */
         var array = [0,1,2,3];
-        array[0] = 7;
+        array[0] = 7; // 配列の一部を書きかえている
         expect(
           array
         ).not.to.eql(

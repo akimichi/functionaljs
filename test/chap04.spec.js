@@ -486,12 +486,13 @@ describe('データ', () => {
       });
       it('関数と変数の類似性', (next) => {
         /* #@range_begin(function_resembles_variable) */
-        var x = 3;
+        var three = 3;
         expect(
-          x
-        ).to.be(
+          three
+        ).to.eql(
           3
         );
+        /* #@range_end(function_resembles_variable) */
         var id = (any) => {
           return any;
         };
@@ -502,7 +503,6 @@ describe('データ', () => {
         ).to.be(
           3
         );
-        /* #@range_end(function_resembles_variable) */
         next();
       });
       it('オブジェクトに関数をいれる', (next) => {
@@ -671,25 +671,29 @@ describe('データ', () => {
     describe('値としてのデータ', () => {
       it('基本型は値である', (next) => {
         /* #@range_begin(basic_type_is_value_type) */
-        var number = 1;
+        var n = 1;
         expect(
-          number
+          n
         ).to.be(
           1
         )
-        var bool = true;
+        var s = "hello"
         expect(
-          bool
-        ).to.be(
-          true
-        )
-        var string = "hello"
-        expect(
-          string
+          s
         ).to.be(
           "hello"
         )
         /* #@range_end(basic_type_is_value_type) */
+        expect(
+          n
+        ).to.be(
+          1
+        )
+        expect(
+		  s
+        ).to.be(
+          "hello"
+        )
         next();
       });
       it('合成型は参照である', (next) => {

@@ -728,7 +728,7 @@ describe('データ', () => {
       it('関数はスコープを分ける', (next) => {
         /* #@range_begin(function_creates_scope) */
         var createScope = (_) =>  {
-          var innerScope = "inner";
+          var innerScope = "inner"; // innerScope変数は createScopeの中でのみ有効
           return innerScope;
         }
         expect(
@@ -738,7 +738,7 @@ describe('データ', () => {
         )
         expect(
           (_) => {
-            innerScope // 関数内の局所スコープにある変数にアクセスします
+            innerScope // 関数内の局所スコープにある変数にアクセスを試みます
           }
         ).to.throwException((e)=> {
           expect(e).to.be.a(ReferenceError);

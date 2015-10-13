@@ -613,7 +613,7 @@ describe('データ', () => {
         expect(
           array
         ).not.to.eql(
-          [0,1,2,3] // [7,1,2,3]
+          [0,1,2,3] // [7,1,2,3]に変更されている
         )
         /* #@range_end(array_is_mutable) */
         next();
@@ -690,7 +690,7 @@ describe('データ', () => {
           1
         )
         expect(
-		  s
+          s
         ).to.be(
           "hello"
         )
@@ -732,18 +732,20 @@ describe('データ', () => {
           return innerScope;
         }
         expect(
-          createScope()
-        ).to.be(
-          "inner"
-        )
-        expect(
           (_) => {
             innerScope // 関数内の局所スコープにある変数にアクセスを試みます
           }
         ).to.throwException((e)=> {
-          expect(e).to.be.a(ReferenceError);
+          expect(e).to.be.a(
+			ReferenceError
+		  );
         });
         /* #@range_end(function_creates_scope) */
+        expect(
+          createScope()
+        ).to.be(
+          "inner"
+        )
         next();
       });
       it('スコープの入れ子', (next) => {
@@ -835,24 +837,20 @@ describe('データ', () => {
         );
         expect(
           (_) => { // 例外をキャッチするにはexpectに関数を渡します
-            unbound // 今まで定義されている変数にアクセスします
+            unbound // ここで自由変数にアクセスします
           }
-        ).to.throwException((e)=> {
-          expect(e).to.be.a(ReferenceError);
+        ).to.throwException((exception)=> {
+          expect(exception).to.be.a(
+            ReferenceError
+          );
         });
         /* #@range_end(variable_binding_value) */
-        // var unbound;
-        // expect(
-        //   unbound
-        // ).to.be(
-        //   undefined
-        // );
         next();
       });
-      it('関数本体での束縛変数', (next) => {
+      it('関数本体でのバインド変数', (next) => {
         /* #@range_begin(bound_variable_in_function) */
         var add = (x,y) => {
-          return x + y;
+          return x + y; // x も y もバインド変数
         };
         /* #@range_end(bound_variable_in_function) */
         expect(
@@ -869,20 +867,41 @@ describe('データ', () => {
         );
         next();
       });
-      it('クロージャーの変数バインディング', (next) => {
-        /* #@range_begin(free_variable_in_closure) */
-        var outerFunction = (outerArgument) => {
-          var innerFunction = (innerArgument) => {
-            return outerArgument + innerArgument;
-          };
-          return innerFunction;
-        }
-        /* #@range_end(free_variable_in_closure) */
+      it('関数本体での自由変数', (next) => {
+        /* #@range_begin(free_variable_in_function) */
+        var add = (x) => {
+          return x + y;  // x はバインド変数だが、y は自由変数
+        };
+        /* #@range_end(free_variable_in_function) */
+        /* #@range_begin(free_variable_in_function_test) */
         expect(
-          outerFunction(2)(3)
+          (_) => {
+            add(1,2) 
+          }
+        ).to.throwException((exception)=> {
+          expect(exception).to.be.a(
+            ReferenceError
+          );
+        });
+        /* #@range_end(free_variable_in_function_test) */
+        next();
+      });
+      it('クロージャーの変数バインディング', (next) => {
+        /* #@range_begin(binding_in_closure) */
+        var adder = (y) => { // 外側の関数
+          var add = (x) => { // 内側の関数
+            return x + y;
+          };
+          return add;
+        }
+        /* #@range_end(binding_in_closure) */
+        /* #@range_begin(binding_in_closure_test) */
+        expect(
+          adder(2)(3)
         ).to.be(
           5
         );
+        /* #@range_end(binding_in_closure_test) */
         next();
       });
       it('環境の実装', (next) => {
@@ -950,6 +969,7 @@ describe('データ', () => {
         ).to.be(
           29
         );
+        // この時点で誕生日を迎えました
         age = 30;
         expect(
           age
@@ -985,6 +1005,42 @@ describe('データ', () => {
           true
         )
         /* #@range_end(variables_hold_reference) */
+        next();
+      });
+    });
+    describe('代入の仕組み', () => {
+      it('合成型への代入', (next) => {
+        /* #@range_begin(assign_to_complex_value) */
+        var object = {one: 1, two: 2}
+        expect(
+          object.one
+        ).to.eql(
+          1
+        );
+        object.one = 3;
+        expect(
+          object.one
+        ).to.eql(
+          3
+        );
+        /* #@range_end(assign_to_complex_value) */
+        next();
+      });
+      it('基本型への代入', (next) => {
+        /* #@range_begin(assign_to_basic_value) */
+        var basic_value = 1;
+        expect(
+          basic_value
+        ).to.eql(
+          1
+        );
+        basic_value = 3;
+        expect(
+          basic_value
+        ).to.eql(
+          3
+        );
+        /* #@range_end(assign_to_basic_value) */
         next();
       });
     });

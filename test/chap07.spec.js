@@ -39,7 +39,7 @@ describe('高階関数', () => {
           return obj(key);
         },
         set: (key, value, obj) => {
-		  var self = this;
+          var self = this;
           return (key2) => {
             if(key === key2) {
               return value;
@@ -54,17 +54,17 @@ describe('高階関数', () => {
       expect(
         objects.get("R2D2", objects.set("R2D2", "Star Wars", objects.set("HAL9000","2001: a space odessay",objects.empty)))
       ).to.eql(
-		"Star Wars"
+        "Star Wars"
       )
       expect(
         objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
       ).to.eql(
-		undefined
+        undefined
       )
       expect(
         objects.get("HAL9000", objects.set.call(objects,"C3PO", "Star Wars", objects.set.call(objects,"R2D2", "Star Wars", objects.set.call(objects,"HAL9000","2001: a space odessay",objects.empty))))
       ).to.eql(
-		"2001: a space odessay"
+        "2001: a space odessay"
       )
       /* #@range_end(immutable_object_type_test) */
       next();
@@ -79,7 +79,7 @@ describe('高階関数', () => {
           return obj(key);
         },
         set: (key, value, obj) => {
-		  var self = this;
+          var self = this;
           return (key2) => {
             if(key === key2) {
               return value;
@@ -88,27 +88,27 @@ describe('高階関数', () => {
             }
           }
         },
-		mkObject: (obj) => {
-		  var self = this;
-		  var keys = (o) => {
-			var result = [];
-			for(var prop in o) {
-			  if(o.hasOwnProperty(prop))
-				result.push(prop);
-			}
-			return result;
-		  };
-		  return keys(obj).reduce((accumulator, key) => {
-		  	return self.set.call(self,key, obj[key], accumulator);
-		  }, self.empty)
-		}
+        mkObject: (obj) => {
+          var self = this;
+          var keys = (o) => {
+            var result = [];
+            for(var prop in o) {
+              if(o.hasOwnProperty(prop))
+                result.push(prop);
+            }
+            return result;
+          };
+          return keys(obj).reduce((accumulator, key) => {
+            return self.set.call(self,key, obj[key], accumulator);
+          }, self.empty)
+        }
       };
       /* #@range_end(immutable_object_type_improved) */
       /* #@range_begin(immutable_object_type_improved_test) */
        expect(
         objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
       ).to.eql(
-		undefined
+        undefined
       )
       expect(
         objects.get("HAL9000", objects.mkObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
@@ -225,244 +225,257 @@ describe('高階関数', () => {
     //   next();
     // });
   });
+  describe('クロージ0', () => {
+    it('クロージャーの変数バインディング', (next) => {
+      /* #@range_begin(free_variable_in_closure) */
+        var outerFunction = (outerArgument) => {
+          var innerFunction = (innerArgument) => {
+            return outerArgument + innerArgument;
+          };
+          return innerFunction;
+        }
+      /* #@range_end(free_variable_in_closure) */
+      next();
+    });
+  });
   describe('コンビネーター', () => {
     it('コンビネーター・ライブラリー', (next) => {
       /* #@range_begin(combinator_library) */
-	  var id = (any) => {
-		return any;
-	  };
-	  var get = (key) => {
-		  return (obj) => {
-			return obj[key];
-		  };
-	  };
-	  var isEqual = (n1) => {
-		return (n2) => {
-		  return n2 === n1;
-		};
-	  };
-	  var isLessThan = (n1) => {
-		return (n2) => {
-		  return n1 > n2;
-		};
-	  };
-	  var isMoreThan = (n1) => {
-		return (n2) => {
-		  return n1 < n2;
-		};
-	  };
-	  var not = (predicate) => {
-		return (data) => {
-		  return ! predicate(data);
-		}
-	  };
-	  var within = (lower) => {
-		return (upper) => {
-		  return (data) => {
-			return (extractor) => {
-			  return and(extractor, isMoreThan(lower))(extractor, isLessThan(upper))(data);
-			};
-		  };
-		};
-	  };
-	  var and = (firstExtractor, firstPredicate) => {
-		return (nextExtractor, nextPredicate) => {
-		  return (data) => {
-			var firstResult = firstPredicate(firstExtractor(data))
-			if(! firstResult) {
-			  return false;
-			} else {
-			  return nextPredicate(nextExtractor(data));
-			}
-		  }
-		};
-	  };
-	  var or = (firstExtractor, firstPredicate) => {
-		return (nextExtractor, nextPredicate) => {
-		  return (data) => {
-			var firstResult = firstPredicate(firstExtractor(data))
-			if(firstResult) {
-			  return true;
-			} else {
-			  return nextPredicate(nextExtractor(data));
-			}
-		  }
-		};
-	  };
+      var id = (any) => {
+        return any;
+      };
+      var get = (key) => {
+          return (obj) => {
+            return obj[key];
+          };
+      };
+      var isEqual = (n1) => {
+        return (n2) => {
+          return n2 === n1;
+        };
+      };
+      var isLessThan = (n1) => {
+        return (n2) => {
+          return n1 > n2;
+        };
+      };
+      var isMoreThan = (n1) => {
+        return (n2) => {
+          return n1 < n2;
+        };
+      };
+      var not = (predicate) => {
+        return (data) => {
+          return ! predicate(data);
+        }
+      };
+      var within = (lower) => {
+        return (upper) => {
+          return (data) => {
+            return (extractor) => {
+              return and(extractor, isMoreThan(lower))(extractor, isLessThan(upper))(data);
+            };
+          };
+        };
+      };
+      var and = (firstExtractor, firstPredicate) => {
+        return (nextExtractor, nextPredicate) => {
+          return (data) => {
+            var firstResult = firstPredicate(firstExtractor(data))
+            if(! firstResult) {
+              return false;
+            } else {
+              return nextPredicate(nextExtractor(data));
+            }
+          }
+        };
+      };
+      var or = (firstExtractor, firstPredicate) => {
+        return (nextExtractor, nextPredicate) => {
+          return (data) => {
+            var firstResult = firstPredicate(firstExtractor(data))
+            if(firstResult) {
+              return true;
+            } else {
+              return nextPredicate(nextExtractor(data));
+            }
+          }
+        };
+      };
       /* #@range_end(combinator_library) */
       /* #@range_begin(combinator_library_test) */
-  	  var data = {
-  		temp: 24,
-  		time: new Date("2013/2/15 17:57:27")
-  	  };
-	  expect(((_) => {
-		var getTemp = (data) => {
-		  return get('temp')(data);
-		};
-		var getHour = (data) => {
-		  return get('time')(data).getHours();
-		};
-		return and(getTemp, isMoreThan(20))(getHour, isEqual(17))(data)
-	  })()).to.eql(
-  		true
-  	  )
-	  expect(((_) => {
-		var getTemp = (data) => {
-		  return get('temp')(data);
-		};
-		var getHour = (data) => {
-		  return get('time')(data).getHours();
-		};
-		return or(getTemp, isMoreThan(30))(getHour, isEqual(17))(data)
-	  })()).to.eql(
-  		true
-  	  )
-	  expect(
-		within(20)(30)(get('temp')(data))(id)
-	  ).to.eql(
-  		true
-  	  )
-	  expect(
-		within(20)(30)(data)(get('temp'))
-	  ).to.eql(
-  		true
-  	  )
-	  expect(
-		within(20)(30)(data)((data) => {
-		  return get('temp')(data)
-		})
-	  ).to.eql(
-  		true
-  	  )
+      var data = {
+        temp: 24,
+        time: new Date("2013/2/15 17:57:27")
+      };
+      expect(((_) => {
+        var getTemp = (data) => {
+          return get('temp')(data);
+        };
+        var getHour = (data) => {
+          return get('time')(data).getHours();
+        };
+        return and(getTemp, isMoreThan(20))(getHour, isEqual(17))(data)
+      })()).to.eql(
+        true
+      )
+      expect(((_) => {
+        var getTemp = (data) => {
+          return get('temp')(data);
+        };
+        var getHour = (data) => {
+          return get('time')(data).getHours();
+        };
+        return or(getTemp, isMoreThan(30))(getHour, isEqual(17))(data)
+      })()).to.eql(
+        true
+      )
+      expect(
+        within(20)(30)(get('temp')(data))(id)
+      ).to.eql(
+        true
+      )
+      expect(
+        within(20)(30)(data)(get('temp'))
+      ).to.eql(
+        true
+      )
+      expect(
+        within(20)(30)(data)((data) => {
+          return get('temp')(data)
+        })
+      ).to.eql(
+        true
+      )
       /* #@range_end(combinator_library_test) */
-	  next();
-	});
+      next();
+    });
   });
   describe('モナドを作る', () => {
-	describe('Maybeモナド', () => {
-	  var id = (any) => {
-		return any;
-	  };
-	  var match = (exp, pattern) => {
-		return exp.call(pattern, pattern);
-	  };
-	  it('代数的データ型を作る')
-	  describe('Maybeモナドを作る', () => {
-		/* #@range_begin(maybe_monad) */
-		var just = (value) => {
-		  return (pattern) => {
-			return pattern.just(value);
-		  };
-		};
-		var nothing = ((_) => {
-		  return (pattern) => {
-			return pattern.nothing(_);
-		  };
-		})(null);
-		var unit = (value) => {
-		  if(value){
-			return just(value);
-		  } else {
-			return nothing(null);
-		  }
-		};
-		var isEqual = (maybeA) => {
-		  return (maybeB) => {
-			return match(maybeA,{
-			  just: (valueA) => {
-				return match(maybeB,{
-				  just: (valueB) => {
-					return (valueA === valueB);
-				  },
-				  nothing: (_) => {
-					return false;
-				  }
-				});
-			  },
-			  nothing: (_) => {
-				return match(maybeB,{
-				  just: (_) => {
-					return false;
-				  },
-				  nothing: (_) => {
-					return true;
-				  }
-				});
-			  }
-			});
-		  };
-		};
-		var map = (maybe) => {
-		  return (transform) => {
-			expect(transform).to.a('function');
-			return match(maybe,{
-			  just: (value) => {
-				return unit(transform(value));
-			  },
-			  nothing: (_) => {
-				return nothing;
-			  }
-			});
-		  };
-		};
-		var flatMap = (maybe) => {
-		  return (transform) => {
-			expect(transform).to.a('function');
-			return match(maybe,{
-			  just: (value) => {
-				return transform(value);
-			  },
-			  nothing: (_) => {
-				return nothing;
-			  }
-			});
-		  };
-		};
-		/* #@range_end(maybe_monad) */
-		it("map id == id", function(next){
-		  /* #@range_begin(maybe_monad_test) */
+    describe('Maybeモナド', () => {
+      var id = (any) => {
+        return any;
+      };
+      var match = (exp, pattern) => {
+        return exp.call(pattern, pattern);
+      };
+      it('代数的データ型を作る')
+      describe('Maybeモナドを作る', () => {
+        /* #@range_begin(maybe_monad) */
+        var just = (value) => {
+          return (pattern) => {
+            return pattern.just(value);
+          };
+        };
+        var nothing = ((_) => {
+          return (pattern) => {
+            return pattern.nothing(_);
+          };
+        })(null);
+        var unit = (value) => {
+          if(value){
+            return just(value);
+          } else {
+            return nothing(null);
+          }
+        };
+        var isEqual = (maybeA) => {
+          return (maybeB) => {
+            return match(maybeA,{
+              just: (valueA) => {
+                return match(maybeB,{
+                  just: (valueB) => {
+                    return (valueA === valueB);
+                  },
+                  nothing: (_) => {
+                    return false;
+                  }
+                });
+              },
+              nothing: (_) => {
+                return match(maybeB,{
+                  just: (_) => {
+                    return false;
+                  },
+                  nothing: (_) => {
+                    return true;
+                  }
+                });
+              }
+            });
+          };
+        };
+        var map = (maybe) => {
+          return (transform) => {
+            expect(transform).to.a('function');
+            return match(maybe,{
+              just: (value) => {
+                return unit(transform(value));
+              },
+              nothing: (_) => {
+                return nothing;
+              }
+            });
+          };
+        };
+        var flatMap = (maybe) => {
+          return (transform) => {
+            expect(transform).to.a('function');
+            return match(maybe,{
+              just: (value) => {
+                return transform(value);
+              },
+              nothing: (_) => {
+                return nothing;
+              }
+            });
+          };
+        };
+        /* #@range_end(maybe_monad) */
+        it("map id == id", function(next){
+          /* #@range_begin(maybe_monad_test) */
           var justOne = just(1);
           expect(
-			isEqual(map(justOne)(id))(id(justOne))
+            isEqual(map(justOne)(id))(id(justOne))
           ).to.be(
-			true
+            true
           );
           expect(
-			isEqual(map(nothing)(id))(id(nothing))
+            isEqual(map(nothing)(id))(id(nothing))
           ).to.be(
-			true
+            true
           );
-		  /* #@range_end(maybe_monad_test) */
+          /* #@range_end(maybe_monad_test) */
           next();
-		});
-		it("add(maybe, maybe)", (next) => {
-		  /* #@range_begin(maybe_monad_add_test) */
-		  var add = (maybeA) => {
-			return (maybeB) => {
+        });
+        it("add(maybe, maybe)", (next) => {
+          /* #@range_begin(maybe_monad_add_test) */
+          var add = (maybeA) => {
+            return (maybeB) => {
               return flatMap(maybeA)((a) => {
-				return flatMap(maybeB)((b) => {
+                return flatMap(maybeB)((b) => {
                   return unit(a + b);
-				});
+                });
             });
-			};
+            };
           };
           var justOne = just(1);
           var justTwo = just(2);
           var justThree = just(3);
           expect(
-			isEqual(add(justOne)(justTwo))(justThree)
+            isEqual(add(justOne)(justTwo))(justThree)
           ).to.eql(
-			true
+            true
           );
           expect(
-			isEqual(add(justOne)(nothing))(nothing)
+            isEqual(add(justOne)(nothing))(nothing)
           ).to.eql(
-			true
+            true
           );
-		  /* #@range_end(maybe_monad_add_test) */
+          /* #@range_end(maybe_monad_add_test) */
           next();
-		});
-	  });
-	});
+        });
+      });
+    });
   });
 });

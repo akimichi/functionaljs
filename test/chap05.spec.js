@@ -4,71 +4,122 @@ var expect = require('expect.js');
 var util = require('util');
 
 describe('制御構造', () => {
-  describe('真理値', () => {
-    it('チャーチの真理値', (next) => {
-	  /* ##@range_begin(church_truth)*/
-	  var _true = (x) => {
-		return (y) => {
-		  return x;
-		};
-	  };
-	  var _false = (x) => {
-		return (y) => {
-		  return y;
-		};
-	  };
-	  var _ifElse = (pred) => {
-		return (x) => {
-		  return (y) => {
-			return pred(x)(y);
-		  };
-		};
-	  };
-	  var _not = (x) => {
-		return (x(_false))(_true);
-	  };
-	  var _and = (x) => {
-		return (y) => {
-		  return (x(y))(_false);
-		};
-	  };
-	  var _or = (x) => {
-		return (y) => {
-		  return (x(_true))(y);
-		};
-	  };
-	  /* ##@range_end(church_truth) */
-      /* ##@range_begin(church_truth_test) */
+  describe('条文分岐', () => {
+    it('逆数の例', (next) => {
+      /* ##@range_begin(inverse_function)*/
+      var inverse = (n) => {
+        if(n === 0) {
+          return 0;
+        } else {
+          return 1 / n;
+        }
+      };
+      /* ##@range_end(inverse_function)*/
       expect(
-		_true(1)(0)
-	  ).to.be(
-		1
-	  );
+        inverse(2)
+      ).to.be(
+        0.5
+      );
       expect(
-		_not(_true)(1)(0)
-	  ).to.be(
-		0
-	  );
-      expect(
-		_and(_true)(_true)(1)(0)
-	  ).to.be(
-		1
-	  );
-      expect(
-		_ifElse(_true)(_false)(_true)(1)(0)
-	  ).to.be(
-		0
-	  );
-
-      /* ##@range_end(church_truth_test) */
+        inverse(0)
+      ).to.be(
+        0
+      );
       next();
-	});
-  });
-  describe('条文文', () => {
-    
+    });
+    describe('真理値', () => {
+      it('チャーチの真理値', (next) => {
+        /* ##@range_begin(church_truth) */
+        var _true = (x) => {
+          return (y) => {
+            return x;
+          };
+        };
+        var _false = (x) => {
+          return (y) => {
+            return y;
+          };
+        };
+        var _ifElse = (pred) => {
+          return (x) => {
+            return (y) => {
+              return pred(x)(y);
+            };
+          };
+        };
+        var _not = (x) => {
+          return (x(_false))(_true);
+        };
+        var _and = (x) => {
+          return (y) => {
+            return (x(y))(_false);
+          };
+        };
+        var _or = (x) => {
+          return (y) => {
+            return (x(_true))(y);
+          };
+        };
+        /* ##@range_end(church_truth) */
+        /* ##@range_begin(church_truth_test) */
+        expect(
+          _true(1)(0)
+        ).to.be(
+          1
+        );
+        expect(
+          _not(_true)(1)(0)
+        ).to.be(
+          0
+        );
+        expect(
+          _and(_true)(_true)(1)(0)
+        ).to.be(
+          1
+        );
+        expect(
+          _ifElse(_true)(_false)(_true)(1)(0)
+        ).to.be(
+          0
+        );
+
+        /* ##@range_end(church_truth_test) */
+        next();
+      });
+    });
   });
   describe('パターンマッチ', () => {
-    
+    it("compare", function(next) {
+      /* #@range_begin(compare) */
+      var compare =  function(n,m){
+        if (n > m) {
+          return 1;
+        } else {
+          if(n === m) {
+            return 0;
+          } else {
+            return -1;
+          }
+        }
+      };
+      expect(
+		compare(3,2)
+	  ).to.eql(
+		1
+	  );
+      expect(
+		compare(1,1)
+	  ).to.eql(
+		0
+	  );
+      expect(
+		compare(2,3)
+	  ).to.eql(
+		  -1
+	  );
+      /* #@range_end(compare) */
+      next();
+    });
   });
   describe('代数的データ型', () => {
     it('男女の別をsum型で表現する', (next) => {
@@ -147,27 +198,60 @@ describe('制御構造', () => {
           return pattern.mul(x, y);
         };
       };
-      var exp = add(num(1), mul(num(2), num(3)));
-      var evaluate = (exp) => {
-        return match(exp, {
+      var calculate = (exp) => {
+        return match(exp, { // パターンマッチを実行する
           num: (x) => {
             return x;
           },
           add: (x, y) => {
-            return evaluate(x) + evaluate(y);
+            return calculate(x) + calculate(y);
           },
           mul: (x, y) => {
-            return evaluate(x) * evaluate(y);
+            return calculate(x) * calculate(y);
           }
         });
       };
+      var exp = add(num(1), mul(num(2), num(3)));
       expect(
-        evaluate(exp)
+        calculate(exp)
       ).to.eql(
         7
       )
       /* #@range_end(algebraic_datatype) */
       next();
     });
+  });
+  describe("反復文", function() {
+    /* #@range_begin(while_example) */
+    it("while文", function(next) {
+      var counter = 0;
+      while (counter < 10) {
+        counter += 1;
+      }
+      expect(counter).to.eql(10);
+      next();
+    });
+    /* #@range_end(while_example) */
+    /* #@range_begin(for_example) */
+    it("for文", function(next) {
+      var counter;
+      for (counter = 0; counter < 10; counter += 1) {
+        ;
+      }
+      expect(counter).to.eql(10);
+      next();
+    });
+    /* #@range_end(for_example) */
+    /* #@range_begin(forEach_example) */
+    it("forEach文", function(next) {
+      var array = [1,2,3,4,5];
+      var sum = 0;
+      array.forEach(function(element){
+        sum += element;
+      });
+      expect(sum).to.eql(15);
+      next();
+    });
+    /* #@range_end(forEach_example) */
   });
 });

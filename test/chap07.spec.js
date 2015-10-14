@@ -225,7 +225,7 @@ describe('高階関数', () => {
     //   next();
     // });
   });
-  describe('クロージ0', () => {
+  describe('クロージャー', () => {
     it('クロージャーの変数バインディング', (next) => {
       /* #@range_begin(free_variable_in_closure) */
         var outerFunction = (outerArgument) => {

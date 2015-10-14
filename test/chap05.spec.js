@@ -253,5 +253,161 @@ describe('制御構造', () => {
       next();
     });
     /* #@range_end(forEach_example) */
+	describe('再帰処理', () => {
+	  var list = {
+		empty: [],
+		cons: (n, list) => {
+          return [n].concat(list);
+		},
+		head: (list) => {
+          return list[0];
+		},
+		tail: (list) => {
+          return list.slice(1,list.length);
+		},
+		isEmpty: (list) => {
+          return list.length === 0;
+		}
+	  };
+	  describe('mapの例', () => {
+		/* #@range_begin(recursive_map) */
+		var map = (alist, transform) => {
+		  if (list.isEmpty(alist)) {
+			return list.empty;
+		  } else {
+			var x = list.head(alist);
+			var xs = list.tail(alist);
+			return list.cons(transform(x), map(xs, transform));
+		  }
+		};
+		/* #@range_end(recursive_map) */
+		var alist = list.cons(1,
+							  list.cons(2,
+										list.cons(3,
+												  list.empty)));
+		var double = (n) => {
+		  return n * 2;
+		};
+		var doubledList = map(alist, double);
+		expect(
+		  list.head(doubledList)
+		).to.eql(
+		  2
+		);
+		expect(
+		  list.head(list.tail(doubledList))
+		).to.eql(
+		  4
+		);
+		expect(
+		  list.head(list.tail(list.tail(doubledList)))
+		).to.eql(
+		  6
+		);
+      });
+	  describe('sumの例', () => {
+		/* #@range_begin(recursive_sum) */
+	  	var sum = (alist, accumulator) => {
+	  	  if (list.isEmpty(alist)) {
+	  		return accumulator;
+	  	  } else {
+			var x = list.head(alist);
+	  		var xs = list.tail(alist);
+	  		return sum(xs, accumulator + x);
+	  	  }
+	  	};
+		/* #@range_end(recursive_sum) */
+		var alist = list.cons(1,
+							  list.cons(2,
+										list.cons(3,
+												  list.empty)));
+		expect(
+		  sum(alist, 0)
+		).to.eql(
+		  6
+		);
+      });
+	  describe('maximumの例', () => {
+		/* #@range_begin(recursive_maximum) */
+	  	var maximum = (alist, accumulator) => {
+	  	  if (list.isEmpty(alist)) {
+	  		return accumulator;
+	  	  } else {
+			var x = list.head(alist);
+	  		var xs = list.tail(alist);
+			if(x > accumulator) {
+			  return maximum(xs, x);
+			} else {
+	  		  return maximum(xs, accumulator);
+			}
+	  	  }
+	  	};
+		/* #@range_end(recursive_maximum) */
+		var alist = list.cons(2,
+							  list.cons(4,
+										list.cons(1,
+												  list.empty)));
+		expect(
+		  maximum(alist, 0)
+		).to.eql(
+		  4
+		);
+      });
+	  describe('factorialの例', () => {
+		it("factorial by recursive process", function(next) {
+		  /* #@range_begin(recursive_factorial) */
+		  var factorial = (n) => {
+			if (n === 1) {
+			  return 1;
+			} else {
+			  return n * factorial(n - 1);
+			}
+		  };
+		  /* #@range_end(recursive_factorial) */
+		  expect(
+			factorial(6)
+		  ).to.eql(
+			720
+		  );
+		  next();
+		});
+		it("factorial by iterative process", function(next) {
+		  /* #@range_begin(iterative_factorial) */
+		  var factorial = (n) => {
+			return fact_iter(1, 1, n);
+		  };
+		  var fact_iter = (product, counter, max_count) => {
+			if (counter > max_count) {
+			  return product;
+			} else {
+			  return fact_iter(counter * product, counter + 1, max_count);
+			}
+		  };
+		  expect(factorial(6)).to.eql(720);
+		  /* #@range_end(iterative_factorial) */
+		  next();
+		});
+		it('命令的factorial', function(next) {
+		  /* #@range_begin(imperative_factorial) */
+		  var factorial = function(n) {
+			var index, result;
+			result = 1;
+			index = 1;
+			while (index < n + 1) {
+			  result = result * index;
+			  index = index + 1;
+			}
+			return result;
+		  };
+		  /* #@range_end(imperative_factorial) */
+		  expect(
+			factorial(5)
+		  ).to.eql(
+			120
+		  );
+		  next();
+		});
+	  });
+	});
   });
 });

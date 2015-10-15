@@ -27,6 +27,16 @@ describe('制御構造', () => {
       );
       next();
     });
+    it('ifは文である', (next) => {
+      /* ##@range_begin(if_statement) */
+	  if(true) {
+		
+	  } else {
+
+	  }
+      /* ##@range_end(if_statement) */
+      next();
+    });
     describe('真理値', () => {
       it('チャーチの真理値', (next) => {
         /* ##@range_begin(church_truth) */
@@ -78,6 +88,30 @@ describe('制御構造', () => {
           1
         );
         expect(
+          _ifElse(_true)(1)(0)
+        ).to.be(
+          1
+        );
+        expect(
+          _ifElse(_false)(1)(0)
+        ).to.be(
+          0
+        );
+        expect(((_) => {
+		  var eq = (x) => {
+			return (y) => {
+			  if(x === y) {
+				return _true;
+			  } else {
+				return _false;
+			  }
+			};
+		  };
+          return _ifElse(eq(0)(0))(1)(0);
+        })()).to.be(
+          1
+        );
+        expect(
           _ifElse(_true)(_false)(_true)(1)(0)
         ).to.be(
           0
@@ -95,7 +129,7 @@ describe('制御構造', () => {
         if (n > m) {
           return 1;
         } else {
-          if(n === m) {
+          if(n === m) {  // ネストされたif文
             return 0;
           } else {
             return -1;
@@ -103,20 +137,20 @@ describe('制御構造', () => {
         }
       };
       expect(
-		compare(3,2)
-	  ).to.eql(
-		1
-	  );
+        compare(3,2)
+      ).to.eql(
+        1
+      );
       expect(
-		compare(1,1)
-	  ).to.eql(
-		0
-	  );
+        compare(1,1)
+      ).to.eql(
+        0
+      );
       expect(
-		compare(2,3)
-	  ).to.eql(
-		  -1
-	  );
+        compare(2,3)
+      ).to.eql(
+          -1
+      );
       /* #@range_end(compare) */
       next();
     });

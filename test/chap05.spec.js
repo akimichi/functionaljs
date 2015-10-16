@@ -29,13 +29,116 @@ describe('制御構造', () => {
     });
     it('ifは文である', (next) => {
       /* ##@range_begin(if_statement) */
-	  if(true) {
-		
-	  } else {
+      if(true) {
+        
+      } else {
 
-	  }
+      }
       /* ##@range_end(if_statement) */
       next();
+    });
+    describe('コンビネータ', () => {
+      /* ##@range_begin(logical_combinator) */
+      var or = (former, latter) => {
+        return (data) => {
+          if (former(data)) {
+            return true;
+          } else {
+            if (latter(data)) {
+              return true
+            } else {
+              return false;
+            }
+          }
+        };
+      };
+      var not = (condition) => {
+        return (data) => {
+          if (condition(data)) {
+            return false;
+          } else {
+            return true;
+          }
+        };
+      };
+      var and = (former, latter) => {
+        return (data) => {
+          if (former(data) && latter(data)) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      };
+      /* ##@range_end(logical_combinator) */
+      it('倍数の組み合わせ', (next) => {
+        /* ##@range_begin(logical_combinator_test) */
+        var multiplyOfN = (n) => {
+          return (m) => {
+            if((m % n) === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        };
+        var twoFold = multiplyOfN(2);
+        var threeFold = multiplyOfN(3);
+        var twelveFold = multiplyOfN(12);
+        var id = (any) => {
+          return any;
+        };
+        expect(
+          twoFold(2)
+        ).to.eql(
+          true
+        )
+        expect(
+          and(and(twoFold,threeFold),not(twelveFold))(6)
+        ).to.eql(
+          true
+        )
+        /* ##@range_end(logical_combinator_test) */
+        expect(
+           and(twoFold,threeFold)(6)
+        ).to.eql(
+          true
+        )
+        expect(
+           and(twoFold,threeFold)(4)
+        ).to.eql(
+          false
+        )
+        expect(
+          and(and(twoFold,threeFold),not(twelveFold))(4)
+        ).to.eql(
+          false
+        )
+        next();
+      });
+      // it('2と3の倍数で 12の倍数ではない', (next) => {
+      //    var timesForN = (n) => {
+      //      return (m) => {
+      //        if((m % n) === 0) {
+      //          return true;
+      //        } else {
+      //          return false;
+      //        }
+      //      }
+      //    };
+      //    var two = timesForN(2);
+      //    var three = timesForN(3);
+      //    var notTwelve = not(timesForN(12));
+      //    var id = (any) => {
+      //      return any;
+      //    };
+      //    expect(
+      //      and(and(two, three), notTwelve)(6)(id)
+      //    ).to.eql(
+      //      false
+      //    )
+      //   next();
+      // });
     });
     describe('真理値', () => {
       it('チャーチの真理値', (next) => {
@@ -98,15 +201,15 @@ describe('制御構造', () => {
           0
         );
         expect(((_) => {
-		  var eq = (x) => {
-			return (y) => {
-			  if(x === y) {
-				return _true;
-			  } else {
-				return _false;
-			  }
-			};
-		  };
+          var eq = (x) => {
+            return (y) => {
+              if(x === y) {
+                return _true;
+              } else {
+                return _false;
+              }
+            };
+          };
           return _ifElse(eq(0)(0))(1)(0);
         })()).to.be(
           1
@@ -156,6 +259,81 @@ describe('制御構造', () => {
     });
   });
   describe('代数的データ型', () => {
+    it('Listをsum型で表現する', (next) => {
+      /* #@range_begin(list_in_algebraic_datatype) */
+      var match = (exp, pattern) => {
+        return exp.call(pattern, pattern);
+      };
+      var empty = (_) => {
+        return (pattern) => {
+          return pattern.empty(_);
+        }
+      };
+      var cons = (x, xs) => {
+        return (pattern) => {
+          return pattern.cons(x, xs);
+        };
+      };
+      var isEmpty = (list) => {
+        return match(list, {
+          empty: (list) => {
+            return true;
+          },
+          cons: (head, tail) => {
+            return false;
+          },
+        })
+      };
+      var head = (list) => {
+        return match(list, {
+          empty: (list) => {
+            return undefined;
+          },
+          cons: (head, tail) => {
+            return head;
+          },
+        })
+      };
+      var tail = (list) => {
+        return match(list, {
+          empty: (list) => {
+            return undefined;
+          },
+          cons: (head, tail) => {
+            return tail;
+          },
+        })
+      };
+      /* #@range_end(list_in_algebraic_datatype) */
+      /* #@range_begin(list_in_algebraic_datatype_test) */
+      expect(
+        isEmpty(empty())
+      ).to.eql(
+        true
+      )
+      expect(
+        isEmpty(cons(1,empty()))
+      ).to.eql(
+        false
+      )
+      expect(
+        head(cons(1,empty()))
+      ).to.be(
+        1
+      )
+      expect(
+        isEmpty(tail(cons(1,empty())))
+      ).to.be(
+        true
+      )
+      expect(
+        head(tail(cons(1,cons(2,empty()))))
+      ).to.be(
+        2
+      )
+      /* #@range_end(list_in_algebraic_datatype_test) */
+      next();
+    });
     it('男女の別をsum型で表現する', (next) => {
       var BMI = (weight /* kg */, height /* cm */) => {
         var height_in_meter = height / 100.0;
@@ -287,161 +465,161 @@ describe('制御構造', () => {
       next();
     });
     /* #@range_end(forEach_example) */
-	describe('再帰処理', () => {
-	  var list = {
-		empty: [],
-		cons: (n, list) => {
+    describe('再帰処理', () => {
+      var list = {
+        empty: [],
+        cons: (n, list) => {
           return [n].concat(list);
-		},
-		head: (list) => {
+        },
+        head: (list) => {
           return list[0];
-		},
-		tail: (list) => {
+        },
+        tail: (list) => {
           return list.slice(1,list.length);
-		},
-		isEmpty: (list) => {
+        },
+        isEmpty: (list) => {
           return list.length === 0;
-		}
-	  };
-	  describe('mapの例', () => {
-		/* #@range_begin(recursive_map) */
-		var map = (alist, transform) => {
-		  if (list.isEmpty(alist)) {
-			return list.empty;
-		  } else {
-			var x = list.head(alist);
-			var xs = list.tail(alist);
-			return list.cons(transform(x), map(xs, transform));
-		  }
-		};
-		/* #@range_end(recursive_map) */
-		var alist = list.cons(1,
-							  list.cons(2,
-										list.cons(3,
-												  list.empty)));
-		var double = (n) => {
-		  return n * 2;
-		};
-		var doubledList = map(alist, double);
-		expect(
-		  list.head(doubledList)
-		).to.eql(
-		  2
-		);
-		expect(
-		  list.head(list.tail(doubledList))
-		).to.eql(
-		  4
-		);
-		expect(
-		  list.head(list.tail(list.tail(doubledList)))
-		).to.eql(
-		  6
-		);
+        }
+      };
+      describe('mapの例', () => {
+        /* #@range_begin(recursive_map) */
+        var map = (alist, transform) => {
+          if (list.isEmpty(alist)) {
+            return list.empty;
+          } else {
+            var x = list.head(alist);
+            var xs = list.tail(alist);
+            return list.cons(transform(x), map(xs, transform));
+          }
+        };
+        /* #@range_end(recursive_map) */
+        var alist = list.cons(1,
+                              list.cons(2,
+                                        list.cons(3,
+                                                  list.empty)));
+        var double = (n) => {
+          return n * 2;
+        };
+        var doubledList = map(alist, double);
+        expect(
+          list.head(doubledList)
+        ).to.eql(
+          2
+        );
+        expect(
+          list.head(list.tail(doubledList))
+        ).to.eql(
+          4
+        );
+        expect(
+          list.head(list.tail(list.tail(doubledList)))
+        ).to.eql(
+          6
+        );
       });
-	  describe('sumの例', () => {
-		/* #@range_begin(recursive_sum) */
-	  	var sum = (alist, accumulator) => {
-	  	  if (list.isEmpty(alist)) {
-	  		return accumulator;
-	  	  } else {
-			var x = list.head(alist);
-	  		var xs = list.tail(alist);
-	  		return sum(xs, accumulator + x);
-	  	  }
-	  	};
-		/* #@range_end(recursive_sum) */
-		var alist = list.cons(1,
-							  list.cons(2,
-										list.cons(3,
-												  list.empty)));
-		expect(
-		  sum(alist, 0)
-		).to.eql(
-		  6
-		);
+      describe('sumの例', () => {
+        /* #@range_begin(recursive_sum) */
+        var sum = (alist, accumulator) => {
+          if (list.isEmpty(alist)) {
+            return accumulator;
+          } else {
+            var x = list.head(alist);
+            var xs = list.tail(alist);
+            return sum(xs, accumulator + x);
+          }
+        };
+        /* #@range_end(recursive_sum) */
+        var alist = list.cons(1,
+                              list.cons(2,
+                                        list.cons(3,
+                                                  list.empty)));
+        expect(
+          sum(alist, 0)
+        ).to.eql(
+          6
+        );
       });
-	  describe('maximumの例', () => {
-		/* #@range_begin(recursive_maximum) */
-	  	var maximum = (alist, accumulator) => {
-	  	  if (list.isEmpty(alist)) {
-	  		return accumulator;
-	  	  } else {
-			var x = list.head(alist);
-	  		var xs = list.tail(alist);
-			if(x > accumulator) {
-			  return maximum(xs, x);
-			} else {
-	  		  return maximum(xs, accumulator);
-			}
-	  	  }
-	  	};
-		/* #@range_end(recursive_maximum) */
-		var alist = list.cons(2,
-							  list.cons(4,
-										list.cons(1,
-												  list.empty)));
-		expect(
-		  maximum(alist, 0)
-		).to.eql(
-		  4
-		);
+      describe('maximumの例', () => {
+        /* #@range_begin(recursive_maximum) */
+        var maximum = (alist, accumulator) => {
+          if (list.isEmpty(alist)) {
+            return accumulator;
+          } else {
+            var x = list.head(alist);
+            var xs = list.tail(alist);
+            if(x > accumulator) {
+              return maximum(xs, x);
+            } else {
+              return maximum(xs, accumulator);
+            }
+          }
+        };
+        /* #@range_end(recursive_maximum) */
+        var alist = list.cons(2,
+                              list.cons(4,
+                                        list.cons(1,
+                                                  list.empty)));
+        expect(
+          maximum(alist, 0)
+        ).to.eql(
+          4
+        );
       });
-	  describe('factorialの例', () => {
-		it("factorial by recursive process", function(next) {
-		  /* #@range_begin(recursive_factorial) */
-		  var factorial = (n) => {
-			if (n === 1) {
-			  return 1;
-			} else {
-			  return n * factorial(n - 1);
-			}
-		  };
-		  /* #@range_end(recursive_factorial) */
-		  expect(
-			factorial(6)
-		  ).to.eql(
-			720
-		  );
-		  next();
-		});
-		it("factorial by iterative process", function(next) {
-		  /* #@range_begin(iterative_factorial) */
-		  var factorial = (n) => {
-			return fact_iter(1, 1, n);
-		  };
-		  var fact_iter = (product, counter, max_count) => {
-			if (counter > max_count) {
-			  return product;
-			} else {
-			  return fact_iter(counter * product, counter + 1, max_count);
-			}
-		  };
-		  expect(factorial(6)).to.eql(720);
-		  /* #@range_end(iterative_factorial) */
-		  next();
-		});
-		it('命令的factorial', function(next) {
-		  /* #@range_begin(imperative_factorial) */
-		  var factorial = function(n) {
-			var index, result;
-			result = 1;
-			index = 1;
-			while (index < n + 1) {
-			  result = result * index;
-			  index = index + 1;
-			}
-			return result;
-		  };
-		  /* #@range_end(imperative_factorial) */
-		  expect(
-			factorial(5)
-		  ).to.eql(
-			120
-		  );
-		  next();
-		});
-	  });
-	});
+      describe('factorialの例', () => {
+        it("factorial by recursive process", function(next) {
+          /* #@range_begin(recursive_factorial) */
+          var factorial = (n) => {
+            if (n === 1) {
+              return 1;
+            } else {
+              return n * factorial(n - 1);
+            }
+          };
+          /* #@range_end(recursive_factorial) */
+          expect(
+            factorial(6)
+          ).to.eql(
+            720
+          );
+          next();
+        });
+        it("factorial by iterative process", function(next) {
+          /* #@range_begin(iterative_factorial) */
+          var factorial = (n) => {
+            return fact_iter(1, 1, n);
+          };
+          var fact_iter = (product, counter, max_count) => {
+            if (counter > max_count) {
+              return product;
+            } else {
+              return fact_iter(counter * product, counter + 1, max_count);
+            }
+          };
+          expect(factorial(6)).to.eql(720);
+          /* #@range_end(iterative_factorial) */
+          next();
+        });
+        it('命令的factorial', function(next) {
+          /* #@range_begin(imperative_factorial) */
+          var factorial = function(n) {
+            var index, result;
+            result = 1;
+            index = 1;
+            while (index < n + 1) {
+              result = result * index;
+              index = index + 1;
+            }
+            return result;
+          };
+          /* #@range_end(imperative_factorial) */
+          expect(
+            factorial(5)
+          ).to.eql(
+            120
+          );
+          next();
+        });
+      });
+    });
   });
 });

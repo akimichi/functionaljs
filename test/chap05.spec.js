@@ -264,10 +264,8 @@ describe('制御構造', () => {
       var match = (exp, pattern) => {
         return exp.call(pattern, pattern);
       };
-      var empty = (_) => {
-        return (pattern) => {
-          return pattern.empty(_);
-        }
+      var empty = (pattern) => {
+        return pattern.empty;
       };
       var cons = (x, xs) => {
         return (pattern) => {
@@ -276,9 +274,7 @@ describe('制御構造', () => {
       };
       var isEmpty = (list) => {
         return match(list, {
-          empty: (list) => {
-            return true;
-          },
+          empty: true,
           cons: (head, tail) => {
             return false;
           },
@@ -286,9 +282,7 @@ describe('制御構造', () => {
       };
       var head = (list) => {
         return match(list, {
-          empty: (list) => {
-            return undefined;
-          },
+          empty: undefined,
           cons: (head, tail) => {
             return head;
           },
@@ -296,9 +290,7 @@ describe('制御構造', () => {
       };
       var tail = (list) => {
         return match(list, {
-          empty: (list) => {
-            return undefined;
-          },
+          empty: undefined,
           cons: (head, tail) => {
             return tail;
           },
@@ -307,27 +299,27 @@ describe('制御構造', () => {
       /* #@range_end(list_in_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */
       expect(
-        isEmpty(empty())
+        isEmpty(empty)
       ).to.eql(
         true
       )
       expect(
-        isEmpty(cons(1,empty()))
+        isEmpty(cons(1,empty))
       ).to.eql(
         false
       )
       expect(
-        head(cons(1,empty()))
+        head(cons(1,empty))
       ).to.be(
         1
       )
       expect(
-        isEmpty(tail(cons(1,empty())))
+        isEmpty(tail(cons(1,empty)))
       ).to.be(
         true
       )
       expect(
-        head(tail(cons(1,cons(2,empty()))))
+        head(tail(cons(1,cons(2,empty))))
       ).to.be(
         2
       )
@@ -434,37 +426,49 @@ describe('制御構造', () => {
     });
   });
   describe("反復文", function() {
-    /* #@range_begin(while_example) */
     it("while文", function(next) {
+      /* #@range_begin(while_example) */
       var counter = 0;
       while (counter < 10) {
         counter += 1;
       }
-      expect(counter).to.eql(10);
+      expect(
+		counter
+	  ).to.eql(
+		10
+	  );
+      /* #@range_end(while_example) */
       next();
     });
-    /* #@range_end(while_example) */
-    /* #@range_begin(for_example) */
     it("for文", function(next) {
+      /* #@range_begin(for_example) */
       var counter;
       for (counter = 0; counter < 10; counter += 1) {
         ;
       }
-      expect(counter).to.eql(10);
+      expect(
+		counter
+	  ).to.eql(
+		10
+	  );
+      /* #@range_end(for_example) */
       next();
     });
-    /* #@range_end(for_example) */
-    /* #@range_begin(forEach_example) */
     it("forEach文", function(next) {
+      /* #@range_begin(forEach_example) */
       var array = [1,2,3,4,5];
       var sum = 0;
-      array.forEach(function(element){
+      array.forEach((element) => {
         sum += element;
       });
-      expect(sum).to.eql(15);
+      expect(
+		sum
+	  ).to.eql(
+		15
+	  );
+    /* #@range_end(forEach_example) */
       next();
     });
-    /* #@range_end(forEach_example) */
     describe('再帰処理', () => {
       var list = {
         empty: [],
@@ -481,6 +485,94 @@ describe('制御構造', () => {
           return list.length === 0;
         }
       };
+      it('lengthの例', (next) => {
+        var match = (exp, pattern) => {
+          return exp.call(pattern, pattern);
+        };
+        var empty = (pattern) => {
+          return pattern.empty;
+        };
+        var cons = (x, xs) => {
+          return (pattern) => {
+            return pattern.cons(x, xs);
+          };
+        };
+        var isEmpty = (list) => {
+          return match(list, {
+            empty: true,
+            cons: (head, tail) => {
+              return false;
+            },
+          })
+        };
+        var head = (list) => {
+          return match(list, {
+            empty: undefined,
+            cons: (head, tail) => {
+              return head;
+            },
+          })
+        };
+        var tail = (list) => {
+          return match(list, {
+            empty: undefined,
+            cons: (head, tail) => {
+              return tail;
+            },
+          })
+        };
+        /* #@range_begin(recursive_length) */
+        var length = (list, accumulator) => {
+          return match(list, {
+            empty: accumulator,
+            cons: (head, tail) => {
+              return length(tail, accumulator + 1);
+            },
+          })
+        };
+        expect(
+          length(empty, 0)
+        ).to.eql(
+          0
+        )
+        expect(
+          length(cons(1,empty), 0)
+        ).to.eql(
+          1
+        )
+        expect(
+          length(cons(1,cons(2,cons(3,empty))),0)
+        ).to.eql(
+          3
+        )
+        /* #@range_end(recursive_length) */
+        /* #@range_begin(recursive_sum) */
+        var sum = (list, accumulator) => {
+          return match(list, {
+            empty: accumulator,
+            cons: (head, tail) => {
+              return sum(tail, accumulator + head);
+            },
+          })
+        };
+        expect(
+          sum(empty, 0)
+        ).to.eql(
+          0
+        )
+        expect(
+          sum(cons(1,empty), 0)
+        ).to.eql(
+          1
+        )
+        expect(
+          sum(cons(1,cons(2,cons(3,empty))),0)
+        ).to.eql(
+          6
+        )
+        /* #@range_end(recursive_sum) */
+        next();
+      });
       describe('mapの例', () => {
         /* #@range_begin(recursive_map) */
         var map = (alist, transform) => {

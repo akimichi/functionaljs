@@ -37,108 +37,100 @@ describe('制御構造', () => {
       /* ##@range_end(if_statement) */
       next();
     });
-    describe('コンビネータ', () => {
-      /* ##@range_begin(logical_combinator) */
-      var or = (former, latter) => {
-        return (data) => {
-          if (former(data)) {
-            return true;
+    it('ifの非正格性', (next) => {
+      /* ##@range_begin(if_nonstrict) */
+      var infiniteLoop = (x) => {
+        return infiniteLoop(x);
+      };
+      var func = (x) => {
+        if(true) {
+          return x;
+        } else {
+          return infiniteLoop(x);
+        }
+      };
+      expect(
+        func(1)
+      ).to.eql(
+        1
+      );
+      /* ##@range_end(if_nonstrict) */
+      next();
+    });
+    it("三項演算子", (next) => {
+      /* ##@range_begin(trinary_if) */
+      var signum = (n) => {
+        return (n > 0)?  1 : (n === 0)? 0 : -1;
+      };
+      expect(
+        signum(3)
+      ).to.eql(
+        1
+      );
+      expect(
+        signum(-3)
+      ).to.eql(
+          -1
+      );
+      expect(
+        signum(0)
+      ).to.eql(
+        0
+      );
+      /* ##@range_end(trinary_if) */
+      next();
+    });
+    it('関数渡しで条件文を構築する', (next) => {
+      /* #@range_begin(conditional)         */
+      var conditional = function(pred, trueExpr, falseExpr){
+        return (x) => {
+          if(pred(x)){
+            return trueExpr(x);
           } else {
-            if (latter(data)) {
-              return true
-            } else {
-              return false;
-            }
+            return falseExpr(x);
           }
         };
       };
-      var not = (condition) => {
-        return (data) => {
-          if (condition(data)) {
-            return false;
-          } else {
-            return true;
-          }
+      var lessThan = (n) => {
+        return (x) => {
+          return x < n;
         };
       };
-      var and = (former, latter) => {
-        return (data) => {
-          if (former(data) && latter(data)) {
-            return true;
-          } else {
-            return false;
-          }
+      var succ = (n) => {
+        return n + 1;
+      };
+      expect(
+        conditional(lessThan(3), function(_){ return 1;},function(_){ return 0;})(2)
+      ).to.eql(
+        1
+      );
+      var infiniteLoop = (x) => {
+        return infiniteLoop(x);
+      };
+      expect(conditional(lessThan(3), function(x){ return x;},function(x){ return infiniteLoop(x);})(2)).to.eql(2);
+      /* #@range_end(conditional) */
+      next();
+    });
+    it('関数渡しで反復文を構築する', function(next) {
+      /* #@range_begin(loop)            */
+      var loop = function(pred, accumulator, expression){
+        if(pred(accumulator)){
+          return loop(pred, expression(accumulator), expression);
+        } else {
+          return accumulator;
+        }
+      };
+      var lessThan = function(n){
+        return function(x){
+          return x < n;
         };
       };
-      /* ##@range_end(logical_combinator) */
-      it('倍数の組み合わせ', (next) => {
-        /* ##@range_begin(logical_combinator_test) */
-        var multiplyOfN = (n) => {
-          return (m) => {
-            if((m % n) === 0) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-        };
-        var twoFold = multiplyOfN(2);
-        var threeFold = multiplyOfN(3);
-        var twelveFold = multiplyOfN(12);
-        var id = (any) => {
-          return any;
-        };
-        expect(
-          twoFold(2)
-        ).to.eql(
-          true
-        )
-        expect(
-          and(and(twoFold,threeFold),not(twelveFold))(6)
-        ).to.eql(
-          true
-        )
-        /* ##@range_end(logical_combinator_test) */
-        expect(
-           and(twoFold,threeFold)(6)
-        ).to.eql(
-          true
-        )
-        expect(
-           and(twoFold,threeFold)(4)
-        ).to.eql(
-          false
-        )
-        expect(
-          and(and(twoFold,threeFold),not(twelveFold))(4)
-        ).to.eql(
-          false
-        )
-        next();
-      });
-      // it('2と3の倍数で 12の倍数ではない', (next) => {
-      //    var timesForN = (n) => {
-      //      return (m) => {
-      //        if((m % n) === 0) {
-      //          return true;
-      //        } else {
-      //          return false;
-      //        }
-      //      }
-      //    };
-      //    var two = timesForN(2);
-      //    var three = timesForN(3);
-      //    var notTwelve = not(timesForN(12));
-      //    var id = (any) => {
-      //      return any;
-      //    };
-      //    expect(
-      //      and(and(two, three), notTwelve)(6)(id)
-      //    ).to.eql(
-      //      false
-      //    )
-      //   next();
-      // });
+      var succ = function(n){
+        return n + 1;
+      };
+      expect(loop(lessThan(3), 0, succ)).to.eql(3);
+      /* #@range_end(loop) */
+      next();
     });
     describe('真理値', () => {
       it('チャーチの真理値', (next) => {
@@ -225,8 +217,57 @@ describe('制御構造', () => {
       });
     });
   });
-  describe('パターンマッチ', () => {
-    it("compare", function(next) {
+  describe('switch文', () => {
+    it("信号機", (next) => {
+      var forward, stop, watchfulForward;
+      /* #@range_begin(signal) */
+      var move;
+      var signal = (light) => {
+        switch(light){
+        case "green":
+          move = forward;
+          break;
+        case "red":
+          move = stop;
+          break;
+        case "yellow":
+          move = watchfulForward;
+          break;
+        default:
+          throw {
+            name: "そのような信号はありません",
+            message: "unknown: " + light
+          };
+        }
+      }
+      /* #@range_end(signal) */
+      next();
+    });
+    it("通貨の例", (next) => {
+      /* #@range_begin(currency) */
+      var move;
+      var signal = (currency) => {
+        switch(currency){
+        case "yen":
+          move = forward;
+          break;
+        case "dollar":
+          move = stop;
+          break;
+        case "euro":
+          move = watchfulForward;
+          break;
+        default:
+          throw {
+            name: "対応していない通貨です",
+            message: "unknown: " + currency
+          };
+        }
+      }
+      /* #@range_end(currency) */
+      next();
+    });
+    it("compare", (next) => {
       /* #@range_begin(compare) */
       var compare =  function(n,m){
         if (n > m) {
@@ -257,32 +298,143 @@ describe('制御構造', () => {
       /* #@range_end(compare) */
       next();
     });
+    describe('コンビネータ', () => {
+      var multiplyOf = (n) => {
+        return (m) => {
+          if((m % n) === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      };
+      var twoFold = multiplyOf(2);
+      var threeFold = multiplyOf(3);
+      var twelveFold = multiplyOf(12);
+      it('2と3の倍数で 12の倍数ではない', (next) => {
+        /* ##@range_begin(twelveFoldAndThreeFoldButNotTwelveFoldByConditional) */
+        var twoFold = (n) => { // 2の倍数を判定する
+          if((n % 2) === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        // 3の倍数を判定する threeFold 、12の倍数を判定する twelveFoldも同様に定義する
+        var twelveFoldAndThreeFoldButNotTwelveFold = (n) => {
+          if(twoFold(n) && threeFold(n)) {
+            if(twelveFold(n)) {
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            return false;
+          }
+        };
+        expect(
+          twelveFoldAndThreeFoldButNotTwelveFold(6)
+        ).to.eql(
+          true
+        )
+        expect(
+          twelveFoldAndThreeFoldButNotTwelveFold(12)
+        ).to.eql(
+          false
+        )
+        /* ##@range_end(twelveFoldAndThreeFoldButNotTwelveFoldByConditional) */
+        next();
+      });
+      /* ##@range_begin(logical_combinator) */
+      var or = (former, latter) => {
+        return (data) => {
+          if (former(data)) {
+            return true;
+          } else {
+            if (latter(data)) {
+              return true
+            } else {
+              return false;
+            }
+          }
+        };
+      };
+      var not = (condition) => {
+        return (data) => {
+          if (condition(data)) {
+            return false;
+          } else {
+            return true;
+          }
+        };
+      };
+      var and = (former, latter) => {
+        return (data) => {
+          if (former(data) && latter(data)) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      };
+      /* ##@range_end(logical_combinator) */
+      it('倍数の組み合わせ', (next) => {
+        /* ##@range_begin(logical_combinator_test) */
+        expect(
+          twoFold(2)
+        ).to.eql(
+          true
+        )
+        expect(
+          and(and(twoFold,threeFold),not(twelveFold))(6)
+        ).to.eql(
+          true
+        )
+        /* ##@range_end(logical_combinator_test) */
+        expect(
+           and(twoFold,threeFold)(6)
+        ).to.eql(
+          true
+        )
+        expect(
+           and(twoFold,threeFold)(4)
+        ).to.eql(
+          false
+        )
+        expect(
+          and(and(twoFold,threeFold),not(twelveFold))(4)
+        ).to.eql(
+          false
+        )
+        next();
+      });
+    });
   });
   describe('代数的データ型', () => {
-    it('Listをsum型で表現する', (next) => {
+    it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
-      var match = (exp, pattern) => {
+      var match = (exp, pattern) => { // パターンマッチを実現する関数
         return exp.call(pattern, pattern);
       };
       var empty = (pattern) => {
         return pattern.empty;
       };
-      var cons = (x, xs) => {
+      var cons = (value, list) => {
         return (pattern) => {
-          return pattern.cons(x, xs);
+          return pattern.cons(value, list);
         };
       };
       var isEmpty = (list) => {
-        return match(list, {
+        return match(list, { // match関数で分岐する
           empty: true,
-          cons: (head, tail) => {
+          cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
             return false;
           },
         })
       };
       var head = (list) => {
         return match(list, {
-          empty: undefined,
+          empty: undefined, // 空のリストには先頭要素はありません
           cons: (head, tail) => {
             return head;
           },
@@ -290,7 +442,7 @@ describe('制御構造', () => {
       };
       var tail = (list) => {
         return match(list, {
-          empty: undefined,
+          empty: undefined,  // 空のリストには末尾要素はありません
           cons: (head, tail) => {
             return tail;
           },
@@ -299,27 +451,27 @@ describe('制御構造', () => {
       /* #@range_end(list_in_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */
       expect(
-        isEmpty(empty)
+        isEmpty(empty)         // [] は空のリストではある
       ).to.eql(
         true
       )
       expect(
-        isEmpty(cons(1,empty))
+        isEmpty(cons(1,empty)) // [1] は空のリストではない
       ).to.eql(
         false
       )
       expect(
-        head(cons(1,empty))
+        head(cons(1,empty))    // [1]の先頭要素は 1 である
       ).to.be(
         1
       )
       expect(
-        isEmpty(tail(cons(1,empty)))
+        isEmpty(tail(cons(1,empty)))     // [1]の末尾要素は空のリストである
       ).to.be(
         true
       )
       expect(
-        head(tail(cons(1,cons(2,empty))))
+        head(tail(cons(1,cons(2,empty)))) // [1,2]の2番目の要素は2である
       ).to.be(
         2
       )
@@ -426,19 +578,55 @@ describe('制御構造', () => {
     });
   });
   describe("反復文", function() {
-    it("while文", function(next) {
-      /* #@range_begin(while_example) */
-      var counter = 0;
-      while (counter < 10) {
-        counter += 1;
-      }
-      expect(
-		counter
-	  ).to.eql(
-		10
-	  );
-      /* #@range_end(while_example) */
-      next();
+    describe("while文", () => {
+      it("カウント", (next) => {
+		/* #@range_begin(while_counter) */
+		var counter = 0;
+		while (counter < 10) {
+          counter = counter + 1;
+		}
+		expect(
+          counter
+		).to.eql(
+          10
+		);
+		/* #@range_end(while_counter) */
+		next();
+      });
+      // it("length", (next) => {
+      //   /* #@range_begin(while_length) */
+      //   var array = [1,2,3,4,5];
+	  //   var length = (array) => {
+	  // 	var counter = 0;
+	  // 	while (counter < 10) {
+      //       counter += 1;
+	  // 	}
+	  //   }
+      //   expect(
+      //     counter
+      //   ).to.eql(
+      //     10
+      //   );
+      //   /* #@range_end(while_length) */
+      //   next();
+      // });
+      // it("whileによるsum", (next) => {
+      //   /* #@range_begin(while_sum) */
+      //   var array = [1,2,3,4,5];
+	  //   var sum = (array) => {
+	  // 	var counter = 0;
+	  // 	while (counter < 10) {
+      //       counter += 1;
+	  // 	}
+	  //   }
+      //   expect(
+      //     counter
+      //   ).to.eql(
+      //     10
+      //   );
+      //   /* #@range_end(while_sum) */
+      //   next();
+      // });
     });
     it("for文", function(next) {
       /* #@range_begin(for_example) */
@@ -447,27 +635,46 @@ describe('制御構造', () => {
         ;
       }
       expect(
-		counter
-	  ).to.eql(
-		10
-	  );
+        counter
+      ).to.eql(
+        10
+      );
       /* #@range_end(for_example) */
       next();
     });
-    it("forEach文", function(next) {
-      /* #@range_begin(forEach_example) */
-      var array = [1,2,3,4,5];
-      var sum = 0;
-      array.forEach((element) => {
-        sum += element;
+    describe('forEach文', () => {
+      it("forEach文によるsum", (next) => {
+		/* #@range_begin(forEach_sum) */
+		var array = [1,2,3,4,5];
+		var sum = 0;
+		array.forEach((element) => {
+          sum += element;
+		});
+		expect(
+          sum
+		).to.eql(
+          15
+		);
+		/* #@range_end(forEach_sum) */
+		next();
       });
-      expect(
-		sum
-	  ).to.eql(
-		15
-	  );
-    /* #@range_end(forEach_example) */
-      next();
+      it("forEach文によるlength", (next) => {
+		/* #@range_begin(forEach_length) */
+		var length = (array) => {
+		  var result = 0;
+		  array.forEach((element) => {
+			result += 1;
+		  });
+		  return result;
+		};
+		expect(
+          length([1,2,3,4,5])
+		).to.eql(
+          5
+		);
+		/* #@range_end(forEach_length) */
+		next();
+      });
     });
     describe('再帰処理', () => {
       var list = {
@@ -526,7 +733,7 @@ describe('制御構造', () => {
           return match(list, {
             empty: accumulator,
             cons: (head, tail) => {
-              return length(tail, accumulator + 1);
+              return length(tail, accumulator + 1); // length関数を再帰的に呼び出す
             },
           })
         };

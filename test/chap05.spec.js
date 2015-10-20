@@ -5,6 +5,28 @@ var util = require('util');
 
 describe('制御構造', () => {
   describe('条文分岐', () => {
+    it('偶数の例', (next) => {
+      /* ##@range_begin(even_function)*/
+      var even = (n) => {
+        if((n % 2) == 0) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+      /* ##@range_end(even_function)*/
+      expect(
+        even(2)
+      ).to.eql(
+        true
+      );
+      expect(
+        even(3)
+      ).to.eql(
+        false
+      );
+      next();
+    });
     it('逆数の例', (next) => {
       /* ##@range_begin(inverse_function)*/
       var inverse = (n) => {
@@ -30,7 +52,7 @@ describe('制御構造', () => {
     it('ifは文である', (next) => {
       /* ##@range_begin(if_statement) */
       if(true) {
-        
+
       } else {
 
       }
@@ -46,7 +68,11 @@ describe('制御構造', () => {
         if(true) {
           return x;
         } else {
-          return infiniteLoop(x);
+          throw {
+            name: "",
+            message: "ここには決して到達しません"
+          };
+          //return infiniteLoop(x);
         }
       };
       expect(
@@ -329,7 +355,7 @@ describe('制御構造', () => {
             if(fiveFold(n)) {
               return false;
             } else { // 2の倍数かつ3の倍数で、5の倍数ではない
-              return true; 
+              return true;
             }
           } else {
             return false;
@@ -594,7 +620,7 @@ describe('制御構造', () => {
         /* #@range_begin(while_counter) */
         var counter = 0;         // 変数の初期化
         while (counter < 10) {   // 反復の条件
-          counter = counter + 1;
+          counter = counter + 1; // 変数の更新
         }
         expect(
           counter

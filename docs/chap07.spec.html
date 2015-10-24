@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>chap07.spec.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>chap07.spec.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+
+describe(<span class="hljs-string">'高階関数'</span>, () =&gt; {
+  describe(<span class="hljs-string">'不変なデータ型を作る'</span>, () =&gt; {
+    it(<span class="hljs-string">'不変なオブジェクト型を作る'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>var objects = {
+  empty: {
+  },
+  set: (key,value,obj) =&gt; {
+    expect(obj).to.an(‘object’);
+    obj[key] = value;
+    return obj;
+  },
+  get: (key,obj) =&gt; {
+    expect(obj).to.an(‘object’);
+    return obj[key];
+  },
+  isEmpty: (obj) =&gt; {
+    expect(obj).to.an(‘object’);
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+    for(var key in obj){
+      if(hasOwnProperty.call(obj, key))
+        return false;
+    }
+  },
+  isNotEmpty: (obj) =&gt; {
+    expect(obj).to.an(‘object’);
+    return ! this.objects.isEmpty(obj);
+  },
+};</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(immutable_object_type) */</span>
+      <span class="hljs-keyword">var</span> objects = {
+        empty: (key) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+        },
+        get: (key, obj) =&gt; {
+          <span class="hljs-keyword">return</span> obj(key);
+        },
+        set: (key, value, obj) =&gt; {
+          <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+          <span class="hljs-keyword">return</span> (key2) =&gt; {
+            <span class="hljs-keyword">if</span>(key === key2) {
+              <span class="hljs-keyword">return</span> value;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> self.get(key2,obj)
+            }
+          }
+        }
+      };
+      <span class="hljs-comment">/* #@range_end(immutable_object_type) */</span>
+      <span class="hljs-comment">/* #@range_begin(immutable_object_type_test) */</span>
+      expect(
+        objects.get(<span class="hljs-string">"R2D2"</span>, objects.set(<span class="hljs-string">"R2D2"</span>, <span class="hljs-string">"Star Wars"</span>, objects.set(<span class="hljs-string">"HAL9000"</span>,<span class="hljs-string">"2001: a space odessay"</span>,objects.empty)))
+      ).to.eql(
+        <span class="hljs-string">"Star Wars"</span>
+      )
+      expect(
+        objects.get(<span class="hljs-string">"R2D2"</span>, objects.set(<span class="hljs-string">"HAL9000"</span>,<span class="hljs-string">"2001: a space odessay"</span>,objects.empty))
+      ).to.eql(
+        <span class="hljs-literal">undefined</span>
+      )
+      expect(
+        objects.get(<span class="hljs-string">"HAL9000"</span>, objects.set.call(objects,<span class="hljs-string">"C3PO"</span>, <span class="hljs-string">"Star Wars"</span>, objects.set.call(objects,<span class="hljs-string">"R2D2"</span>, <span class="hljs-string">"Star Wars"</span>, objects.set.call(objects,<span class="hljs-string">"HAL9000"</span>,<span class="hljs-string">"2001: a space odessay"</span>,objects.empty))))
+      ).to.eql(
+        <span class="hljs-string">"2001: a space odessay"</span>
+      )
+      <span class="hljs-comment">/* #@range_end(immutable_object_type_test) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'不変なオブジェクト型を作る(改良版)'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(immutable_object_type_improved) */</span>
+      <span class="hljs-keyword">var</span> objects = {
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+        },
+        get: (key, obj) =&gt; {
+          <span class="hljs-keyword">return</span> obj(key);
+        },
+        set: (key, value, obj) =&gt; {
+          <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+          <span class="hljs-keyword">return</span> (key2) =&gt; {
+            <span class="hljs-keyword">if</span>(key === key2) {
+              <span class="hljs-keyword">return</span> value;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> self.get(key2,obj)
+            }
+          }
+        },
+        mkObject: (obj) =&gt; {
+          <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+          <span class="hljs-keyword">var</span> keys = (o) =&gt; {
+            <span class="hljs-keyword">var</span> result = [];
+            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> prop <span class="hljs-keyword">in</span> o) {
+              <span class="hljs-keyword">if</span>(o.hasOwnProperty(prop))
+                result.push(prop);
+            }
+            <span class="hljs-keyword">return</span> result;
+          };
+          <span class="hljs-keyword">return</span> keys(obj).reduce((accumulator, key) =&gt; {
+            <span class="hljs-keyword">return</span> self.set.call(self,key, obj[key], accumulator);
+          }, self.empty)
+        }
+      };
+      <span class="hljs-comment">/* #@range_end(immutable_object_type_improved) */</span>
+      <span class="hljs-comment">/* #@range_begin(immutable_object_type_improved_test) */</span>
+       expect(
+        objects.get(<span class="hljs-string">"R2D2"</span>, objects.set(<span class="hljs-string">"HAL9000"</span>,<span class="hljs-string">"2001: a space odessay"</span>,objects.empty))
+      ).to.eql(
+        <span class="hljs-literal">undefined</span>
+      )
+      expect(
+        objects.get(<span class="hljs-string">"HAL9000"</span>, objects.mkObject.call(objects,{<span class="hljs-string">"HAL9000"</span> : <span class="hljs-string">"2001: a space odessay"</span>, <span class="hljs-string">"R2D2"</span>: <span class="hljs-string">"Star Wars"</span>}))
+      ).to.eql(
+        <span class="hljs-string">"2001: a space odessay"</span>
+      )
+      expect(
+        objects.get(<span class="hljs-string">"R2D2"</span>, objects.mkObject.call(objects,{<span class="hljs-string">"HAL9000"</span> : <span class="hljs-string">"2001: a space odessay"</span>, <span class="hljs-string">"R2D2"</span>: <span class="hljs-string">"Star Wars"</span>}))
+      ).to.eql(
+        <span class="hljs-string">"Star Wars"</span>
+      )
+      <span class="hljs-comment">/* #@range_end(immutable_object_type_improved_test) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'不変な配列型'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>(define (cons x y)
+  (lambda (m) (m x y)))
+(define (car z)
+  (z (lambda (p q) p)))
+(define (cdr z)
+  (z (lambda (p q) q)))</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(immutable_array_type) */</span>
+      <span class="hljs-keyword">var</span> seq = {
+        empty: (index) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        },
+        cons: (head,tail) =&gt; {
+          <span class="hljs-keyword">return</span> (f) =&gt; {
+            <span class="hljs-keyword">return</span> f(head,tail);
+          };
+        },
+        head: (array) =&gt; {
+          <span class="hljs-keyword">return</span> array((head,tail) =&gt; {
+            <span class="hljs-keyword">return</span> head;
+          });
+        },
+        tail: (array) =&gt; {
+          <span class="hljs-keyword">return</span> array((head,tail) =&gt; {
+            <span class="hljs-keyword">return</span> tail;
+          });
+        },
+        at: (index,array) =&gt; {
+          <span class="hljs-keyword">if</span>(index === <span class="hljs-number">0</span>){
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.head(array);
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.at(index -<span class="hljs-number">1</span>, <span class="hljs-keyword">this</span>.tail(array));
+          }
+        }
+      };
+      <span class="hljs-keyword">var</span> list = seq.cons(<span class="hljs-number">1</span>,seq.cons(<span class="hljs-number">2</span>,seq.cons(<span class="hljs-number">3</span>,seq.empty)));
+      expect(
+        seq.head(list)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      )
+      expect(
+        seq.head(seq.tail(list))
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      )
+      expect(
+        seq.at(<span class="hljs-number">0</span>,list)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      )
+      expect(
+        seq.at(<span class="hljs-number">1</span>,list)
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      )
+      expect(
+        seq.at(<span class="hljs-number">2</span>,list)
+      ).to.eql(
+        <span class="hljs-number">3</span>
+      )
+      <span class="hljs-comment">/* #@range_end(immutable_array_type) */</span>
+      next();
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>it(‘不変な配列型’, (next) =&gt; {
+  var arrays = {
+    empty: [],
+    cons: (any,array) =&gt; {
+      expect(array).to.an(‘array’);
+      return [any].concat(array);
+    },
+    head: (ary) =&gt; {
+      expect(ary).to.an(‘array’);
+      return ary[0];
+    },
+    tail: (ary) =&gt; {
+      expect(ary).to.an(‘array’);
+      expect(self.isNonEmpty(ary)).to.be.ok();
+      return ary.slice(1,ary.length);
+    },
+    get: (index,ary) =&gt; {
+      expect(index).to.be.a(‘number’);
+      expect(ary).to.an(‘array’);
+      return ary[index];
+    },
+    isEmpty: (ary) =&gt; {
+      expect(ary).to.an(‘array’);
+      return self.equal.call(self,ary.length)(0);
+    },
+    isNotEmpty: (ary) =&gt; {
+      expect(ary).to.an(‘array’);
+      return self.not.call(self,self.arrays.isEmpty(ary));
+    }
+  };
+  expect(
+    arrays.cons(1,arrays.empty)
+  ).to.eql(
+    [1]
+  )
+  next();
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  });
+  describe(<span class="hljs-string">'クロージャー'</span>, () =&gt; {
+    it(<span class="hljs-string">'クロージャーの変数バインディング'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(free_variable_in_closure) */</span>
+        <span class="hljs-keyword">var</span> outerFunction = (outerArgument) =&gt; {
+          <span class="hljs-keyword">var</span> innerFunction = (innerArgument) =&gt; {
+            <span class="hljs-keyword">return</span> outerArgument + innerArgument;
+          };
+          <span class="hljs-keyword">return</span> innerFunction;
+        }
+      <span class="hljs-comment">/* #@range_end(free_variable_in_closure) */</span>
+      next();
+    });
+  });
+  describe(<span class="hljs-string">'コンビネーター'</span>, () =&gt; {
+    it(<span class="hljs-string">'コンビネーター・ライブラリー'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(combinator_library) */</span>
+      <span class="hljs-keyword">var</span> id = (any) =&gt; {
+        <span class="hljs-keyword">return</span> any;
+      };
+      <span class="hljs-keyword">var</span> get = (key) =&gt; {
+          <span class="hljs-keyword">return</span> (obj) =&gt; {
+            <span class="hljs-keyword">return</span> obj[key];
+          };
+      };
+      <span class="hljs-keyword">var</span> isEqual = (n1) =&gt; {
+        <span class="hljs-keyword">return</span> (n2) =&gt; {
+          <span class="hljs-keyword">return</span> n2 === n1;
+        };
+      };
+      <span class="hljs-keyword">var</span> isLessThan = (n1) =&gt; {
+        <span class="hljs-keyword">return</span> (n2) =&gt; {
+          <span class="hljs-keyword">return</span> n1 &gt; n2;
+        };
+      };
+      <span class="hljs-keyword">var</span> isMoreThan = (n1) =&gt; {
+        <span class="hljs-keyword">return</span> (n2) =&gt; {
+          <span class="hljs-keyword">return</span> n1 &lt; n2;
+        };
+      };
+      <span class="hljs-keyword">var</span> not = (predicate) =&gt; {
+        <span class="hljs-keyword">return</span> (data) =&gt; {
+          <span class="hljs-keyword">return</span> ! predicate(data);
+        }
+      };
+      <span class="hljs-keyword">var</span> within = (lower) =&gt; {
+        <span class="hljs-keyword">return</span> (upper) =&gt; {
+          <span class="hljs-keyword">return</span> (data) =&gt; {
+            <span class="hljs-keyword">return</span> (extractor) =&gt; {
+              <span class="hljs-keyword">return</span> and(extractor, isMoreThan(lower))(extractor, isLessThan(upper))(data);
+            };
+          };
+        };
+      };
+      <span class="hljs-keyword">var</span> and = (firstExtractor, firstPredicate) =&gt; {
+        <span class="hljs-keyword">return</span> (nextExtractor, nextPredicate) =&gt; {
+          <span class="hljs-keyword">return</span> (data) =&gt; {
+            <span class="hljs-keyword">var</span> firstResult = firstPredicate(firstExtractor(data))
+            <span class="hljs-keyword">if</span>(! firstResult) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> nextPredicate(nextExtractor(data));
+            }
+          }
+        };
+      };
+      <span class="hljs-keyword">var</span> or = (firstExtractor, firstPredicate) =&gt; {
+        <span class="hljs-keyword">return</span> (nextExtractor, nextPredicate) =&gt; {
+          <span class="hljs-keyword">return</span> (data) =&gt; {
+            <span class="hljs-keyword">var</span> firstResult = firstPredicate(firstExtractor(data))
+            <span class="hljs-keyword">if</span>(firstResult) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> nextPredicate(nextExtractor(data));
+            }
+          }
+        };
+      };
+      <span class="hljs-comment">/* #@range_end(combinator_library) */</span>
+      <span class="hljs-comment">/* #@range_begin(combinator_library_test) */</span>
+      <span class="hljs-keyword">var</span> data = {
+        temp: <span class="hljs-number">24</span>,
+        time: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-string">"2013/2/15 17:57:27"</span>)
+      };
+      expect(((_) =&gt; {
+        <span class="hljs-keyword">var</span> getTemp = (data) =&gt; {
+          <span class="hljs-keyword">return</span> get(<span class="hljs-string">'temp'</span>)(data);
+        };
+        <span class="hljs-keyword">var</span> getHour = (data) =&gt; {
+          <span class="hljs-keyword">return</span> get(<span class="hljs-string">'time'</span>)(data).getHours();
+        };
+        <span class="hljs-keyword">return</span> and(getTemp, isMoreThan(<span class="hljs-number">20</span>))(getHour, isEqual(<span class="hljs-number">17</span>))(data)
+      })()).to.eql(
+        <span class="hljs-literal">true</span>
+      )
+      expect(((_) =&gt; {
+        <span class="hljs-keyword">var</span> getTemp = (data) =&gt; {
+          <span class="hljs-keyword">return</span> get(<span class="hljs-string">'temp'</span>)(data);
+        };
+        <span class="hljs-keyword">var</span> getHour = (data) =&gt; {
+          <span class="hljs-keyword">return</span> get(<span class="hljs-string">'time'</span>)(data).getHours();
+        };
+        <span class="hljs-keyword">return</span> or(getTemp, isMoreThan(<span class="hljs-number">30</span>))(getHour, isEqual(<span class="hljs-number">17</span>))(data)
+      })()).to.eql(
+        <span class="hljs-literal">true</span>
+      )
+      expect(
+        within(<span class="hljs-number">20</span>)(<span class="hljs-number">30</span>)(get(<span class="hljs-string">'temp'</span>)(data))(id)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      )
+      expect(
+        within(<span class="hljs-number">20</span>)(<span class="hljs-number">30</span>)(data)(get(<span class="hljs-string">'temp'</span>))
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      )
+      expect(
+        within(<span class="hljs-number">20</span>)(<span class="hljs-number">30</span>)(data)((data) =&gt; {
+          <span class="hljs-keyword">return</span> get(<span class="hljs-string">'temp'</span>)(data)
+        })
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      )
+      <span class="hljs-comment">/* #@range_end(combinator_library_test) */</span>
+      next();
+    });
+  });
+  describe(<span class="hljs-string">'モナドを作る'</span>, () =&gt; {
+    describe(<span class="hljs-string">'Maybeモナド'</span>, () =&gt; {
+      <span class="hljs-keyword">var</span> id = (any) =&gt; {
+        <span class="hljs-keyword">return</span> any;
+      };
+      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
+        <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
+      };
+      it(<span class="hljs-string">'代数的データ型を作る'</span>)
+      describe(<span class="hljs-string">'Maybeモナドを作る'</span>, () =&gt; {
+        <span class="hljs-comment">/* #@range_begin(maybe_monad) */</span>
+        <span class="hljs-keyword">var</span> just = (value) =&gt; {
+          <span class="hljs-keyword">return</span> (pattern) =&gt; {
+            <span class="hljs-keyword">return</span> pattern.just(value);
+          };
+        };
+        <span class="hljs-keyword">var</span> nothing = ((_) =&gt; {
+          <span class="hljs-keyword">return</span> (pattern) =&gt; {
+            <span class="hljs-keyword">return</span> pattern.nothing(_);
+          };
+        })(<span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">var</span> unit = (value) =&gt; {
+          <span class="hljs-keyword">if</span>(value){
+            <span class="hljs-keyword">return</span> just(value);
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> nothing(<span class="hljs-literal">null</span>);
+          }
+        };
+        <span class="hljs-keyword">var</span> isEqual = (maybeA) =&gt; {
+          <span class="hljs-keyword">return</span> (maybeB) =&gt; {
+            <span class="hljs-keyword">return</span> match(maybeA,{
+              just: (valueA) =&gt; {
+                <span class="hljs-keyword">return</span> match(maybeB,{
+                  just: (valueB) =&gt; {
+                    <span class="hljs-keyword">return</span> (valueA === valueB);
+                  },
+                  nothing: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                  }
+                });
+              },
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> match(maybeB,{
+                  just: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                  },
+                  nothing: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                  }
+                });
+              }
+            });
+          };
+        };
+        <span class="hljs-keyword">var</span> map = (maybe) =&gt; {
+          <span class="hljs-keyword">return</span> (transform) =&gt; {
+            expect(transform).to.a(<span class="hljs-string">'function'</span>);
+            <span class="hljs-keyword">return</span> match(maybe,{
+              just: (value) =&gt; {
+                <span class="hljs-keyword">return</span> unit(transform(value));
+              },
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> nothing;
+              }
+            });
+          };
+        };
+        <span class="hljs-keyword">var</span> flatMap = (maybe) =&gt; {
+          <span class="hljs-keyword">return</span> (transform) =&gt; {
+            expect(transform).to.a(<span class="hljs-string">'function'</span>);
+            <span class="hljs-keyword">return</span> match(maybe,{
+              just: (value) =&gt; {
+                <span class="hljs-keyword">return</span> transform(value);
+              },
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> nothing;
+              }
+            });
+          };
+        };
+        <span class="hljs-comment">/* #@range_end(maybe_monad) */</span>
+        it(<span class="hljs-string">"map id == id"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>)</span>{
+          <span class="hljs-comment">/* #@range_begin(maybe_monad_test) */</span>
+          <span class="hljs-keyword">var</span> justOne = just(<span class="hljs-number">1</span>);
+          expect(
+            isEqual(map(justOne)(id))(id(justOne))
+          ).to.be(
+            <span class="hljs-literal">true</span>
+          );
+          expect(
+            isEqual(map(nothing)(id))(id(nothing))
+          ).to.be(
+            <span class="hljs-literal">true</span>
+          );
+          <span class="hljs-comment">/* #@range_end(maybe_monad_test) */</span>
+          next();
+        });
+        it(<span class="hljs-string">"add(maybe, maybe)"</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(maybe_monad_add_test) */</span>
+          <span class="hljs-keyword">var</span> add = (maybeA) =&gt; {
+            <span class="hljs-keyword">return</span> (maybeB) =&gt; {
+              <span class="hljs-keyword">return</span> flatMap(maybeA)((a) =&gt; {
+                <span class="hljs-keyword">return</span> flatMap(maybeB)((b) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(a + b);
+                });
+            });
+            };
+          };
+          <span class="hljs-keyword">var</span> justOne = just(<span class="hljs-number">1</span>);
+          <span class="hljs-keyword">var</span> justTwo = just(<span class="hljs-number">2</span>);
+          <span class="hljs-keyword">var</span> justThree = just(<span class="hljs-number">3</span>);
+          expect(
+            isEqual(add(justOne)(justTwo))(justThree)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          expect(
+            isEqual(add(justOne)(nothing))(nothing)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          <span class="hljs-comment">/* #@range_end(maybe_monad_add_test) */</span>
+          next();
+        });
+      });
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

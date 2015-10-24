@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>chap02.spec.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>chap02.spec.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
+
+describe(<span class="hljs-string">'なぜ関数型プログラミングが重要か'</span>, () =&gt; {
+  describe(<span class="hljs-string">'関数型言語と関数型プログラミング'</span>, () =&gt; {
+    describe(<span class="hljs-string">'関数の評価戦略'</span>, () =&gt; {
+      it(<span class="hljs-string">'succ関数の定義'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+        <span class="hljs-comment">/* #@range_begin(succ_definition) */</span>
+        <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+        };
+        <span class="hljs-comment">/* #@range_end(succ_definition) */</span>
+        <span class="hljs-comment">/* succ関数のテスト */</span>
+        expect(
+          succ(<span class="hljs-number">0</span>)
+        ).to.eql(
+          <span class="hljs-number">1</span>
+        );
+        expect(
+          succ(<span class="hljs-number">1</span>)
+        ).to.eql(
+          <span class="hljs-number">2</span>
+        );
+        next();
+      });
+    });
+    describe(<span class="hljs-string">'関数型プログミングとは'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      describe(<span class="hljs-string">'第1級市民としての関数'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        it(<span class="hljs-string">'数値は第1級市民である'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+          <span class="hljs-comment">/*  #@range_begin(number_as_first_class_citizen) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>値を変数に束縛する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> zero = <span class="hljs-number">0</span>;
+          <span class="hljs-keyword">var</span> name = <span class="hljs-string">"Haskell Curry"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>値をデータ構造に埋めこむ</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> birthday = {
+            year: <span class="hljs-number">1999</span>,
+            month: <span class="hljs-number">1</span>,
+            day: <span class="hljs-number">12</span>
+          };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>値を関数に渡す</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          expect(
+            <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">1</span>)
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>関数から値を返す</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> birthYear = (birthdayObject) =&gt; {
+            <span class="hljs-keyword">return</span> birthdayObject.year;
+          };
+          expect(
+            birthYear(birthday)
+          ).to.eql(
+            <span class="hljs-number">1999</span>
+          );
+          <span class="hljs-comment">/* #@range_end(number_as_first_class_citizen) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'関数は変数に束縛できる'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+          <span class="hljs-comment">/* #@range_begin(function_bound_to_variable) */</span>
+          <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+            <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+          };
+          expect(
+            succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 変数succを用いてλ式を呼びだす</span>
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(function_bound_to_variable) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'関数をオブジェクトに埋めこむ'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(function_embedded_in_object) */</span>
+          <span class="hljs-keyword">var</span> math = {
+            add: (n,m) =&gt; {
+              <span class="hljs-keyword">return</span> n + m;
+            }
+          };
+          expect(
+            math.add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">3</span>
+          );
+          <span class="hljs-comment">/* #@range_end(function_embedded_in_object) */</span>
+          next();
+        });
+      });
+      it(<span class="hljs-string">'Array.reduceによるsumの定義'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(sum_in_array_reduce) */</span>
+        <span class="hljs-keyword">var</span> add = (x, y) =&gt; {
+          <span class="hljs-keyword">return</span> x + y;
+        };
+        <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+          <span class="hljs-keyword">return</span> array.reduce(add,<span class="hljs-number">0</span>); <span class="hljs-comment">// reduceにadd関数を渡している</span>
+        };
+        <span class="hljs-comment">/* #@range_end(sum_in_array_reduce)  */</span>
+        expect(
+          sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
+        ).to.eql(
+          <span class="hljs-number">10</span>
+        );
+        next();
+      });
+      it(<span class="hljs-string">'関数を返す'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(function_returning_function) */</span>
+        <span class="hljs-keyword">var</span> reduce = (init,glue) =&gt; {
+          <span class="hljs-keyword">return</span> (array) =&gt; { <span class="hljs-comment">// 関数が返る</span>
+            <span class="hljs-keyword">if</span>(array.length === <span class="hljs-number">0</span>){
+              <span class="hljs-keyword">return</span> init;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">var</span> accumulator = glue(array[<span class="hljs-number">0</span>], init);
+              <span class="hljs-keyword">var</span> tail = array.slice(<span class="hljs-number">1</span>,array.length);
+              <span class="hljs-keyword">return</span> reduce(accumulator,glue)(tail);
+            }
+          };
+        };
+        <span class="hljs-comment">/* #@range_end(function_returning_function) */</span>
+        <span class="hljs-comment">/* #@range_begin(function_returning_function_test) */</span>
+        <span class="hljs-keyword">var</span> adder = (x,y) =&gt; {
+          <span class="hljs-keyword">return</span> x + y;
+        };
+        <span class="hljs-keyword">var</span> sum = reduce(<span class="hljs-number">0</span>,adder);
+        expect(
+          sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
+        ).to.eql(
+          <span class="hljs-number">10</span>
+        );
+        <span class="hljs-comment">/* #@range_end(function_returning_function_test) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>var returnFunction = (func) =&gt; {
+   return (args) =&gt; {
+     return func.apply(this, args);
+   };
+};
+adder . multiplyier
+expect(
+   compose(adder)(multiplyier)(2,3)
+).to.eql(
+   10
+);
+// expo([2,3,4,…]) = 2 ^ 3 ^ 4 ^ …. = (2 <em> 2 </em> 2) <em> (2 </em> 2 <em> 2) </em> (2 <em> 2 </em> 2) <em> (2 </em> 2 <em> 2) </em> …
+var expo = (array) =&gt; {
+  return array.reduce(returnFunctionFromFunction(returnFunctionFromFunction(multiplyier)),1);
+};
+expect(
+   expo([2,3,4])
+).to.eql(
+   24
+);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        next();
+      });
+      describe(<span class="hljs-string">'関数の参照透明性'</span>, () =&gt; {
+        it(<span class="hljs-string">'算術関数は参照透明性を持つ'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(square_definition) */</span>
+          <span class="hljs-keyword">var</span> square = (x) =&gt; {
+            <span class="hljs-keyword">return</span> x * x;
+          };
+          <span class="hljs-comment">/*  #@range_end(square_definition) */</span>
+          <span class="hljs-comment">/* #@range_begin(square_is_transparent) */</span>
+          expect(
+            square(<span class="hljs-number">2</span>) <span class="hljs-comment">// 1回目の実行</span>
+          ).to.eql(
+            <span class="hljs-number">4</span>
+          );
+          expect(
+            square(<span class="hljs-number">2</span>) <span class="hljs-comment">// 2回目の実行</span>
+          ).to.eql(
+            <span class="hljs-number">4</span>
+          );
+          expect(
+            square(<span class="hljs-number">3</span>) === square(<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          <span class="hljs-comment">/* #@range_end(square_is_transparent) */</span>
+          <span class="hljs-comment">/* #@range_begin(multiply_definition) */</span>
+          <span class="hljs-keyword">var</span> multiply = (x,y) =&gt; {
+            <span class="hljs-keyword">return</span> x * y;
+          };
+          <span class="hljs-comment">/*  #@range_end(multiply_definition) */</span>
+          <span class="hljs-comment">/* #@range_begin(multiply_is_transparent) */</span>
+          expect(
+            multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-number">6</span>
+          );
+          expect(
+            multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-number">6</span>
+          );
+          expect(
+            multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>) === multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          <span class="hljs-comment">/* #@range_end(multiply_is_transparent) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'Date.now関数は参照透明性を持たない'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(datenow_is_not_transparent) */</span>
+          <span class="hljs-keyword">var</span> a = <span class="hljs-built_in">Date</span>.now();
+
+          <span class="hljs-comment">/* 時間を1秒進める */</span>
+          <span class="hljs-keyword">var</span> sleep = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sleep-async'</span>)();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>var sleep = require(‘sleep’);
+sleep.sleep(1);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          sleep.sleep(<span class="hljs-number">2000</span>, () =&gt; {
+            expect(
+              a
+            ).to.not.eql( <span class="hljs-comment">/* 等しくないことをテストしている */</span>
+              <span class="hljs-built_in">Date</span>.now()
+            );
+          });
+
+          <span class="hljs-comment">/* #@range_end(datenow_is_not_transparent) */</span>
+          next();
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>it(‘console.log関数は参照透明性を持たない’, (next) =&gt; {
+  /<em> #@range_begin(consolelog_is_not_transparent) </em>/
+  var a = console.log();
+  expect(
+    a
+  ).to.eql( /<em> 等しくないことをテストしている </em>/
+    console.log()
+  );
+  /<em> #@range_end(consolelog_is_not_transparent) </em>/
+  next();
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'参照透明な関数では同値なものは置換可能である'</span>, () =&gt; {
+          it(<span class="hljs-string">'同じ引数のsquare関数は置換可能である'</span>, (next) =&gt; {
+            <span class="hljs-comment">/* #@range_begin(equals_replacement)  */</span>
+            <span class="hljs-keyword">var</span> square = (n) =&gt; {
+              <span class="hljs-keyword">return</span> n * n;
+            };
+            <span class="hljs-keyword">var</span> b = <span class="hljs-number">1</span>;
+            <span class="hljs-keyword">var</span> a = b;
+            expect(
+              square(a)
+            ).to.eql(
+              square(b)
+            );
+            expect(
+              square(b)
+            ).to.eql(
+              square(a)
+            );
+            expect(
+              square(a)
+            ).to.eql(
+              square(a)
+            );
+            expect(
+              square(b)
+            ).to.eql(
+              square(b)
+            );
+            <span class="hljs-comment">/* #@range_end(equals_replacement)  */</span>
+            next();
+          });
+        });
+        it(<span class="hljs-string">'参照不透明な関数では同値なものは置換できない'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(unequals_replacement)  */</span>
+          <span class="hljs-keyword">var</span> wrapper = (f) =&gt; {
+            <span class="hljs-keyword">return</span> (args) =&gt; {
+              <span class="hljs-keyword">return</span> f.call(f, args);
+            };
+          };
+          <span class="hljs-keyword">var</span> now = (_) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">Date</span>.now();
+          };
+          <span class="hljs-keyword">var</span> b = <span class="hljs-number">1</span>;
+          <span class="hljs-keyword">var</span> a = b;
+		  <span class="hljs-keyword">var</span> aResult = wrapper(now)(a);
+          expect(
+            aResult
+          ).to.not.eql(
+            wrapper(now)(b)
+          );
+          <span class="hljs-comment">/* #@range_end(unequals_replacement)  */</span>
+          next();
+        });
+      });
+      describe(<span class="hljs-string">'変数の参照透明性'</span>, () =&gt; {
+        it(<span class="hljs-string">'値は参照透明性を持つ'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(any_value_has_referential_transparency) */</span>
+          expect(
+            <span class="hljs-number">2</span>
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(any_value_has_referential_transparency) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'変数は参照透明性を持つとは限らない'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(variable_isnt_referential_transparent) */</span>
+          <span class="hljs-keyword">var</span> foo = <span class="hljs-number">2</span>;
+          <span class="hljs-keyword">var</span> bar = foo;
+          foo = <span class="hljs-number">3</span>;
+          expect(
+            foo
+          ).to.not.eql(
+            bar
+          );
+          <span class="hljs-comment">/* #@range_end(variable_isnt_referential_transparent) */</span>
+          next();
+        });
+      });
+    });
+    describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
+      describe(<span class="hljs-string">'副作用としての代入'</span>, () =&gt; {
+        it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
+          <span class="hljs-keyword">var</span> add = (x, y) =&gt; {
+            <span class="hljs-keyword">return</span> x + y;
+          };
+          <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
+          expect(
+            add(x, <span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">3</span>
+          );
+          x = <span class="hljs-number">2</span>; <span class="hljs-comment">// ここで変数xに2を代入している</span>
+          expect(
+            add(x, <span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">4</span>
+          );
+          <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
+          next();
+        });
+        it(<span class="hljs-string">'配列は参照透明性を破壊する'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(array_destroys_referential_transparency) */</span>
+          <span class="hljs-keyword">var</span> array = [];
+          array.push(<span class="hljs-number">1</span>);
+          expect(
+            array.pop()
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          array.push(<span class="hljs-number">2</span>);
+          expect(
+            array.pop()
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(array_destroys_referential_transparency) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>var add = (n,m) =&gt; {
+  return n + m;
+};
+var array = [];
+array.push(1);
+expect(
+  add(array.pop(),2)
+).to.eql(
+  3
+);
+array.push(2);
+expect(
+  add(array.pop(),2)
+).to.eql(
+  4
+);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          next();
+        });
+        it(<span class="hljs-string">'配列の状態を表示する'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(array_destroys_referential_transparency_log) */</span>
+          <span class="hljs-keyword">var</span> add = (n,m) =&gt; {
+            <span class="hljs-keyword">return</span> n + m;
+          };
+          <span class="hljs-keyword">var</span> array = [];
+          array.push(<span class="hljs-number">1</span>);
+          <span class="hljs-built_in">console</span>.log(array); <span class="hljs-comment">// [ 1 ]</span>
+          expect(
+            add(array.pop(),<span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">3</span>
+          );
+          array.push(<span class="hljs-number">2</span>);
+          <span class="hljs-built_in">console</span>.log(array); <span class="hljs-comment">// [ 2 ]</span>
+          expect(
+            add(array.pop(),<span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">4</span>
+          );
+          <span class="hljs-comment">/* #@range_end(array_destroys_referential_transparency_log) */</span>
+          next();
+        });
+      });
+      describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
+        it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
+          <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+          <span class="hljs-keyword">var</span> read = (path) =&gt; {
+            <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
+          };
+          <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
+            fs.writeFileSync(path, n);
+            <span class="hljs-keyword">return</span> n;
+          };
+          write(<span class="hljs-string">'/tmp/io.txt'</span>, <span class="hljs-number">1</span>);
+          expect(
+            read(<span class="hljs-string">'/tmp/io.txt'</span>)
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          write(<span class="hljs-string">'/tmp/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
+          expect(
+            read(<span class="hljs-string">'/tmp/io.txt'</span>)
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
+          next();
+        });
+      });
+      describe(<span class="hljs-string">'副作用への対処'</span>, () =&gt; {
+        it(<span class="hljs-string">'命令型プログラミングによる乗算'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+          <span class="hljs-comment">/* #@range_begin(imperative_addition) */</span>
+          <span class="hljs-keyword">var</span> add = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x,y</span>)</span>{
+            <span class="hljs-keyword">var</span> times = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">while</span>(times &lt; y){
+              x = x + <span class="hljs-number">1</span>;
+              times = times + <span class="hljs-number">1</span>;
+            };
+            <span class="hljs-keyword">return</span> x;
+          };
+          expect(
+            add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-number">5</span>
+          );
+          <span class="hljs-comment">/* #@range_end(imperative_addition) */</span>
+          <span class="hljs-keyword">var</span> x = <span class="hljs-number">4</span>;
+          <span class="hljs-keyword">var</span> y = <span class="hljs-number">5</span>;
+          expect(
+            add(x,y)
+          ).to.eql(
+            <span class="hljs-number">9</span>
+          );
+          expect(
+            x
+          ).to.eql(
+            <span class="hljs-number">4</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'関数型プログラミングによる乗算'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+          <span class="hljs-comment">/* #@range_begin(functional_addition) */</span>
+          <span class="hljs-keyword">var</span> add = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x,y</span>)</span>{
+            <span class="hljs-keyword">if</span>(y &lt; <span class="hljs-number">1</span>){
+              <span class="hljs-keyword">return</span> x;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> add(x + <span class="hljs-number">1</span>, y - <span class="hljs-number">1</span>);
+            }
+          };
+          <span class="hljs-comment">/* #@range_end(functional_addition) */</span>
+          expect(add(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>)).to.eql(<span class="hljs-number">3</span>);
+          expect(add(<span class="hljs-number">2</span>,<span class="hljs-number">2</span>)).to.eql(<span class="hljs-number">4</span>);
+          expect(add(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>)).to.eql(<span class="hljs-number">5</span>);
+          expect(add(<span class="hljs-number">12</span>,<span class="hljs-number">5</span>)).to.eql(<span class="hljs-number">17</span>);
+          next();
+        });
+        describe(<span class="hljs-string">'不変なデータ'</span>, () =&gt;  {
+          describe(<span class="hljs-string">'命令的なstackの実装'</span>, () =&gt; {
+            <span class="hljs-comment">/* #@range_begin(imperative_stack) */</span>
+            <span class="hljs-keyword">var</span> stack = [];
+            <span class="hljs-keyword">var</span> add = (stack) =&gt; {
+              <span class="hljs-keyword">var</span> x = stack.pop();
+              <span class="hljs-keyword">var</span> y = stack.pop();
+              <span class="hljs-keyword">return</span> stack.push(x+y);
+            };
+            <span class="hljs-keyword">var</span> subtract = (stack) =&gt; {
+              <span class="hljs-keyword">var</span> x = stack.pop();
+              <span class="hljs-keyword">var</span> y = stack.pop();
+              <span class="hljs-keyword">return</span> stack.push(x-y);
+            };
+            <span class="hljs-comment">/* #@range_end(imperative_stack) */</span>
+            it(<span class="hljs-string">'(2 + 3) * 2'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+              <span class="hljs-comment">/* #@range_begin(imperative_stack_test) */</span>
+              stack.push(<span class="hljs-number">2</span>);
+              stack.push(<span class="hljs-number">3</span>);
+              add(stack);
+              stack.push(<span class="hljs-number">2</span>);
+              add(stack);
+              expect(
+                stack.pop()
+              ).to.eql(
+                <span class="hljs-number">7</span>
+              );
+              <span class="hljs-comment">/* #@range_end(imperative_stack_test) */</span>
+              next();
+            });
+            it(<span class="hljs-string">'(2 + 3) + 2 logged'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+              <span class="hljs-keyword">var</span> stack = [];
+              <span class="hljs-comment">/* #@range_begin(imperative_stack_log) */</span>
+              stack.push(<span class="hljs-number">2</span>);
+              <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 2 ]</span>
+              stack.push(<span class="hljs-number">3</span>);
+              <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 2, 3 ]</span>
+              add(stack);
+              <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 5 ]</span>
+              stack.push(<span class="hljs-number">2</span>);
+              <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 5, 2 ]</span>
+              add(stack);
+              <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 7 ]</span>
+              expect(
+                stack.pop()
+              ).to.eql(
+                <span class="hljs-number">7</span>
+              );
+              <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// []</span>
+              <span class="hljs-comment">/* #@range_end(imperative_stack_log) */</span>
+              next();
+            });
+          });
+          describe(<span class="hljs-string">'関数的なstackの実装'</span>, () =&gt; {
+            <span class="hljs-comment">/* #@range_begin(functional_stack) */</span>
+            <span class="hljs-keyword">var</span> push = (n, stack) =&gt; {
+              <span class="hljs-keyword">return</span> [n].concat(stack);
+            };
+            <span class="hljs-keyword">var</span> pop = (stack) =&gt; {
+              <span class="hljs-keyword">return</span> {
+                value: stack[<span class="hljs-number">0</span>],
+                rest: stack.slice(<span class="hljs-number">1</span>,stack.length)
+              };
+            };
+            <span class="hljs-keyword">var</span> empty = [];
+            <span class="hljs-keyword">var</span> add = (stack) =&gt; {
+              <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
+              <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
+              <span class="hljs-keyword">return</span> push(x+y,rest);
+            };
+            <span class="hljs-keyword">var</span> subtract = (stack) =&gt; {
+              <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
+              <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
+              <span class="hljs-keyword">return</span> push(x-y,rest);
+            };
+            <span class="hljs-keyword">var</span> multiply = (stack) =&gt; {
+              <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
+              <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
+              <span class="hljs-keyword">return</span> push(x*y,rest);
+            };
+            <span class="hljs-keyword">var</span> divide = (stack) =&gt; {
+              <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
+              <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
+              <span class="hljs-keyword">return</span> push(x/y,rest);
+            };
+            <span class="hljs-comment">/* #@range_end(functional_stack) */</span>
+            it(<span class="hljs-string">'(2 + 3) * 4'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+              <span class="hljs-comment">/* #@range_begin(functional_stack_test) */</span>
+              <span class="hljs-keyword">var</span> s0 = empty;
+              <span class="hljs-keyword">var</span> s1 = push(<span class="hljs-number">2</span>, s0);
+              <span class="hljs-keyword">var</span> s2 = push(<span class="hljs-number">3</span>, s1);
+              <span class="hljs-keyword">var</span> s3 = add(s2);
+              <span class="hljs-keyword">var</span> s4 = push(<span class="hljs-number">2</span>,s3);
+              <span class="hljs-keyword">var</span> s5 = multiply(s4);
+              expect(
+                pop(s5).value
+              ).to.eql(
+                <span class="hljs-number">10</span>
+              );
+              <span class="hljs-comment">/* #@range_end(functional_stack_test) */</span>
+              next();
+            });
+          });
+        });
+        describe(<span class="hljs-string">'副作用への対処'</span>, () =&gt;  {
+          describe(<span class="hljs-string">'モナド'</span>, () =&gt; {
+            <span class="hljs-keyword">var</span> bind = (operate, continues) =&gt; {
+              <span class="hljs-keyword">return</span> (stack) =&gt; {
+                <span class="hljs-keyword">var</span> newState = operate(stack);
+                <span class="hljs-keyword">return</span> continues(newState.value)(newState.stack);
+              };
+            };
+            <span class="hljs-keyword">var</span> unit = (n) =&gt; {
+              <span class="hljs-keyword">return</span> (stack) =&gt; {
+                <span class="hljs-keyword">return</span> {
+                  value: n,
+                  stack: stack
+                };
+              };
+            };
+            <span class="hljs-keyword">var</span> push = (n) =&gt; {
+              <span class="hljs-keyword">return</span> (stack) =&gt; {
+                <span class="hljs-keyword">return</span> unit(<span class="hljs-literal">undefined</span>)([n].concat(stack));
+              };
+            };
+            <span class="hljs-keyword">var</span> pop = () =&gt; {
+              <span class="hljs-keyword">return</span> (stack) =&gt; {
+                <span class="hljs-keyword">return</span> unit(stack[<span class="hljs-number">0</span>])(stack.slice(<span class="hljs-number">1</span>,stack.length));
+              };
+            };
+            <span class="hljs-keyword">var</span> run = (operate, initState) =&gt; {
+              <span class="hljs-keyword">return</span> operate(initState);
+            };
+            <span class="hljs-keyword">var</span> empty = [];
+
+            it(<span class="hljs-string">'状態を明示化する'</span>, (next) =&gt;{
+              <span class="hljs-comment">/* #@range_begin(explicit_state) */</span>
+              <span class="hljs-keyword">var</span> push = (n,stack) =&gt; {
+                <span class="hljs-keyword">return</span> {
+                  value: <span class="hljs-literal">undefined</span>,
+                  stack: [n].concat(stack)
+                };
+              };
+              <span class="hljs-keyword">var</span> pop = (stack) =&gt; {
+                <span class="hljs-keyword">return</span> {
+                  value: stack[<span class="hljs-number">0</span>],
+                  stack: stack.slice(<span class="hljs-number">1</span>,stack.length)
+                };
+              };
+              <span class="hljs-keyword">var</span> empty = [];
+              <span class="hljs-keyword">var</span> state1 = push(<span class="hljs-number">2</span>, empty);
+              <span class="hljs-keyword">var</span> state2 = push(<span class="hljs-number">3</span>, state1.stack);
+              <span class="hljs-keyword">var</span> state3 = pop(state2.stack);
+              <span class="hljs-keyword">var</span> state4 = pop(state3.stack);
+              expect(
+                state4.value
+              ).to.eql(
+                <span class="hljs-number">2</span>
+              );
+              <span class="hljs-comment">/* #@range_end(explicit_state) */</span>
+              next();
+            });
+            it(<span class="hljs-string">'継続を用いる'</span>, (next) =&gt;{
+              <span class="hljs-keyword">var</span> push = (n,stack) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(<span class="hljs-literal">undefined</span>)([n].concat(stack));
+              };
+              <span class="hljs-keyword">var</span> pop = (stack) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(stack[<span class="hljs-number">0</span>])(stack.slice(<span class="hljs-number">1</span>,stack.length));
+              };
+
+              <span class="hljs-comment">/* #@range_begin(bind_defined_by_continuation) */</span>
+              <span class="hljs-keyword">var</span> bind = (state, continues) =&gt; {
+                <span class="hljs-keyword">return</span> continues(state);
+              };
+              expect(
+                bind(push(<span class="hljs-number">2</span>,empty), (state1) =&gt; {
+                  <span class="hljs-keyword">return</span> bind(push(<span class="hljs-number">3</span>, state1.stack), (state2) =&gt;{
+                    <span class="hljs-keyword">return</span> bind(pop(state2.stack), (state3) =&gt; {
+                      <span class="hljs-keyword">return</span> bind(pop(state3.stack), (state4) =&gt; {
+                        <span class="hljs-keyword">return</span> state4;
+                      });
+                    });
+                  });
+                })
+              ).to.eql(
+                {
+                  value: <span class="hljs-number">2</span>,
+                  stack: []
+                }
+              );
+              <span class="hljs-comment">/* #@range_end(bind_defined_by_continuation) */</span>
+              next();
+            });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>it(‘push,popのシグネチャを変更(2)’, (next) =&gt;{
+  var bind = (state, continues) =&gt; {
+    return continues(state);
+  };
+  var unit = (n) =&gt; {
+    return (stack) =&gt; {
+      return {
+        value: n,
+        stack: stack
+      };
+    };
+  };
+  var push = (n) =&gt; {
+    return (state) =&gt; {
+      return unit(undefined)([n].concat(state.stack));
+    };
+  };
+  var pop = () =&gt; {
+    return (state) =&gt; {
+      return unit(state.stack[0])(state.stack.slice(1,state.stack.length));
+    };
+  };
+  var empty = unit(undefined)([]);
+  expect(
+    bind(push(2)(empty), (state1) =&gt; {
+      return bind(push(3)(state1), (state2) =&gt;{
+        return bind(pop()(state2), (state3) =&gt; {
+          return bind(pop()(state3), (state4) =&gt; {
+            return state4;
+          });
+        });
+      });
+    })
+  ).to.eql(
+    {
+      value: 2,
+      stack: []
+    }
+  );
+  next();
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            it(<span class="hljs-string">'カリー化'</span>, (next) =&gt;{
+              <span class="hljs-comment">/* #@range_begin(curring) */</span>
+              <span class="hljs-keyword">var</span> bind = (operate, continues) =&gt; {
+                <span class="hljs-keyword">return</span> (stack) =&gt; {
+                  <span class="hljs-keyword">var</span> newState = operate(stack);
+                  <span class="hljs-keyword">return</span> continues(newState)(newState.stack);
+                };
+              };
+              <span class="hljs-keyword">var</span> unit = (n) =&gt; {
+                <span class="hljs-keyword">return</span> (stack) =&gt; {
+                  <span class="hljs-keyword">return</span> {
+                    value: n,
+                    stack: stack
+                  };
+                };
+              };
+              <span class="hljs-keyword">var</span> push = (n) =&gt; {
+                <span class="hljs-keyword">return</span> (stack) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(<span class="hljs-literal">undefined</span>)([n].concat(stack));
+                };
+              };
+              <span class="hljs-keyword">var</span> pop = () =&gt; {
+                <span class="hljs-keyword">return</span> (stack) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(stack[<span class="hljs-number">0</span>])(stack.slice(<span class="hljs-number">1</span>,stack.length));
+                };
+              };
+              expect(
+                bind(push(<span class="hljs-number">2</span>), (state1) =&gt; {
+                  <span class="hljs-keyword">return</span> bind(push(<span class="hljs-number">3</span>), (state2) =&gt;{
+                    <span class="hljs-keyword">return</span> bind(pop(), (state3) =&gt; {
+                      <span class="hljs-keyword">return</span> bind(pop(), (state4) =&gt; {
+                        <span class="hljs-keyword">return</span> (stack) =&gt; {
+                          <span class="hljs-keyword">return</span> unit(state4.value)(stack);
+                        };
+                      });
+                    });
+                  });
+                })(empty)
+              ).to.eql(
+                {
+                  value: <span class="hljs-number">2</span>,
+                  stack: []
+                }
+              );
+              <span class="hljs-comment">/* #@range_end(curring) */</span>
+              next();
+            });
+            it(<span class="hljs-string">'中間状態を隠蔽する'</span>, (next) =&gt;{
+              <span class="hljs-comment">/* #@range_begin(hide_internal_state) */</span>
+              <span class="hljs-keyword">var</span> bind = (operate, continues) =&gt; {
+                <span class="hljs-keyword">return</span> (stack) =&gt; {
+                  <span class="hljs-keyword">var</span> newState = operate(stack);
+                  <span class="hljs-keyword">return</span> continues(newState.value)(newState.stack);
+                };
+              };
+              <span class="hljs-keyword">var</span> computation = bind(push(<span class="hljs-number">2</span>), () =&gt; {
+                <span class="hljs-keyword">return</span> bind(push(<span class="hljs-number">3</span>), () =&gt;{
+                  <span class="hljs-keyword">return</span> bind(pop(), (state3) =&gt; {
+                    <span class="hljs-keyword">return</span> bind(pop(), (state4) =&gt; {
+                      <span class="hljs-keyword">return</span> unit(state4);
+                    });
+                  });
+                });
+              });
+              expect(
+                computation(empty)
+              ).to.eql(
+                {
+                  value: <span class="hljs-number">2</span>,
+                  stack: []
+                }
+              );
+              <span class="hljs-comment">/* #@range_end(hide_internal_state) */</span>
+              next();
+            });
+            it(<span class="hljs-string">'計算を合成する'</span>, (next) =&gt;{
+              <span class="hljs-comment">/* #@range_begin(combining_monad) */</span>
+              <span class="hljs-keyword">var</span> computation1 = bind(push(<span class="hljs-number">2</span>), () =&gt; {
+                <span class="hljs-keyword">return</span> bind(push(<span class="hljs-number">3</span>), () =&gt; {
+                  <span class="hljs-keyword">return</span> bind(push(<span class="hljs-number">4</span>), () =&gt; {
+                    <span class="hljs-keyword">return</span> unit();
+                  });
+                });
+              });
+              <span class="hljs-keyword">var</span> computation2 = bind(pop(), (state1) =&gt; {
+                <span class="hljs-keyword">return</span> bind(pop(), (state2) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(state2);
+                });
+              });
+              <span class="hljs-keyword">var</span> combine = (a, b) =&gt; {
+                <span class="hljs-keyword">return</span> (stack) =&gt; {
+                  <span class="hljs-keyword">var</span> initialState = unit(<span class="hljs-literal">undefined</span>)(stack);
+                  <span class="hljs-keyword">var</span> newState = a(stack);
+                  <span class="hljs-keyword">return</span> b(newState.stack);
+                };
+              };
+              expect(
+                combine(computation1,computation2)(empty)
+              ).to.eql(
+                {
+                  value: <span class="hljs-number">3</span>,
+                  stack: [<span class="hljs-number">2</span>]
+                }
+              );
+              <span class="hljs-comment">/* #@range_end(combining_monad) */</span>
+              next();
+            });
+            it(<span class="hljs-string">'逆ポーランド電卓'</span>, (next) =&gt;{
+              <span class="hljs-comment">/* #@range_begin(revserse_polish) */</span>
+              <span class="hljs-keyword">var</span> add = bind(pop(), (state1) =&gt; {
+                <span class="hljs-keyword">return</span> bind(pop(), (state2) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(state1 + state2);
+                });
+              });
+              <span class="hljs-keyword">var</span> subtract = bind(pop(), (state1) =&gt; {
+                <span class="hljs-keyword">return</span> bind(pop(), (state2) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(state1 - state2);
+                });
+              });
+              <span class="hljs-keyword">var</span> multiply = bind(pop(), (state1) =&gt; {
+                <span class="hljs-keyword">return</span> bind(pop(), (state2) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(state1 * state2);
+                });
+              });
+              <span class="hljs-keyword">var</span> divide = bind(pop(), (state1) =&gt; {
+                <span class="hljs-keyword">return</span> bind(pop(), (state2) =&gt; {
+                  <span class="hljs-keyword">return</span> unit(state1 / state2);
+                });
+              });
+              expect(
+                add([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>])
+              ).to.eql(
+                {
+                  value: <span class="hljs-number">3</span>,
+                  stack: []
+                }
+              );
+              <span class="hljs-comment">/* #@range_end(revserse_polish) */</span>
+              next();
+            });
+          });
+        });
+      });
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

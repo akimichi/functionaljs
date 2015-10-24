@@ -435,7 +435,7 @@ describe('制御構造', () => {
         ).to.eql(
           false
         )
-        // 2の倍数もしくは3の倍数で5の倍数でもあるもの
+        /* 2の倍数もしくは3の倍数で5の倍数でもあるもの */
         /* ##@range_begin(another_logical_combinator_test) */
         expect(
           and(or(twoFold,threeFold),fiveFold)(10)
@@ -614,7 +614,9 @@ describe('制御構造', () => {
       next();
     });
   });
-  describe("反復文", function() {
+  // 反復処理の種類と特徴
+  // =================
+  describe("反復処理の種類と特徴", function() {
     describe("while文", () => {
       it("カウント", (next) => {
         /* #@range_begin(while_counter) */

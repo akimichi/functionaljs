@@ -33,10 +33,49 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
 
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="-">プログラムをコントロールする仕組み</h1>
 
-describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
-  describe(<span class="hljs-string">'条文分岐'</span>, () =&gt; {
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'プログラムをコントロールする仕組み'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="-">条文分岐</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'条文分岐'</span>, () =&gt; {
     it(<span class="hljs-string">'偶数の例'</span>, (next) =&gt; {
       <span class="hljs-comment">/* ##@range_begin(even_function)*/</span>
       <span class="hljs-keyword">var</span> even = (n) =&gt; {
@@ -103,22 +142,9 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
           <span class="hljs-keyword">throw</span> {
             name: <span class="hljs-string">""</span>,
             message: <span class="hljs-string">"ここには決して到達しません"</span>
-          };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>return infiniteLoop(x);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        }
+          };
+          <span class="hljs-comment">/*return infiniteLoop(x); */</span>
+        }
       };
       expect(
         func(<span class="hljs-number">1</span>)
@@ -287,9 +313,23 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
         next();
       });
     });
-  });
-  describe(<span class="hljs-string">'switch文'</span>, () =&gt; {
-    it(<span class="hljs-string">"信号機"</span>, (next) =&gt; {
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="-switch-">条件分岐としてのswitch文</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'条件分岐としてのswitch文'</span>, () =&gt; {
+    it(<span class="hljs-string">"信号機の例"</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> forward, stop, watchfulForward;
       <span class="hljs-comment">/* #@range_begin(signal) */</span>
       <span class="hljs-keyword">var</span> move;
@@ -344,7 +384,7 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
         <span class="hljs-keyword">if</span> (n &gt; m) {
           <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
         } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">if</span>(n === m) {  <span class="hljs-comment">// ネストされたif文</span>
+          <span class="hljs-keyword">if</span>(n === m) {  <span class="hljs-comment">/* ネストされたif文 */</span>
             <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
           } <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
@@ -368,8 +408,22 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
       );
       <span class="hljs-comment">/* #@range_end(compare) */</span>
       next();
-    });
-    describe(<span class="hljs-string">'コンビネータ'</span>, () =&gt; {
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h3 id="-">コンビネータによる条件分岐の改善</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'コンビネータによる条件分岐の改善'</span>, () =&gt; {
       <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
         <span class="hljs-keyword">return</span> (m) =&gt; {
           <span class="hljs-keyword">if</span>((m % n) === <span class="hljs-number">0</span>) {
@@ -384,7 +438,7 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
       <span class="hljs-keyword">var</span> fiveFold = multiplyOf(<span class="hljs-number">5</span>);
       it(<span class="hljs-string">'2と3の倍数で 5の倍数ではない'</span>, (next) =&gt; {
         <span class="hljs-comment">/* ##@range_begin(twoFoldAndThreeFoldButNotFiveFoldByConditional) */</span>
-        <span class="hljs-keyword">var</span> twoFold = (n) =&gt; { <span class="hljs-comment">// 2の倍数を判定する</span>
+        <span class="hljs-keyword">var</span> twoFold = (n) =&gt; { <span class="hljs-comment">/* 2の倍数を判定する */</span>
           <span class="hljs-keyword">if</span>((n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
           } <span class="hljs-keyword">else</span> {
@@ -399,7 +453,7 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
           <span class="hljs-keyword">if</span>(twoFold(n) &amp;&amp; threeFold(n)) {
             <span class="hljs-keyword">if</span>(fiveFold(n)) {
               <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// 2の倍数かつ3の倍数で、5の倍数ではない</span>
+            } <span class="hljs-keyword">else</span> { <span class="hljs-comment">/* 2の倍数かつ3の倍数で、5の倍数ではない */</span>
               <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
             }
           } <span class="hljs-keyword">else</span> {
@@ -491,8 +545,22 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
         next();
       });
     });
-  });
-  describe(<span class="hljs-string">'代数的データ型'</span>, () =&gt; {
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="-">代数的データ型</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'代数的データ型'</span>, () =&gt; {
     it(<span class="hljs-string">'Listを代数的データ型として実装する'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
       <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; { <span class="hljs-comment">// パターンマッチを実現する関数</span>
@@ -583,58 +651,19 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
         <span class="hljs-keyword">return</span> match(person, {
           male: (data) =&gt; {
             <span class="hljs-keyword">return</span> {
-              BMI: BMI(data.weight, data.height),</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>total body water</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              TBW: data.weight * <span class="hljs-number">0.6</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>estimated blood volume</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              EBV: <span class="hljs-number">0.168</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.050</span> * data.weight + <span class="hljs-number">0.444</span>
+              BMI: BMI(data.weight, data.height),
+              <span class="hljs-comment">/* total body water */</span>
+              TBW: data.weight * <span class="hljs-number">0.6</span>,
+              <span class="hljs-comment">/* estimated blood volume */</span>
+              EBV: <span class="hljs-number">0.168</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.050</span> * data.weight + <span class="hljs-number">0.444</span>
             };
           },
           female: (data) =&gt; {
             <span class="hljs-keyword">return</span> {
               BMI: BMI(data.weight, data.height),
-              TBW: data.weight * <span class="hljs-number">0.5</span>,</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              EBV: <span class="hljs-number">0.250</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.625</span> * data.weight - <span class="hljs-number">0.662</span>
+              TBW: data.weight * <span class="hljs-number">0.5</span>,
+              <span class="hljs-comment">/* estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662 */</span>
+              EBV: <span class="hljs-number">0.250</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.625</span> * data.weight - <span class="hljs-number">0.662</span>
             };
           },
         });
@@ -702,26 +731,14 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h1 id="-">反復処理の種類と特徴</h1>
+              <h2 id="-">反復処理の種類と特徴</h2>
 
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              
             </div>
             
             <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"反復処理の種類と特徴"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
@@ -744,11 +761,11 @@ describe(<span class="hljs-string">'制御構造'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>it(“length”, (next) =&gt; {
   /<em> #@range_begin(while_length) </em>/

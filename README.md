@@ -3,7 +3,7 @@
 
 ## 利用法
 
-ローカル環境に nvm がインストールされていることが前です。
+ローカル環境に nvm がインストールされていることが必要です。
 
 ~~~
 $ git clone git@github.com:akimichi/functionaljs.git

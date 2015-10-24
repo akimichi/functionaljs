@@ -31,3 +31,5 @@ $ ./node_modules/.bin/gulp doc
 
 http://akimichi.github.io/functionaljs/
 
+
+* [第1章](http://akimichi.github.io/functionaljs/chap01.spec.html)

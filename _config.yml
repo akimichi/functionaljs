@@ -1,5 +1,11 @@
 highlighter: pygments
+github: [Repository metadata]
 auto: true
 server: true
 markdown: kramdown
 baseurl: /functionaljs
+exclude: ['vendor', 'Gemfile', 'Gemfile.lock', '.ruby-version', '.gitignore', '.bundle', '.git', 'LICENSE']
+gems:
+    - jekyll-mentions
+    - jekyll-redirect-from
+    - jekyll-sitemap

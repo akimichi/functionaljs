@@ -5,6 +5,8 @@
 
 ## 利用法
 
+ローカル環境に nvm がインストールされていることが前です。
+
 ~~~
 $ git clone git@github.com:akimichi/functionaljs.git
 $ cd functionaljs
@@ -24,4 +26,10 @@ $ ./node_modules/.bin/gulp
 $ ./node_modules/.bin/gulp doc
 ~~~
 
+
+
+## プロジェクトページ
+
+
+http://akimichi.github.io/functionaljs/
 

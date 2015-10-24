@@ -637,40 +637,42 @@ describe('プログラムをコントロールする仕組み', () => {
         /* #@range_end(while_counter) */
         next();
       });
-      // it("length", (next) => {
-      //   /* #@range_begin(while_length) */
-      //   var array = [1,2,3,4,5];
-      //   var length = (array) => {
-      //    var counter = 0;
-      //    while (counter < 10) {
-      //       counter += 1;
-      //    }
-      //   }
-      //   expect(
-      //     counter
-      //   ).to.eql(
-      //     10
-      //   );
-      //   /* #@range_end(while_length) */
-      //   next();
-      // });
-      // it("whileによるsum", (next) => {
-      //   /* #@range_begin(while_sum) */
-      //   var array = [1,2,3,4,5];
-      //   var sum = (array) => {
-      //    var counter = 0;
-      //    while (counter < 10) {
-      //       counter += 1;
-      //    }
-      //   }
-      //   expect(
-      //     counter
-      //   ).to.eql(
-      //     10
-      //   );
-      //   /* #@range_end(while_sum) */
-      //   next();
-      // });
+	  /*
+      it("length", (next) => {
+        // #@range_begin(while_length)
+        var array = [1,2,3,4,5];
+        var length = (array) => {
+         var counter = 0;
+         while (counter < 10) {
+            counter += 1;
+         }
+        }
+        expect(
+          counter
+        ).to.eql(
+          10
+        );
+        // #@range_end(while_length)
+        next();
+      });
+      it("whileによるsum", (next) => {
+        // #@range_begin(while_sum)
+        var array = [1,2,3,4,5];
+        var sum = (array) => {
+         var counter = 0;
+         while (counter < 10) {
+            counter += 1;
+         }
+        }
+        expect(
+          counter
+        ).to.eql(
+          10
+        );
+        // #@range_end(while_sum)
+        next();
+      });
+	  */
     });
     it("for文", function(next) {
       /* #@range_begin(for_example) */

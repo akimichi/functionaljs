@@ -24,4 +24,4 @@ gulp.task('deploy', function() {
     .pipe(ghPages());
 });
 
-gulp.task('default', ['test','doc']);
+gulp.task('default', ['test','doc', 'deploy']);

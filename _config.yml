@@ -2,3 +2,4 @@ highlighter: pygments
 auto: true
 server: true
 markdown: kramdown
+baseurl: /functionaljs

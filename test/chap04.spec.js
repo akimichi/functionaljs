@@ -3,7 +3,9 @@
 var expect = require('expect.js');
 var util = require('util');
 
-describe('データ', () => {
+// データの種類と特徴
+// ============================
+describe('データの種類と特徴', () => {
   describe('型とは何か', () => {
     it('整数の構成', (next) => {
       /* #@range_begin(integer_construction) */
@@ -23,20 +25,22 @@ describe('データ', () => {
       /* #@range_end(integer_construction) */
       next();
     });
-    // describe('型決定のタイミング', () => {
-    //   it('NaNはエラーの場所を発見しにくくする', (next) => {
-    //  var one = 1;
-    //  var two = 2;
-    //  var three = "three";
-    //  var four = 4;
-    //  expect(
-    //    one * two * (three + four)
-    //  ).to.eql(
-    //    11   /* 1 * 2 + (3 + 4) = 10 を期待する */
-    //  );
-    //  next();
-    //   });
-    // }
+	/*
+    describe('型決定のタイミング', () => {
+      it('NaNはエラーの場所を発見しにくくする', (next) => {
+         var one = 1;
+         var two = 2;
+         var three = "three";
+         var four = 4;
+         expect(
+           one * two * (three + four)
+         ).to.eql(
+            11   // 1 * 2 + (3 + 4) = 10 を期待する
+         );
+		 next();
+       });
+    })
+	*/
   });
   describe('基本型', () => {
     it('未定義の変数', (next) => {

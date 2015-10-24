@@ -3,7 +3,10 @@
 var expect = require('expect.js');
 var util = require('util');
 
-describe('制御構造', () => {
+// プログラムをコントロールする仕組み
+// ============================
+describe('プログラムをコントロールする仕組み', () => {
+  // ## 条文分岐
   describe('条文分岐', () => {
     it('偶数の例', (next) => {
       /* ##@range_begin(even_function)*/
@@ -72,7 +75,7 @@ describe('制御構造', () => {
             name: "",
             message: "ここには決して到達しません"
           };
-          //return infiniteLoop(x);
+          /*return infiniteLoop(x); */
         }
       };
       expect(
@@ -243,8 +246,9 @@ describe('制御構造', () => {
       });
     });
   });
-  describe('switch文', () => {
-    it("信号機", (next) => {
+  // ## 条件分岐としてのswitch文
+  describe('条件分岐としてのswitch文', () => {
+    it("信号機の例", (next) => {
       var forward, stop, watchfulForward;
       /* #@range_begin(signal) */
       var move;
@@ -299,7 +303,7 @@ describe('制御構造', () => {
         if (n > m) {
           return 1;
         } else {
-          if(n === m) {  // ネストされたif文
+          if(n === m) {  /* ネストされたif文 */
             return 0;
           } else {
             return -1;
@@ -324,7 +328,8 @@ describe('制御構造', () => {
       /* #@range_end(compare) */
       next();
     });
-    describe('コンビネータ', () => {
+	// ### コンビネータによる条件分岐の改善
+    describe('コンビネータによる条件分岐の改善', () => {
       var multiplyOf = (n) => {
         return (m) => {
           if((m % n) === 0) {
@@ -339,7 +344,7 @@ describe('制御構造', () => {
       var fiveFold = multiplyOf(5);
       it('2と3の倍数で 5の倍数ではない', (next) => {
         /* ##@range_begin(twoFoldAndThreeFoldButNotFiveFoldByConditional) */
-        var twoFold = (n) => { // 2の倍数を判定する
+        var twoFold = (n) => { /* 2の倍数を判定する */
           if((n % 2) === 0) {
             return true;
           } else {
@@ -354,7 +359,7 @@ describe('制御構造', () => {
           if(twoFold(n) && threeFold(n)) {
             if(fiveFold(n)) {
               return false;
-            } else { // 2の倍数かつ3の倍数で、5の倍数ではない
+            } else { /* 2の倍数かつ3の倍数で、5の倍数ではない */
               return true;
             }
           } else {
@@ -447,6 +452,7 @@ describe('制御構造', () => {
       });
     });
   });
+  // ## 代数的データ型
   describe('代数的データ型', () => {
     it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
@@ -539,9 +545,9 @@ describe('制御構造', () => {
           male: (data) => {
             return {
               BMI: BMI(data.weight, data.height),
-              // total body water
+              /* total body water */
               TBW: data.weight * 0.6,
-              // estimated blood volume
+              /* estimated blood volume */
               EBV: 0.168 * Math.pow(data.height,3) + 0.050 * data.weight + 0.444
             };
           },
@@ -549,7 +555,7 @@ describe('制御構造', () => {
             return {
               BMI: BMI(data.weight, data.height),
               TBW: data.weight * 0.5,
-              // estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662
+              /* estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662 */
               EBV: 0.250 * Math.pow(data.height,3) + 0.625 * data.weight - 0.662
             };
           },
@@ -614,8 +620,7 @@ describe('制御構造', () => {
       next();
     });
   });
-  // 反復処理の種類と特徴
-  // =================
+  // ## 反復処理の種類と特徴
   describe("反復処理の種類と特徴", function() {
     describe("while文", () => {
       it("カウント", (next) => {

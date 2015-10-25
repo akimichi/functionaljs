@@ -11,7 +11,7 @@ describe('プログラムをコントロールする仕組み', () => {
     it('偶数の例', (next) => {
       /* ##@range_begin(even_function)*/
       var even = (n) => {
-        if((n % 2) == 0) {
+        if((n % 2) === 0) {
           return true;
         } else {
           return false;
@@ -30,8 +30,9 @@ describe('プログラムをコントロールする仕組み', () => {
       );
       next();
     });
+    /*
     it('逆数の例', (next) => {
-      /* ##@range_begin(inverse_function)*/
+      // ##@range_begin(inverse_function)
       var inverse = (n) => {
         if(n === 0) {
           return 0;
@@ -39,7 +40,7 @@ describe('プログラムをコントロールする仕組み', () => {
           return 1 / n;
         }
       };
-      /* ##@range_end(inverse_function)*/
+      // ##@range_end(inverse_function)
       expect(
         inverse(2)
       ).to.be(
@@ -52,6 +53,7 @@ describe('プログラムをコントロールする仕組み', () => {
       );
       next();
     });
+    */
     it('ifは文である', (next) => {
       /* ##@range_begin(if_statement) */
       if(true) {
@@ -63,10 +65,10 @@ describe('プログラムをコントロールする仕組み', () => {
       next();
     });
     it('ifの非正格性', (next) => {
-      /* ##@range_begin(if_nonstrict) */
       var infiniteLoop = (x) => {
         return infiniteLoop(x);
       };
+      /* ##@range_begin(if_nonstrict) */
       var func = (x) => {
         if(true) {
           return x;
@@ -75,9 +77,9 @@ describe('プログラムをコントロールする仕組み', () => {
             name: "",
             message: "ここには決して到達しません"
           };
-          /*return infiniteLoop(x); */
         }
       };
+      /* テスト */
       expect(
         func(1)
       ).to.eql(
@@ -109,8 +111,32 @@ describe('プログラムをコントロールする仕組み', () => {
       /* ##@range_end(trinary_if) */
       next();
     });
-    it('関数渡しで条件文を構築する', (next) => {
-      /* #@range_begin(conditional)         */
+    it('条件式を実装する', (next) => {
+      /* #@range_begin(conditional) */
+      var cond = (predicate, pattern) => {
+        if(predicate){
+          return pattern.trueClause();
+        } else {
+          return pattern.falseClause();
+        };
+      };
+      /* テスト */
+      expect(
+        cond((2 < 3), {
+          trueClause: () => {
+            return true;
+          },
+          falseClause: () => {
+            throw {
+              message: "ここは到達しません"
+            };
+          }
+        })
+      ).to.eql(
+        true
+      );
+      /* #@range_end(conditional) */
+      /*
       var conditional = function(pred, trueExpr, falseExpr){
         return (x) => {
           if(pred(x)){
@@ -137,7 +163,7 @@ describe('プログラムをコントロールする仕組み', () => {
         return infiniteLoop(x);
       };
       expect(conditional(lessThan(3), function(x){ return x;},function(x){ return infiniteLoop(x);})(2)).to.eql(2);
-      /* #@range_end(conditional) */
+      */
       next();
     });
     it('関数渡しで反復文を構築する', function(next) {
@@ -328,7 +354,7 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(compare) */
       next();
     });
-	// ### コンビネータによる条件分岐の改善
+    // ### コンビネータによる条件分岐の改善
     describe('コンビネータによる条件分岐の改善', () => {
       var multiplyOf = (n) => {
         return (m) => {
@@ -342,8 +368,31 @@ describe('プログラムをコントロールする仕組み', () => {
       var twoFold = multiplyOf(2);
       var threeFold = multiplyOf(3);
       var fiveFold = multiplyOf(5);
+      it('notコンビネータ', (next) => {
+        // not:: (NUMBER->BOOL) -> NUMBER -> BOOL
+        var not = (predicate) => {
+          return (data) => { // NUMBER -> BOOL
+            if (predicate(data)) {
+              return false;
+            } else {
+              return true;
+            }
+          };
+        };
+      expect(
+        not(not(twoFold))(4)
+        // twoFold:: NUMBER -> BOOL
+        // not:: (NUMBER->BOOL) -> NUMBER -> BOOL
+        // not(twoFold):: NUMBER -> BOOL
+        // not(not(twoFold)):: NUMBER -> BOOL
+        // not(not(not(twoFold))):: NUMBER -> BOOL
+      ).to.eql(
+        true
+      );
+        next();
+      });
       it('2と3の倍数で 5の倍数ではない', (next) => {
-        /* ##@range_begin(twoFoldAndThreeFoldButNotFiveFoldByConditional) */
+        /* ##@range_begin(twoFoldAndThreeFoldButNotFiveFold) */
         var twoFold = (n) => { /* 2の倍数を判定する */
           if((n % 2) === 0) {
             return true;
@@ -356,8 +405,8 @@ describe('プログラムをコントロールする仕組み', () => {
           5の倍数を判定する fiveFoldも同様に定義したとする
         */
         var twoFoldAndThreeFoldButNotFiveFold = (n) => {
-          if(twoFold(n) && threeFold(n)) {
-            if(fiveFold(n)) {
+          if(twoFold(n) && threeFold(n)) { /* 2の倍数かつ3の倍数 */
+            if(fiveFold(n)) { /* 5の倍数 */
               return false;
             } else { /* 2の倍数かつ3の倍数で、5の倍数ではない */
               return true;
@@ -366,6 +415,7 @@ describe('プログラムをコントロールする仕組み', () => {
             return false;
           }
         };
+        /* テスト */
         expect(
           twoFoldAndThreeFoldButNotFiveFold(6)
         ).to.eql(
@@ -376,50 +426,42 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           false
         )
-        /* ##@range_end(twoFoldAndThreeFoldButNotFiveFoldByConditional) */
+        /* ##@range_end(twoFoldAndThreeFoldButNotFiveFold) */
         next();
       });
+      /* ##@range_begin(not_combinator) */
+      /* 「~ではない」を表す否定  */
+      /* not:: (NUMBER->BOOL) -> (NUMBER->BOOL) */
+      var not = (predicate) => { // predicate:: NUMBER->BOOL
+        return (number) => {     // NUMBER->BOOL型の関数を返す
+          return ! predicate(number); // !演算子で論理を反転させる
+        };
+      };
+      /* ##@range_end(not_combinator) */
       /* ##@range_begin(logical_combinator) */
-      var and = (former, latter) => {
+      /* 「かつ」を表す論理積  */
+      /* and:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
+      var and = (predicateA, predicateB) => {
         return (data) => {
-          if (former(data) && latter(data)) {
-            return true;
-          } else {
-            return false;
-          }
+          return predicateA(data) && predicateB(data);
         };
       };
-      var or = (former, latter) => {
+      /* 「もしくは」を表す論理和  */
+      var or = (predicateA, predicateB) => {
         return (data) => {
-          if (former(data)) {
-            return true;
-          } else {
-            if (latter(data)) {
-              return true
-            } else {
-              return false;
-            }
-          }
-        };
-      };
-      var not = (condition) => {
-        return (data) => {
-          if (condition(data)) {
-            return false;
-          } else {
-            return true;
-          }
+          return predicateA(data) || predicateB(data);
         };
       };
       /* ##@range_end(logical_combinator) */
-      it('倍数の組み合わせ', (next) => {
-        /* ##@range_begin(logical_combinator_test) */
+      it('論理コンビネータのテスト', (next) => {
         expect(
           twoFold(2)
         ).to.eql(
           true
         )
+        /* ##@range_begin(logical_combinator_test) */
         expect(
+		  /* 「2の倍数かつ3の倍数で、5の倍数ではない」*/
           and(and(twoFold,threeFold),not(fiveFold))(6)
         ).to.eql(
           true
@@ -637,7 +679,7 @@ describe('プログラムをコントロールする仕組み', () => {
         /* #@range_end(while_counter) */
         next();
       });
-	  /*
+      /*
       it("length", (next) => {
         // #@range_begin(while_length)
         var array = [1,2,3,4,5];
@@ -672,7 +714,7 @@ describe('プログラムをコントロールする仕組み', () => {
         // #@range_end(while_sum)
         next();
       });
-	  */
+      */
     });
     it("for文", function(next) {
       /* #@range_begin(for_example) */

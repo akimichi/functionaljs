@@ -4,9 +4,9 @@ layout: default
 
 # 「関数型プログラミングの基礎知識」サンプルコード
 
-* [第1章](chap01.spec.html)
+* [第1章 「計算」とは](chap01.spec.html)
 * [第2章](chap02.spec.html)
-* [第3章](chap03.spec.html)
+* [第3章 心の準備](chap03.spec.html)
 * [第4章 データの種類と特徴](chap04.spec.html)
 * [第5章 プログラムをコントロールする仕組み](chap05.spec.html)
-* [発展 プログラミング言語を作る](interpreter.spec.js)
+* [発展 プログラミング言語を作る](interpreter.spec.html)

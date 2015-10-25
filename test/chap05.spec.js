@@ -299,6 +299,26 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(signal) */
       next();
     });
+    it("可変データとのマッチング", (next) => {
+      /* #@range_begin(switch_for_mutable) */
+      var switch_for_mutable = (array) => {
+        switch(array){
+        case [1,2,3]:
+		  return true;
+          break;
+        default:
+		  return false;
+        }
+      }
+	  /* テスト */
+      expect(
+        switch_for_mutable([1,2,3])
+      ).to.eql(
+        false
+      );
+      /* #@range_end(switch_for_mutable) */
+      next();
+    });
     it("通貨の例", (next) => {
       /* #@range_begin(currency) */
       var move;
@@ -369,7 +389,7 @@ describe('プログラムをコントロールする仕組み', () => {
       var threeFold = multiplyOf(3);
       var fiveFold = multiplyOf(5);
       it('notコンビネータ', (next) => {
-        // not:: (NUMBER->BOOL) -> NUMBER -> BOOL
+        /* not:: (NUMBER->BOOL) -> NUMBER -> BOOL */
         var not = (predicate) => {
           return (data) => { // NUMBER -> BOOL
             if (predicate(data)) {
@@ -381,11 +401,6 @@ describe('プログラムをコントロールする仕組み', () => {
         };
       expect(
         not(not(twoFold))(4)
-        // twoFold:: NUMBER -> BOOL
-        // not:: (NUMBER->BOOL) -> NUMBER -> BOOL
-        // not(twoFold):: NUMBER -> BOOL
-        // not(not(twoFold)):: NUMBER -> BOOL
-        // not(not(not(twoFold))):: NUMBER -> BOOL
       ).to.eql(
         true
       );
@@ -485,6 +500,7 @@ describe('プログラムをコントロールする仕組み', () => {
         /* 2の倍数もしくは3の倍数で5の倍数でもあるもの */
         /* ##@range_begin(another_logical_combinator_test) */
         expect(
+		  /* 「2の倍数もしくは3の倍数、かつ5の倍数でもある」 */
           and(or(twoFold,threeFold),fiveFold)(10)
         ).to.eql(
           true
@@ -498,9 +514,7 @@ describe('プログラムをコントロールする仕組み', () => {
   describe('代数的データ型', () => {
     it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
-      var match = (exp, pattern) => { // パターンマッチを実現する関数
-        return exp.call(pattern, pattern);
-      };
+	  /* リストの代数的データ型 */
       var empty = (pattern) => {
         return pattern.empty;
       };
@@ -509,6 +523,12 @@ describe('プログラムをコントロールする仕組み', () => {
           return pattern.cons(value, list);
         };
       };
+	  /* 代数的データ型に対してパターンマッチを実現する関数 */
+      var match = (exp, pattern) => { 
+        return exp.call(pattern, pattern);
+      };
+      /* #@range_end(list_in_algebraic_datatype) */
+      /* #@range_begin(list_function_using_algebraic_datatype) */
       var isEmpty = (list) => {
         return match(list, { // match関数で分岐する
           empty: true,
@@ -533,7 +553,7 @@ describe('プログラムをコントロールする仕組み', () => {
           },
         })
       };
-      /* #@range_end(list_in_algebraic_datatype) */
+      /* #@range_end(list_function_using_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */
       expect(
         isEmpty(empty)         // [] は空のリストではある

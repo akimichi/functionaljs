@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>interpreter.spec.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>interpreter.spec.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+
+describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="-">環境</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> emptyEnv = (variable) =&gt; {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+  };
+  <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
+  <span class="hljs-keyword">var</span> lookupEnv = (variable, env) =&gt; {
+    <span class="hljs-keyword">return</span> env(variable);
+  };
+  <span class="hljs-comment">/* 環境を拡張する */</span>
+  <span class="hljs-keyword">var</span> extendEnv = (variable, value, env) =&gt; {
+    <span class="hljs-keyword">return</span> (queryVariable) =&gt; {
+      <span class="hljs-keyword">if</span>(variable === queryVariable) {
+        <span class="hljs-keyword">return</span> value;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> lookupEnv(queryVariable,env)
+      }
+    }
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="-">式の代数的データ構造</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; { 
+    <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
+  };
+  <span class="hljs-keyword">var</span> number = (value) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.number(value);
+    };
+  };
+  <span class="hljs-keyword">var</span> variable = (name) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.variable(value);
+    };
+  };
+  <span class="hljs-keyword">var</span> lambda = (arg, body) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.lambda(arg, body);
+    };
+  };
+  <span class="hljs-keyword">var</span> application = (name, arg) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.application(name,arg);
+    };
+  };
+  <span class="hljs-keyword">var</span> closure = (id, body, env) =&gt; {
+    <span class="hljs-keyword">return</span> (arg) =&gt; {
+      <span class="hljs-keyword">return</span> evaluate(body, extendEnv(id, body,env));
+    };
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="-">式の評価関数</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> evaluate = (exp, env) =&gt; {
+	<span class="hljs-keyword">return</span> match(exp,{
+	  number: (value) =&gt; {
+		<span class="hljs-keyword">return</span> value;
+	  },
+	  variable: (name) =&gt; {
+        <span class="hljs-keyword">return</span> lookupEnv(name, env);
+	  },
+	  lambda: (arg, body) =&gt; {
+		<span class="hljs-keyword">return</span> (actualArg) =&gt; {
+		  <span class="hljs-keyword">return</span> evaluate(body, extendEnv(arg, actualArg ,env));
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>return closure(arg, body, env);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	  },
+	  application: (name, arg) =&gt; {
+        <span class="hljs-keyword">var</span> rator = evaluate(name, env)
+        <span class="hljs-keyword">var</span> rand = evaluate(arg, env)
+        <span class="hljs-keyword">return</span> rator(rand);
+      }
+    });
+  };
+  describe(<span class="hljs-string">'環境'</span>, () =&gt; {
+    it(<span class="hljs-string">'extendEnvで環境を作り、 lookupEnv で環境を探る'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> newEnv = extendEnv(<span class="hljs-string">'a'</span>,<span class="hljs-number">1</span>, emptyEnv);
+      expect(
+		lookupEnv(<span class="hljs-string">"a"</span>, newEnv)
+	  ).to.be(
+		<span class="hljs-number">1</span>
+	  );
+	  next();
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>it(‘gets a value with applyEnv’, function() {
+  var env, mapping, newEnv, newMapping;
+  mapping = {
+    x: 1,
+    y: 2
+  };
+  env = intp.extendEnv(mapping, intp.emptyEnv());
+  (expect(intp.applyEnv(env, “x”))).to.be(1);
+  newMapping = {
+    z: 3
+  };
+  newEnv = intp.extendEnv(newMapping, env);
+  (expect(intp.applyEnv(newEnv, “z”))).to.be(3);
+  return (expect(intp.applyEnv(newEnv, “y”))).to.be(2);
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  });
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

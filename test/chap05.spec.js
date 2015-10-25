@@ -523,11 +523,13 @@ describe('プログラムをコントロールする仕組み', () => {
           return pattern.cons(value, list);
         };
       };
+      /* #@range_end(list_in_algebraic_datatype) */
+      /* #@range_begin(match_in_algebraic_datatype) */
 	  /* 代数的データ型に対してパターンマッチを実現する関数 */
       var match = (exp, pattern) => { 
         return exp.call(pattern, pattern);
       };
-      /* #@range_end(list_in_algebraic_datatype) */
+      /* #@range_end(match_in_algebraic_datatype) */
       /* #@range_begin(list_function_using_algebraic_datatype) */
       var isEmpty = (list) => {
         return match(list, { // match関数で分岐する
@@ -556,7 +558,7 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(list_function_using_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */
       expect(
-        isEmpty(empty)         // [] は空のリストではある
+        isEmpty(empty)         // empty は空のリストではある
       ).to.eql(
         true
       )
@@ -691,6 +693,7 @@ describe('プログラムをコントロールする仕組み', () => {
         while (counter < 10) {   // 反復の条件
           counter = counter + 1; // 変数の更新
         }
+		/* テスト */
         expect(
           counter
         ).to.eql(
@@ -736,11 +739,12 @@ describe('プログラムをコントロールする仕組み', () => {
       });
       */
     });
-    it("for文", function(next) {
+    it("for文", (next) => {
       /* #@range_begin(for_example) */
       for (var counter = 0; counter < 10; counter += 1) {
         ;
       }
+	  /* テスト */
       expect(
         counter
       ).to.eql(
@@ -757,6 +761,7 @@ describe('プログラムをコントロールする仕組み', () => {
         array.forEach((element) => {
           sum += element;
         });
+		/* テスト */
         expect(
           sum
         ).to.eql(
@@ -844,6 +849,7 @@ describe('プログラムをコントロールする仕組み', () => {
             },
           })
         };
+		/* テスト */
         expect(
           length(empty, 0)
         ).to.eql(

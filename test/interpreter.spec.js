@@ -8,16 +8,17 @@ describe('λ計算機', () => {
     return undefined;
   };
   /* 変数名に対応する値を環境から取りだす */
-  var lookupEnv = (variable, env) => {
-    return env(variable);
+  var lookupEnv = (identifier, env) => {
+    return env(identifier);
   };
   /* 環境を拡張する */
-  var extendEnv = (variable, value, env) => {
-    return (queryVariable) => {
-      if(variable === queryVariable) {
+  var extendEnv = (identifier, value, env) => {
+	expect(identifier).to.a('string');
+    return (queryIdentifier) => {
+      if(identifier === queryIdentifier) {
         return value;
       } else {
-        return lookupEnv(queryVariable,env)
+        return lookupEnv(queryIdentifier,env)
       }
     }
   };
@@ -37,16 +38,16 @@ describe('λ計算機', () => {
       return pattern.variable(name);
     };
   };
-  var lambda = (arg, body) => {
-	expect(arg).to.a('function');
+  var lambda = (variable, body) => {
+	expect(variable).to.a('function');
 	expect(body).to.a('function');
     return (pattern) => {
-      return pattern.lambda(arg, body);
+      return pattern.lambda(variable, body);
     };
   };
-  var application = (name, arg) => {
+  var application = (variable, arg) => {
     return (pattern) => {
-      return pattern.application(name,arg);
+      return pattern.application(variable, arg);
     };
   };
   // var closure = (id, body, env) => {
@@ -63,14 +64,19 @@ describe('λ計算機', () => {
 	  variable: (name) => {
         return lookupEnv(name, env);
 	  },
-	  lambda: (arg, body) => {
+	  lambda: (variable, bodyExp) => {
 		return (actualArg) => {
-		  return evaluate(body, extendEnv(arg, actualArg ,env));
+		  //expect(actualArg).to.a('string');
+		  return match(variable,{
+			variable: (name) => {
+			  return evaluate(bodyExp, extendEnv(name, actualArg ,env));
+			}
+		  })
 		};
 		// return closure(arg, body, env);
 	  },
-	  application: (func, arg) => {
-        var rator = evaluate(func, env)
+	  application: (variable, arg) => {
+        var rator = evaluate(variable, env)
         var rand = evaluate(arg, env)
         return rator(rand);
       }
@@ -102,7 +108,7 @@ describe('λ計算機', () => {
     //   return (expect(intp.applyEnv(newEnv, "y"))).to.be(2);
     // });
   });
-  describe('eval', () => {
+  describe('evaluate関数で式を評価する', () => {
     it('evaluate number', (next) => {
       expect(
 		evaluate(number(2), emptyEnv)
@@ -125,15 +131,40 @@ describe('λ計算機', () => {
 	  );
 	  next();
     });
-    it('evaluate a constant function application with eval', (next) => {
+    it('constant関数', (next) => {
       var constant = lambda(variable("x"),number(1))
       expect(
 		evaluate(constant, emptyEnv)
 	  ).to.a(
 		'function'
 	  );
+	  var applied = application(constant, variable("y"))
+      expect(
+		evaluate(applied, emptyEnv)
+	  ).to.eql(
+		1
+	  );
 	  next();
     });
+    // it('id関数', (next) => {
+	//   /* λx.x */
+    //   var id = lambda(variable("x"),variable("x"))
+    //   expect(
+	// 	evaluate(id, emptyEnv)
+	//   ).to.a(
+	// 	'function'
+	//   );
+	//   var applied = application(id, number(1))
+    //   expect(
+	// 	evaluate(applied, emptyEnv)
+	//   ).to.eql(
+	// 	1
+	//   );
+	//   next();
+    // });
+	// it('evaluate id function as an object with eval', (next) => {
+	  
+	// });
   //   it('evaluate id function as an object with eval', function() {
   //     var func, id;
   //     id = {

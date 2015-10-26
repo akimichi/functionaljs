@@ -97,21 +97,23 @@ describe('λ計算機', () => {
       );
       next();
     });
-    // it('gets a value with applyEnv', function() {
-    //   var env, mapping, newEnv, newMapping;
-    //   mapping = {
-    //     x: 1,
-    //     y: 2
-    //   };
-    //   env = intp.extendEnv(mapping, intp.emptyEnv());
-    //   (expect(intp.applyEnv(env, "x"))).to.be(1);
-    //   newMapping = {
-    //     z: 3
-    //   };
-    //   newEnv = intp.extendEnv(newMapping, env);
-    //   (expect(intp.applyEnv(newEnv, "z"))).to.be(3);
-    //   return (expect(intp.applyEnv(newEnv, "y"))).to.be(2);
-    // });
+	/*
+    it('gets a value with applyEnv', function() {
+      var env, mapping, newEnv, newMapping;
+      mapping = {
+        x: 1,
+        y: 2
+      };
+      env = intp.extendEnv(mapping, intp.emptyEnv());
+      (expect(intp.applyEnv(env, "x"))).to.be(1);
+      newMapping = {
+        z: 3
+      };
+      newEnv = intp.extendEnv(newMapping, env);
+      (expect(intp.applyEnv(newEnv, "z"))).to.be(3);
+      return (expect(intp.applyEnv(newEnv, "y"))).to.be(2);
+    });
+	*/
   });
   describe('evaluate関数で式を評価する', () => {
     it('数値を評価する', (next) => {

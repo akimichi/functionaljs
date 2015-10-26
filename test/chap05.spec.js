@@ -304,13 +304,13 @@ describe('プログラムをコントロールする仕組み', () => {
       var switch_for_mutable = (array) => {
         switch(array){
         case [1,2,3]:
-		  return true;
+          return true;
           break;
         default:
-		  return false;
+          return false;
         }
       }
-	  /* テスト */
+      /* テスト */
       expect(
         switch_for_mutable([1,2,3])
       ).to.eql(
@@ -356,6 +356,7 @@ describe('プログラムをコントロールする仕組み', () => {
           }
         }
       };
+	  /* テスト */
       expect(
         compare(3,2)
       ).to.eql(
@@ -476,7 +477,7 @@ describe('プログラムをコントロールする仕組み', () => {
         )
         /* ##@range_begin(logical_combinator_test) */
         expect(
-		  /* 「2の倍数かつ3の倍数で、5の倍数ではない」*/
+          /* 「2の倍数かつ3の倍数で、5の倍数ではない」*/
           and(and(twoFold,threeFold),not(fiveFold))(6)
         ).to.eql(
           true
@@ -500,7 +501,7 @@ describe('プログラムをコントロールする仕組み', () => {
         /* 2の倍数もしくは3の倍数で5の倍数でもあるもの */
         /* ##@range_begin(another_logical_combinator_test) */
         expect(
-		  /* 「2の倍数もしくは3の倍数、かつ5の倍数でもある」 */
+          /* 「2の倍数もしくは3の倍数、かつ5の倍数でもある」 */
           and(or(twoFold,threeFold),fiveFold)(10)
         ).to.eql(
           true
@@ -514,7 +515,7 @@ describe('プログラムをコントロールする仕組み', () => {
   describe('代数的データ型', () => {
     it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
-	  /* リストの代数的データ型 */
+      /* リストの代数的データ型 */
       var empty = (pattern) => {
         return pattern.empty;
       };
@@ -525,7 +526,7 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       /* #@range_end(list_in_algebraic_datatype) */
       /* #@range_begin(match_in_algebraic_datatype) */
-	  /* 代数的データ型に対してパターンマッチを実現する関数 */
+      /* 代数的データ型に対してパターンマッチを実現する関数 */
       var match = (exp, pattern) => { 
         return exp.call(pattern, pattern);
       };
@@ -693,7 +694,7 @@ describe('プログラムをコントロールする仕組み', () => {
         while (counter < 10) {   // 反復の条件
           counter = counter + 1; // 変数の更新
         }
-		/* テスト */
+        /* テスト */
         expect(
           counter
         ).to.eql(
@@ -744,7 +745,7 @@ describe('プログラムをコントロールする仕組み', () => {
       for (var counter = 0; counter < 10; counter += 1) {
         ;
       }
-	  /* テスト */
+      /* テスト */
       expect(
         counter
       ).to.eql(
@@ -761,7 +762,7 @@ describe('プログラムをコントロールする仕組み', () => {
         array.forEach((element) => {
           sum += element;
         });
-		/* テスト */
+        /* テスト */
         expect(
           sum
         ).to.eql(
@@ -849,7 +850,7 @@ describe('プログラムをコントロールする仕組み', () => {
             },
           })
         };
-		/* テスト */
+        /* テスト */
         expect(
           length(empty, 0)
         ).to.eql(

@@ -34,7 +34,8 @@
 
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
 
-describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div></div>
+describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {
+  <span class="hljs-comment">/* #@range_begin(environment) */</span></pre></div></div>
             
         </li>
         
@@ -53,19 +54,22 @@ describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div><
     <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
   };
   <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
-  <span class="hljs-keyword">var</span> lookupEnv = (variable, env) =&gt; {
-    <span class="hljs-keyword">return</span> env(variable);
+  <span class="hljs-keyword">var</span> lookupEnv = (identifier, env) =&gt; {
+    <span class="hljs-keyword">return</span> env(identifier);
   };
   <span class="hljs-comment">/* 環境を拡張する */</span>
-  <span class="hljs-keyword">var</span> extendEnv = (variable, value, env) =&gt; {
-    <span class="hljs-keyword">return</span> (queryVariable) =&gt; {
-      <span class="hljs-keyword">if</span>(variable === queryVariable) {
+  <span class="hljs-keyword">var</span> extendEnv = (identifier, value, env) =&gt; {
+    expect(identifier).to.a(<span class="hljs-string">'string'</span>);
+    <span class="hljs-keyword">return</span> (queryIdentifier) =&gt; {
+      expect(queryIdentifier).to.a(<span class="hljs-string">'string'</span>);
+      <span class="hljs-keyword">if</span>(identifier === queryIdentifier) {
         <span class="hljs-keyword">return</span> value;
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> lookupEnv(queryVariable,env)
+        <span class="hljs-keyword">return</span> lookupEnv(queryIdentifier,env)
       }
     }
-  };</pre></div></div>
+  };
+  <span class="hljs-comment">/* #@range_end(environment) */</span></pre></div></div>
             
         </li>
         
@@ -83,31 +87,32 @@ describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div><
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; { 
     <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
   };
+  <span class="hljs-comment">/* #@range_begin(expression_algaraic_datatype) */</span>
   <span class="hljs-keyword">var</span> number = (value) =&gt; {
+    expect(value).to.a(<span class="hljs-string">'number'</span>);
     <span class="hljs-keyword">return</span> (pattern) =&gt; {
       <span class="hljs-keyword">return</span> pattern.number(value);
     };
   };
   <span class="hljs-keyword">var</span> variable = (name) =&gt; {
+    expect(name).to.a(<span class="hljs-string">'string'</span>);
     <span class="hljs-keyword">return</span> (pattern) =&gt; {
-      <span class="hljs-keyword">return</span> pattern.variable(value);
+      <span class="hljs-keyword">return</span> pattern.variable(name);
     };
   };
-  <span class="hljs-keyword">var</span> lambda = (arg, body) =&gt; {
+  <span class="hljs-keyword">var</span> lambda = (variable, body) =&gt; {
+    expect(variable).to.a(<span class="hljs-string">'function'</span>);
+    expect(body).to.a(<span class="hljs-string">'function'</span>);
     <span class="hljs-keyword">return</span> (pattern) =&gt; {
-      <span class="hljs-keyword">return</span> pattern.lambda(arg, body);
+      <span class="hljs-keyword">return</span> pattern.lambda(variable, body);
     };
   };
-  <span class="hljs-keyword">var</span> application = (name, arg) =&gt; {
+  <span class="hljs-keyword">var</span> application = (variable, arg) =&gt; {
     <span class="hljs-keyword">return</span> (pattern) =&gt; {
-      <span class="hljs-keyword">return</span> pattern.application(name,arg);
+      <span class="hljs-keyword">return</span> pattern.application(variable, arg);
     };
   };
-  <span class="hljs-keyword">var</span> closure = (id, body, env) =&gt; {
-    <span class="hljs-keyword">return</span> (arg) =&gt; {
-      <span class="hljs-keyword">return</span> evaluate(body, extendEnv(id, body,env));
-    };
-  };</pre></div></div>
+  <span class="hljs-comment">/* #@range_end(expression_algaraic_datatype) */</span></pre></div></div>
             
         </li>
         
@@ -122,18 +127,47 @@ describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div><
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> evaluate = (exp, env) =&gt; {
-	<span class="hljs-keyword">return</span> match(exp,{
-	  number: (value) =&gt; {
-		<span class="hljs-keyword">return</span> value;
-	  },
-	  variable: (name) =&gt; {
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(evaluation_function) */</span>
+  <span class="hljs-keyword">var</span> evaluate = (exp, env) =&gt; {
+    <span class="hljs-keyword">return</span> match(exp,{
+      <span class="hljs-comment">/* 数値の評価 */</span>
+      number: (value) =&gt; {
+        <span class="hljs-keyword">return</span> value;
+      },
+      <span class="hljs-comment">/* 変数の評価 */</span>
+      variable: (name) =&gt; {
         <span class="hljs-keyword">return</span> lookupEnv(name, env);
-	  },
-	  lambda: (arg, body) =&gt; {
-		<span class="hljs-keyword">return</span> (actualArg) =&gt; {
-		  <span class="hljs-keyword">return</span> evaluate(body, extendEnv(arg, actualArg ,env));
-		};</pre></div></div>
+      },
+      <span class="hljs-comment">/* λ式の評価 */</span>
+      lambda: (variable, bodyExp) =&gt; {
+        <span class="hljs-comment">/* クロージャーを返す */</span>
+        <span class="hljs-keyword">return</span> (actualArg) =&gt; {
+          <span class="hljs-keyword">return</span> match(variable,{ <span class="hljs-comment">// maybeを返すべきか？</span>
+            variable: (name) =&gt; {
+              <span class="hljs-keyword">return</span> evaluate(bodyExp, extendEnv(name, actualArg ,env));
+            }
+          })
+        };
+      },
+      <span class="hljs-comment">/* 関数適用の評価 */</span>
+      application: (variable, arg) =&gt; {
+        <span class="hljs-keyword">var</span> rator = evaluate(variable, env);
+        <span class="hljs-keyword">var</span> rand = evaluate(arg, env);
+        <span class="hljs-keyword">return</span> rator(rand);
+      }
+    });
+  };
+  <span class="hljs-comment">/* #@range_end(evaluation_function) */</span>
+  describe(<span class="hljs-string">'環境'</span>, () =&gt; {
+    it(<span class="hljs-string">'extendEnvで環境を作り、 lookupEnv で環境を探る'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> newEnv = extendEnv(<span class="hljs-string">'a'</span>,<span class="hljs-number">1</span>, emptyEnv);
+      expect(
+        lookupEnv(<span class="hljs-string">"a"</span>, newEnv)
+      ).to.be(
+        <span class="hljs-number">1</span>
+      );
+      next();
+    });</pre></div></div>
             
         </li>
         
@@ -143,38 +177,6 @@ describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div><
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>return closure(arg, body, env);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>	  },
-	  application: (name, arg) =&gt; {
-        <span class="hljs-keyword">var</span> rator = evaluate(name, env)
-        <span class="hljs-keyword">var</span> rand = evaluate(arg, env)
-        <span class="hljs-keyword">return</span> rator(rand);
-      }
-    });
-  };
-  describe(<span class="hljs-string">'環境'</span>, () =&gt; {
-    it(<span class="hljs-string">'extendEnvで環境を作り、 lookupEnv で環境を探る'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> newEnv = extendEnv(<span class="hljs-string">'a'</span>,<span class="hljs-number">1</span>, emptyEnv);
-      expect(
-		lookupEnv(<span class="hljs-string">"a"</span>, newEnv)
-	  ).to.be(
-		<span class="hljs-number">1</span>
-	  );
-	  next();
-    });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>it(‘gets a value with applyEnv’, function() {
   var env, mapping, newEnv, newMapping;
@@ -195,6 +197,166 @@ describe(<span class="hljs-string">'λ計算機'</span>, () =&gt; {</pre></div><
             </div>
             
             <div class="content"><div class='highlight'><pre>  });
+  describe(<span class="hljs-string">'evaluate関数で式を評価する'</span>, () =&gt; {
+    it(<span class="hljs-string">'数値を評価する'</span>, (next) =&gt; {
+      expect(
+        evaluate(number(<span class="hljs-number">2</span>), emptyEnv)
+      ).to.be(
+        <span class="hljs-number">2</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'変数を評価する'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> env = extendEnv(<span class="hljs-string">"x"</span>,<span class="hljs-number">1</span>, emptyEnv);
+      expect(
+        evaluate(variable(<span class="hljs-string">"x"</span>), env)
+      ).to.be(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        evaluate(variable(<span class="hljs-string">"y"</span>), env)
+      ).to.be(
+        <span class="hljs-literal">undefined</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'constant関数'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> constant = lambda(variable(<span class="hljs-string">"x"</span>),number(<span class="hljs-number">1</span>))
+      expect(
+        evaluate(constant, emptyEnv)
+      ).to.a(
+        <span class="hljs-string">'function'</span>
+      );
+      <span class="hljs-keyword">var</span> applied = application(constant, variable(<span class="hljs-string">"y"</span>))
+      expect(
+        evaluate(applied, emptyEnv)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'id関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* λx.x */</span>
+      <span class="hljs-keyword">var</span> id = lambda(variable(<span class="hljs-string">"x"</span>),variable(<span class="hljs-string">"x"</span>))
+      expect(
+        evaluate(id, emptyEnv)
+      ).to.a(
+        <span class="hljs-string">'function'</span>
+      );
+      expect(
+        evaluate(application(id, number(<span class="hljs-number">1</span>)), emptyEnv)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'ブール型を評価する'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* λx.λy.x */</span>
+      <span class="hljs-keyword">var</span> trueFun = lambda(variable(<span class="hljs-string">"x"</span>),lambda(variable(<span class="hljs-string">"y"</span>),variable(<span class="hljs-string">"x"</span>)));
+      <span class="hljs-comment">/* λx.λy.y */</span>
+      <span class="hljs-keyword">var</span> falseFun = lambda(variable(<span class="hljs-string">"x"</span>),lambda(variable(<span class="hljs-string">"y"</span>),variable(<span class="hljs-string">"y"</span>)));
+      <span class="hljs-keyword">var</span> not = lambda(variable(<span class="hljs-string">"x"</span>),
+                       application(
+                         application(
+                           variable(<span class="hljs-string">"x"</span>),falseFun),
+                         trueFun));
+      <span class="hljs-keyword">var</span> and = lambda(variable(<span class="hljs-string">"x"</span>),
+                       lambda(variable(<span class="hljs-string">"y"</span>),
+                              application(
+                                application(variable(<span class="hljs-string">"x"</span>),variable(<span class="hljs-string">"y"</span>)),
+                                falseFun)));
+      <span class="hljs-keyword">var</span> or = lambda(variable(<span class="hljs-string">"x"</span>),
+                      lambda(variable(<span class="hljs-string">"y"</span>),
+                             application(
+                               application(variable(<span class="hljs-string">"x"</span>),trueFun),
+                               variable(<span class="hljs-string">"y"</span>))));
+      <span class="hljs-keyword">var</span> cond = lambda(variable(<span class="hljs-string">"pred"</span>),
+                        lambda(variable(<span class="hljs-string">"x"</span>),
+                               lambda(variable(<span class="hljs-string">"y"</span>),
+                                      application(
+                                        application(variable(<span class="hljs-string">"pred"</span>),variable(<span class="hljs-string">"x"</span>)),variable(<span class="hljs-string">"y"</span>)))));
+      expect(
+        evaluate(
+          application(
+            application(trueFun,number(<span class="hljs-number">1</span>)),
+            number(<span class="hljs-number">0</span>)),
+          emptyEnv)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        evaluate(
+          application(
+            application(
+              application(not, trueFun), number(<span class="hljs-number">1</span>)), number(<span class="hljs-number">0</span>)),emptyEnv)
+      ).to.eql(
+        <span class="hljs-number">0</span>
+      );
+      expect(
+        evaluate(
+          application(
+            application(
+              application(
+                application(and, 
+                            trueFun), 
+                trueFun), 
+              number(<span class="hljs-number">1</span>)),
+            number(<span class="hljs-number">0</span>)),emptyEnv)
+      ).to.be(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        evaluate(
+          application(
+            application(
+              application(
+                application(
+                  application(cond, trueFun),
+                  falseFun),
+              trueFun),
+              number(<span class="hljs-number">1</span>)),
+            number(<span class="hljs-number">0</span>)),
+          emptyEnv)
+      ).to.eql(
+        <span class="hljs-number">0</span>
+      );
+      next();
+    });
+    <span class="hljs-comment">/*
+  return describe('consBinding', function() {
+    it('constructs new binding with consBinding', function() {
+      var emptyBinding, firstBinding, secondBinding;
+      emptyBinding = {};
+      firstBinding = intp.consBinding("a", 1)(emptyBinding);
+      (expect(firstBinding['a'])).to.be(1);
+      secondBinding = intp.consBinding("b", 2)(firstBinding);
+      (expect(secondBinding['b'])).to.be(2);
+      return (expect(secondBinding['a'])).to.be(1);
+    });
+    it('can be composed', function() {
+      var composedBinding, emptyBinding, firstBinding, secondBinding, thirdBinding;
+      firstBinding = intp.consBinding("a", 1);
+      secondBinding = intp.consBinding("b", 2);
+      thirdBinding = intp.consBinding("c", 3);
+      emptyBinding = {};
+      composedBinding = fj.compose(fj.compose(firstBinding, secondBinding), thirdBinding)(emptyBinding);
+      (expect(composedBinding['a'])).to.be(1);
+      (expect(composedBinding['b'])).to.be(2);
+      return (expect(composedBinding['c'])).to.be(3);
+    });
+    return it('pipes consBinding with pipe', function() {
+      var combinedBinding, emptyBinding, firstBinding, secondBinding, thirdBinding;
+      firstBinding = intp.consBinding("a", 1);
+      secondBinding = intp.consBinding("b", 2);
+      thirdBinding = intp.consBinding("c", 3);
+      emptyBinding = {};
+      combinedBinding = fj.pipe([firstBinding, secondBinding, thirdBinding])(emptyBinding);
+      (expect(combinedBinding['a'])).to.be(1);
+      (expect(combinedBinding['b'])).to.be(2);
+      return (expect(combinedBinding['c'])).to.be(3);
+    });
+    */</span>
+  });
 });</pre></div></div>
             
         </li>

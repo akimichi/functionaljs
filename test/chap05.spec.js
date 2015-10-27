@@ -64,30 +64,6 @@ describe('プログラムをコントロールする仕組み', () => {
       /* ##@range_end(if_statement) */
       next();
     });
-    it('ifの非正格性', (next) => {
-      var infiniteLoop = (x) => {
-        return infiniteLoop(x);
-      };
-      /* ##@range_begin(if_nonstrict) */
-      var func = (x) => {
-        if(true) {
-          return x;
-        } else {
-          throw {
-            name: "",
-            message: "ここには決して到達しません"
-          };
-        }
-      };
-      /* テスト */
-      expect(
-        func(1)
-      ).to.eql(
-        1
-      );
-      /* ##@range_end(if_nonstrict) */
-      next();
-    });
     it("三項演算子", (next) => {
       /* ##@range_begin(trinary_if) */
       var signum = (n) => {
@@ -111,60 +87,105 @@ describe('プログラムをコントロールする仕組み', () => {
       /* ##@range_end(trinary_if) */
       next();
     });
-    it('条件式を実装する', (next) => {
-      /* #@range_begin(conditional) */
-      var cond = (predicate, pattern) => {
-        if(predicate){
-          return pattern.trueClause();
-        } else {
-          return pattern.falseClause();
-        };
+    describe('条件式を実装する', () => {
+      var infiniteLoop = (_) => {
+        return infiniteLoop(_);       /* 無限に実行します */
       };
-      /* テスト */
-      expect(
-        cond((2 < 3), {
-          trueClause: () => {
+      it('ifの非正格性', (next) => {
+        /* ##@range_begin(if_nonstrict) */
+        var infiniteLoop = (_) => {
+          return infiniteLoop(_);     /* 無限に実行します */
+        };
+        var lessThanFive = (n) => {
+          if(n < 5) {
             return true;
-          },
-          falseClause: () => {
-            throw {
-              message: "ここは到達しません"
-            };
-          }
-        })
-      ).to.eql(
-        true
-      );
-      /* #@range_end(conditional) */
-      /*
-      var conditional = function(pred, trueExpr, falseExpr){
-        return (x) => {
-          if(pred(x)){
-            return trueExpr(x);
           } else {
-            return falseExpr(x);
+            return infiniteLoop(); // ここを実行すると無限ループになります
           }
         };
-      };
-      var lessThan = (n) => {
-        return (x) => {
-          return x < n;
+        /* テスト */
+        expect(
+          lessThanFive(1)
+        ).to.eql(
+          true
+        );
+        /*
+          expect(
+          lessThanFive(10)
+          ).to.eql(
+          false // 無限ループに陥ります
+          );
+        */
+        /* ##@range_end(if_nonstrict) */
+        next();
+      });
+      it('条件式の実装(不完全)', (next) => {
+        /* #@range_begin(functional_if_strict) */
+        var functionalIf = (predicate, trueClause, falseClause) => {
+          if(predicate){
+            return trueClause;
+          } else {
+            return falseClause;
+          }
         };
-      };
-      var succ = (n) => {
-        return n + 1;
-      };
-      expect(
-        conditional(lessThan(3), function(_){ return 1;},function(_){ return 0;})(2)
-      ).to.eql(
-        1
-      );
-      var infiniteLoop = (x) => {
-        return infiniteLoop(x);
-      };
-      expect(conditional(lessThan(3), function(x){ return x;},function(x){ return infiniteLoop(x);})(2)).to.eql(2);
-      */
-      next();
+        /* テスト */
+        expect(
+          functionalIf((2 < 3), 2, 3)
+        ).to.eql(
+          2
+        );
+        expect(
+          functionalIf((2 > 3), 2, 3)
+        ).to.eql(
+          3
+        );
+        /* #@range_end(functional_if_strict) */
+        // expect(conditional(lessThan(3), function(x){ return x;},function(x){ return infiniteLoop(x);})(2)).to.eql(2);
+        next();
+      });
+      it('条件式の実装', (next) => {
+        /* #@range_begin(functional_if) */
+        var functionalIf = (predicate, pattern) => {
+          if(predicate){
+            return pattern.thenClause();
+          } else {
+            return pattern.elseClause();
+          };
+        };
+        /* テスト */
+        expect(
+          functionalIf((2 < 3), {
+            thenClause: () => { // 関数を渡している
+              return true;
+            },
+            elseClause: () => {
+              return infiniteLoop();
+            }
+          })
+        ).to.eql(
+          true
+        );
+        /* #@range_end(functional_if) */
+        /* #@range_begin(functional_if_test) */
+        var even = (n) => {
+          return functionalIf((n % 2) === 0,{
+            thenClause: () => {
+              return true;
+            },
+            elseClause: () => {
+              return false;
+            }
+          });
+        };
+        /* テスト */
+        expect(
+          even(2)
+        ).to.eql(
+          true
+        )
+        /* #@range_end(functional_if_test) */
+        next();
+      });
     });
     it('関数渡しで反復文を構築する', function(next) {
       /* #@range_begin(loop)            */
@@ -356,7 +377,7 @@ describe('プログラムをコントロールする仕組み', () => {
           }
         }
       };
-	  /* テスト */
+      /* テスト */
       expect(
         compare(3,2)
       ).to.eql(
@@ -527,8 +548,8 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(list_in_algebraic_datatype) */
       /* #@range_begin(match_in_algebraic_datatype) */
       /* 代数的データ型に対してパターンマッチを実現する関数 */
-      var match = (exp, pattern) => { 
-        return exp.call(pattern, pattern);
+      var match = (data, pattern) => { 
+		return data(pattern);
       };
       /* #@range_end(match_in_algebraic_datatype) */
       /* #@range_begin(list_function_using_algebraic_datatype) */
@@ -574,16 +595,16 @@ describe('プログラムをコントロールする仕組み', () => {
         1
       )
       expect(
-        isEmpty(tail(cons(1,empty)))     // [1]の末尾要素は空のリストである
-      ).to.be(
-        true
-      )
-      expect(
         head(tail(cons(1,cons(2,empty)))) // [1,2]の2番目の要素は2である
       ).to.be(
         2
       )
       /* #@range_end(list_in_algebraic_datatype_test) */
+      expect(
+        isEmpty(tail(cons(1,empty)))     // [1]の末尾要素は空のリストである
+      ).to.be(
+        true
+      )
       next();
     });
     it('男女の別をsum型で表現する', (next) => {
@@ -780,6 +801,7 @@ describe('プログラムをコントロールする仕組み', () => {
           });
           return result;
         };
+		/* テスト */
         expect(
           length([1,2,3,4,5])
         ).to.eql(

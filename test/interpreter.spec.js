@@ -22,11 +22,11 @@ describe('λ計算機', () => {
       } else {
         return lookupEnv(queryIdentifier,env)
       }
-    }
+    };
   };
   /* #@range_end(environment) */
   // ## 式の代数的データ構造
-  var match = (exp, pattern) => { 
+  var match = (exp, pattern) => {
     return exp.call(pattern, pattern);
   };
   /* #@range_begin(expression_algaraic_datatype) */
@@ -75,7 +75,7 @@ describe('λ計算機', () => {
             variable: (name) => {
               return evaluate(bodyExp, extendEnv(name, actualArg ,env));
             }
-          })
+          });
         };
       },
       /* 関数適用の評価 */
@@ -97,7 +97,7 @@ describe('λ計算機', () => {
       );
       next();
     });
-	/*
+    /*
     it('gets a value with applyEnv', function() {
       var env, mapping, newEnv, newMapping;
       mapping = {
@@ -113,7 +113,7 @@ describe('λ計算機', () => {
       (expect(intp.applyEnv(newEnv, "z"))).to.be(3);
       return (expect(intp.applyEnv(newEnv, "y"))).to.be(2);
     });
-	*/
+    */
   });
   describe('evaluate関数で式を評価する', () => {
     it('数値を評価する', (next) => {
@@ -215,9 +215,9 @@ describe('λ計算機', () => {
           application(
             application(
               application(
-                application(and, 
-                            trueFun), 
-                trueFun), 
+                application(and,
+                            trueFun),
+                trueFun),
               number(1)),
             number(0)),emptyEnv)
       ).to.be(

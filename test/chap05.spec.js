@@ -54,16 +54,21 @@ describe('プログラムをコントロールする仕組み', () => {
       next();
     });
     */
-    it('ifは文である', (next) => {
-      /* ##@range_begin(if_statement) */
-      if(true) {
-
-      } else {
-
-      }
-      /* ##@range_end(if_statement) */
-      next();
-    });
+    // it('ifは文である', (next) => {
+    //   /* ##@range_begin(if_statement) */
+    //   var result = if(true) {
+	// 	true;
+    //   } else {
+	// 	false;
+    //   }
+    //   expect(
+    //     result
+    //   ).to.eql(
+    //     10
+    //   );
+    //   /* ##@range_end(if_statement) */
+    //   next();
+    // });
     it("三項演算子", (next) => {
       /* ##@range_begin(trinary_if) */
       var signum = (n) => {
@@ -94,7 +99,7 @@ describe('プログラムをコントロールする仕組み', () => {
       it('ifの非正格性', (next) => {
         /* ##@range_begin(if_nonstrict) */
         var infiniteLoop = (_) => {
-          return infiniteLoop(_);     /* 無限に実行します */
+          return infiniteLoop(_);     /* 再帰呼び出しで無限に実行します */
         };
         var lessThanFive = (n) => {
           if(n < 5) {
@@ -109,11 +114,11 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           true
         );
-        /*
+        /* このテストは実行されると無限ループになるのでコメントアウトしています
           expect(
-          lessThanFive(10)
+            lessThanFive(10)
           ).to.eql(
-          false // 無限ループに陥ります
+            false // 無限ループ
           );
         */
         /* ##@range_end(if_nonstrict) */
@@ -155,7 +160,7 @@ describe('プログラムをコントロールする仕組み', () => {
         /* テスト */
         expect(
           functionalIf((2 < 3), {
-            thenClause: () => { // 関数を渡している
+            thenClause: () => { // 関数で包んでいる
               return true;
             },
             elseClause: () => {

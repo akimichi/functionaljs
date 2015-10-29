@@ -433,6 +433,10 @@ describe('プログラムをコントロールする仕組み', () => {
       );
         next();
       });
+      // it('(twoFold && threeFold) && (~ fiveFold)', (next) => {
+	  // 	(twoFold && threeFold) && (~ fiveFold)
+      //   next();
+      // });
       it('2と3の倍数で 5の倍数ではない', (next) => {
         /* ##@range_begin(twoFoldAndThreeFoldButNotFiveFold) */
         var twoFold = (n) => { /* 2の倍数を判定する */
@@ -879,17 +883,17 @@ describe('プログラムをコントロールする仕組み', () => {
         };
         /* テスト */
         expect(
-          length(empty, 0)
+          length(empty, 0)                        // []の長さは0
         ).to.eql(
           0
         )
         expect(
-          length(cons(1,empty), 0)
+          length(cons(1,empty), 0)                // [1]の長さは1
         ).to.eql(
           1
         )
         expect(
-          length(cons(1,cons(2,cons(3,empty))),0)
+          length(cons(1,cons(2,cons(3,empty))),0) // [1,2,3]の長さは3
         ).to.eql(
           3
         )

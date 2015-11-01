@@ -428,6 +428,172 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(compare) */
       next();
     });
+    describe('コンビネータライブラリー', () => {
+	  var event = {
+		hour: 13,
+		temperture: 25,
+		heater: true
+	  };
+      it('ifで実装する', (next) => {
+		// 昼間(12~18)は26~28度
+		// 夜(19~23)は24~26度
+		// 深夜(0~6)は21~23度
+		// 朝(7~11)は24~26度
+		// thermostat:: (EVENT, BOOL) -> BOOL
+		var thermostat = (event) => {
+		  if(event.hour > 12 && event.hour < 19){
+			if(event.temperture > 28) {
+			  return false;
+			} else {
+			  if(event.temperture < 26) {
+				return true;
+			  } else {
+				return event.heater;
+			  }
+			}
+		  }
+		  if(event.hour > 18 && event.hour < 24){
+			if(event.temperture > 26) {
+			  return false;
+			} else {
+			  if(event.temperture < 24) {
+				return true;
+			  } else {
+				return event.heater;
+			  }
+			}
+		  }
+		  if(event.hour > 0 && event.hour < 7){
+			if(event.temperture > 23) {
+			  return false;
+			} else {
+			  if(event.temperture < 21) {
+				return true;
+			  } else {
+				return event.heater;
+			  }
+			}
+		  }
+		  if(event.hour > 6 && event.hour < 12){
+			if(event.temperture > 26) {
+			  return false;
+			} else {
+			  if(event.temperture < 24) {
+				return true;
+			  } else {
+				return event.heater;
+			  }
+			}
+		  }
+		}
+		expect(
+          thermostat({ hour: 22, temperture: 25, heater: false})
+		).to.eql(
+          false
+		);
+		expect(
+          thermostat({ hour: 7, temperture: 22, heater: false})
+		).to.eql(
+          true
+		);
+		next();
+      });
+      it('コンビネーターで実装する', (next) => {
+		// hour:: EVENT -> NUMBER
+		var hour = (event) => {
+		  return event.hour;
+		};
+		// temperture:: EVENT -> NUMBER
+		var temperture = (event) => {
+		  return event.temperture;
+		};
+		// heater:: EVENT -> BOOL
+		var heater = (event) => {
+		  return event.heater;
+		};
+		var and = (former, latter) => {
+          expect(former).to.a('function');
+          expect(latter).to.a('function');
+		  return (extractor) => {
+			return (event) => {
+              expect(event).to.an('object');
+              return former(extractor(event)) && latter(extractor(event));
+			};
+		  };
+		};
+		var not = (predicate) => {
+		  return (extractor) => {
+			return (event) => {
+			  expect(event).to.an('object');
+              return ! predicate(extractor(event));
+			}
+          }
+		};
+		var or = (former, latter) => {
+          expect(former).to.a('function');
+          expect(latter).to.a('function');
+          return (event) => {
+            expect(event).to.an('object');
+            return former(event) || latter(event);
+          };
+		};
+		// isMoreThan:: NUMBER -> NUMBER -> BOOL
+		var isMoreThan = (n) => {
+		  return (m) => {
+			return m > n;
+		  };
+		};
+		// negate:: (NUMBER -> NUMBER -> BOOL) -> BOOL
+		var negate = (predicate) => {
+		  return (n) => {
+			return (m) => {
+			  return ! predicate(n)(m);
+			};
+		  };
+		};
+		var isLessThan = negate(isMoreThan);
+		expect(
+		  //isMoreThan(4,3)
+		  isMoreThan(3)(4)
+		).to.eql(
+		  true
+		)
+		expect(
+		  negate(isMoreThan)(3)(4)
+		).to.eql(
+		  false
+		)
+		expect(
+		  isLessThan(3)(4)
+		).to.eql(
+		  false
+		)
+		var range = (lower, upper) => {
+		  return (extractor) => {
+			expect(extractor).to.a('function');
+			return (event) => {
+			  expect(event).to.an('object');
+			  return and(isMoreThan(lower), isLessThan(upper))(extractor)(event);
+			};
+		  };
+		};
+		expect(
+		  range(12, 18)(hour)({ hour: 16, temperture: 25, heater: false})
+		).to.eql(
+		  true
+		)
+		var afternoon = range(12, 18)(hour);
+		var night = range(19, 23)(hour);
+		var midnight = range(0, 6)(hour);
+		var morning = range(7, 12)(hour);
+		expect(
+		  afternoon({ hour: 8, temperture: 25, heater: false})
+		).to.eql(
+		  false
+		)
+		next();
+      });
+    });
     // ### コンビネータによる条件分岐の改善
     describe('コンビネータによる条件分岐の改善', () => {
       var multiplyOf = (n) => {
@@ -453,11 +619,11 @@ describe('プログラムをコントロールする仕組み', () => {
             }
           };
         };
-      expect(
-        not(not(twoFold))(4)
-      ).to.eql(
-        true
-      );
+		expect(
+          not(not(twoFold))(4)
+		).to.eql(
+          true
+		);
         next();
       });
       // it('(twoFold && threeFold) && (~ fiveFold)', (next) => {

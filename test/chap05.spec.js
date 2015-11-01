@@ -57,9 +57,9 @@ describe('プログラムをコントロールする仕組み', () => {
     // it('ifは文である', (next) => {
     //   /* ##@range_begin(if_statement) */
     //   var result = if(true) {
-	// 	true;
+    //  true;
     //   } else {
-	// 	false;
+    //  false;
     //   }
     //   expect(
     //     result
@@ -94,18 +94,18 @@ describe('プログラムをコントロールする仕組み', () => {
     });
     describe('条件式を実装する', () => {
       var infiniteLoop = (_) => {
-        return infiniteLoop(_);       /* 無限に実行します */
+        return infiniteLoop(_);       
       };
       it('ifの非正格性', (next) => {
         /* ##@range_begin(if_nonstrict) */
         var infiniteLoop = (_) => {
-          return infiniteLoop(_);     /* 再帰呼び出しで無限に実行します */
+          return infiniteLoop(_);     /* 同じ関数を実行するので無限ループになります */
         };
         var lessThanFive = (n) => {
           if(n < 5) {
             return true;
           } else {
-            return infiniteLoop(); // ここを実行すると無限ループになります
+            return infiniteLoop(); // ここが実行されると無限ループになります
           }
         };
         /* テスト */
@@ -128,11 +128,12 @@ describe('プログラムをコントロールする仕組み', () => {
         /* #@range_begin(functional_if_strict) */
         var functionalIf = (predicate, trueClause, falseClause) => {
           if(predicate){
-            return trueClause;
+            return trueClause; // 判定式が真の場合に実行する
           } else {
-            return falseClause;
+            return falseClause;  // 判定式が真の場合に実行する
           }
         };
+        /* #@range_end(functional_if_strict) */
         /* テスト */
         expect(
           functionalIf((2 < 3), 2, 3)
@@ -144,7 +145,6 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           3
         );
-        /* #@range_end(functional_if_strict) */
         // expect(conditional(lessThan(3), function(x){ return x;},function(x){ return infiniteLoop(x);})(2)).to.eql(2);
         next();
       });
@@ -152,15 +152,15 @@ describe('プログラムをコントロールする仕組み', () => {
         /* #@range_begin(functional_if) */
         var functionalIf = (predicate, pattern) => {
           if(predicate){
-            return pattern.thenClause();
+            return pattern.thenClause();  // 判定式が真の場合に、pattern.thenClauseの関数を実行する
           } else {
-            return pattern.elseClause();
+            return pattern.elseClause();  // 判定式が真の場合に、pattern.elseClauseの関数を実行する
           };
         };
         /* テスト */
         expect(
           functionalIf((2 < 3), {
-            thenClause: () => { // 関数で包んでいる
+            thenClause: () => { // 関数で包む必要がある
               return true;
             },
             elseClause: () => {
@@ -189,6 +189,33 @@ describe('プログラムをコントロールする仕組み', () => {
           true
         )
         /* #@range_end(functional_if_test) */
+
+        /* #@range_begin(multiplyOf)            */
+        var multiplyOf = (n) => {
+          return (m) => {
+            return functionalIf(m % n === 0,{
+              thenClause: () => {
+                return true;
+              },
+              elseClause: () => {
+                return false;
+              }
+            });
+          };
+        };
+        /* テスト */
+        var threeFold = multiplyOf(3);
+        expect(
+          threeFold(2)
+        ).to.eql(
+          false
+        )
+        expect(
+          threeFold(3)
+        ).to.eql(
+          true
+        )
+        /* #@range_end(multiplyOf)            */
         next();
       });
     });
@@ -434,22 +461,15 @@ describe('プログラムをコントロールする仕組み', () => {
         next();
       });
       // it('(twoFold && threeFold) && (~ fiveFold)', (next) => {
-	  // 	(twoFold && threeFold) && (~ fiveFold)
+      //    (twoFold && threeFold) && (~ fiveFold)
       //   next();
       // });
       it('2と3の倍数で 5の倍数ではない', (next) => {
         /* ##@range_begin(twoFoldAndThreeFoldButNotFiveFold) */
-        var twoFold = (n) => { /* 2の倍数を判定する */
-          if((n % 2) === 0) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-        /*
-          3の倍数を判定する threeFold
-          5の倍数を判定する fiveFoldも同様に定義したとする
-        */
+        var twoFold = multiplyOf(2); /* 2の倍数を判定する */
+        var threeFold = multiplyOf(3); /* 3の倍数を判定する */
+        var fiveFold = multiplyOf(5); /* 5の倍数を判定する */
+
         var twoFoldAndThreeFoldButNotFiveFold = (n) => {
           if(twoFold(n) && threeFold(n)) { /* 2の倍数かつ3の倍数 */
             if(fiveFold(n)) { /* 5の倍数 */
@@ -558,7 +578,7 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_begin(match_in_algebraic_datatype) */
       /* 代数的データ型に対してパターンマッチを実現する関数 */
       var match = (data, pattern) => { 
-		return data(pattern);
+        return data(pattern);
       };
       /* #@range_end(match_in_algebraic_datatype) */
       /* #@range_begin(list_function_using_algebraic_datatype) */
@@ -810,7 +830,7 @@ describe('プログラムをコントロールする仕組み', () => {
           });
           return result;
         };
-		/* テスト */
+        /* テスト */
         expect(
           length([1,2,3,4,5])
         ).to.eql(
@@ -881,7 +901,7 @@ describe('プログラムをコントロールする仕組み', () => {
             },
           })
         };
-        /* テスト */
+        /************************ テスト ************************/
         expect(
           length(empty, 0)                        // []の長さは0
         ).to.eql(

@@ -485,7 +485,7 @@ describe('プログラムをコントロールする仕組み', () => {
               }
             }
           }
-        }
+        };
         expect(
           thermostat({ hour: 22, temperture: 25, heater: false})
         ).to.eql(
@@ -499,6 +499,14 @@ describe('プログラムをコントロールする仕組み', () => {
         next();
       });
       it('コンビネーターで実装する', (next) => {
+        var functionalIf = (predicate, pattern) => {
+          if(predicate){
+            return pattern.thenClause();
+          } else {
+            return pattern.elseClause()
+          };
+        };
+        // expect:: STRING -> OBJECT -> ANY
         var extract = (key) => {
           return (obj) => {
             return obj[key];
@@ -510,40 +518,40 @@ describe('プログラムをコントロールする仕組み', () => {
         var temperture = extract('temperture');
         // heater:: EVENT -> BOOL
         var heater = extract('heater');
+        // and:: (ANY -> BOOL,ANY -> BOOL) -> ANY -> BOOL
         var and = (former, latter) => {
           expect(former).to.a('function');
           expect(latter).to.a('function');
-          return (extractor) => {
-            return (event) => {
-              expect(event).to.an('object');
-              return former(extractor(event)) && latter(extractor(event));
-            };
+          return (data) => {
+            // expect(event).to.an('object');
+            return former(data) && latter(data);
           };
         };
         var not = (predicate) => {
-          return (extractor) => {
-            return (event) => {
-              expect(event).to.an('object');
-              return ! predicate(extractor(event));
-            };
+          return (data) => {
+            // expect(data).to.an('object');
+            return ! predicate(data);
           };
         };
         var or = (former, latter) => {
           expect(former).to.a('function');
           expect(latter).to.a('function');
-          return (event) => {
-            expect(event).to.an('object');
-            return former(event) || latter(event);
+          return (data) => {
+            // expect(event).to.an('object');
+            return former(data) || latter(data);
           };
         };
         // isMoreThan:: NUMBER -> NUMBER -> BOOL
         var isMoreThan = (n) => {
+          expect(n).to.a('number');
           return (m) => {
+            expect(m).to.a('number');
             return m > n;
           };
         };
         // negate:: (NUMBER -> NUMBER -> BOOL) -> BOOL
         var negate = (predicate) => {
+          // return ! predicate;
           return (n) => {
             return (m) => {
               return ! predicate(n)(m);
@@ -552,7 +560,6 @@ describe('プログラムをコントロールする仕組み', () => {
         };
         var isLessThan = negate(isMoreThan);
         expect(
-          //isMoreThan(4,3)
           isMoreThan(3)(4)
         ).to.eql(
           true
@@ -567,29 +574,104 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           false
         );
-        var range = (lower, upper) => {
+        // within:: (NUMBER, NUMBER) -> (EVENT -> ANY) -> EVENT -> BOOL
+        var within = (lower, upper) => {
           return (extractor) => {
             expect(extractor).to.a('function');
             return (event) => {
               expect(event).to.an('object');
-              return and(isMoreThan(lower), isLessThan(upper))(extractor)(event);
+              return and(isMoreThan(lower), isLessThan(upper))(extractor(event));
             };
           };
         };
         expect(
-          range(12, 18)(hour)({ hour: 16, temperture: 25, heater: false})
+          within(12, 18)(hour)({ hour: 16, temperture: 25, heater: false})
         ).to.eql(
           true
         );
-        var afternoon = range(12, 18)(hour);
-        var night = range(19, 23)(hour);
-        var midnight = range(0, 6)(hour);
-        var morning = range(7, 12)(hour);
+        expect(
+          within(12, 18)(temperture)({ hour: 16, temperture: 25, heater: false})
+        ).to.eql(
+          false
+        );
+        // afternoon:: EVENT -> BOOL
+        var afternoon = within(12, 18)(hour);
+        var night = within(19, 23)(hour);
+        var midnight = within(0, 6)(hour);
+        var morning = within(7, 12)(hour);
         expect(
           afternoon({ hour: 8, temperture: 25, heater: false})
         ).to.eql(
           false
         );
+        // above:: NUMBER -> (EVENT -> ANY) -> EVENT -> BOOL
+        var above = (threshold) => {
+          return (extractor) => {
+            expect(extractor).to.a('function');
+            return (event) => {
+              expect(event).to.an('object');
+              return isMoreThan(threshold)(extractor(event));
+            };
+          };
+        };
+        expect(
+          temperture({ hour: 8, temperture: 25, heater: false})
+        ).to.eql(
+          25
+        );
+        expect(
+          above(20)(temperture)({ hour: 8, temperture: 25, heater: false})
+        ).to.eql(
+          true
+        );
+        // below:: NUMBER -> (EVENT -> ANY) -> EVENT -> BOOL
+        var below = (threshold) => {
+          return (extractor) => {
+            expect(extractor).to.a('function');
+            return (event) => {
+              expect(event).to.an('object');
+              return isLessThan(threshold)(extractor(event));
+            };
+          };
+        };
+        expect(
+          below(20)(temperture)({ hour: 8, temperture: 25, heater: false})
+        ).to.eql(
+          false
+        );
+
+        // afternoon:: EVENT -> BOOL
+        // above(28)(temperture):: EVENT -> BOOL
+        expect(
+          and(afternoon
+              ,above(28)(temperture))({ hour: 13, temperture: 29, heater: false})
+        ).to.eql(
+          true
+        );
+        // heaterOn:: (TIMEZONE, TEMPERATUREZONE) -> EVENT -> BOOL
+        // 昼間(12~18)は26~28度
+        var heaterOn = (timezone, temperaturezone) => {
+          return (pattern) => {
+            return (event) => {
+              return functionalIf(and(timezone, temperaturezone)(event),pattern);
+              // thenClause: () => {
+              //   return true;
+              // },
+              // elseClause: () => {
+              //   return ;
+              // }
+            };
+          };
+        };
+        var afternoonHeaterOn = (temperaturezone) => {
+          return (event) => {
+            return functionalIf(and(afternoon,temperaturezone),{
+
+            });
+          };
+        };
+
+
         next();
       });
     });

@@ -94,7 +94,7 @@ describe('プログラムをコントロールする仕組み', () => {
     });
     describe('条件式を実装する', () => {
       var infiniteLoop = (_) => {
-        return infiniteLoop(_);       
+        return infiniteLoop(_);
       };
       it('ifの非正格性', (next) => {
         /* ##@range_begin(if_nonstrict) */
@@ -429,169 +429,168 @@ describe('プログラムをコントロールする仕組み', () => {
       next();
     });
     describe('コンビネータライブラリー', () => {
-	  var event = {
-		hour: 13,
-		temperture: 25,
-		heater: true
-	  };
+      var event = {
+        hour: 13,
+        temperture: 25,
+        heater: true
+      };
       it('ifで実装する', (next) => {
-		// 昼間(12~18)は26~28度
-		// 夜(19~23)は24~26度
-		// 深夜(0~6)は21~23度
-		// 朝(7~11)は24~26度
-		// thermostat:: (EVENT, BOOL) -> BOOL
-		var thermostat = (event) => {
-		  if(event.hour > 12 && event.hour < 19){
-			if(event.temperture > 28) {
-			  return false;
-			} else {
-			  if(event.temperture < 26) {
-				return true;
-			  } else {
-				return event.heater;
-			  }
-			}
-		  }
-		  if(event.hour > 18 && event.hour < 24){
-			if(event.temperture > 26) {
-			  return false;
-			} else {
-			  if(event.temperture < 24) {
-				return true;
-			  } else {
-				return event.heater;
-			  }
-			}
-		  }
-		  if(event.hour > 0 && event.hour < 7){
-			if(event.temperture > 23) {
-			  return false;
-			} else {
-			  if(event.temperture < 21) {
-				return true;
-			  } else {
-				return event.heater;
-			  }
-			}
-		  }
-		  if(event.hour > 6 && event.hour < 12){
-			if(event.temperture > 26) {
-			  return false;
-			} else {
-			  if(event.temperture < 24) {
-				return true;
-			  } else {
-				return event.heater;
-			  }
-			}
-		  }
-		}
-		expect(
+        // 昼間(12~18)は26~28度
+        // 夜(19~23)は24~26度
+        // 深夜(0~6)は21~23度
+        // 朝(7~11)は24~26度
+        // thermostat:: (EVENT, BOOL) -> BOOL
+        var thermostat = (event) => {
+          if(event.hour > 12 && event.hour < 19){
+            if(event.temperture > 28) {
+              return false;
+            } else {
+              if(event.temperture < 26) {
+                return true;
+              } else {
+                return event.heater;
+              }
+            }
+          }
+          if(event.hour > 18 && event.hour < 24){
+            if(event.temperture > 26) {
+              return false;
+            } else {
+              if(event.temperture < 24) {
+                return true;
+              } else {
+                return event.heater;
+              }
+            }
+          }
+          if(event.hour > 0 && event.hour < 7){
+            if(event.temperture > 23) {
+              return false;
+            } else {
+              if(event.temperture < 21) {
+                return true;
+              } else {
+                return event.heater;
+              }
+            }
+          }
+          if(event.hour > 6 && event.hour < 12){
+            if(event.temperture > 26) {
+              return false;
+            } else {
+              if(event.temperture < 24) {
+                return true;
+              } else {
+                return event.heater;
+              }
+            }
+          }
+        }
+        expect(
           thermostat({ hour: 22, temperture: 25, heater: false})
-		).to.eql(
+        ).to.eql(
           false
-		);
-		expect(
+        );
+        expect(
           thermostat({ hour: 7, temperture: 22, heater: false})
-		).to.eql(
+        ).to.eql(
           true
-		);
-		next();
+        );
+        next();
       });
       it('コンビネーターで実装する', (next) => {
-		// hour:: EVENT -> NUMBER
-		var hour = (event) => {
-		  return event.hour;
-		};
-		// temperture:: EVENT -> NUMBER
-		var temperture = (event) => {
-		  return event.temperture;
-		};
-		// heater:: EVENT -> BOOL
-		var heater = (event) => {
-		  return event.heater;
-		};
-		var and = (former, latter) => {
+        var extract = (key) => {
+          return (obj) => {
+            return obj[key];
+          };
+        };
+        // hour:: EVENT -> NUMBER
+        var hour = extract('hour');
+        // temperture:: EVENT -> NUMBER
+        var temperture = extract('temperture');
+        // heater:: EVENT -> BOOL
+        var heater = extract('heater');
+        var and = (former, latter) => {
           expect(former).to.a('function');
           expect(latter).to.a('function');
-		  return (extractor) => {
-			return (event) => {
+          return (extractor) => {
+            return (event) => {
               expect(event).to.an('object');
               return former(extractor(event)) && latter(extractor(event));
-			};
-		  };
-		};
-		var not = (predicate) => {
-		  return (extractor) => {
-			return (event) => {
-			  expect(event).to.an('object');
+            };
+          };
+        };
+        var not = (predicate) => {
+          return (extractor) => {
+            return (event) => {
+              expect(event).to.an('object');
               return ! predicate(extractor(event));
-			}
-          }
-		};
-		var or = (former, latter) => {
+            };
+          };
+        };
+        var or = (former, latter) => {
           expect(former).to.a('function');
           expect(latter).to.a('function');
           return (event) => {
             expect(event).to.an('object');
             return former(event) || latter(event);
           };
-		};
-		// isMoreThan:: NUMBER -> NUMBER -> BOOL
-		var isMoreThan = (n) => {
-		  return (m) => {
-			return m > n;
-		  };
-		};
-		// negate:: (NUMBER -> NUMBER -> BOOL) -> BOOL
-		var negate = (predicate) => {
-		  return (n) => {
-			return (m) => {
-			  return ! predicate(n)(m);
-			};
-		  };
-		};
-		var isLessThan = negate(isMoreThan);
-		expect(
-		  //isMoreThan(4,3)
-		  isMoreThan(3)(4)
-		).to.eql(
-		  true
-		)
-		expect(
-		  negate(isMoreThan)(3)(4)
-		).to.eql(
-		  false
-		)
-		expect(
-		  isLessThan(3)(4)
-		).to.eql(
-		  false
-		)
-		var range = (lower, upper) => {
-		  return (extractor) => {
-			expect(extractor).to.a('function');
-			return (event) => {
-			  expect(event).to.an('object');
-			  return and(isMoreThan(lower), isLessThan(upper))(extractor)(event);
-			};
-		  };
-		};
-		expect(
-		  range(12, 18)(hour)({ hour: 16, temperture: 25, heater: false})
-		).to.eql(
-		  true
-		)
-		var afternoon = range(12, 18)(hour);
-		var night = range(19, 23)(hour);
-		var midnight = range(0, 6)(hour);
-		var morning = range(7, 12)(hour);
-		expect(
-		  afternoon({ hour: 8, temperture: 25, heater: false})
-		).to.eql(
-		  false
-		)
-		next();
+        };
+        // isMoreThan:: NUMBER -> NUMBER -> BOOL
+        var isMoreThan = (n) => {
+          return (m) => {
+            return m > n;
+          };
+        };
+        // negate:: (NUMBER -> NUMBER -> BOOL) -> BOOL
+        var negate = (predicate) => {
+          return (n) => {
+            return (m) => {
+              return ! predicate(n)(m);
+            };
+          };
+        };
+        var isLessThan = negate(isMoreThan);
+        expect(
+          //isMoreThan(4,3)
+          isMoreThan(3)(4)
+        ).to.eql(
+          true
+        );
+        expect(
+          negate(isMoreThan)(3)(4)
+        ).to.eql(
+          false
+        );
+        expect(
+          isLessThan(3)(4)
+        ).to.eql(
+          false
+        );
+        var range = (lower, upper) => {
+          return (extractor) => {
+            expect(extractor).to.a('function');
+            return (event) => {
+              expect(event).to.an('object');
+              return and(isMoreThan(lower), isLessThan(upper))(extractor)(event);
+            };
+          };
+        };
+        expect(
+          range(12, 18)(hour)({ hour: 16, temperture: 25, heater: false})
+        ).to.eql(
+          true
+        );
+        var afternoon = range(12, 18)(hour);
+        var night = range(19, 23)(hour);
+        var midnight = range(0, 6)(hour);
+        var morning = range(7, 12)(hour);
+        expect(
+          afternoon({ hour: 8, temperture: 25, heater: false})
+        ).to.eql(
+          false
+        );
+        next();
       });
     });
     // ### コンビネータによる条件分岐の改善
@@ -603,7 +602,7 @@ describe('プログラムをコントロールする仕組み', () => {
           } else {
             return false;
           }
-        }
+        };
       };
       var twoFold = multiplyOf(2);
       var threeFold = multiplyOf(3);
@@ -619,11 +618,11 @@ describe('プログラムをコントロールする仕組み', () => {
             }
           };
         };
-		expect(
+        expect(
           not(not(twoFold))(4)
-		).to.eql(
+        ).to.eql(
           true
-		);
+        );
         next();
       });
       // it('(twoFold && threeFold) && (~ fiveFold)', (next) => {
@@ -652,12 +651,12 @@ describe('プログラムをコントロールする仕組み', () => {
           twoFoldAndThreeFoldButNotFiveFold(6)
         ).to.eql(
           true
-        )
+        );
         expect(
           twoFoldAndThreeFoldButNotFiveFold(30)
         ).to.eql(
           false
-        )
+        );
         /* ##@range_end(twoFoldAndThreeFoldButNotFiveFold) */
         next();
       });
@@ -690,30 +689,30 @@ describe('プログラムをコントロールする仕組み', () => {
           twoFold(2)
         ).to.eql(
           true
-        )
+        );
         /* ##@range_begin(logical_combinator_test) */
         expect(
           /* 「2の倍数かつ3の倍数で、5の倍数ではない」*/
           and(and(twoFold,threeFold),not(fiveFold))(6)
         ).to.eql(
           true
-        )
+        );
         /* ##@range_end(logical_combinator_test) */
         expect(
            and(twoFold,threeFold)(6)
         ).to.eql(
           true
-        )
+        );
         expect(
            and(twoFold,threeFold)(4)
         ).to.eql(
           false
-        )
+        );
         expect(
           and(and(twoFold,threeFold),not(fiveFold))(4)
         ).to.eql(
           false
-        )
+        );
         /* 2の倍数もしくは3の倍数で5の倍数でもあるもの */
         /* ##@range_begin(another_logical_combinator_test) */
         expect(
@@ -721,7 +720,7 @@ describe('プログラムをコントロールする仕組み', () => {
           and(or(twoFold,threeFold),fiveFold)(10)
         ).to.eql(
           true
-        )
+        );
         /* ##@range_end(another_logical_combinator_test) */
         next();
       });
@@ -743,7 +742,7 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(list_in_algebraic_datatype) */
       /* #@range_begin(match_in_algebraic_datatype) */
       /* 代数的データ型に対してパターンマッチを実現する関数 */
-      var match = (data, pattern) => { 
+      var match = (data, pattern) => {
         return data(pattern);
       };
       /* #@range_end(match_in_algebraic_datatype) */

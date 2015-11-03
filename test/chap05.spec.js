@@ -648,29 +648,27 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           true
         );
-        // heaterOn:: (TIMEZONE, TEMPERATUREZONE) -> EVENT -> BOOL
-        // 昼間(12~18)は26~28度
-        var heaterOn = (timezone, temperaturezone) => {
-          return (pattern) => {
-            return (event) => {
-              return functionalIf(and(timezone, temperaturezone)(event),pattern);
-              // thenClause: () => {
-              //   return true;
-              // },
-              // elseClause: () => {
-              //   return ;
-              // }
-            };
-          };
-        };
-        var afternoonHeaterOn = (temperaturezone) => {
+		thermostat: (timezone, temperaturezone) => {
           return (event) => {
-            return functionalIf(and(afternoon,temperaturezone),{
-
-            });
-          };
-        };
-
+			
+		  };
+		}
+        // heaterOn:: (TIMEZONE, TEMPERATUREZONE) -> EVENT -> BOOL
+        
+        // var heaterOn = (event) => {
+		//   or(
+		// 	and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
+		// 	and(night,below(24)(temperture))), // 夜(19~23)は24~26度
+		// 	// 深夜(0~6)は21~23度
+		// 	// 朝(7~11)は24~26度
+			
+			
+        // };
+		  
+		// or(
+		//   and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
+		//   and(night,below(24)(temperture)))) // 夜(19~23)は24~26度
+		
 
         next();
       });
@@ -718,16 +716,23 @@ describe('プログラムをコントロールする仕組み', () => {
         var fiveFold = multiplyOf(5); /* 5の倍数を判定する */
 
         var twoFoldAndThreeFoldButNotFiveFold = (n) => {
-          if(twoFold(n) && threeFold(n)) { /* 2の倍数かつ3の倍数 */
-            if(fiveFold(n)) { /* 5の倍数 */
-              return false;
-            } else { /* 2の倍数かつ3の倍数で、5の倍数ではない */
-              return true;
-            }
+          if(twoFold(n) && threeFold(n) && ! fiveFold(n)) {
+            return true;
           } else {
             return false;
           }
         };
+        // var twoFoldAndThreeFoldButNotFiveFold = (n) => {
+        //   if(twoFold(n) && threeFold(n)) { /* 2の倍数かつ3の倍数 */
+        //     if(fiveFold(n)) { /* 5の倍数 */
+        //       return false;
+        //     } else { /* 2の倍数かつ3の倍数で、5の倍数ではない */
+        //       return true;
+        //     }
+        //   } else {
+        //     return false;
+        //   }
+        // };
         /* テスト */
         expect(
           twoFoldAndThreeFoldButNotFiveFold(6)

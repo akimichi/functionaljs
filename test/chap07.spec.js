@@ -2,6 +2,62 @@
 
 var expect = require('expect.js');
 
+var seq = {
+  empty: (index) => {
+    return true;
+  },
+  cons: (head,tail) => {
+    return (f) => {
+      return f(head,tail);
+    };
+  },
+  head: (list) => {
+    return list((head,tail) => {
+      return head;
+    });
+  },
+  tail: (list) => {
+    return list((head,tail) => {
+      return tail;
+    });
+  },
+  at: (index,list) => {
+    if(index === 0){
+      return this.head(list);
+    } else {
+      return this.at(index -1, this.tail(list));
+    }
+  }
+};
+
+var stream = {
+  empty: (index) => {
+    return true;
+  },
+  cons: (head,tailThunk) => {
+    return (f) => {
+      return f(head,tailThunk);
+    };
+  },
+  head: (lazyList) => {
+    return lazyList((head,tailThunk) => {
+      return head;
+    });
+  },
+  tail: (lazyList) => {
+    return lazyList((head,tailThunk) => {
+      return tailThunk();
+    });
+  },
+  at: (index,lazyList) => {
+    if(index === 0){
+      return this.head(lazyList);
+    } else {
+      return this.at(index -1, this.tail(lazyList));
+    }
+  }
+};
+
 describe('高階関数', () => {
   describe('不変なデータ型を作る', () => {
     it('不変なオブジェクト型を作る', (next) => {
@@ -123,14 +179,14 @@ describe('高階関数', () => {
       /* #@range_end(immutable_object_type_improved_test) */
       next();
     });
-    it('不変な配列型', (next) => {
+    it('不変なリスト型', (next) => {
       // (define (cons x y)
       //   (lambda (m) (m x y)))
       // (define (car z)
       //   (z (lambda (p q) p)))
       // (define (cdr z)
       //   (z (lambda (p q) q)))
-      /* #@range_begin(immutable_array_type) */
+      /* #@range_begin(immutable_list) */
       var seq = {
         empty: (index) => {
           return true;
@@ -184,7 +240,7 @@ describe('高階関数', () => {
       ).to.eql(
         3
       )
-      /* #@range_end(immutable_array_type) */
+      /* #@range_end(immutable_list) */
       next();
     });
     // it('不変な配列型', (next) => {
@@ -224,6 +280,38 @@ describe('高階関数', () => {
     //   )
     //   next();
     // });
+    it('不変なストリーム型', (next) => {
+      /* #@range_begin(immutable_stream) */
+	  var stream = {
+		empty: (index) => {
+		  return true;
+		},
+		cons: (head,tailThunk) => {
+		  return (f) => {
+			return f(head,tailThunk);
+		  };
+		},
+		head: (lazyList) => {
+		  return lazyList((head,tailThunk) => {
+			return head;
+		  });
+		},
+		tail: (lazyList) => {
+		  return lazyList((head,tailThunk) => {
+			return tailThunk();
+		  });
+		},
+		at: (index,lazyList) => {
+		  if(index === 0){
+			return this.head(lazyList);
+		  } else {
+			return this.at(index -1, this.tail(lazyList));
+		  }
+		}
+	  };
+      /* #@range_end(immutable_stream) */
+      next();
+    });
   });
   describe('クロージャー', () => {
     it('クロージャーの変数バインディング', (next) => {
@@ -235,6 +323,70 @@ describe('高階関数', () => {
           return innerFunction;
         }
       /* #@range_end(free_variable_in_closure) */
+      next();
+    });
+	describe('ジェネレーター', () => {
+	  /* #@range_begin(generator_in_closure) */
+	  var generator = (seed) => {
+		return (current) => {
+		  return (stepFunction) => {
+			return stream.cons(current(seed),
+							   (_) => { return generator(stepFunction(seed))(current)(stepFunction) })
+		  };
+		};
+	  };
+	  var id = (any) => { return any; };
+	  var succ = (n) => { return n + 1; };
+	  var integers = generator(0)(id)(succ);
+	  expect(
+		stream.head(integers)
+	  ).to.eql(
+		0
+	  );
+	  expect(
+		stream.head(stream.tail(integers))
+	  ).to.eql(
+		1
+	  );
+	  expect(
+		stream.head(stream.tail(stream.tail(integers)))
+	  ).to.eql(
+		2
+	  );
+	  /* #@range_end(generator_in_closure) */
+    });
+  });
+  describe('コールバックを渡す', () => {
+    it('イベント駆動', (next) => {
+	  var processEvent = (event) => {
+		return (callback) => {
+		  return callback(event);
+		};
+	  };
+	  var anEvent = {"temperture": 26.0};
+      expect(
+		processEvent(anEvent)((theEvent) => {
+		  return theEvent.temperture;
+		})
+      ).to.eql(
+		26
+      );
+	  var extract = (key) => {
+		return (object) => {
+		  return object[key]
+		};
+	  }
+	  var extractTemperture = (event) => {
+		return processEvent(event)(extract("temperture"));
+		// return processEvent(event)((theEvent) => {
+		//   return theEvent.temperture;
+		// })
+	  };
+      expect(
+		extractTemperture(anEvent)
+      ).to.eql(
+		26
+      );
       next();
     });
   });

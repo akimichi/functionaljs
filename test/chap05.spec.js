@@ -648,27 +648,27 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           true
         );
-		thermostat: (timezone, temperaturezone) => {
+        thermostat: (timezone, temperaturezone) => {
           return (event) => {
-			
-		  };
-		}
+
+          };
+        }
         // heaterOn:: (TIMEZONE, TEMPERATUREZONE) -> EVENT -> BOOL
-        
+
         // var heaterOn = (event) => {
-		//   or(
-		// 	and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
-		// 	and(night,below(24)(temperture))), // 夜(19~23)は24~26度
-		// 	// 深夜(0~6)は21~23度
-		// 	// 朝(7~11)は24~26度
-			
-			
+        //   or(
+        //  and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
+        //  and(night,below(24)(temperture))), // 夜(19~23)は24~26度
+        //  // 深夜(0~6)は21~23度
+        //  // 朝(7~11)は24~26度
+
+
         // };
-		  
-		// or(
-		//   and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
-		//   and(night,below(24)(temperture)))) // 夜(19~23)は24~26度
-		
+
+        // or(
+        //   and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
+        //   and(night,below(24)(temperture)))) // 夜(19~23)は24~26度
+
 
         next();
       });
@@ -840,7 +840,7 @@ describe('プログラムをコントロールする仕組み', () => {
           cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
             return false;
           },
-        })
+        });
       };
       var head = (list) => {
         return match(list, {
@@ -848,7 +848,7 @@ describe('プログラムをコントロールする仕組み', () => {
           cons: (head, tail) => {
             return head;
           },
-        })
+        });
       };
       var tail = (list) => {
         return match(list, {
@@ -856,7 +856,7 @@ describe('プログラムをコントロールする仕組み', () => {
           cons: (head, tail) => {
             return tail;
           },
-        })
+        });
       };
       /* #@range_end(list_function_using_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */

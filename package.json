@@ -35,6 +35,7 @@
     "gulp-run": "^1.6.6",
     "gulp-tap": "^0.1.3",
     "gulp-util": "^3.0.4",
+    "kansuu.js": "^0.1",
     "npm": "^2.7.3",
     "random-js": "^1.0.4",
     "seedrandom": "^2.3.11"

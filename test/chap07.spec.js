@@ -55,6 +55,11 @@ var stream = {
     } else {
       return this.at(index -1, this.tail(lazyList));
     }
+  },
+  map: (lazyList, transform) => {
+    var x = transform(this.head(lazyList));
+    var xs = this.tail(lazyList);
+    return this.cons(x, this.map(xs, transform));
   }
 };
 
@@ -165,17 +170,17 @@ describe('高階関数', () => {
         objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
       ).to.eql(
         undefined
-      )
+      );
       expect(
         objects.get("HAL9000", objects.mkObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
       ).to.eql(
         "2001: a space odessay"
-      )
+      );
       expect(
         objects.get("R2D2", objects.mkObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
       ).to.eql(
         "Star Wars"
-      )
+      );
       /* #@range_end(immutable_object_type_improved_test) */
       next();
     });
@@ -282,33 +287,34 @@ describe('高階関数', () => {
     // });
     it('不変なストリーム型', (next) => {
       /* #@range_begin(immutable_stream) */
-	  var stream = {
-		empty: (index) => {
-		  return true;
-		},
-		cons: (head,tailThunk) => {
-		  return (f) => {
-			return f(head,tailThunk);
-		  };
-		},
-		head: (lazyList) => {
-		  return lazyList((head,tailThunk) => {
-			return head;
-		  });
-		},
-		tail: (lazyList) => {
-		  return lazyList((head,tailThunk) => {
-			return tailThunk();
-		  });
-		},
-		at: (index,lazyList) => {
-		  if(index === 0){
-			return this.head(lazyList);
-		  } else {
-			return this.at(index -1, this.tail(lazyList));
-		  }
-		}
-	  };
+      var stream = {
+        empty: (index) => {
+          return true;
+        },
+        cons: (head,tailThunk) => {
+          return (f) => {
+            return f(head,tailThunk);
+          };
+        },
+        head: (lazyList) => {
+          return lazyList((head,tailThunk) => {
+            return head;
+          });
+        },
+        tail: (lazyList) => {
+          return lazyList((head,tailThunk) => {
+            return tailThunk();
+          });
+        },
+        at: (index,lazyList) => {
+          if(index === 0){
+            return this.head(lazyList);
+          } else {
+            return this.at(index -1, this.tail(lazyList));
+          }
+        }
+      };
+
       /* #@range_end(immutable_stream) */
       next();
     });
@@ -321,71 +327,85 @@ describe('高階関数', () => {
             return outerArgument + innerArgument;
           };
           return innerFunction;
-        }
+        };
       /* #@range_end(free_variable_in_closure) */
       next();
     });
-	describe('ジェネレーター', () => {
-	  /* #@range_begin(generator_in_closure) */
-	  var generator = (seed) => {
-		return (current) => {
-		  return (stepFunction) => {
-			return stream.cons(current(seed),
-							   (_) => { return generator(stepFunction(seed))(current)(stepFunction) })
-		  };
-		};
-	  };
-	  var id = (any) => { return any; };
-	  var succ = (n) => { return n + 1; };
-	  var integers = generator(0)(id)(succ);
-	  expect(
-		stream.head(integers)
-	  ).to.eql(
-		0
-	  );
-	  expect(
-		stream.head(stream.tail(integers))
-	  ).to.eql(
-		1
-	  );
-	  expect(
-		stream.head(stream.tail(stream.tail(integers)))
-	  ).to.eql(
-		2
-	  );
-	  /* #@range_end(generator_in_closure) */
+    describe('ジェネレーター', () => {
+      /* #@range_begin(generator_in_closure) */
+      var generator = (seed) => {
+        return (current) => {
+          return (stepFunction) => {
+            return stream.cons(current(seed),
+                               (_) => { return generator(stepFunction(seed))(current)(stepFunction) })
+          };
+        };
+      };
+      var id = (any) => { return any; };
+      var succ = (n) => { return n + 1; };
+      var integers = generator(0)(id)(succ);
+      expect(
+        stream.head(integers)
+      ).to.eql(
+        0
+      );
+      expect(
+        stream.head(stream.tail(integers))
+      ).to.eql(
+        1
+      );
+      expect(
+        stream.head(stream.tail(stream.tail(integers)))
+      ).to.eql(
+        2
+      );
+      /* #@range_end(generator_in_closure) */
+      describe('streamとgenerator', () => {
+        var integers = generator(0)(id)(succ);
+        var double = (n) => {
+          return n * 2;
+        };
+        var doubles = stream.map.call(stream,
+                                      integers, double);
+        expect(
+          stream.head(integers)
+        ).to.eql(
+          0
+        );
+
+      });
     });
   });
   describe('コールバックを渡す', () => {
     it('イベント駆動', (next) => {
-	  var processEvent = (event) => {
-		return (callback) => {
-		  return callback(event);
-		};
-	  };
-	  var anEvent = {"temperture": 26.0};
+      var processEvent = (event) => {
+        return (callback) => {
+          return callback(event);
+        };
+      };
+      var anEvent = {"temperture": 26.0};
       expect(
-		processEvent(anEvent)((theEvent) => {
-		  return theEvent.temperture;
-		})
+        processEvent(anEvent)((theEvent) => {
+          return theEvent.temperture;
+        })
       ).to.eql(
-		26
+        26
       );
-	  var extract = (key) => {
-		return (object) => {
-		  return object[key]
-		};
-	  }
-	  var extractTemperture = (event) => {
-		return processEvent(event)(extract("temperture"));
-		// return processEvent(event)((theEvent) => {
-		//   return theEvent.temperture;
-		// })
-	  };
+      var extract = (key) => {
+        return (object) => {
+          return object[key]
+        };
+      }
+      var extractTemperture = (event) => {
+        return processEvent(event)(extract("temperture"));
+        // return processEvent(event)((theEvent) => {
+        //   return theEvent.temperture;
+        // })
+      };
       expect(
-		extractTemperture(anEvent)
+        extractTemperture(anEvent)
       ).to.eql(
-		26
+        26
       );
       next();
     });

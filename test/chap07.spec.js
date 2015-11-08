@@ -56,11 +56,11 @@ var stream = {
       return this.at(index -1, this.tail(lazyList));
     }
   },
-  map: (lazyList, transform) => {
-    var x = transform(this.head(lazyList));
-    var xs = this.tail(lazyList);
-    return this.cons(x, this.map(xs, transform));
-  }
+  // map: (lazyList, transform) => {
+  //   var x = transform(this.head(lazyList));
+  //   var xs = this.tail(lazyList);
+  //   return this.cons(x, this.map(xs, transform));
+  // }
 };
 
 describe('高階関数', () => {
@@ -360,20 +360,20 @@ describe('高階関数', () => {
         2
       );
       /* #@range_end(generator_in_closure) */
-      describe('streamとgenerator', () => {
-        var integers = generator(0)(id)(succ);
-        var double = (n) => {
-          return n * 2;
-        };
-        var doubles = stream.map.call(stream,
-                                      integers, double);
-        expect(
-          stream.head(integers)
-        ).to.eql(
-          0
-        );
+      // describe('streamとgenerator', () => {
+      //   var integers = generator(0)(id)(succ);
+      //   var double = (n) => {
+      //     return n * 2;
+      //   };
+      //   var doubles = stream.map.call(stream,
+      //                                 integers, double);
+      //   expect(
+      //     stream.head(integers)
+      //   ).to.eql(
+      //     0
+      //   );
 
-      });
+      // });
     });
   });
   describe('コールバックを渡す', () => {

@@ -42,6 +42,9 @@ describe('関数の基本', () => {
       });
     }
   };
+  var infiniteLoop = (_) => {
+	return infiniteLoop(_);
+  };
   describe('関数の定義', () => {
 	it('関数の変数へのバインド', (next) => {
       /* #@range_begin(function_bound_to_variable) */
@@ -199,14 +202,34 @@ describe('関数の基本', () => {
 	describe('関数合成', () => {
 	  /* #@range_begin(compose_definition) */
 	  var compose = (f) => {
-		var self = this;
 		return (g) => {
-		  return (_) => {
-			return f.call(self, g.apply(self, arguments));
+		  return (arg) =>{
+			return f(g(arg));
 		  };
   		};
 	  };
+	  // var compose = (f) => {
+	  // 	var self = this;
+	  // 	return (g) => {
+	  // 	  return (_) => {
+	  // 		return f.call(self, g.apply(self, arguments));
+	  // 	  };
+  	  // 	};
+	  // };
 	  /* #@range_end(compose_definition) */
+      it('マイナスのマイナスはプラス', (next) => {
+        /* #@range_begin(composition_example_negation_twice) */
+        var negate = (n) => {
+          return - n;
+        };
+        expect(
+          compose(negate)(negate)(2)
+        ).to.eql(
+          2
+        );
+        /* #@range_end(composition_example_negation_twice) */
+        next();
+      });
       it("1個の引数の関数を合成する", (next) => {
         var increment = function(n){
           return n + 1;
@@ -291,6 +314,82 @@ describe('関数の基本', () => {
 	  );
 	  /* #@range_end(list_reverse) */
       next();
+	});
+  });
+  describe('関数の適用', () => {
+	
+  });
+  describe('関数の純粋性', () => {
+	describe('副作用が参照透過性を損なうこと', () => {
+	  it('console.logが参照透過性を損なうこと', (next) => {
+		/* #@range_begin(log_destroys_referential_transparency) */
+		expect(
+		  console.log("this is a test")
+		).to.eql(
+		  console.log("this is anoter test")
+		)
+		/* #@range_end(log_destroys_referential_transparency) */
+		next();
+	  });
+	  describe('ファイル操作が参照透過性を損なうこと', () => {
+		/* #@range_begin(fileio_destroys_referential_transparency) */
+		var fs = require('fs');
+		after(() => { // テストの終了時に実行される
+		  fs.writeFileSync('test/resources/file.txt', "This is a test.");
+		});
+		it('ファイルを操作する', (next) => {
+		  expect(
+			fs.readFileSync("test/resources/file.txt", 'utf8')
+		  ).to.be(
+			"This is a test."
+		  );
+		  fs.writeFileSync('test/resources/file.txt', "This is another test.")
+		  expect(
+		    fs.readFileSync("test/resources/file.txt", 'utf8')
+		  ).not.to.be(
+		    "This is a test."
+		  );
+		  next();
+		});
+		/* #@range_end(fileio_destroys_referential_transparency) */
+	  });
+	});
+	describe('副作用の分離', () => {
+	  it('kestrelコンビネーター', (next) => {
+		// this.timeout(2000);
+		// var timeout = setTimeout(next, 2000);
+		/* #@range_begin(kestrel_combinator) */
+		var kestrel = (x) => {
+		  return (y) => {
+			return x;
+		  };
+		};
+		/* #@range_end(kestrel_combinator) */
+		/* #@range_begin(kestrel_combinator_test) */
+		expect(
+		  kestrel(1)(2)
+		).to.eql(
+		  1
+		);
+		/*
+		expect(
+		  kestrel(1)(infiniteLoop())
+		).to.eql(
+		  1
+		);
+		*/ 
+		/* #@range_end(kestrel_combinator_test) */
+		// setTimeout(function(){
+        //   // happens 0.5 seconds later:
+		//   expect(
+		// 	kestrel(1)(infiniteLoop())
+		//   ).to.eql(
+		// 	1
+		//   );
+        //   next(); // this tells mocha to run the next test
+		// },500);
+		next();
+	  });
 	});
   });
 });

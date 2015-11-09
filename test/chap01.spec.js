@@ -112,21 +112,21 @@ describe('「計算」とは', () => {
           /* #@range_end(turing_example_succ) */
           
           expect(
-			/* #@range_begin(turing_example_succ_test) */
+            /* #@range_begin(turing_example_succ_test) */
             machine(code,// 命令コード
                     tape,        // テープ
                     'q0',        // 初期状態
                     'q4')       // 終了状態
-			/* #@range_end(turing_example_succ_test) */
+            /* #@range_end(turing_example_succ_test) */
           ).to.eql(
-			/* #@range_begin(turing_example_succ_test_result) */
+            /* #@range_begin(turing_example_succ_test_result) */
             {
               '-1': 'B',
               '0': '1',
               '1': '1',
               '2': 'B'
             }
-			/* #@range_end(turing_example_succ_test_result) */
+            /* #@range_end(turing_example_succ_test_result) */
           );
           next();
         });
@@ -137,19 +137,19 @@ describe('「計算」とは', () => {
     describe('さまざまなバインド関数 ', () => {
       it('JavaScriptのbind関数', (next) => {
         /* #@range_begin(bind_in_javascript) */
-		var foo = (y) => {
-		  return this.x + y; 
-		};
-		var object = { x : 1 };
-		var bar = foo.bind(object);
+        var foo = (y) => {
+          return this.x + y; 
+        };
+        var object = { x : 1 };
+        var bar = foo.bind(object);
         /* #@range_end(bind_in_javascript) */
         expect(
           bar(2)
-		).to.eql(
+        ).to.eql(
           3
         );
         next();
-	  });
+      });
       it('monadのbind関数', (next) => {
         /* #@range_begin(bind_in_monad) */
         var bind = (instance) => {
@@ -158,19 +158,19 @@ describe('「計算」とは', () => {
           };
         }
         /* #@range_end(bind_in_monad) */
-		expect(
+        expect(
           /* #@range_begin(bind_in_monad_usage) */
           bind(2 * 3)((n) => {
             return n * 4;
           })
           /* #@range_end(bind_in_monad_usage) */
-		).to.eql(
+        ).to.eql(
           /* #@range_begin(bind_in_monad_usage_answer) */
             24 
           /* #@range_end(bind_in_monad_usage_answer) */
-		);
+        );
         next();
-	  });
+      });
     });
     describe('置換モデル', () => {
       it('単純なλ式の簡約', (next) => {
@@ -374,7 +374,7 @@ describe('「計算」とは', () => {
           } else {
             return add(succ(x),prev(y)); // add関数の再帰呼び出し
           }
-		  // return times(y, succ, null, x);
+          // return times(y, succ, null, x);
         };
         /* #@range_begin(multiply) */
         var times = (count,fun,arg, memo) => {

@@ -25,7 +25,7 @@ describe('データの種類と特徴', () => {
       /* #@range_end(integer_construction) */
       next();
     });
-	/*
+    /*
     describe('型決定のタイミング', () => {
       it('NaNはエラーの場所を発見しにくくする', (next) => {
          var one = 1;
@@ -37,10 +37,10 @@ describe('データの種類と特徴', () => {
          ).to.eql(
             11   // 1 * 2 + (3 + 4) = 10 を期待する
          );
-		 next();
+         next();
        });
     })
-	*/
+    */
   });
   describe('基本型', () => {
     it('未定義の変数', (next) => {
@@ -741,8 +741,8 @@ describe('データの種類と特徴', () => {
           }
         ).to.throwException((e)=> {
           expect(e).to.be.a(
-			ReferenceError
-		  );
+            ReferenceError
+          );
         });
         /* #@range_end(function_creates_scope) */
         expect(

@@ -272,7 +272,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           };
           var b = 1;
           var a = b;
-		  var aResult = wrapper(now)(a);
+          var aResult = wrapper(now)(a);
           expect(
             aResult
           ).to.not.eql(

@@ -945,40 +945,159 @@ describe('関数の使い方', () => {
         // });
       });
     });
-    describe('コールバックを渡す', () => {
-      it('イベント駆動', (next) => {
-        var processEvent = (event) => {
-          return (callback) => {
-            return callback(event);
+    describe('関数を渡す', () => {
+      describe('コールバックを渡す', () => {
+		it('イベント駆動', (next) => {
+          var processEvent = (event) => {
+			return (callback) => {
+              return callback(event);
+			};
           };
-        };
-        var anEvent = {"temperture": 26.0};
-        expect(
-          processEvent(anEvent)((theEvent) => {
-            return theEvent.temperture;
-          })
-        ).to.eql(
-          26
-        );
-        var extract = (key) => {
-          return (object) => {
-            return object[key]
+          var anEvent = {"temperture": 26.0};
+          expect(
+			processEvent(anEvent)((theEvent) => {
+              return theEvent.temperture;
+			})
+          ).to.eql(
+			26
+          );
+          var extract = (key) => {
+			return (object) => {
+              return object[key]
+			};
+          }
+          var extractTemperture = (event) => {
+			return processEvent(event)(extract("temperture"));
+			// return processEvent(event)((theEvent) => {
+			//   return theEvent.temperture;
+			// })
           };
-        }
-        var extractTemperture = (event) => {
-          return processEvent(event)(extract("temperture"));
-          // return processEvent(event)((theEvent) => {
-          //   return theEvent.temperture;
-          // })
-        };
-        expect(
-          extractTemperture(anEvent)
-        ).to.eql(
-          26
-        );
-        next();
+          expect(
+			extractTemperture(anEvent)
+          ).to.eql(
+			26
+          );
+          next();
+		});
       });
-    });
+      describe('畳み込み関数で反復処理を渡す', () => {
+		var seq  = {
+		  match: (data, pattern) => {
+			var self = this;
+			return data(pattern);
+		  },
+          // compose: (f,g) => {
+		  // 	return (arg) => {
+          //     return f(g(arg));
+		  // 	};
+          // },
+		  // flip: (fun) => {
+		  // 	return  (f) => {
+          //     return (g) => {
+		  // 		return fun(g)(f);
+          //     };
+		  // 	};
+          // },
+		  empty: (_) => {
+			return (pattern) => {
+			  return pattern.empty();
+			};
+		  },
+		  cons: (value, list) => {
+			return (pattern) => {
+			  return pattern.cons(value, list);
+			};
+		  },
+		  head: (list) => {
+			var self = this;
+			return self.match(list, {
+			  empty: (_) => {
+				return undefined;
+			  },
+			  cons: (head, tail) => {
+				return head;
+			  },
+			});
+		  },
+		  tail: (list) => {
+			var self = this;
+			return self.match(list, {
+			  empty: (_) => {
+				return undefined;
+			  },
+			  cons: (head, tail) => {
+				return tail;
+			  },
+			});
+		  },
+		  isEmpty: (list) => {
+			var self = this;
+			return seq.match(list, {
+			  empty: (_) => {
+				return true;
+			  },
+			  cons: (head, tail) => {
+				return false;
+			  },
+			});
+		  },
+		  // // concat:: LIST[T] -> LIST[T] -> LIST[T]
+		  // concat: (xs) => {
+		  // 	var self = this;
+		  // 	return (ys) => {
+		  // 	  if(self.isEmpty(xs)){
+		  // 		return ys;
+		  // 	  } else {
+		  // 		return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
+		  // 	  }
+		  // 	};
+		  // },
+		  // // concat:: LIST[LIST[T]] -> LIST[T]
+		  // join: (list_of_list) => {
+		  // 	var self = this;
+		  // 	if(self.isEmpty(list_of_list)){
+		  // 	  return self.empty();
+		  // 	} else {
+		  // 	  return self.concat(seq.head(list_of_list))(self.join(seq.tail(list_of_list)));
+		  // 	}
+		  // },
+          /* #@range_begin(foldr_final_version) */
+		  // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
+		  foldr: (list) => {
+			var self = this;
+			return (accumulator) => {
+			  return (glue) => {
+				expect(glue).to.a('function');
+				if(self.isEmpty(list)){
+				  return accumulator;
+				} else {
+				  var item = self.head(list);
+				  var tail = self.tail(list);
+				  return glue(item)(self.foldr(tail)(accumulator)(glue));
+				}
+			  };
+			};
+		  }
+          /* #@range_end(foldr_final_version) */
+		};
+		it("'畳み込み関数foldr'", (next) => {
+          /* #@range_begin(foldr_final_version_test) */
+		  // list = [1,2,3,4]
+		  var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+		  expect(
+			seq.foldr(list)(0)(function (item){
+			  return (accumulator) => {
+				return accumulator + item;
+			  };
+			})
+		  ).to.eql(
+			10
+		  )
+          /* #@range_end(foldr_final_version_test) */
+		  next();
+		});
+      }); // 畳み込み関数で反復処理を渡す
+    }); // 関数を渡す
     describe('コンビネーター', () => {
       it('コンビネーター・ライブラリー', (next) => {
         /* #@range_begin(combinator_library) */

@@ -614,11 +614,11 @@ describe('関数の使い方', () => {
             return (accumulator) => {
               return seq.match.call(seq,
                                     list, {
-                empty: accumulator,  // 空のリストの場合は終了
-                cons: (head, tail) => {
-                  return toArrayAux(tail)(accumulator.concat(head))
-                },
-              });
+									  empty: accumulator,  // 空のリストの場合は終了
+									  cons: (head, tail) => {
+										return toArrayAux(tail)(accumulator.concat(head))
+									  },
+									});
             };
           };
           return toArrayAux(list)([])
@@ -1077,24 +1077,36 @@ describe('関数の使い方', () => {
 				}
 			  };
 			};
-		  }
+		  },
           /* #@range_end(foldr_final_version) */
-		};
-		it("'畳み込み関数foldr'", (next) => {
-          /* #@range_begin(foldr_final_version_test) */
-		  // list = [1,2,3,4]
-		  var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
-		  expect(
-			seq.foldr(list)(0)(function (item){
+          /* #@range_begin(foldr_toArray) */
+		  toArray: (list) => {
+			var self = this;
+			return self.foldr(list)([])(function (item) {
 			  return (accumulator) => {
-				return accumulator + item;
+				return [item].concat(accumulator);
 			  };
-			})
-		  ).to.eql(
-			10
-		  )
-          /* #@range_end(foldr_final_version_test) */
-		  next();
+			});
+		  }
+          /* #@range_end(foldr_toArray) */
+		};
+		describe('畳み込み関数foldr', () => {
+		  it("foldrでsumを作る", (next) => {
+			/* #@range_begin(foldr_sum) */
+			// list = [1,2,3,4]
+			var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+			expect(
+			  seq.foldr(list)(0)(function (item){
+				return (accumulator) => {
+				  return accumulator + item;
+				};
+			  })
+			).to.eql(
+			  10
+			)
+			/* #@range_end(foldr_sum) */
+			next();
+		  });
 		});
       }); // 畳み込み関数で反復処理を渡す
     }); // 関数を渡す
@@ -1447,6 +1459,15 @@ describe('関数の使い方', () => {
 			  },
 			});
 		  },
+		  toArray: (list) => {
+			var self = this;
+			return self.foldr(list)([])(function (item) {
+			  return (accumulator) => {
+				return [item].concat(accumulator);
+				// return accumulator.concat(item);
+			  };
+			});
+		  },
 		  // concat:: LIST[T] -> LIST[T] -> LIST[T]
 		  concat: (xs) => {
 			var self = this;
@@ -1483,12 +1504,35 @@ describe('関数の使い方', () => {
 			  };
 			};
 		  },
+		  // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
 		  map: (list) => {
 			var self = this;
 			return (transform) => {
 			  expect(transform).to.a('function');
-			  var glue = self.compose(self.cons.bind(self))(transform.bind(self));
-			  return self.foldr(list)(self.empty())(glue);
+			  return seq.match(list,{
+			  	empty: (_) => {
+			  	  return self.empty;
+			  	},
+			  	cons: (x,xs) => {
+			  	  return self.cons(transform(x),self.map(xs)(transform));
+			  	}
+			  });
+			  // return self.foldr(list)(self.empty())(function (item){
+			  // 	return (accumulator) => {
+			  // 	  return seq.match(list,{
+			  // 		empty: (_) => {
+			  // 		  return accumulator;
+			  // 		},
+			  // 		cons: (x,xs) => {
+			  // 		  return transform();
+			  // 		}
+			  // 	  });
+			  // 	};
+			  // });
+			  // var glue = self.compose(self.cons.bind(self),transform.bind(self));
+			  // return self.foldr(list)(self.empty())(glue);
+			  // var glue = self.compose(self.cons.bind(self),transform.bind(self));
+			  // return self.foldr(list)(self.empty())(glue);
 			};
 		  },
 		  // ### list#unit
@@ -1502,8 +1546,7 @@ describe('関数の使い方', () => {
 			return (transform) => {
 			  expect(transform).to.a('function');
 			  return self.join(
-				self.flip.call(self,
-							   self.map.bind(self))(transform.bind(self))(instance));
+				self.flip(self.map(transform.bind(self))(instance)));
 			};
 		  }
 		}; // end of seq
@@ -1612,6 +1655,38 @@ describe('関数の使い方', () => {
 			})
 		  ).to.eql(
 			10
+		  )
+		  next();
+		})
+		it("'list#toArray'", (next) => {
+		  // list = [1,2,3,4]
+		  var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+		  expect(
+			seq.toArray(list)
+		  ).to.eql(
+			[1,2,3,4]
+		  )
+		  next();
+		})
+		it("'list#map'", (next) => {
+		  // list = [1,2,3,4]
+		  var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+		  expect(
+			seq.toArray(seq.map(list)(function (item){
+			  return item * 2;
+			}))
+		  ).to.eql(
+			[2,4,6,8]
+		  )
+		  next();
+		})
+		it("'list#unit'", (next) => {
+		  // list = [1,2,3,4]
+		  var list = seq.unit(1);
+		  expect(
+			seq.toArray(list)
+		  ).to.eql(
+			[1]
 		  )
 		  next();
 		})

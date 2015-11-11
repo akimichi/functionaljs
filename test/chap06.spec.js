@@ -354,16 +354,14 @@ describe('関数の使い方', () => {
         )
         /* #@range_end(function_applied_sequentially) */
         /* #@range_begin(function_applied_twice) */
-        var twice = (f) => {
-          return (n) => {
-            return f(f(n));
-          };
+        var twice = (f,arg) => {
+          return f(f(arg));
         };
         var succ = (x) => {
           return x + 1;
         };
         expect(
-          twice(succ)(2)
+          twice(succ,2)
         ).to.eql(
           4
         );
@@ -392,19 +390,17 @@ describe('関数の使い方', () => {
       });
       describe('関数合成', () => {
         /* #@range_begin(compose_definition) */
-        var compose = (f,g) => {
-          return (arg) =>{
-            return f(g(arg));
-          };
+        var compose = (f,g,arg) => {
+          return f(g(arg));
         };
         /* #@range_end(compose_definition) */
         it('否定を合成する', (next) => {
           /* #@range_begin(compose_negation) */
           var negate = (n) => {
-            return - n;
+            return -1 *  n;
           };
           expect(
-            compose(negate,negate)(2)
+            compose(negate,negate, 2)
           ).to.eql(
             2
           );
@@ -420,12 +416,12 @@ describe('関数の使い方', () => {
             return n - 1;
           };
           expect(
-            compose(prev,succ)(5)
+            compose(prev,succ,5)
           ).to.eql(
             5
           );
           expect(
-            compose(prev,succ)(2)
+            compose(prev,succ,2)
           ).to.eql(
             2
           );

@@ -154,7 +154,6 @@ describe('関数の使い方', () => {
     describe('再帰的な関数の適用', () => {
       var seq  = {
         match: (data, pattern) => {
-          var self = this;
           return data(pattern);
         },
         compose: (f,g) => {
@@ -203,7 +202,7 @@ describe('関数の使い方', () => {
         },
         isEmpty: (list) => {
           var self = this;
-          return seq.match(list, {
+          return self.match(list, {
             empty: (_) => {
               return true;
             },
@@ -238,7 +237,7 @@ describe('関数の使い方', () => {
           if(self.isEmpty(list_of_list)){
             return self.empty();
           } else {
-            return self.concat(seq.head(list_of_list))(self.join(seq.tail(list_of_list)));
+            return self.concat(seq.head(list_of_list))(self.join(self.tail(list_of_list)));
           }
         },
         // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
@@ -247,13 +246,21 @@ describe('関数の使い方', () => {
           return (accumulator) => {
             return (glue) => {
               expect(glue).to.a('function');
-              if(self.isEmpty(list)){
-                return accumulator;
-              } else {
-                var item = self.head(list);
-                var tail = self.tail(list);
-                return glue(item)(self.foldr(tail)(accumulator)(glue));
-              }
+			  return self.match(list,{
+				empty: (_) => {
+				  return accumulator;
+				},
+				cons: (head, tail) => {
+				  return glue(head)(self.foldr(tail)(accumulator)(glue));
+				}
+			  });
+              // if(self.isEmpty(list)){
+              //   return accumulator;
+              // } else {
+              //   var item = self.head(list);
+              //   var tail = self.tail(list);
+              //   return glue(item)(self.foldr(tail)(accumulator)(glue));
+              // }
             };
           };
         },
@@ -263,7 +270,7 @@ describe('関数の使い方', () => {
           var self = this;
           return (transform) => {
             expect(transform).to.a('function');
-            return seq.match(list,{
+            return self.match(list,{
               empty: (_) => {
                 return self.empty;
               },
@@ -289,6 +296,188 @@ describe('関数の使い方', () => {
         )
         /* #@range_end(list_map_test) */
         next();
+      });
+      it('リストの逆順を求める', (next) => {
+        /* #@range_begin(list_reverse) */
+        var reverse = (list) => {
+          return (accumulator) => {
+            return seq.match(list, {
+              empty: (_) => {
+				return accumulator;  // 空のリストの場合は終了
+			  },
+              cons: (head, tail) => {
+                return reverse(tail)(seq.cons(head, accumulator))
+              },
+            });
+          }
+        };
+        // toArray:: LIST -> ARRAY -> ARRAY
+        var toArray = (list) => {
+          var toArrayAux = (list) => {
+            return (accumulator) => {
+              return seq.match(list, {
+                empty: (_) => {
+				  return accumulator;  // 空のリストの場合は終了
+				},
+                cons: (head, tail) => {
+                  return toArrayAux(tail)(accumulator.concat(head))
+                },
+              });
+            };
+          };
+          return toArrayAux(list)([])
+        };
+        /**************** テスト ****************/
+		var list = seq.cons(1, seq.cons(2,seq.empty()));
+        expect(
+          toArray(reverse(list)(seq.empty()))
+        ).to.eql(
+          [2,1]
+        );
+        /* #@range_end(list_reverse) */
+        next();
+      });
+    });
+    describe('関数を合成する', () => {
+      it('関数を連続して適用する', (next) => {
+        /* #@range_begin(function_applied_sequentially) */
+        var double = (n) => {
+          return n * 2;
+        };
+        var negate = (n) => {
+          return - n;
+        };
+        expect(
+          negate(double(2))
+        ).to.eql(
+            -4
+        )
+        /* #@range_end(function_applied_sequentially) */
+        /* #@range_begin(function_applied_twice) */
+        var twice = (f) => {
+          return (n) => {
+            return f(f(n));
+          };
+        };
+        var succ = (x) => {
+          return x + 1;
+        };
+        expect(
+          twice(succ)(2)
+        ).to.eql(
+          4
+        );
+        /* #@range_end(function_applied_twice) */
+        /* #@range_begin(function_applied_ntimes) */
+        var applyNtimes = (n) => {
+          return (func) => {
+            return (init) => {
+              return (accumulator) => {
+                if(n === 0) {
+                  return accumulator;
+                } else {
+                  return applyNtimes(n - 1)(func)(init)(func(accumulator))
+                };
+              };
+            };
+          };
+        };
+        expect(
+          applyNtimes(4)(succ)(0)(0) // succ(succ(succ(succ(0))))
+        ).to.eql(
+          4
+        );
+        /* #@range_end(function_applied_ntimes) */
+        next();
+      });
+      describe('関数合成', () => {
+        /* #@range_begin(compose_definition) */
+        var compose = (f,g) => {
+          return (arg) =>{
+            return f(g(arg));
+          };
+        };
+        /* #@range_end(compose_definition) */
+        it('否定を合成する', (next) => {
+          /* #@range_begin(compose_negation) */
+          var negate = (n) => {
+            return - n;
+          };
+          expect(
+            compose(negate,negate)(2)
+          ).to.eql(
+            2
+          );
+          /* #@range_end(compose_negation) */
+          next();
+        });
+        it('1個の引数の関数を合成する', (next) => {
+          /* #@range_begin(compose_one_argument_functions) */
+          var succ = (n) => {
+            return n + 1;
+          };
+          var prev = (n) => {
+            return n - 1;
+          };
+          expect(
+            compose(prev,succ)(5)
+          ).to.eql(
+            5
+          );
+          expect(
+            compose(prev,succ)(2)
+          ).to.eql(
+            2
+          );
+          /* #@range_end(compose_one_argument_functions) */
+          next();
+        });
+        it('乗算と否定の合成は失敗する', (next) => {
+          /* #@range_begin(compose_negate_multiply) */
+          // var negate = (x) => {
+          //    return - x;
+          // };
+          // var multiply = (x, y) => {
+          //    return x * y;
+          // };
+          // expect(
+          //    compose(negate, negate)(2)
+          // ).to.eql(
+          //    2
+          // );
+          // expect(
+          //    compose(negate, multiply)(2,3)
+          // ).to.be(null);
+          /* #@range_end(compose_negate_multiply) */
+          next();
+        });
+        
+        // it("'compose two argument functions'", function(next) {
+        //   var negate = function(x) {
+        //     return -x;
+        //   };
+        //   var multiply = function(x,y){
+        //     return x * y;
+        //   };
+        //   expect((__.compose.bind(__)(negate)(multiply))(2,3)).to.eql(-6);
+        //   next();
+        // });
+        // it("compose several functions", function(next) {
+        //   var not = function(x){
+        //     return ! x;
+        //   };
+        //   expect(
+        //     __.compose.bind(__)(not)(math.isEqual(3))(3)
+        //   ).to.eql(
+        //       false
+        //   );
+        //   // expect(
+        //   //   __.compose.bind(__)(__.not)(math.isEqual(3))(3)
+        //   // ).to.eql(
+        //   //  false
+        //   // );
+        //   next();
+        // });
       });
     });
   }); // 関数の適用
@@ -501,183 +690,6 @@ describe('関数の使い方', () => {
       //   return this.cons(x, this.map(xs, transform));
       // }
     };
-    describe('関数を合成する', () => {
-      it('関数を連続して適用する', (next) => {
-        /* #@range_begin(function_applied_sequentially) */
-        var double = (n) => {
-          return n * 2;
-        };
-        var negate = (n) => {
-          return - n;
-        };
-        expect(
-          negate(double(2))
-        ).to.eql(
-            -4
-        )
-        /* #@range_end(function_applied_sequentially) */
-        /* #@range_begin(function_applied_twice) */
-        var twice = (f) => {
-          return (n) => {
-            return f(f(n));
-          };
-        };
-        var succ = (x) => {
-          return x + 1;
-        };
-        expect(
-          twice(succ)(2)
-        ).to.eql(
-          4
-        );
-        /* #@range_end(function_applied_twice) */
-        /* #@range_begin(function_applied_ntimes) */
-        var applyNtimes = (n) => {
-          return (func) => {
-            return (init) => {
-              return (accumulator) => {
-                if(n === 0) {
-                  return accumulator;
-                } else {
-                  return applyNtimes(n - 1)(func)(init)(func(accumulator))
-                };
-              };
-            };
-          };
-        };
-        expect(
-          applyNtimes(4)(succ)(0)(0) // succ(succ(succ(succ(0))))
-        ).to.eql(
-          4
-        );
-        /* #@range_end(function_applied_ntimes) */
-        next();
-      });
-      describe('関数合成', () => {
-        /* #@range_begin(compose_definition) */
-        var compose = (f,g) => {
-          return (arg) =>{
-            return f(g(arg));
-          };
-        };
-        /* #@range_end(compose_definition) */
-        it('否定を合成する', (next) => {
-          /* #@range_begin(compose_negation) */
-          var negate = (n) => {
-            return - n;
-          };
-          expect(
-            compose(negate,negate)(2)
-          ).to.eql(
-            2
-          );
-          /* #@range_end(compose_negation) */
-          next();
-        });
-        it('1個の引数の関数を合成する', (next) => {
-          /* #@range_begin(compose_one_argument_functions) */
-          var succ = (n) => {
-            return n + 1;
-          };
-          var prev = (n) => {
-            return n - 1;
-          };
-          expect(
-            compose(prev,succ)(5)
-          ).to.eql(
-            5
-          );
-          expect(
-            compose(prev,succ)(2)
-          ).to.eql(
-            2
-          );
-          /* #@range_end(compose_one_argument_functions) */
-          next();
-        });
-        it('乗算と否定の合成は失敗する', (next) => {
-          /* #@range_begin(compose_negate_multiply) */
-          // var negate = (x) => {
-          //    return - x;
-          // };
-          // var multiply = (x, y) => {
-          //    return x * y;
-          // };
-          // expect(
-          //    compose(negate, negate)(2)
-          // ).to.eql(
-          //    2
-          // );
-          // expect(
-          //    compose(negate, multiply)(2,3)
-          // ).to.be(null);
-          /* #@range_end(compose_negate_multiply) */
-          next();
-        });
-        
-        // it("'compose two argument functions'", function(next) {
-        //   var negate = function(x) {
-        //     return -x;
-        //   };
-        //   var multiply = function(x,y){
-        //     return x * y;
-        //   };
-        //   expect((__.compose.bind(__)(negate)(multiply))(2,3)).to.eql(-6);
-        //   next();
-        // });
-        // it("compose several functions", function(next) {
-        //   var not = function(x){
-        //     return ! x;
-        //   };
-        //   expect(
-        //     __.compose.bind(__)(not)(math.isEqual(3))(3)
-        //   ).to.eql(
-        //       false
-        //   );
-        //   // expect(
-        //   //   __.compose.bind(__)(__.not)(math.isEqual(3))(3)
-        //   // ).to.eql(
-        //   //  false
-        //   // );
-        //   next();
-        // });
-      });
-      it('リストの逆順を求める', (next) => {
-        /* #@range_begin(list_reverse) */
-        var reverse = (list) => {
-          return (accumulator) => {
-            return seq.match(list, {
-              empty: accumulator,  // 空のリストの場合は終了
-              cons: (head, tail) => {
-                return reverse(tail)(seq.cons(head, accumulator))
-              },
-            });
-          }
-        };
-        // toArray:: LIST -> ARRAY -> ARRAY
-        var toArray = (list) => {
-          var toArrayAux = (list) => {
-            return (accumulator) => {
-              return seq.match(list, {
-                empty: accumulator,  // 空のリストの場合は終了
-                cons: (head, tail) => {
-                  return toArrayAux(tail)(accumulator.concat(head))
-                },
-              });
-            };
-          };
-          return toArrayAux(list)([])
-        };
-        /**************** テスト ****************/
-        expect(
-          toArray(reverse(seq.cons(1, seq.cons(2,seq.empty)))(seq.empty))
-        ).to.eql(
-          [2,1]
-        );
-        /* #@range_end(list_reverse) */
-        next();
-      });
-    });
     describe('カリー化', () => {
       describe('関数合成のカリー化', () => {
         /* #@range_begin(compose_definition_curried) */

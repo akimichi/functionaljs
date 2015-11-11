@@ -311,16 +311,18 @@ describe('関数の使い方', () => {
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
         });
         it('ファイルを操作する', (next) => {
-          expect(
-            fs.readFileSync("test/resources/file.txt", 'utf8')
-          ).to.be(
-            "This is a test."
-          );
+		  var text = fs.readFileSync("test/resources/file.txt", 'utf8');
+          // expect(
+          //   fs.readFileSync("test/resources/file.txt", 'utf8')
+          // ).to.be(
+          //   "This is a test."
+          // );
           fs.writeFileSync('test/resources/file.txt', "This is another test.")
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
           ).not.to.be(
-            "This is a test."
+			text
+            // "This is a test."
           );
           next();
         });
@@ -363,6 +365,39 @@ describe('関数の使い方', () => {
         // },500);
         next();
       });
+      it('tapコンビネーター', (next) => {
+        /* #@range_begin(tap_combinator) */
+		var tap = (target) => {
+		  var original = target;
+		  return function doSideEffect(sideEffect) {
+			sideEffect(target);
+			expect(original).to.eql(target);
+			return target;
+		  };
+		};
+        /* #@range_end(tap_combinator) */
+        /* #@range_begin(tap_combinator_test) */
+		var consoleSideEffect = (any) => {
+		  console.log(any);
+		};
+		var target = 1;
+		expect(
+		  tap(target)(consoleSideEffect)
+		).to.eql(
+		  1
+		);
+		var updateSideEffect = (n) => {
+		  n = n + 1;
+		  return n;
+		};
+		expect(
+		  tap(target)(updateSideEffect)
+		).to.eql(
+		  target
+		);
+        /* #@range_end(tap_combinator_test) */
+        next();
+	  });
     });
   }); // 関数の純粋性
   describe('高階関数', () => {

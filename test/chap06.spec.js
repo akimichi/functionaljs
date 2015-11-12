@@ -940,7 +940,7 @@ describe('関数の使い方', () => {
               }
             }
           },
-          mkObject: (obj) => {
+          fromObject: (obj) => {
             var self = this;
             var keys = (o) => {
               var result = [];
@@ -963,12 +963,12 @@ describe('関数の使い方', () => {
           undefined
         );
         expect(
-          objects.get("HAL9000", objects.mkObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
+          objects.get("HAL9000", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
         ).to.eql(
           "2001: a space odessay"
         );
         expect(
-          objects.get("R2D2", objects.mkObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
+          objects.get("R2D2", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
         ).to.eql(
           "Star Wars"
         );
@@ -1169,6 +1169,38 @@ describe('関数の使い方', () => {
     });
     describe('関数を渡す', () => {
       describe('コールバックを渡す', () => {
+        it('直接コールする', (next) => {
+          /* #@range_begin(direct_call) */
+		  var succ = function(n){
+			return n + 1;
+		  };
+		  var directCall = function(n){
+			return succ(n);
+		  };
+		  expect(
+			directCall(2)
+		  ).to.eql(
+			3
+		  );
+        /* #@range_end(direct_call) */
+          next();
+        });
+        it('コールバックを呼び出す', (next) => {
+          /* #@range_begin(call_callback) */
+		  var succ = function(n){
+			return n + 1;
+		  };
+		  var call_callback = function(n, callback){
+			return callback(n);
+		  };
+		  expect(
+			call_callback(2,succ)
+		  ).to.eql(
+			3
+		  );
+          /* #@range_end(call_callback) */
+          next();
+        });
         it('イベント駆動', (next) => {
           var processEvent = (event) => {
             return (callback) => {
@@ -1331,6 +1363,35 @@ describe('関数の使い方', () => {
           });
         });
       }); // 畳み込み関数で反復処理を渡す
+      describe('継続を渡す', () => {
+        it("継続による反復処理", (next) => {
+          /* #@range_begin(loop_cps) */
+		  var loop = (pred, accumulator) => {
+			return function(continues){
+			  if(pred(accumulator)){
+				return loop(pred, continues(accumulator))(continues);
+			  } else {
+				return accumulator;
+			  }
+			};
+		  };
+		  var lessThan = (n) => {
+			return (x) => {
+			  return x < n;
+			};
+		  };
+		  var succ = (n) => {
+			return n + 1;
+		  };
+		  expect(
+			loop(lessThan(3), 0)(succ)
+		  ).to.eql(
+			3
+		  );
+          /* #@range_end(loop_cps) */
+          next();
+        });
+      });
     }); // 関数を渡す
     describe('コンビネーター', () => {
       it('コンビネーター・ライブラリー', (next) => {

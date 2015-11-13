@@ -2,6 +2,15 @@
 
 var expect = require('expect.js');
 
+var uncurry = (fun) => {
+  return function() {
+    var result = fun;
+    for (var i = 0; i < arguments.length; i++)
+      result = result(arguments[i]);
+    return result;
+  };
+};
+
 // 関数の使い方
 // ========
 describe('関数の使い方', () => {
@@ -246,14 +255,14 @@ describe('関数の使い方', () => {
           return (accumulator) => {
             return (glue) => {
               expect(glue).to.a('function');
-			  return self.match(list,{
-				empty: (_) => {
-				  return accumulator;
-				},
-				cons: (head, tail) => {
-				  return glue(head)(self.foldr(tail)(accumulator)(glue));
-				}
-			  });
+              return self.match(list,{
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return glue(head)(self.foldr(tail)(accumulator)(glue));
+                }
+              });
               // if(self.isEmpty(list)){
               //   return accumulator;
               // } else {
@@ -266,32 +275,80 @@ describe('関数の使い方', () => {
         },
         /* #@range_begin(list_map) */
         // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-        map: (list) => {
+        map: (list, transform) => {
           var self = this;
-          return (transform) => {
-            expect(transform).to.a('function');
-            return self.match(list,{
-              empty: (_) => {
-                return self.empty;
-              },
-              cons: (x,xs) => {
-                return self.cons(transform(x),self.map(xs)(transform));
-              }
-            });
-          };
-        }
+          return self.match(list,{
+            empty: (_) => {
+              return self.empty;
+            },
+            cons: (x,xs) => {
+              return self.cons(transform(x),self.map(xs,transform));
+            }
+          });
+        },
         /* #@range_end(list_map) */
+        // map: (list) => {
+        //   var self = this;
+        //   return (transform) => {
+        //     expect(transform).to.a('function');
+        //     return self.match(list,{
+        //       empty: (_) => {
+        //         return self.empty;
+        //       },
+        //       cons: (x,xs) => {
+        //         return self.cons(transform(x),self.map(xs)(transform));
+        //       }
+        //     });
+        //   };
+        // }
       };
+      it('factorialの例', (next) => {
+        /* #@range_begin(naive_factorial) */
+        var factorial = (n) => {
+          if (n === 1) {
+            return 1;
+          } else {
+            return n * factorial(n - 1);
+          }
+        };
+        expect(
+          factorial(3)
+        ).to.eql(
+          6
+        )
+        /* #@range_end(naive_factorial) */
+        next();
+      });
+      it('末尾再帰によるfactorialの例', (next) => {
+        /* #@range_begin(tail_recursive_factorial) */
+        var factorial = (n) => {
+          var factorialRec = (n, accumulator) => {
+            if (n === 1) {
+              return 1 * accumulator;
+            } else {
+              return factorialRec(n - 1, n * accumulator);
+            };
+          }
+          return factorialRec(n, 1)
+        };
+        expect(
+          factorial(3)
+        ).to.eql(
+          6
+        )
+        /* #@range_end(tail_recursive_factorial) */
+        next();
+      });
       it('list#mapをテストする', (next) => {
         /* #@range_begin(list_map_test) */
         // list = [1,2,3,4]
         //var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
         var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))))
         expect(
-          seq.toArray(seq.map(list)(function (item){
+          seq.toArray(seq.map(list,(item) => {
             return item * 2;
           }))
-        ).to.eql(
+		).to.eql(
           [2,4,6,8]
         )
         /* #@range_end(list_map_test) */
@@ -299,38 +356,33 @@ describe('関数の使い方', () => {
       });
       it('リストの逆順を求める', (next) => {
         /* #@range_begin(list_reverse) */
-        var reverse = (list) => {
-          return (accumulator) => {
+        var reverse = (list,accumulator) => {
+          return seq.match(list, {
+            empty: (_) => {
+              return accumulator;  // 空のリストの場合は終了
+            },
+            cons: (head, tail) => {
+              return reverse(tail, seq.cons(head, accumulator))
+            },
+          });
+        };
+        var toArray = (list) => {
+          var toArrayAux = (list,accumulator) => {
             return seq.match(list, {
               empty: (_) => {
-				return accumulator;  // 空のリストの場合は終了
-			  },
+                return accumulator;  // 空のリストの場合は終了
+              },
               cons: (head, tail) => {
-                return reverse(tail)(seq.cons(head, accumulator))
+                return toArrayAux(tail, accumulator.concat(head))
               },
             });
-          }
-        };
-        // toArray:: LIST -> ARRAY -> ARRAY
-        var toArray = (list) => {
-          var toArrayAux = (list) => {
-            return (accumulator) => {
-              return seq.match(list, {
-                empty: (_) => {
-				  return accumulator;  // 空のリストの場合は終了
-				},
-                cons: (head, tail) => {
-                  return toArrayAux(tail)(accumulator.concat(head))
-                },
-              });
-            };
           };
-          return toArrayAux(list)([])
+          return toArrayAux(list, [])
         };
         /**************** テスト ****************/
-		var list = seq.cons(1, seq.cons(2,seq.empty()));
+        var list = seq.cons(1, seq.cons(2,seq.empty()));
         expect(
-          toArray(reverse(list)(seq.empty()))
+          toArray(reverse(list, seq.empty()))
         ).to.eql(
           [2,1]
         );
@@ -496,18 +548,12 @@ describe('関数の使い方', () => {
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
         });
         it('ファイルを操作する', (next) => {
-		  var text = fs.readFileSync("test/resources/file.txt", 'utf8');
-          // expect(
-          //   fs.readFileSync("test/resources/file.txt", 'utf8')
-          // ).to.be(
-          //   "This is a test."
-          // );
+          var text = fs.readFileSync("test/resources/file.txt", 'utf8');
           fs.writeFileSync('test/resources/file.txt', "This is another test.")
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
           ).not.to.be(
-			text
-            // "This is a test."
+            text
           );
           next();
         });
@@ -552,37 +598,37 @@ describe('関数の使い方', () => {
       });
       it('tapコンビネーター', (next) => {
         /* #@range_begin(tap_combinator) */
-		var tap = (target) => {
-		  var original = target;
-		  return function doSideEffect(sideEffect) {
-			sideEffect(target);
-			expect(original).to.eql(target);
-			return target;
-		  };
-		};
+        var tap = (target) => {
+          var original = target;
+          return function doSideEffect(sideEffect) {
+            sideEffect(target);
+            expect(original).to.eql(target);
+            return target;
+          };
+        };
         /* #@range_end(tap_combinator) */
         /* #@range_begin(tap_combinator_test) */
-		var consoleSideEffect = (any) => {
-		  console.log(any);
-		};
-		var target = 1;
-		expect(
-		  tap(target)(consoleSideEffect)
-		).to.eql(
-		  1
-		);
-		var updateSideEffect = (n) => {
-		  n = n + 1;
-		  return n;
-		};
-		expect(
-		  tap(target)(updateSideEffect)
-		).to.eql(
-		  target
-		);
+        var consoleSideEffect = (any) => {
+          console.log(any);
+        };
+        var target = 1;
+        expect(
+          tap(target)(consoleSideEffect)
+        ).to.eql(
+          1
+        );
+        var updateSideEffect = (n) => {
+          n = n + 1;
+          return n;
+        };
+        expect(
+          tap(target)(updateSideEffect)
+        ).to.eql(
+          target
+        );
         /* #@range_end(tap_combinator_test) */
         next();
-	  });
+      });
     });
   }); // 関数の純粋性
   describe('高階関数', () => {
@@ -687,6 +733,75 @@ describe('関数の使い方', () => {
       // }
     };
     describe('カリー化', () => {
+      it('カリー化された関数の単純な例', (next) => {
+		/* #@range_begin(simple_curried_function) */
+        var add = function (x,y) {
+          return x + y ;
+        };
+        var addCurried =  (x) => {
+          return (y) => {
+            return x + y ;
+          };
+        };
+        expect(
+          add(1,2)
+        ).to.eql(
+          addCurried(1)(2)
+        );
+		/* #@range_end(simple_curried_function) */
+        next();
+      });
+      describe('通常の関数とカリー化関数の相互変換', () => {
+		it('通常の関数をカリー化する', (next) => {
+		  /* #@range_begin(curry_function_definition) */
+          var curry = (fun) => {
+            return function curried(x,optionalY){
+              if(arguments.length > 1){
+                return fun.call(this, x,optionalY);
+              } else {
+                return function partiallyApplied(y) {
+                  return fun.call(this, x,y);
+                };
+              }
+            };
+          };
+          var add = (x,y) => {
+            return x + y;
+          };
+          var curriedAdd = curry(add);
+          expect(
+            curriedAdd(1)(2)
+          ).to.eql(
+            3
+          );
+		  /* #@range_end(curry_function_definition) */
+          next();
+		});
+		it('カリー化を通常の関数に変換する', (next) => {
+		  /* #@range_begin(uncurry_function_definition) */
+          var uncurry = (fun) => {
+            return function() {
+              var result = fun;
+              for (var i = 0; i < arguments.length; i++)
+                result = result(arguments[i]);
+              return result;
+            };
+          };
+          var addCurried = (x) => {
+            return (y) => {
+              return x + y;
+            };
+          };
+          var add = uncurry(addCurried);
+          expect(
+            add(1,2)
+          ).to.eql(
+            3
+          );
+		  /* #@range_end(uncurry_function_definition) */
+          next();
+		});
+      });
       describe('関数合成のカリー化', () => {
         /* #@range_begin(compose_definition_curried) */
         var compose = (f) => {
@@ -718,6 +833,39 @@ describe('関数の使い方', () => {
         expect(flip(callee)(succ)(2)).to.eql(3);
         /* #@range_end(flip) */
 
+		it('カリー化関数の合成', (next) => {
+          /* #@range_begin(compose_and_uncurry) */
+          var compose = (f) => {
+            return (g) => {
+              return (_) => {
+                return f(g.apply(this, arguments));
+              };
+            };
+          };
+          var uncurry = (fun) => {
+            return () => {
+              var result = fun;
+              for (var i = 0; i < arguments.length; i++)
+                result = result(arguments[i]);
+              return result;
+            };
+          };
+          var negate = (x) => {
+            return -x;
+          };
+          var multiply = (x) => {
+            return (y) => {
+              return x * y;
+            };
+          };
+          expect(
+            compose(negate)(uncurry(multiply))(2,3)
+          ).to.eql(
+              -6
+          );
+          /* #@range_end(compose_and_uncurry) */
+          next();
+		});
         it('マイナスのマイナスはプラス', (next) => {
           /* #@range_begin(composition_example_negation_twice) */
           var negate = (n) => {
@@ -1171,33 +1319,33 @@ describe('関数の使い方', () => {
       describe('コールバックを渡す', () => {
         it('直接コールする', (next) => {
           /* #@range_begin(direct_call) */
-		  var succ = function(n){
-			return n + 1;
-		  };
-		  var directCall = function(n){
-			return succ(n);
-		  };
-		  expect(
-			directCall(2)
-		  ).to.eql(
-			3
-		  );
+          var succ = function(n){
+            return n + 1;
+          };
+          var directCall = function(n){
+            return succ(n);
+          };
+          expect(
+            directCall(2)
+          ).to.eql(
+            3
+          );
         /* #@range_end(direct_call) */
           next();
         });
         it('コールバックを呼び出す', (next) => {
           /* #@range_begin(call_callback) */
-		  var succ = function(n){
-			return n + 1;
-		  };
-		  var call_callback = function(n, callback){
-			return callback(n);
-		  };
-		  expect(
-			call_callback(2,succ)
-		  ).to.eql(
-			3
-		  );
+          var succ = function(n){
+            return n + 1;
+          };
+          var call_callback = function(n, callback){
+            return callback(n);
+          };
+          expect(
+            call_callback(2,succ)
+          ).to.eql(
+            3
+          );
           /* #@range_end(call_callback) */
           next();
         });
@@ -1366,28 +1514,28 @@ describe('関数の使い方', () => {
       describe('継続を渡す', () => {
         it("継続による反復処理", (next) => {
           /* #@range_begin(loop_cps) */
-		  var loop = (pred, accumulator) => {
-			return function(continues){
-			  if(pred(accumulator)){
-				return loop(pred, continues(accumulator))(continues);
-			  } else {
-				return accumulator;
-			  }
-			};
-		  };
-		  var lessThan = (n) => {
-			return (x) => {
-			  return x < n;
-			};
-		  };
-		  var succ = (n) => {
-			return n + 1;
-		  };
-		  expect(
-			loop(lessThan(3), 0)(succ)
-		  ).to.eql(
-			3
-		  );
+          var loop = (pred, accumulator) => {
+            return function(continues){
+              if(pred(accumulator)){
+                return loop(pred, continues(accumulator))(continues);
+              } else {
+                return accumulator;
+              }
+            };
+          };
+          var lessThan = (n) => {
+            return (x) => {
+              return x < n;
+            };
+          };
+          var succ = (n) => {
+            return n + 1;
+          };
+          expect(
+            loop(lessThan(3), 0)(succ)
+          ).to.eql(
+            3
+          );
           /* #@range_end(loop_cps) */
           next();
         });
@@ -1987,244 +2135,6 @@ describe('関数の使い方', () => {
             [1,-1,2,-2,3,-3]
           );
           next();
-        });
-      });
-    });
-    describe('プログラミング言語を作る', () => {
-      describe('環境を作る', () => {
-        /* #@range_begin(environment) */
-        // ## 環境
-        var emptyEnv = (variable) => {
-          return undefined;
-        };
-        /* 変数名に対応する値を環境から取りだす */
-        var lookupEnv = (identifier, env) => {
-          return env(identifier);
-        };
-        /* 環境を拡張する */
-        var extendEnv = (identifier, value, env) => {
-          expect(identifier).to.a('string');
-          return (queryIdentifier) => {
-            expect(queryIdentifier).to.a('string');
-            if(identifier === queryIdentifier) {
-              return value;
-            } else {
-              return lookupEnv(queryIdentifier,env)
-            }
-          };
-        };
-        /* #@range_end(environment) */
-        it('extendEnvで環境を作り、 lookupEnv で環境を探る', (next) => {
-          var newEnv = extendEnv('a',1, emptyEnv);
-          expect(
-            lookupEnv("a", newEnv)
-          ).to.be(
-            1
-          );
-          next();
-        });
-        describe('式を作る', () => {
-          // ## 式の代数的データ構造
-          var match = (exp, pattern) => {
-            return exp.call(pattern, pattern);
-          };
-          /* #@range_begin(expression_algaraic_datatype) */
-          var number = (value) => {
-            expect(value).to.a('number');
-            return (pattern) => {
-              return pattern.number(value);
-            };
-          };
-          var variable = (name) => {
-            expect(name).to.a('string');
-            return (pattern) => {
-              return pattern.variable(name);
-            };
-          };
-          var lambda = (variable, body) => {
-            expect(variable).to.a('function');
-            expect(body).to.a('function');
-            return (pattern) => {
-              return pattern.lambda(variable, body);
-            };
-          };
-          var application = (variable, arg) => {
-            return (pattern) => {
-              return pattern.application(variable, arg);
-            };
-          };
-          it('式をテストする', (next) => {
-            // λx.λy.x
-            match(lambda(variable("x"),lambda(variable("y"),variable("x"))),{
-              lambda: (variable, arg) => {
-                expect(
-                  variable
-                ).to.a('function')
-              }
-            });
-            next();
-          });
-          /* #@range_end(expression_algaraic_datatype) */
-          describe('評価器を作る', () => {
-            // ## 式の評価関数
-            /* #@range_begin(evaluation_function) */
-            var evaluate = (exp, env) => {
-              return match(exp,{
-                /* 数値の評価 */
-                number: (value) => {
-                  return value;
-                },
-                /* 変数の評価 */
-                variable: (name) => {
-                  return lookupEnv(name, env);
-                },
-                /* λ式の評価 */
-                lambda: (variable, bodyExp) => {
-                  /* クロージャーを返す */
-                  return (actualArg) => {
-                    return match(variable,{ // maybeを返すべきか？
-                      variable: (name) => {
-                        return evaluate(bodyExp, extendEnv(name, actualArg ,env));
-                      }
-                    });
-                  };
-                },
-                /* 関数適用の評価 */
-                application: (variable, arg) => {
-                  var rator = evaluate(variable, env);
-                  var rand = evaluate(arg, env);
-                  return rator(rand);
-                }
-              });
-            };
-            /* #@range_end(evaluation_function) */
-            describe('evaluate関数で式を評価する', () => {
-              it('数値を評価する', (next) => {
-                expect(
-                  evaluate(number(2), emptyEnv)
-                ).to.be(
-                  2
-                );
-                next();
-              });
-              it('変数を評価する', (next) => {
-                var env = extendEnv("x",1, emptyEnv);
-                expect(
-                  evaluate(variable("x"), env)
-                ).to.be(
-                  1
-                );
-                expect(
-                  evaluate(variable("y"), env)
-                ).to.be(
-                  undefined
-                );
-                next();
-              });
-              it('constant関数', (next) => {
-                var constant = lambda(variable("x"),number(1))
-                expect(
-                  evaluate(constant, emptyEnv)
-                ).to.a(
-                  'function'
-                );
-                var applied = application(constant, variable("y"))
-                expect(
-                  evaluate(applied, emptyEnv)
-                ).to.eql(
-                  1
-                );
-                next();
-              });
-              it('id関数', (next) => {
-                /* λx.x */
-                var id = lambda(variable("x"),variable("x"))
-                expect(
-                  evaluate(id, emptyEnv)
-                ).to.a(
-                  'function'
-                );
-                expect(
-                  evaluate(application(id, number(1)), emptyEnv)
-                ).to.eql(
-                  1
-                );
-                next();
-              });
-              it('ブール型を評価する', (next) => {
-                /* λx.λy.x */
-                var trueFun = lambda(variable("x"),lambda(variable("y"),variable("x")));
-                /* λx.λy.y */
-                var falseFun = lambda(variable("x"),lambda(variable("y"),variable("y")));
-                var not = lambda(variable("x"),
-                                 application(
-                                   application(
-                                     variable("x"),falseFun),
-                                   trueFun));
-                var and = lambda(variable("x"),
-                                 lambda(variable("y"),
-                                        application(
-                                          application(variable("x"),variable("y")),
-                                          falseFun)));
-                var or = lambda(variable("x"),
-                                lambda(variable("y"),
-                                       application(
-                                         application(variable("x"),trueFun),
-                                         variable("y"))));
-                var cond = lambda(variable("pred"),
-                                  lambda(variable("x"),
-                                         lambda(variable("y"),
-                                                application(
-                                                  application(variable("pred"),variable("x")),variable("y")))));
-                expect(
-                  evaluate(
-                    application(
-                      application(trueFun,number(1)),
-                      number(0)),
-                    emptyEnv)
-                ).to.eql(
-                  1
-                );
-                expect(
-                  evaluate(
-                    application(
-                      application(
-                        application(not, trueFun), number(1)), number(0)),emptyEnv)
-                ).to.eql(
-                  0
-                );
-                expect(
-                  evaluate(
-                    application(
-                      application(
-                        application(
-                          application(and,
-                                      trueFun),
-                          trueFun),
-                        number(1)),
-                      number(0)),emptyEnv)
-                ).to.be(
-                  1
-                );
-                expect(
-                  evaluate(
-                    application(
-                      application(
-                        application(
-                          application(
-                            application(cond, trueFun),
-                            falseFun),
-                          trueFun),
-                        number(1)),
-                      number(0)),
-                    emptyEnv)
-                ).to.eql(
-                  0
-                );
-                next();
-              });
-            });
-          });
         });
       });
     });

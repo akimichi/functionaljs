@@ -11,6 +11,7 @@ var uncurry = (fun) => {
   };
 };
 
+
 // 関数の使い方
 // ========
 describe('関数の使い方', () => {
@@ -348,7 +349,7 @@ describe('関数の使い方', () => {
           seq.toArray(seq.map(list,(item) => {
             return item * 2;
           }))
-		).to.eql(
+        ).to.eql(
           [2,4,6,8]
         )
         /* #@range_end(list_map_test) */
@@ -734,7 +735,7 @@ describe('関数の使い方', () => {
     };
     describe('カリー化', () => {
       it('カリー化された関数の単純な例', (next) => {
-		/* #@range_begin(simple_curried_function) */
+        /* #@range_begin(simple_curried_function) */
         var add = function (x,y) {
           return x + y ;
         };
@@ -748,12 +749,12 @@ describe('関数の使い方', () => {
         ).to.eql(
           addCurried(1)(2)
         );
-		/* #@range_end(simple_curried_function) */
+        /* #@range_end(simple_curried_function) */
         next();
       });
       describe('通常の関数とカリー化関数の相互変換', () => {
-		it('通常の関数をカリー化する', (next) => {
-		  /* #@range_begin(curry_function_definition) */
+        it('通常の関数をカリー化する', (next) => {
+          /* #@range_begin(curry_function_definition) */
           var curry = (fun) => {
             return function curried(x,optionalY){
               if(arguments.length > 1){
@@ -774,11 +775,11 @@ describe('関数の使い方', () => {
           ).to.eql(
             3
           );
-		  /* #@range_end(curry_function_definition) */
+          /* #@range_end(curry_function_definition) */
           next();
-		});
-		it('カリー化を通常の関数に変換する', (next) => {
-		  /* #@range_begin(uncurry_function_definition) */
+        });
+        it('カリー化を通常の関数に変換する', (next) => {
+          /* #@range_begin(uncurry_function_definition) */
           var uncurry = (fun) => {
             return function() {
               var result = fun;
@@ -798,9 +799,9 @@ describe('関数の使い方', () => {
           ).to.eql(
             3
           );
-		  /* #@range_end(uncurry_function_definition) */
+          /* #@range_end(uncurry_function_definition) */
           next();
-		});
+        });
       });
       describe('関数合成のカリー化', () => {
         /* #@range_begin(compose_definition_curried) */
@@ -833,7 +834,7 @@ describe('関数の使い方', () => {
         expect(flip(callee)(succ)(2)).to.eql(3);
         /* #@range_end(flip) */
 
-		it('カリー化関数の合成', (next) => {
+        it('カリー化関数の合成', (next) => {
           /* #@range_begin(compose_and_uncurry) */
           var compose = (f) => {
             return (g) => {
@@ -865,7 +866,7 @@ describe('関数の使い方', () => {
           );
           /* #@range_end(compose_and_uncurry) */
           next();
-		});
+        });
         it('マイナスのマイナスはプラス', (next) => {
           /* #@range_begin(composition_example_negation_twice) */
           var negate = (n) => {
@@ -2137,6 +2138,270 @@ describe('関数の使い方', () => {
           next();
         });
       });
+      describe('Streamモナド', () => {
+        var match = (data, pattern) => {
+          return data(pattern);
+        };
+        var maybe = {
+          just: (value) => {
+            return (pattern) => {
+              return pattern.just(value);
+            };
+          },
+          nothing: (_) => {
+            return (pattern) => {
+              return pattern.nothing(_);
+            };
+          },
+          unit: (value) => {
+            if(value){
+              return self.maybe.just(value);
+            } else {
+              return self.maybe.nothing(undefined);
+            }
+          },
+          get: (maybe) => {
+            return match(maybe,{
+              just: (value) => {
+                return value;
+              },
+              nothing: (_) => {
+                return undefined;
+              }
+            });
+          },
+          isEqual: (maybeA) => {
+            return (maybeB) => {
+              return match(maybeA,{
+                just: (valueA) => {
+                  return match(maybeB,{
+                    just: (valueB) => {
+                      return (valueA === valueB);
+                    },
+                    nothing: (_) => {
+                      return false;
+                    }
+                  });
+                },
+                nothing: (_) => {
+                  return match(maybeB,{
+                    just: (_) => {
+                      return false;
+                    },
+                    nothing: (_) => {
+                      return true;
+                    }
+                  });
+                }
+              });
+            };
+          },
+          map: (maybe) => {
+            return (transform) => {
+              expect(transform).to.a('function');
+              return match(maybe,{
+                just: (value) => {
+                  return unit(transform(value));
+                },
+                nothing: (_) => {
+                  return nothing();
+                }
+              });
+            };
+          },
+          flatMap: (maybe) => {
+            return (transform) => {
+              expect(transform).to.a('function');
+              return match(maybe,{
+                just: (value) => {
+                  return transform(value);
+                },
+                nothing: (_) => {
+                  return nothing();
+                }
+              });
+            };
+          }
+        }; // end of maybe
+        /* #@range_begin(stream_monad_definition) */
+        var stream = {
+          empty: (_) => {
+            return (pattern) => {
+              expect(pattern).to.an('object');
+              return pattern.empty();
+            };
+          },
+          cons: (head,tailThunk) => {
+            expect(tailThunk).to.a('function');
+            return (pattern) => {
+              expect(pattern).to.an('object');
+              return pattern.cons(head,tailThunk);
+            };
+          },
+          // head:: STREAM -> MAYBE[STREAM]
+          head: (lazyList) => {
+            // var self = this;
+            return match(lazyList,{
+              empty: (_) => {
+                return maybe.nothing();
+              },
+              cons: (value, tailThunk) => {
+                return maybe.just(value);
+              }
+            });
+          },
+          // tail:: STREAM -> MAYBE[STREAM]
+          tail: (lazyList) => {
+            // var self = this;
+            return match(lazyList,{
+              empty: (_) => {
+                return maybe.nothing();
+              },
+              cons: (head, tailThunk) => {
+                return maybe.just(tailThunk());
+              }
+            });
+          },
+          isEmpty: (stream) => {
+            // var self = this;
+            return match(stream,{
+              empty: (_) => {
+                return true;
+              },
+              cons: (head1,tailThunk) => {
+                return false;
+              }
+            });
+          },
+          // ### stream#toArray
+          toArray: (lazyList) => {
+            // var self = this;
+            return match(lazyList,{
+              empty: (_) => {
+                return [];
+              },
+              cons: (head,tailThunk) => {
+                if(stream.isEmpty(tailThunk())){
+                  return [head];
+                } else {
+                  return [head].concat(stream.toArray(tailThunk()));
+                }
+              }
+            });
+          },
+          // ### stream#unit
+          // unit:: ANY -> STREAM
+          unit: (value) => {
+            // var self = this;
+            if(value){
+              return stream.cons(value, (_) => {
+                return stream.empty();
+              });
+            } else {
+              return stream.empty();
+            }
+          },
+          // ### stream#map
+          map: (stream) => {
+            // var self = this;
+            return (transform) => {
+              return match(stream,{
+                empty: (_) => {
+                  return stream.empty();
+                },
+                cons: (head,tailThunk) => {
+                  return stream.cons(transform(head),(_) => {
+                    return stream.map(tailThunk())(transform)});
+                }
+              });
+            };
+          },
+          // ## stream#append
+          append: (stream1, stream2) => {
+            // var self = this;
+            return match(stream1,{
+              empty: (_) => {
+                return stream2;
+              },
+              cons: (head1,tailThunk1) => {
+                return match(stream2,{
+                  empty: (_) => {
+                    return stream1;
+                  },
+                  cons: (head2,tailThunk2) => {
+                    return stream.cons(head1,() => {
+                      return stream.append(tailThunk1(),stream2)});
+                  }
+                });
+              }
+            });
+          },
+          // ## stream#concat
+          concat: (xs) => {
+            // var self = this;
+            return (ys) => {
+              return match(xs,{
+                empty: (_) => {
+                  return ys;
+                },
+                cons: (head,tailThunk) => {
+                  return stream.cons(head,(_) => {
+                    return stream.concat(tailThunk())((_) => {
+                      return ys;
+                    })
+                  });
+                }
+              });
+            };
+          },
+          // ## stream#flatten
+          // flatten :: STREAM[STREAM[T]] => STREAM[T]
+          flatten: (lazyList) => {
+            // var self = this;
+            return match(lazyList,{
+              empty: (_) => {
+                return stream.empty();
+              },
+              cons: (head,tailThunk) => {
+                return stream.concat(head)(stream.flatten(tailThunk()));
+              }
+            });
+          },
+          // ### stream#flatMap
+          // ~~~haskell
+          // flatMap xs f = flatten (map f xs)
+          //~~~
+          // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
+          flatMap: (stream) => {
+            // var self = this;
+            return (transform) => {
+              return stream.flatten(stream.map(stream)(transform));
+            };
+          }
+        };
+        /* #@range_end(stream_monad_definition) */
+        it("stream#unit", (next) => {
+          match(maybe.nothing(null),{
+            nothing: (_) => {
+              return expect(
+                _
+              ).to.eql(
+                null
+              )
+            },
+            just: (value) => {
+              return expect().fail()
+            }
+          });
+          var lazyList = stream.unit(1);
+          expect(
+            maybe.get(stream.head(lazyList))
+          ).to.eql(
+            1
+          );
+          next();
+        });
+      }); // streamモナド
     });
   });
 });

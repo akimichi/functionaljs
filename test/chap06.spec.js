@@ -2302,10 +2302,10 @@ describe('関数の使い方', () => {
             }
           },
           // ### stream#map
-          map: (stream) => {
+          map: (lazyList) => {
             // var self = this;
             return (transform) => {
-              return match(stream,{
+              return match(lazyList,{
                 empty: (_) => {
                   return stream.empty();
                 },
@@ -2372,10 +2372,10 @@ describe('関数の使い方', () => {
           // flatMap xs f = flatten (map f xs)
           //~~~
           // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
-          flatMap: (stream) => {
+          flatMap: (lazyList) => {
             // var self = this;
             return (transform) => {
-              return stream.flatten(stream.map(stream)(transform));
+              return stream.flatten(stream.map(lazyList)(transform));
             };
           }
         };
@@ -2401,7 +2401,175 @@ describe('関数の使い方', () => {
           );
           next();
         });
+		it("stream#cons", (next) => {
+		  var lazyList = stream.cons(1, (_) => {
+			return stream.cons(2,(_) => {
+			  return stream.empty();
+			});
+		  });
+		  expect(
+			maybe.get(stream.head(lazyList))
+		  ).to.eql(
+			1
+		  );
+		  next();
+		});
+		it("stream#tail", (next) => {
+		  // lazyList = [1,2]
+		  var lazyList = stream.cons(1, (_) => {
+			return stream.cons(2,(_) => {
+			  return stream.empty();
+			});
+		  });
+		  expect(
+			stream.tail(lazyList)
+		  ).to.a("function");
+
+		  match(stream.tail(lazyList),{
+			nothing: (_) => {
+			  expect().fail();
+			},
+			just: (tail) => {
+			  match(tail,{
+				empty: (_) => {
+				  expect().fail();
+				},
+				cons: (head, tailThunk) => {
+				  expect(head).to.eql(2);
+				}
+			  });
+			}
+		  });
+		  expect(
+			maybe.get(stream.head(maybe.get(stream.tail(lazyList))))
+		  ).to.eql(
+			2
+		  );
+		  next();
+		});
+		it("stream#toArray", (next) => {
+		  expect(
+			stream.toArray(stream.empty())
+		  ).to.eql(
+	  		[]
+		  );
+		  expect(
+			stream.toArray(stream.unit(1))
+		  ).to.eql(
+	  		[1]
+		  );
+		  next();
+		});
+		describe("stream#map", (nex) => {
+		  it("要素を2倍にする", (next) => {
+			// lazyList = [1,2]
+			var lazyList = stream.cons(1, (_) => {
+			  return stream.cons(2,(_) => {
+				return stream.empty();
+			  });
+			});
+			var doubledLazyList = stream.map(lazyList)((item) => {
+			  return item * 2;
+			});
+			expect(
+			  maybe.get(stream.head(doubledLazyList))
+			).to.eql(
+			  2
+			);
+			expect(
+			  maybe.get(stream.head(maybe.get(stream.tail(doubledLazyList))))
+			).to.eql(
+			  4
+			);
+			expect(
+			  stream.toArray(doubledLazyList)
+			).to.eql(
+			  [2,4]
+			);
+			next();
+		  });
+		  it("無限の整数列を作る", (next) => {
+			var ones = stream.cons(1, (_) => {
+			  return ones;
+			});
+			var twoes = stream.map(ones)((item) => {
+			  return item * 2;
+			});
+			expect(
+			  maybe.get(stream.head(twoes))
+			).to.eql(
+			  2
+			);
+			expect(
+			  maybe.get(stream.head(maybe.get(stream.tail(twoes))))
+			).to.eql(
+			  2
+			);
+			expect(
+			  maybe.get(stream.head(maybe.get(stream.tail(maybe.get(stream.tail(twoes))))))
+			).to.eql(
+			  2
+			);
+			next();
+		  });
+		  it("整数列を作る", (next) => {
+			var integersFrom = (from) => {
+			  return stream.cons(from, (_) => {
+				return integersFrom(from + 1);
+			  });
+			};
+			expect(
+			  maybe.get(stream.head(integersFrom(0)))
+			).to.eql(
+			  0
+			);
+			expect(
+			  maybe.get(stream.head(maybe.get(stream.tail(integersFrom(0)))))
+			).to.eql(
+			  1
+			);
+			var doubledInterger = stream.flatMap(integersFrom(0))((integer) => {
+			  return stream.unit(integer * 2);
+			});
+			expect(
+			  maybe.get(stream.head(doubledInterger))
+			).to.eql(
+			  1
+			);
+			// expect(
+			//   maybe.get(stream.head(maybe.get(stream.tail(maybe.get(stream.tail(twoes))))))
+			// ).to.eql(
+			//   2
+			// );
+			next();
+		  });
+		});
+		it("stream#flatten", (next) => {
+		  // innerStream = [1,2]
+		  var innerStream = stream.cons(1, (_) => {
+	  		return stream.cons(2,(_) => {
+	  		  return stream.empty();
+	  		});
+		  });
+		  // outerStream = [[1,2]]
+		  var outerStream = stream.unit(innerStream);
+		  var flattenedStream = stream.flatten(outerStream);
+		  match(flattenedStream,{
+	  		empty: (_) => {
+	  		  expect().fail()
+	  		},
+	  		cons: (head,tailThunk) => {
+	  		  expect(head).to.eql(1)
+	  		}
+		  });
+		  expect(
+			maybe.get(stream.head(flattenedStream))
+		  ).to.eql(
+			1
+		  );
+		  next();
+		});
       }); // streamモナド
-    });
+    }); // モナド
   });
 });

@@ -7,28 +7,28 @@ describe('パーサーコンビネーター', () => {
   describe('代数的データ構造を用いた第2版', () => {
 
     var match = (exp, pattern) => {
-	  return exp(pattern);
+      return exp(pattern);
       //return exp.call(pattern, pattern);
     };
-	var list = {
-	  // match: (exp, pattern) => {
-	  // 	return exp.call(pattern, pattern);
+    var list = {
+      // match: (exp, pattern) => {
+      //    return exp.call(pattern, pattern);
       // },
-	  empty: (_) => {
-		return (pattern) => {
+      empty: (_) => {
+        return (pattern) => {
           return pattern.empty();
-		};
+        };
       },
-	  cons: (value, list) => {
+      cons: (value, list) => {
         return (pattern) => {
           return pattern.cons(value, list);
         };
       },
-	  isEmpty: (seq) => {
+      isEmpty: (seq) => {
         return match(seq, {
           empty: (_) => {
-			return true;
-		  },
+            return true;
+          },
           cons: (head, tail) => {
             return false;
           },
@@ -37,8 +37,8 @@ describe('パーサーコンビネーター', () => {
       head: (seq) => {
         return match(seq, {
           empty: (_) => {
-			return undefined;
-		  },
+            return undefined;
+          },
           cons: (head, tail) => {
             return head;
           },
@@ -47,46 +47,46 @@ describe('パーサーコンビネーター', () => {
       tail: (seq) => {
         return match(seq, {
           empty: (_)=> {
-			return undefined;
-		  },
+            return undefined;
+          },
           cons: (head, tail) => {
             return tail;
           },
         });
       },
-	  fromString: (string) => {
-		if(string.length === 0) {
-		  return list.empty();
-		} else if(string.length === 1) {
-		  return list.cons(string[0],list.empty()); 
-		} else {
-		  return list.cons(string[0],string.substring(1));
-		}
-	  },
-	  toArray: (seq) => {
+      fromString: (string) => {
+        if(string.length === 0) {
+          return list.empty();
+        } else if(string.length === 1) {
+          return list.cons(string[0],list.empty());
+        } else {
+          return list.cons(string[0],string.substring(1));
+        }
+      },
+      toArray: (seq) => {
         var toArrayAux = (seq) => {
-		  var self = this;
+          var self = this;
           return (accumulator) => {
             return match(seq, {
               empty: (_) => {
-				return accumulator;
-			  }, 
+                return accumulator;
+              },
               cons: (head, tail) => {
                 return toArrayAux.call(self, tail)(accumulator.concat(head))
               },
             });
           };
-		}
-        return toArrayAux(seq)([])
-	  }
-	};
+        };
+        return toArrayAux(seq)([]);
+      }
+    };
     /* パース結果の代数的データ型 */
     var parseResult = {
       failed: (message) => {
-		return (pattern) => {
+        return (pattern) => {
           return pattern.failed(message);
-		};
-	  },
+        };
+      },
       successful: (value, input) => {
         return (pattern) => {
           return pattern.successful(value, input);
@@ -115,32 +115,32 @@ describe('パーサーコンビネーター', () => {
     };
     /* #@range_end(succeed_fail) */
     it('list#fromString', (next) => {
-	  expect(
+      expect(
         list.isEmpty(list.fromString(""))
-	  ).to.eql(
+      ).to.eql(
         true
-	  );
-	  var listFromString = list.fromString("abc");
-	  expect(
+      );
+      var listFromString = list.fromString("abc");
+      expect(
         list.head(listFromString)
-	  ).to.eql(
+      ).to.eql(
         "a"
-	  );
-	  next();
-	});
+      );
+      next();
+    });
     it('list#toArray', (next) => {
-	  expect(
+      expect(
         list.toArray(list.cons(1,list.empty()))
-	  ).to.eql(
+      ).to.eql(
         [1]
-	  );
-	  expect(
+      );
+      expect(
         list.toArray(list.cons("a",list.empty()))
-	  ).to.eql(
+      ).to.eql(
         ["a"]
-	  );
-	  next();
-	});
+      );
+      next();
+    });
     /* #@range_begin(succeed_fail) */
     it('succeed', (next) => {
       match(parse(succeed(1)("hello")),{
@@ -162,90 +162,90 @@ describe('パーサーコンビネーター', () => {
       });
       match(parse(succeed(['+', '-']))(""),{
         failed: () => {
-		  expect().fail()
+          expect().fail()
         },
         successful: (value, input) => {
-		  expect(
+          expect(
             value
-		  ).to.eql(
+          ).to.eql(
             ['+', '-']
-		  );
-		  expect(
+          );
+          expect(
             input
-		  ).to.eql(
+          ).to.eql(
             ""
-		  );
+          );
         }
-	  })
-	  match(parse(succeed(10))(""),{
+      });
+      match(parse(succeed(10))(""),{
         failed: () => {
-		  expect().fail()
+          expect().fail()
         },
         successful: (value, input) => {
-		  expect(
+          expect(
             value
-		  ).to.eql(
+          ).to.eql(
             10
-		  );
-		  expect(
+          );
+          expect(
             input
-		  ).to.eql(
+          ).to.eql(
             ""
-		  );
+          );
         }
-	  })
+      });
       next();
     });
-	it('fail', (next) => {
-	  match(parse(fail("message"))("hello"),{
+    it('fail', (next) => {
+      match(parse(fail("message"))("hello"),{
         failed: (message) => {
-		  expect(
-			message
-		  ).to.eql(
-			"message"
-		  )
+          expect(
+            message
+          ).to.eql(
+            "message"
+          );
         },
         successful: (value, input) => {
-		  expect().fail()
+          expect().fail();
         }
-	  });
-	  next();
-	});
+      });
+      next();
+    });
     /* #@range_end(succeed_fail) */
     /* #@range_begin(satisfy)  */
     // satisfy:: FUNC[T=>BOOL] => LIST => PARSERESULT
     var satisfy = (predicate) => {
       return (inputList) => {
-		return match(inputList, {
-		  empty: (_) => {
-			return fail("failed");
-		  },
-		  cons: (head, tail) => {
-			if(predicate(head)){
+        return match(inputList, {
+          empty: (_) => {
+            return fail("failed");
+          },
+          cons: (head, tail) => {
+            if(predicate(head)){
               return succeed(head)(tail);
             } else {
               return fail("failed");
             }
           }
-        })
-		/* #@range_end(satisfy)       */
-	  }
-	};
-	it('satisfy', (next) => {
-	  var inputList = list.fromString("abc");
-	  var isA = (input) => {
-		return (input === "a")
-	  };
-	  match(satisfy(isA)(inputList),{
-		failed: (_) => {
-		  expect().fail("should not happen")
-		},
-		successful: (value, input) => {
-		  expect(value).to.eql("a")
-		}
-	  })
-	  next();
-	});
+        });
+        /* #@range_end(satisfy)       */
+      };
+    };
+    it('satisfy', (next) => {
+      var inputList = list.fromString("abc");
+      var isA = (input) => {
+        return (input === "a");
+      };
+      match(satisfy(isA)(inputList),{
+        failed: (_) => {
+          expect().fail("should not happen");
+        },
+        successful: (value, input) => {
+          expect(value).to.eql("a")
+        }
+      });
+      next();
+    });
     // character: Char => PARSERESULT => LIST => PARSERESULT
     var character = (ch) => {
       var predicate = (head) => {
@@ -260,44 +260,52 @@ describe('パーサーコンビネーター', () => {
     var seq = (firstParser, nextParser) => {
       return (inputList) => {
         return match(parse(firstParser)(inputList),{
-		  successful: (value, nextInputList) => {
-			return parse(nextParser(value)(nextInputList));
-		  },
-		  failed: (message) => {
-			return parseResult.failed(message);
-		  }
-		});
-	  };
-	};
-    // string: LIST[CHAR] => 
+          successful: (value, nextInputList) => {
+            return parse(nextParser(value)(nextInputList));
+          },
+          failed: (message) => {
+            return parseResult.failed(message);
+          }
+        });
+      };
+    };
+    // string: LIST[CHAR] =>
     var string = (string) => {
-	  return match(string, {
-		empty: (_) => {
-		  return succeed(list.empty());
-		},
-		cons: (head, tail) => {
+      return match(string, {
+        empty: (_) => {
+          return succeed(list.empty());
+        },
+        cons: (head, tail) => {
           return seq(character(head),function(x){
-			return seq(string(tail),function(xs){
+            return seq(string(tail),function(xs){
               return succeed(list.cons(x,xs));
-			});
+            });
           });
-		}
-	  });
-	};
-	// it('string parser', (next) => {
-	//   var stringList = list.fromString("abc");
-	//   var inputList = list.fromString("abcdef");
-	//   var parseResult = parse(string(stringList)(inputList));
-	//   match(parseResult,{
-	// 	failed: (_) => {
-	// 	  expect().fail("should not happen")
-	// 	},
-	// 	successful: (value, nextInput) => {
-	// 	  expect(value).to.eql("a")
-	// 	}
-	//   })
-	//   next();
-	// });
+        }
+      });
+    };
+    // it('string parser', (next) => {
+    //   var stringList = list.fromString("abc");
+    //   var inputList = list.fromString("abcdef");
+    //   var parseResult = parse(string(stringList)(inputList));
+    //   match(parseResult,{
+    //  failed: (_) => {
+    //    expect().fail("should not happen")
+    //  },
+    //  successful: (value, nextInput) => {
+    //    expect(value).to.eql("a")
+    //  }
+    //   })
+    //   next();
+    // });
+
+
+    // (\x. \y. y x) (2 + 2) (\x. x + 1)
+    // => (\y. y (2 + 2)) (\x. x + 1)
+    // => (\x. x + 1) (2 + 2)
+    // => (2 + 2) + 1
+    // => 4 + 1
+    // => 5
   });
   describe('第1版', () => {
     var parser = {

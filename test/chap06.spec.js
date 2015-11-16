@@ -403,15 +403,6 @@ describe('関数の使い方', () => {
             },
           });
         },
-        toArray: (list) => {
-          var self = this;
-          return self.foldr(list)([])(function (item) {
-            return (accumulator) => {
-              return [item].concat(accumulator);
-              // return accumulator.concat(item);
-            };
-          });
-        },
         // concat:: LIST[T] -> LIST[T] -> LIST[T]
         concat: (xs) => {
           var self = this;
@@ -458,11 +449,21 @@ describe('関数の使い方', () => {
         },
         /* #@range_begin(list_map) */
         // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
+        // map: (list, transform) => {
+        //   return this.match(list,{
+        //     empty: (_) => {
+        //       return this.empty();
+        //     },
+        //     cons: (x,xs) => {
+        //       return this.cons(transform(x),this.map(xs,transform));
+        //     }
+        //   });
+        // },
         map: (list, transform) => {
           var self = this;
           return self.match(list,{
             empty: (_) => {
-              return self.empty;
+              return self.empty();
             },
             cons: (x,xs) => {
               return self.cons(transform(x),self.map(xs,transform));
@@ -470,20 +471,44 @@ describe('関数の使い方', () => {
           });
         },
         /* #@range_end(list_map) */
-        // map: (list) => {
+        /* #@range_begin(list_reverse) */
+        reverse: (list, accumulator) => {
+          var self = this;
+          return self.match(list, {
+            empty: (_) => {
+              return accumulator;  // 空のリストの場合は終了
+            },
+            cons: (head, tail) => {
+              return self.reverse(tail, self.cons(head, accumulator));
+            }
+          });
+        },
+        /* #@range_end(list_reverse) */
+        /* #@range_begin(list_toarray) */
+        toArray: (list) => {
+          var self = this;
+          var toArrayAux = (list,accumulator) => {
+            return self.match(list, {
+              empty: (_) => {
+                return accumulator;  // 空のリストの場合は終了
+              },
+              cons: (head, tail) => {
+                return toArrayAux(tail, accumulator.concat(head));
+              }
+            });
+          };
+          return toArrayAux(list, []);
+        }
+        /* #@range_end(list_toarray) */
+        // toArray: (list) => {
         //   var self = this;
-        //   return (transform) => {
-        //     expect(transform).to.a('function');
-        //     return self.match(list,{
-        //       empty: (_) => {
-        //         return self.empty;
-        //       },
-        //       cons: (x,xs) => {
-        //         return self.cons(transform(x),self.map(xs)(transform));
-        //       }
-        //     });
-        //   };
-        // }
+        //   return self.foldr(list)([])(function (item) {
+        //     return (accumulator) => {
+        //       return [item].concat(accumulator);
+        //       // return accumulator.concat(item);
+        //     };
+        //   });
+        // },
       };
       it('factorialの例', (next) => {
         /* #@range_begin(naive_factorial) */
@@ -498,7 +523,7 @@ describe('関数の使い方', () => {
           factorial(3)
         ).to.eql(
           6
-        )
+        );
         /* #@range_end(naive_factorial) */
         next();
       });
@@ -525,51 +550,50 @@ describe('関数の使い方', () => {
       it('list#mapをテストする', (next) => {
         /* #@range_begin(list_map_test) */
         // list = [1,2,3,4]
-        //var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))))
+        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))));
         expect(
           seq.toArray(seq.map(list,(item) => {
             return item * 2;
           }))
         ).to.eql(
           [2,4,6,8]
-        )
+        );
         /* #@range_end(list_map_test) */
         next();
       });
-      it('リストの逆順を求める', (next) => {
-        /* #@range_begin(list_reverse) */
-        var reverse = (list,accumulator) => {
-          return seq.match(list, {
-            empty: (_) => {
-              return accumulator;  // 空のリストの場合は終了
-            },
-            cons: (head, tail) => {
-              return reverse(tail, seq.cons(head, accumulator))
-            },
-          });
-        };
-        var toArray = (list) => {
-          var toArrayAux = (list,accumulator) => {
-            return seq.match(list, {
-              empty: (_) => {
-                return accumulator;  // 空のリストの場合は終了
-              },
-              cons: (head, tail) => {
-                return toArrayAux(tail, accumulator.concat(head))
-              },
-            });
-          };
-          return toArrayAux(list, [])
-        };
-        /**************** テスト ****************/
+      it('list#reverseをテストする', (next) => {
+        // var reverse = (list,accumulator) => {
+        //   return seq.match(list, {
+        //     empty: (_) => {
+        //       return accumulator;  // 空のリストの場合は終了
+        //     },
+        //     cons: (head, tail) => {
+        //       return reverse(tail, seq.cons(head, accumulator))
+        //     },
+        //   });
+        // };
+        // var toArray = (list) => {
+        //   var toArrayAux = (list,accumulator) => {
+        //     return seq.match(list, {
+        //       empty: (_) => {
+        //         return accumulator;  // 空のリストの場合は終了
+        //       },
+        //       cons: (head, tail) => {
+        //         return toArrayAux(tail, accumulator.concat(head))
+        //       },
+        //     });
+        //   };
+        //   return toArrayAux(list, [])
+        // };
+        // /**************** テスト ****************/
+        /* #@range_begin(list_reverse_test) */
         var list = seq.cons(1, seq.cons(2,seq.empty()));
         expect(
-          toArray(reverse(list, seq.empty()))
+          seq.toArray(seq.reverse(list, seq.empty()))
         ).to.eql(
           [2,1]
         );
-        /* #@range_end(list_reverse) */
+        /* #@range_end(list_reverse_test) */
         next();
       });
     });

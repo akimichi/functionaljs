@@ -213,7 +213,6 @@ var seq  = {
 	};
   },
   /* #@range_end(list_filter) */
-  /* #@range_begin(list_toarray) */
   toArray: (list) => {
 	var self = this;
 	var toArrayAux = (list,accumulator) => {

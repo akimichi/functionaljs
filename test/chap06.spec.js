@@ -231,12 +231,21 @@ var seq  = {
 
 it('seqのテスト', (next) => {
   var compose = (f) => {
-    return (g) => {
-      return (arg) => {
-        return f(g(arg));
-      };
-    };
+	var self = this;
+	return (g) => {
+	  return (arg) => {
+		return f.call(self,
+					  g.call(self,arg));
+	  };
+	};
   };
+  // var compose = (f) => {
+  //   return (g) => {
+  //     return (arg) => {
+  //       return f(g(arg));
+  //     };
+  //   };
+  // };
   var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
   expect(
     seq.head(sequence)
@@ -263,6 +272,18 @@ it('seqのテスト', (next) => {
     seq.last(sequence)
   ).to.eql(
     4
+  );
+  // init = reverse . tail . reverse
+  var init = (list) => {
+	return compose.call(seq,
+						seq.reverse)(compose.call(seq,
+												  seq.tail)(seq.reverse))(list);
+  };
+  var list = seq.cons(1, seq.cons(2,seq.cons(3,seq.empty())));
+  expect(
+	seq.toArray(init(list))
+  ).to.eql(
+	[1,2]
   );
   next();
 });
@@ -1212,74 +1233,43 @@ describe('関数の使い方', () => {
     });
   }); // 関数の純粋性
   describe('高階関数', () => {
-    var seq = {
-      match: (data, pattern) => {
-        return data(pattern);
-      },
-      empty: (pattern) => {
-        return pattern.empty;
-      },
-      cons: (value, list) => {
-        return (pattern) => {
-          return pattern.cons(value, list);
-        };
-      },
-      isEmpty: (list) => {
-        return match(list, { // match関数で分岐する
-          empty: true,
-          cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
-            return false;
-          },
-        });
-      },
-      head: (list) => {
-        return match(list, {
-          empty: undefined, // 空のリストには先頭要素はありません
-          cons: (head, tail) => {
-            return head;
-          },
-        });
-      },
-      tail: (list) => {
-        return match(list, {
-          empty: undefined,  // 空のリストには末尾要素はありません
-          cons: (head, tail) => {
-            return tail;
-          },
-        });
-      }
-    };
     // var seq = {
     //   match: (data, pattern) => {
-    //     return data.call(pattern,pattern);
+    //     return data(pattern);
     //   },
-    //   empty: (index) => {
-    //     return true;
+    //   empty: (pattern) => {
+    //     return pattern.empty;
     //   },
-    //   cons: (head,tail) => {
-    //     return (f) => {
-    //       return f(head,tail);
+    //   cons: (value, list) => {
+    //     return (pattern) => {
+    //       return pattern.cons(value, list);
     //     };
     //   },
+    //   isEmpty: (list) => {
+    //     return match(list, { // match関数で分岐する
+    //       empty: true,
+    //       cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+    //         return false;
+    //       }
+    //     });
+    //   },
     //   head: (list) => {
-    //     return list((head,tail) => {
-    //       return head;
+    //     return match(list, {
+    //       empty: undefined, // 空のリストには先頭要素はありません
+    //       cons: (head, tail) => {
+    //         return head;
+    //       }
     //     });
     //   },
     //   tail: (list) => {
-    //     return list((head,tail) => {
-    //       return tail;
+    //     return match(list, {
+    //       empty: undefined,  // 空のリストには末尾要素はありません
+    //       cons: (head, tail) => {
+    //         return tail;
+    //       }
     //     });
-    //   },
-    //   at: (index,list) => {
-    //     if(index === 0){
-    //       return this.head(list);
-    //     } else {
-    //       return this.at(index -1, this.tail(list));
-    //     }
     //   }
     // };
-
     var stream = {
       empty: (index) => {
         return true;
@@ -1534,6 +1524,42 @@ describe('関数の使い方', () => {
           // expect(__.compose.bind(__)(double)(increment)(5)).to.be(12);
           next();
         });
+        it("pipe関数による合成", (next) => {
+		  var compose = (f) => {
+			var self = this;
+			return (g) => {
+			  return (arg) => {
+				return f.call(self,
+							  g.call(self,arg));
+			  };
+			};
+		  };
+          var flip = (fun) => {
+			return  (f) => {
+              return (g) => {
+				return fun(g)(f);
+				// return fun.call(this, g)(f);
+              };
+			};
+          };
+		  var pipe = (fun) => {
+			expect(fun).to.a('function');
+			var self = this;
+			return flip(compose)(fun);
+		  };
+		  var lastCompose = (list) => {
+			return compose.call(seq,
+								seq.head)(seq.reverse)(list);
+		  };
+		  var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+		  expect(
+			lastCompose(sequence)
+		  ).to.eql(
+			4
+		  );
+		  
+          next();
+        });
         // it("'compose two argument functions'", function(next) {
         //   var negate = function(x) {
         //     return -x;
@@ -1560,7 +1586,7 @@ describe('関数の使い方', () => {
         //   // );
         //   next();
         // });
-      });
+      }); // 関数合成のカリー化
       it('リストの逆順を求める', (next) => {
         var seq = {
           match: (data, pattern) => {
@@ -2178,13 +2204,13 @@ describe('関数の使い方', () => {
         var pipe = (f, g) => {
           return (input) => {
             return compose(f,g)(input)
-          }
+          };
         };
         var pipelines = (combinators) => {
           return (input) => {
             return combinators.reduce((accumulator, combinator) => {
               return compose(combinator,accumulator)
-            })
+            });
           };
         };
         next();

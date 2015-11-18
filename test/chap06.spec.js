@@ -21,133 +21,133 @@ var id = (any) => {
 
 var compose = (f) => {
   return (g) => {
-	return (arg) => {
+    return (arg) => {
       return f(g(arg));
-	};
+    };
   };
 };
 
 
 var seq  = {
   match: (data, pattern) => {
-	return data(pattern);
+    return data(pattern);
   },
   // compose: (f,g) => {
-  // 	return (arg) => {
+  //    return (arg) => {
   //     return f(g(arg));
-  // 	};
+  //    };
   // },
   flip: (fun) => {
-	return  (f) => {
+    return  (f) => {
       return (g) => {
-		return fun(g)(f);
+        return fun(g)(f);
       };
-	};
+    };
   },
   empty: (_) => {
-	return (pattern) => {
+    return (pattern) => {
       return pattern.empty();
-	};
+    };
   },
   cons: (value, list) => {
-	return (pattern) => {
+    return (pattern) => {
       return pattern.cons(value, list);
-	};
+    };
   },
   head: (list) => {
-	var self = this;
-	return self.match(list, {
+    var self = this;
+    return self.match(list, {
       empty: (_) => {
-		return undefined;
+        return undefined;
       },
       cons: (head, tail) => {
-		return head;
+        return head;
       }
-	});
+    });
   },
   tail: (list) => {
-	var self = this;
-	return self.match(list, {
+    var self = this;
+    return self.match(list, {
       empty: (_) => {
-		return undefined;
+        return undefined;
       },
       cons: (head, tail) => {
-		return tail;
+        return tail;
       }
-	});
+    });
   },
   isEmpty: (list) => {
-	var self = this;
-	return self.match(list, {
+    var self = this;
+    return self.match(list, {
       empty: (_) => {
-		return true;
+        return true;
       },
       cons: (head, tail) => {
-		return false;
+        return false;
       }
-	});
+    });
   },
   // concat:: LIST[T] -> LIST[T] -> LIST[T]
   concat: (xs) => {
-	var self = this;
-	return (ys) => {
+    var self = this;
+    return (ys) => {
       if(self.isEmpty(xs)){
-		return ys;
+        return ys;
       } else {
-		return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
+        return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
       }
-	};
+    };
   },
   last: (list) => {
-	var self = this;
-	return self.match(list, {
-	  empty: (_) => {
-		return undefined;
-	  },
-	  cons: (head, tail) => {
-		return self.match(tail, {
-		  empty: (_) => {
-			return head;
-		  },
-		  cons: (head, _) => {
-			return self.last(tail);
-		  }
-		});
-	  }
-	});
+    var self = this;
+    return self.match(list, {
+      empty: (_) => {
+        return undefined;
+      },
+      cons: (head, tail) => {
+        return self.match(tail, {
+          empty: (_) => {
+            return head;
+          },
+          cons: (head, _) => {
+            return self.last(tail);
+          }
+        });
+      }
+    });
   },
   // concat:: LIST[LIST[T]] -> LIST[T]
   join: (list_of_list) => {
-	var self = this;
-	if(self.isEmpty(list_of_list)){
+    var self = this;
+    if(self.isEmpty(list_of_list)){
       return self.empty();
-	} else {
+    } else {
       return self.concat(self.head(list_of_list))(self.join(self.tail(list_of_list)));
-	}
+    }
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
   foldr: (list) => {
-	var self = this;
-	return (accumulator) => {
+    var self = this;
+    return (accumulator) => {
       return (glue) => {
-		expect(glue).to.a('function');
-		return self.match(list,{
+        expect(glue).to.a('function');
+        return self.match(list,{
           empty: (_) => {
-			return accumulator;
+            return accumulator;
           },
           cons: (head, tail) => {
-			return glue(head)(self.foldr(tail)(accumulator)(glue));
+            return glue(head)(self.foldr(tail)(accumulator)(glue));
           }
-		});
-		// if(self.isEmpty(list)){
-		//   return accumulator;
-		// } else {
-		//   var item = self.head(list);
-		//   var tail = self.tail(list);
-		//   return glue(item)(self.foldr(tail)(accumulator)(glue));
-		// }
+        });
+        // if(self.isEmpty(list)){
+        //   return accumulator;
+        // } else {
+        //   var item = self.head(list);
+        //   var tail = self.tail(list);
+        //   return glue(item)(self.foldr(tail)(accumulator)(glue));
+        // }
       };
-	};
+    };
   },
   /* #@range_begin(list_map) */
   // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
@@ -162,107 +162,107 @@ var seq  = {
   //   });
   // },
   map: (list, transform) => {
-	var self = this;
-	return self.match(list,{
+    var self = this;
+    return self.match(list,{
       empty: (_) => {
-		return self.empty();
+        return self.empty();
       },
       cons: (x,xs) => {
-		return self.cons(transform(x),self.map(xs,transform));
+        return self.cons(transform(x),self.map(xs,transform));
       }
-	});
+    });
   },
   /* #@range_end(list_map) */
   /* #@range_begin(list_reverse) */
   reverse: (list) => {
-	var self = this;
-	var reverseAux = (list, accumulator) => {
-	  return self.match(list, {
-		empty: (_) => {
-		  return accumulator;  // 空のリストの場合は終了
-		},
-		cons: (head, tail) => {
-		  return reverseAux(tail, self.cons(head, accumulator));
-		}
-	  });
-	};
-	return reverseAux(list, self.empty());
+    var self = this;
+    var reverseAux = (list, accumulator) => {
+      return self.match(list, {
+        empty: (_) => {
+          return accumulator;  // 空のリストの場合は終了
+        },
+        cons: (head, tail) => {
+          return reverseAux(tail, self.cons(head, accumulator));
+        }
+      });
+    };
+    return reverseAux(list, self.empty());
   },
   /* #@range_end(list_reverse) */
   /* #@range_begin(list_filter) */
   filter: (list) => {
-	var self = this;
-	return (predicate) => {
-	  expect(predicate).to.a('function');
-	  var filterAux = (list, accumulator) => {
-		return self.match(list,{
-		  empty: (_) => {
-			return accumulator;
-		  },
-		  cons: (head,tail) => {
-			if(predicate(head) === true){
-			  return self.concat(self.concat(accumulator)(self.cons(head, self.empty())))(filterAux(tail, accumulator));
-			  // return self.concat(accumulator)(self.cons(head, self.empty()));
-			} else  {
-			  return filterAux(tail, accumulator);
-  			}
-		  }
-		});
-	  };
-	  return filterAux(list, self.empty());
-	};
+    var self = this;
+    return (predicate) => {
+      expect(predicate).to.a('function');
+      var filterAux = (list, accumulator) => {
+        return self.match(list,{
+          empty: (_) => {
+            return accumulator;
+          },
+          cons: (head,tail) => {
+            if(predicate(head) === true){
+              return self.concat(self.concat(accumulator)(self.cons(head, self.empty())))(filterAux(tail, accumulator));
+              // return self.concat(accumulator)(self.cons(head, self.empty()));
+            } else  {
+              return filterAux(tail, accumulator);
+            }
+          }
+        });
+      };
+      return filterAux(list, self.empty());
+    };
   },
   /* #@range_end(list_filter) */
   toArray: (list) => {
-	var self = this;
-	var toArrayAux = (list,accumulator) => {
+    var self = this;
+    var toArrayAux = (list,accumulator) => {
       return self.match(list, {
-		empty: (_) => {
+        empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
-		},
-		cons: (head, tail) => {
+        },
+        cons: (head, tail) => {
           return toArrayAux(tail, accumulator.concat(head));
-		}
+        }
       });
-	};
-	return toArrayAux(list, []);
+    };
+    return toArrayAux(list, []);
   }
 };
 
 it('seqのテスト', (next) => {
   var compose = (f) => {
-	return (g) => {
-	  return (arg) => {
-		return f(g(arg));
-	  };
-	};
+    return (g) => {
+      return (arg) => {
+        return f(g(arg));
+      };
+    };
   };
   var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
   expect(
-	seq.head(sequence)
+    seq.head(sequence)
   ).to.eql(
-	1
+    1
   );
   expect(
-	seq.toArray(sequence)
+    seq.toArray(sequence)
   ).to.eql(
-	[1,2,3,4]
+    [1,2,3,4]
   );
   expect(
-	seq.toArray(seq.reverse(sequence))
+    seq.toArray(seq.reverse(sequence))
   ).to.eql(
-	[4,3,2,1]
+    [4,3,2,1]
   );
   expect(
-	seq.head(seq.reverse(sequence))
+    seq.head(seq.reverse(sequence))
   ).to.eql(
-	4
+    4
   );
-  
+
   expect(
-  	seq.last(sequence)
+    seq.last(sequence)
   ).to.eql(
-  	4
+    4
   );
   next();
 });
@@ -278,9 +278,9 @@ describe('関数の使い方', () => {
         return data(pattern);
       },
       empty: (_) => {
-		return (pattern) => {
+        return (pattern) => {
           return pattern.empty();
-		};
+        };
       },
       cons: (value, list) => {
         return (pattern) => {
@@ -395,26 +395,26 @@ describe('関数の使い方', () => {
         next();
       });
     });
-	describe('関数の適用', () => {
+    describe('関数の適用', () => {
       describe('関数適用と置換ルール', () => {
-		var thunk = (func) => {
-		  return (arg) => {
-			return (_) => {
-			  return func(arg);
-			};
-		  };
-		};
-		var force = (thunk) => {
-		  return thunk();
-		};
-		it('thunkによる遅延評価', (next) => {
+        var thunk = (func) => {
+          return (arg) => {
+            return (_) => {
+              return func(arg);
+            };
+          };
+        };
+        var force = (thunk) => {
+          return thunk();
+        };
+        it('thunkによる遅延評価', (next) => {
           /* #@range_begin(nonstrict_function_via_thunk) */
           var multiply = (thunkX,thunkY) => {
-			if(force(thunkX) === 0){
+            if(force(thunkX) === 0){
               return 0;
-			} else {
+            } else {
               return force(thunkX) * force(thunkY);
-			}
+            }
           };
           // var multiply = (x,y) => {
           //   if(x() === 0){
@@ -423,37 +423,37 @@ describe('関数の使い方', () => {
           //     return x() * y();
           //   }
           // };
-		  var id = (any) => {
-			return any;
-		  };
+          var id = (any) => {
+            return any;
+          };
           // var thunk = (value) => {
           //   return () => {
           //     return value;
           //   };
           // };
           expect(
-			multiply(thunk(id)(0),thunk(id)(2))
-			// multiply(thunk(0),thunk(2))
+            multiply(thunk(id)(0),thunk(id)(2))
+            // multiply(thunk(0),thunk(2))
           ).to.eql(
-			0
+            0
           );
           /* #@range_end(nonstrict_function_via_thunk) */
           next();
-		});
-		it('thunkによる条件式', (next) => {
+        });
+        it('thunkによる条件式', (next) => {
           /* #@range_begin(functionalIf_via_thunk) */
           var functionalIf = (predicate, trueClauseThunk, falseClauseThunk) => {
-			if(predicate){
+            if(predicate){
               return force(trueClauseThunk); // 判定式が真の場合に実行する
-			} else {
+            } else {
               return force(falseClauseThunk);  // 判定式が真の場合に実行する
-			}
+            }
           };
           /* テスト */
           expect(
-			functionalIf((2 < 3), thunk(id)(2), thunk(id)(3))
+            functionalIf((2 < 3), thunk(id)(2), thunk(id)(3))
           ).to.eql(
-			2
+            2
           );
           /* #@range_end(functionalIf_via_thunk) */
           // expect(
@@ -462,258 +462,258 @@ describe('関数の使い方', () => {
           //   3
           // );
           next();
-		});
-		describe('thunkによるStream型', () => {
+        });
+        describe('thunkによるStream型', () => {
           var stream = {
-			empty: (_) => {
+            empty: (_) => {
               return (pattern) => {
-				expect(pattern).to.an('object');
-				return pattern.empty();
+                expect(pattern).to.an('object');
+                return pattern.empty();
               };
-			},
-			cons: (head,tailThunk) => {
+            },
+            cons: (head,tailThunk) => {
               expect(tailThunk).to.a('function');
               return (pattern) => {
-				expect(pattern).to.an('object');
-				return pattern.cons(head,tailThunk);
+                expect(pattern).to.an('object');
+                return pattern.cons(head,tailThunk);
               };
-			},
-			// head:: STREAM -> MAYBE[STREAM]
-			head: (lazyList) => {
+            },
+            // head:: STREAM -> MAYBE[STREAM]
+            head: (lazyList) => {
               return match(lazyList,{
-				empty: (_) => {
+                empty: (_) => {
                   return undefined;
-				},
-				cons: (value, tailThunk) => {
+                },
+                cons: (value, tailThunk) => {
                   return value;
-				}
+                }
               });
-			},
-			// tail:: STREAM -> MAYBE[STREAM]
-			tail: (lazyList) => {
+            },
+            // tail:: STREAM -> MAYBE[STREAM]
+            tail: (lazyList) => {
               return match(lazyList,{
-				empty: (_) => {
+                empty: (_) => {
                   return undefined;
-				},
-				cons: (head, tailThunk) => {
+                },
+                cons: (head, tailThunk) => {
                   return tailThunk();
-				}
+                }
               });
-			},
-			isEmpty: (lazyList) => {
+            },
+            isEmpty: (lazyList) => {
               return match(lazyList,{
-				empty: (_) => {
+                empty: (_) => {
                   return true;
-				},
-				cons: (head,tailThunk) => {
+                },
+                cons: (head,tailThunk) => {
                   return false;
-				}
+                }
               });
-			},
-			map: (lazyList) => {
+            },
+            map: (lazyList) => {
               return (transform) => {
-				return match(lazyList,{
+                return match(lazyList,{
                   empty: (_) => {
-					return stream.empty();
+                    return stream.empty();
                   },
                   cons: (head,tailThunk) => {
-					return stream.cons(transform(head),(_) => {
+                    return stream.cons(transform(head),(_) => {
                       return stream.map(tailThunk())(transform)});
                   }
-				});
+                });
               };
-			},
-			// ## stream#concat
-			concat: (xs) => {
+            },
+            // ## stream#concat
+            concat: (xs) => {
               return (ysThunk) => {
-				return match(xs,{
+                return match(xs,{
                   empty: (_) => {
-					return ysThunk();
+                    return ysThunk();
                   },
                   cons: (head,tailThunk) => {
-					return stream.cons(head,(_) => {
+                    return stream.cons(head,(_) => {
                       return stream.concat(tailThunk())(ysThunk);
-					});
+                    });
                   }
-				});
+                });
               };
-			},
-			// ## stream#flatten
-			// flatten :: STREAM[STREAM[T]] => STREAM[T]
-			flatten: (lazyList) => {
+            },
+            // ## stream#flatten
+            // flatten :: STREAM[STREAM[T]] => STREAM[T]
+            flatten: (lazyList) => {
               return match(lazyList,{
-				empty: (_) => {
+                empty: (_) => {
                   return stream.empty();
-				},
-				cons: (head,tailThunk) => {
+                },
+                cons: (head,tailThunk) => {
                   return stream.concat(head)((_) => {
-					return stream.flatten(tailThunk());
+                    return stream.flatten(tailThunk());
                   });
-				}
+                }
               });
-			}
-		  };
+            }
+          };
           it("stream#cons", (next) => {
-			var lazyList = stream.cons(1, (_) => {
+            var lazyList = stream.cons(1, (_) => {
               return stream.cons(2,thunk(stream.empty)());
-			});
-			// var lazyList = stream.cons(1, (_) => {
-			//   return stream.cons(2,(_) => {
-			//     return stream.empty();
-			//   });
-			// });
-			expect(
+            });
+            // var lazyList = stream.cons(1, (_) => {
+            //   return stream.cons(2,(_) => {
+            //     return stream.empty();
+            //   });
+            // });
+            expect(
               stream.head(lazyList)
-			).to.eql(
+            ).to.eql(
               1
-			);
-			next();
+            );
+            next();
           });
-		});
-	  });
+        });
+      });
       describe('関数の評価戦略', () => {
-		/* #@range_begin(strict_evaluation_in_javascript) */
-		var left = (x,y) => {
+        /* #@range_begin(strict_evaluation_in_javascript) */
+        var left = (x,y) => {
           return x;
-		};
-		expect(
+        };
+        expect(
           left(1, 2)
-		).to.eql(
+        ).to.eql(
           1
-		);
-		var infiniteLoop = (_) => {
+        );
+        var infiniteLoop = (_) => {
           return infiniteLoop(_);
-		};
-		
-		/* このテストは実行されると無限ループになるのでコメントアウトしています
+        };
+
+        /* このテストは実行されると無限ループになるのでコメントアウトしています
            expect(
            left(1, infiniteLoop())
            ).to.be.ok()
-		*/
-		/* #@range_end(strict_evaluation_in_javascript) */
-		
+        */
+        /* #@range_end(strict_evaluation_in_javascript) */
+
       });
       describe('再帰的な関数の適用', () => {
-		var seq  = {
+        var seq  = {
           match: (data, pattern) => {
-			return data(pattern);
+            return data(pattern);
           },
           compose: (f,g) => {
-			return (arg) => {
+            return (arg) => {
               return f(g(arg));
-			};
+            };
           },
           flip: (fun) => {
-			return  (f) => {
+            return  (f) => {
               return (g) => {
-				return fun(g)(f);
+                return fun(g)(f);
               };
-			};
+            };
           },
           empty: (_) => {
-			return (pattern) => {
+            return (pattern) => {
               return pattern.empty();
-			};
+            };
           },
           cons: (value, list) => {
-			return (pattern) => {
+            return (pattern) => {
               return pattern.cons(value, list);
-			};
+            };
           },
           head: (list) => {
-			var self = this;
-			return self.match(list, {
-              empty: (_) => {
-				return undefined;
-              },
-              cons: (head, tail) => {
-				return head;
-              }
-			});
-          },
-          tail: (list) => {
-			var self = this;
-			return self.match(list, {
-              empty: (_) => {
-				return undefined;
-              },
-              cons: (head, tail) => {
-				return tail;
-              },
-			});
-          },
-          isEmpty: (list) => {
-			var self = this;
-			return self.match(list, {
-              empty: (_) => {
-				return true;
-              },
-              cons: (head, tail) => {
-				return false;
-              }
-			});
-          },
-          // concat:: LIST[T] -> LIST[T] -> LIST[T]
-          concat: (xs) => {
-			var self = this;
-			return (ys) => {
-              if(self.isEmpty(xs)){
-				return ys;
-              } else {
-				return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
-              }
-			};
-          },
-		  last: (xs) => {
-			var self = this;
-			return self.match(xs, {
+            var self = this;
+            return self.match(list, {
               empty: (_) => {
                 return undefined;
               },
               cons: (head, tail) => {
-				return self.match(tail, {
-				  empty: (_) => {
-					return head;
-				  },
-				  cons: (head, _) => {
-					return self.last(tail);
-				  }
-				});
-			  }
-			});
-		  },
+                return head;
+              }
+            });
+          },
+          tail: (list) => {
+            var self = this;
+            return self.match(list, {
+              empty: (_) => {
+                return undefined;
+              },
+              cons: (head, tail) => {
+                return tail;
+              },
+            });
+          },
+          isEmpty: (list) => {
+            var self = this;
+            return self.match(list, {
+              empty: (_) => {
+                return true;
+              },
+              cons: (head, tail) => {
+                return false;
+              }
+            });
+          },
+          // concat:: LIST[T] -> LIST[T] -> LIST[T]
+          concat: (xs) => {
+            var self = this;
+            return (ys) => {
+              if(self.isEmpty(xs)){
+                return ys;
+              } else {
+                return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
+              }
+            };
+          },
+          last: (xs) => {
+            var self = this;
+            return self.match(xs, {
+              empty: (_) => {
+                return undefined;
+              },
+              cons: (head, tail) => {
+                return self.match(tail, {
+                  empty: (_) => {
+                    return head;
+                  },
+                  cons: (head, _) => {
+                    return self.last(tail);
+                  }
+                });
+              }
+            });
+          },
           // concat:: LIST[LIST[T]] -> LIST[T]
           join: (list_of_list) => {
-			var self = this;
-			if(self.isEmpty(list_of_list)){
+            var self = this;
+            if(self.isEmpty(list_of_list)){
               return self.empty();
-			} else {
+            } else {
               return self.concat(seq.head(list_of_list))(self.join(self.tail(list_of_list)));
-			}
+            }
           },
           // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
           foldr: (list) => {
-			var self = this;
-			return (accumulator) => {
+            var self = this;
+            return (accumulator) => {
               return (glue) => {
-				expect(glue).to.a('function');
-				return self.match(list,{
+                expect(glue).to.a('function');
+                return self.match(list,{
                   empty: (_) => {
-					return accumulator;
+                    return accumulator;
                   },
                   cons: (head, tail) => {
-					return glue(head)(self.foldr(tail)(accumulator)(glue));
+                    return glue(head)(self.foldr(tail)(accumulator)(glue));
                   }
-				});
-				// if(self.isEmpty(list)){
-				//   return accumulator;
-				// } else {
-				//   var item = self.head(list);
-				//   var tail = self.tail(list);
-				//   return glue(item)(self.foldr(tail)(accumulator)(glue));
-				// }
+                });
+                // if(self.isEmpty(list)){
+                //   return accumulator;
+                // } else {
+                //   var item = self.head(list);
+                //   var tail = self.tail(list);
+                //   return glue(item)(self.foldr(tail)(accumulator)(glue));
+                // }
               };
-			};
+            };
           },
           /* #@range_begin(list_map) */
           // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
@@ -728,68 +728,68 @@ describe('関数の使い方', () => {
           //   });
           // },
           map: (list, transform) => {
-			var self = this;
-			return self.match(list,{
+            var self = this;
+            return self.match(list,{
               empty: (_) => {
-				return self.empty();
+                return self.empty();
               },
               cons: (x,xs) => {
-				return self.cons(transform(x),self.map(xs,transform));
+                return self.cons(transform(x),self.map(xs,transform));
               }
-			});
+            });
           },
           /* #@range_end(list_map) */
           /* #@range_begin(list_reverse) */
           // reverse: (list, accumulator) => {
-		  // 	var self = this;
-		  // 	return self.match(list, {
+          //    var self = this;
+          //    return self.match(list, {
           //     empty: (_) => {
-		  // 		return accumulator;  // 空のリストの場合は終了
+          //        return accumulator;  // 空のリストの場合は終了
           //     },
           //     cons: (head, tail) => {
-		  // 		return self.reverse(tail, self.cons(head, accumulator));
+          //        return self.reverse(tail, self.cons(head, accumulator));
           //     }
-		  // 	});
+          //    });
           // },
           /* #@range_end(list_reverse) */
           /* #@range_begin(list_filter) */
-		  filter: (list) => {
-			var self = this;
-			return (predicate) => {
-			  expect(predicate).to.a('function');
-			  var filterAux = (list, accumulator) => {
-				return self.match(list,{
-				  empty: (_) => {
-					return accumulator;
-				  },
-				  cons: (head,tail) => {
-					if(predicate(head) === true){
-					  return self.concat(self.concat(accumulator)(self.cons(head, self.empty())))(filterAux(tail, accumulator));
-					  // return self.concat(accumulator)(self.cons(head, self.empty()));
-					} else  {
-					  return filterAux(tail, accumulator);
-  					}
-				  }
-				});
-			  };
-			  return filterAux(list, self.empty());
-			};
-		  },
+          filter: (list) => {
+            var self = this;
+            return (predicate) => {
+              expect(predicate).to.a('function');
+              var filterAux = (list, accumulator) => {
+                return self.match(list,{
+                  empty: (_) => {
+                    return accumulator;
+                  },
+                  cons: (head,tail) => {
+                    if(predicate(head) === true){
+                      return self.concat(self.concat(accumulator)(self.cons(head, self.empty())))(filterAux(tail, accumulator));
+                      // return self.concat(accumulator)(self.cons(head, self.empty()));
+                    } else  {
+                      return filterAux(tail, accumulator);
+                    }
+                  }
+                });
+              };
+              return filterAux(list, self.empty());
+            };
+          },
           /* #@range_end(list_filter) */
           /* #@range_begin(list_toarray) */
           toArray: (list) => {
-			var self = this;
-			var toArrayAux = (list,accumulator) => {
+            var self = this;
+            var toArrayAux = (list,accumulator) => {
               return self.match(list, {
-				empty: (_) => {
+                empty: (_) => {
                   return accumulator;  // 空のリストの場合は終了
-				},
-				cons: (head, tail) => {
+                },
+                cons: (head, tail) => {
                   return toArrayAux(tail, accumulator.concat(head));
-				}
+                }
               });
-			};
-			return toArrayAux(list, []);
+            };
+            return toArrayAux(list, []);
           }
           /* #@range_end(list_toarray) */
           // toArray: (list) => {
@@ -801,86 +801,86 @@ describe('関数の使い方', () => {
           //     };
           //   });
           // },
-		};
-		it('factorialの例', (next) => {
+        };
+        it('factorialの例', (next) => {
           /* #@range_begin(naive_factorial) */
           var factorial = (n) => {
-			if (n === 1) {
+            if (n === 1) {
               return 1;
-			} else {
+            } else {
               return n * factorial(n - 1);
-			}
+            }
           };
           expect(
-			factorial(3)
+            factorial(3)
           ).to.eql(
-			6
+            6
           );
           /* #@range_end(naive_factorial) */
           next();
-		});
-		it('末尾再帰によるfactorialの例', (next) => {
+        });
+        it('末尾再帰によるfactorialの例', (next) => {
           /* #@range_begin(tail_recursive_factorial) */
           var factorial = (n) => {
-			var factorialRec = (n, accumulator) => {
+            var factorialRec = (n, accumulator) => {
               if (n === 1) {
-				return 1 * accumulator;
+                return 1 * accumulator;
               } else {
-				return factorialRec(n - 1, n * accumulator);
+                return factorialRec(n - 1, n * accumulator);
               };
-			};
-			return factorialRec(n, 1);
+            };
+            return factorialRec(n, 1);
           };
           expect(
-			factorial(3)
+            factorial(3)
           ).to.eql(
-			6
+            6
           );
           /* #@range_end(tail_recursive_factorial) */
           next();
-		});
-		it('list#lastをテストする', (next) => {
+        });
+        it('list#lastをテストする', (next) => {
           /* #@range_begin(list_last_test) */
           // list = [1,2,3,4]
           var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
           expect(
-			seq.last(list)
+            seq.last(list)
           ).to.eql(
-			4
+            4
           );
-          /* #@range_end(list_map_test) */
+          /* #@range_end(list_last_test) */
           next();
-		});
-		it('list#mapをテストする', (next) => {
+        });
+        it('list#mapをテストする', (next) => {
           /* #@range_begin(list_map_test) */
           // list = [1,2,3,4]
           var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))));
           expect(
-			seq.toArray(seq.map(list,(item) => {
+            seq.toArray(seq.map(list,(item) => {
               return item * 2;
-			}))
+            }))
           ).to.eql(
-			[2,4,6,8]
+            [2,4,6,8]
           );
           /* #@range_end(list_map_test) */
           next();
-		});
-		it('list#filterテストする', (next) => {
+        });
+        it('list#filterテストする', (next) => {
           /* #@range_begin(list_filter_test) */
           // list = [1,2,3,4]
           var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))));
-		  var even = (n) => {
+          var even = (n) => {
             return (n % 2) === 0;
           };
           expect(
-			seq.toArray(seq.filter(list)(even))
+            seq.toArray(seq.filter(list)(even))
           ).to.eql(
-			[2,4]
+            [2,4]
           );
           /* #@range_end(list_filter_test) */
-		  next();
-		});
-		it('list#reverseをテストする', (next) => {
+          next();
+        });
+        it('list#reverseをテストする', (next) => {
           var reverse = (list,accumulator) => {
             return seq.match(list, {
               empty: (_) => {
@@ -908,107 +908,107 @@ describe('関数の使い方', () => {
           /* #@range_begin(list_reverse_test) */
           var list = seq.cons(1, seq.cons(2,seq.empty()));
           expect(
-			seq.toArray(reverse(list, seq.empty()))
-			// seq.toArray(seq.reverse(list, seq.empty()))
+            seq.toArray(reverse(list, seq.empty()))
+            // seq.toArray(seq.reverse(list, seq.empty()))
           ).to.eql(
-			[2,1]
+            [2,1]
           );
           /* #@range_end(list_reverse_test) */
           next();
-		});
+        });
       });
       describe('関数を合成する', () => {
-		it('関数を連続して適用する', (next) => {
+        it('関数を連続して適用する', (next) => {
           /* #@range_begin(function_applied_sequentially) */
           var double = (n) => {
-			return n * 2;
+            return n * 2;
           };
           var negate = (n) => {
-			return - n;
+            return - n;
           };
           expect(
-			negate(double(2))
+            negate(double(2))
           ).to.eql(
               -4
           );
           /* #@range_end(function_applied_sequentially) */
           /* #@range_begin(function_applied_twice) */
           var twice = (f,arg) => {
-			return f(f(arg));
+            return f(f(arg));
           };
           var succ = (x) => {
-			return x + 1;
+            return x + 1;
           };
           expect(
-			twice(succ,2)
+            twice(succ,2)
           ).to.eql(
-			4
+            4
           );
           /* #@range_end(function_applied_twice) */
           /* #@range_begin(function_applied_ntimes) */
           var applyNtimes = (n) => {
-			return (func) => {
+            return (func) => {
               return (init) => {
-				return (accumulator) => {
+                return (accumulator) => {
                   if(n === 0) {
-					return accumulator;
+                    return accumulator;
                   } else {
-					return applyNtimes(n - 1)(func)(init)(func(accumulator));
+                    return applyNtimes(n - 1)(func)(init)(func(accumulator));
                   };
-				};
+                };
               };
-			};
+            };
           };
           expect(
-			applyNtimes(4)(succ)(0)(0) // succ(succ(succ(succ(0))))
+            applyNtimes(4)(succ)(0)(0) // succ(succ(succ(succ(0))))
           ).to.eql(
-			4
+            4
           );
           /* #@range_end(function_applied_ntimes) */
           next();
-		});
-		describe('関数合成', () => {
+        });
+        describe('関数合成', () => {
           /* #@range_begin(compose_definition) */
           var compose = (f,g,arg) => {
-			return f(g(arg));
+            return f(g(arg));
           };
           /* #@range_end(compose_definition) */
           it('否定を合成する', (next) => {
-			/* #@range_begin(compose_negation) */
-			var negate = (n) => {
+            /* #@range_begin(compose_negation) */
+            var negate = (n) => {
               return -1 *  n;
-			};
-			expect(
+            };
+            expect(
               compose(negate,negate, 2)
-			).to.eql(
+            ).to.eql(
               2
-			);
-			/* #@range_end(compose_negation) */
-			next();
+            );
+            /* #@range_end(compose_negation) */
+            next();
           });
           it('1個の引数の関数を合成する', (next) => {
-			/* #@range_begin(compose_one_argument_functions) */
-			var succ = (n) => {
+            /* #@range_begin(compose_one_argument_functions) */
+            var succ = (n) => {
               return n + 1;
-			};
-			var prev = (n) => {
+            };
+            var prev = (n) => {
               return n - 1;
-			};
-			expect(
+            };
+            expect(
               compose(prev,succ,5)
-			).to.eql(
+            ).to.eql(
               5
-			);
-			expect(
+            );
+            expect(
               compose(prev,succ,2)
-			).to.eql(
+            ).to.eql(
               2
-			);
-			/* #@range_end(compose_one_argument_functions) */
-			next();
+            );
+            /* #@range_end(compose_one_argument_functions) */
+            next();
           });
           it('乗算と否定の合成は失敗する', (next) => {
-			/* #@range_begin(compose_negate_multiply) */
+            /* #@range_begin(compose_negate_multiply) */
             var negate = (x) => {
                return - x;
             };
@@ -1020,10 +1020,10 @@ describe('関数の使い方', () => {
             ).to.eql(
                2
             );
-			/* #@range_end(compose_negate_multiply) */
-			next();
+            /* #@range_end(compose_negate_multiply) */
+            next();
           });
-          
+
           // it("'compose two argument functions'", function(next) {
           //   var negate = function(x) {
           //     return -x;
@@ -1050,64 +1050,64 @@ describe('関数の使い方', () => {
           //   // );
           //   next();
           // });
-		});
+        });
         it('再帰によるlast', (next) => {
           /* #@range_begin(list_last_recursive) */
-		  var last = (list) => {
-  			return seq.match(list, {
-  			  empty: (_) => {
-  				return undefined;
-  			  },
-  			  cons: (head, tail) => {
-  				return seq.match(tail, {
-  				  empty: (_) => {
-  					return head;
-  				  },
-  				  cons: (head, _) => {
-  					return last(tail);
-  				  }
-  				});
-  			  }
-  			});
-		  };
+          var last = (list) => {
+            return seq.match(list, {
+              empty: (_) => {
+                return undefined;
+              },
+              cons: (head, tail) => {
+                return seq.match(tail, {
+                  empty: (_) => {
+                    return head;
+                  },
+                  cons: (head, _) => {
+                    return last(tail);
+                  }
+                });
+              }
+            });
+          };
           var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
-		  expect(
-  			last(sequence)
-		  ).to.eql(
-  			4
-		  );
+          expect(
+            last(sequence)
+          ).to.eql(
+            4
+          );
           /* #@range_end(list_last_recursive) */
-		  next();
-		});
+          next();
+        });
         it('合成によるlast', (next) => {
           /* #@range_begin(list_last_compose) */
           // expect(
-		  // 	seq.toArray(seq.reverse(sequence))
+          //    seq.toArray(seq.reverse(sequence))
           // ).to.eql(
-		  // 	0
+          //    0
           // );
           // expect(
-		  // 	seq.head(seq.reverse(sequence))
+          //    seq.head(seq.reverse(sequence))
           // ).to.eql(
-		  // 	0
+          //    0
           // );
           var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
-		  var last = (list) => {
-		  	return compose(seq.head)(seq.reverse)(list);
-		  };
+          var last = (list) => {
+            return compose(seq.head)(seq.reverse)(list);
+          };
           // expect(
-		  // 	last(sequence)
+          //    last(sequence)
           // ).to.eql(
-		  // 	0
+          //    0
           // );
-          /* #@range_begin(list_last_compose) */
-		  next();
-		});
+          /* #@range_end(list_last_compose) */
+          next();
+        });
       }); // 関数を合成する
-	}); // 関数の適用
+    }); // 関数の適用
   }); // 関数の基本
   describe('演算子', () => {
-	
+
   });
   describe('関数の純粋性', () => {
     describe('副作用が参照透過性を損なうこと', () => {
@@ -1163,7 +1163,7 @@ describe('関数の使い方', () => {
           ).to.eql(
           1
           );
-        */ 
+        */
         /* #@range_end(kestrel_combinator_test) */
         // setTimeout(function(){
         //   // happens 0.5 seconds later:
@@ -1441,29 +1441,29 @@ describe('関数の使い方', () => {
         expect(flip(callee)(succ)(2)).to.eql(3);
         /* #@range_end(flip) */
         it('カリー化の合成で乗算と否定の合成は成功する', (next) => {
-		  /* #@range_begin(compose_negate_multiply_successful) */
-		  var compose = (f) => {
-			return (g) => {
-			  return (arg) =>{
-				return f(g(arg));
-			  };
-			};
-		  };
+          /* #@range_begin(compose_negate_multiply_successful) */
+          var compose = (f) => {
+            return (g) => {
+              return (arg) =>{
+                return f(g(arg));
+              };
+            };
+          };
           var negate = (x) => {
             return - x;
           };
           var multiply = (x) => {
-			return (y) => {
-			  return x * y;
+            return (y) => {
+              return x * y;
             };
-		  };
+          };
           expect(
             compose(negate)(multiply(2))(3)
           ).to.eql(
-			  -6
-		  );
-		  /* #@range_end(compose_negate_multiply_successful) */
-		  next();
+              -6
+          );
+          /* #@range_end(compose_negate_multiply_successful) */
+          next();
         });
         it('カリー化による関数の合成', (next) => {
           /* #@range_begin(compose_and_uncurry) */

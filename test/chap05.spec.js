@@ -652,7 +652,7 @@ describe('プログラムをコントロールする仕組み', () => {
           return (event) => {
 
           };
-        }
+        };
         // heaterOn:: (TIMEZONE, TEMPERATUREZONE) -> EVENT -> BOOL
 
         // var heaterOn = (event) => {

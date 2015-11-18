@@ -1524,41 +1524,67 @@ describe('関数の使い方', () => {
           // expect(__.compose.bind(__)(double)(increment)(5)).to.be(12);
           next();
         });
-        it("pipe関数による合成", (next) => {
-		  var compose = (f) => {
-			var self = this;
-			return (g) => {
-			  return (arg) => {
-				return f.call(self,
-							  g.call(self,arg));
+        describe("pipe関数による合成", () => {
+          it("composeでlastを定義する", (next) => {
+			var compose = (f) => {
+			  var self = this;
+			  return (g) => {
+				return (arg) => {
+				  return f.call(self,
+								g.call(self,arg));
+				};
 			  };
 			};
-		  };
-          var flip = (fun) => {
-			return  (f) => {
-              return (g) => {
-				return fun(g)(f);
-				// return fun.call(this, g)(f);
-              };
+			var last = (list) => {
+			  return compose.call(seq,
+								  seq.head)(seq.reverse)(list);
 			};
-          };
-		  var pipe = (fun) => {
-			expect(fun).to.a('function');
-			var self = this;
-			return flip(compose)(fun);
-		  };
-		  var lastCompose = (list) => {
-			return compose.call(seq,
-								seq.head)(seq.reverse)(list);
-		  };
-		  var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
-		  expect(
-			lastCompose(sequence)
-		  ).to.eql(
-			4
-		  );
-		  
-          next();
+			var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+			expect(
+			  last(sequence)
+			).to.eql(
+			  4
+			);
+			next();
+          });
+          it("pipeでlastを定義する", (next) => {
+			var compose = (f) => {
+			  var self = this;
+			  return (g) => {
+				return (arg) => {
+				  return f.call(self,
+								g.call(self,arg));
+				};
+			  };
+			};
+			/* #@range_begin(last_with_pipe) */
+			var flip = (fun) => {
+			  var self = this;
+			  return  (f) => {
+				return (g) => {
+				  return fun.call(self, g)(f); // return fun(g)(f);
+				};
+			  };
+			};
+			var pipe = (fun) => {
+			  var self = this;
+			  expect(fun).to.a('function');
+			  return flip.call(self,
+							   compose)(fun);
+			};
+			var last = (list) => {
+			  return pipe.call(seq,
+							   seq.reverse)(seq.head)(list);
+			};
+			var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+			expect(
+			  last(sequence)
+			).to.eql(
+			  4
+			);
+			/* #@range_end(last_with_pipe) */
+			next();
+          });
         });
         // it("'compose two argument functions'", function(next) {
         //   var negate = function(x) {
@@ -2652,7 +2678,7 @@ describe('関数の使い方', () => {
             var self = this;
             return (transform) => {
               expect(transform).to.a('function');
-              return self.join(self.map(instance)(transform.bind(self)))
+              return self.join(self.map(instance)(transform.bind(self)));
             };
           }
           /* #@range_end(list_monad_definition) */

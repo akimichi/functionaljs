@@ -1028,23 +1028,6 @@ describe('関数の使い方', () => {
             /* #@range_end(compose_one_argument_functions) */
             next();
           });
-          it('乗算と否定の合成は失敗する', (next) => {
-            /* #@range_begin(compose_negate_multiply) */
-            var negate = (x) => {
-               return - x;
-            };
-            var multiply = (x, y) => {
-               return x * y;
-            };
-            expect(
-               compose(negate, negate,2)
-            ).to.eql(
-               2
-            );
-            /* #@range_end(compose_negate_multiply) */
-            next();
-          });
-
           // it("'compose two argument functions'", function(next) {
           //   var negate = function(x) {
           //     return -x;
@@ -1102,25 +1085,10 @@ describe('関数の使い方', () => {
         });
         it('合成によるlast', (next) => {
           /* #@range_begin(list_last_compose) */
-          // expect(
-          //    seq.toArray(seq.reverse(sequence))
-          // ).to.eql(
-          //    0
-          // );
-          // expect(
-          //    seq.head(seq.reverse(sequence))
-          // ).to.eql(
-          //    0
-          // );
           var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
           var last = (list) => {
             return compose(seq.head)(seq.reverse)(list);
           };
-          // expect(
-          //    last(sequence)
-          // ).to.eql(
-          //    0
-          // );
           /* #@range_end(list_last_compose) */
           next();
         });

@@ -880,7 +880,7 @@ describe('データの種類と特徴', () => {
         /* #@range_begin(free_variable_in_function_test) */
         expect(
           (_) => {
-            add(1,2) 
+            add(1,2)
           }
         ).to.throwException((exception)=> {
           expect(exception).to.be.a(
@@ -897,7 +897,7 @@ describe('データの種類と特徴', () => {
             return x + y;
           };
           return add;
-        }
+        };
         /* #@range_end(binding_in_closure) */
         /* #@range_begin(binding_in_closure_test) */
         expect(
@@ -924,9 +924,9 @@ describe('データの種類と特徴', () => {
             if(variable === queryVariable) {
               return value;
             } else {
-              return lookupEnv(queryVariable,env)
+              return lookupEnv(queryVariable,env);
             }
-          }
+          };
         };
         /* #@range_end(environment_implemented) */
         /* #@range_begin(environment_implemented_usage) */

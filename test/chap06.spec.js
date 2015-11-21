@@ -231,13 +231,13 @@ var seq  = {
 
 it('seqのテスト', (next) => {
   var compose = (f) => {
-	var self = this;
-	return (g) => {
-	  return (arg) => {
-		return f.call(self,
-					  g.call(self,arg));
-	  };
-	};
+    var self = this;
+    return (g) => {
+      return (arg) => {
+        return f.call(self,
+                      g.call(self,arg));
+      };
+    };
   };
   // var compose = (f) => {
   //   return (g) => {
@@ -275,15 +275,15 @@ it('seqのテスト', (next) => {
   );
   // init = reverse . tail . reverse
   var init = (list) => {
-	return compose.call(seq,
-						seq.reverse)(compose.call(seq,
-												  seq.tail)(seq.reverse))(list);
+    return compose.call(seq,
+                        seq.reverse)(compose.call(seq,
+                                                  seq.tail)(seq.reverse))(list);
   };
   var list = seq.cons(1, seq.cons(2,seq.cons(3,seq.empty())));
   expect(
-	seq.toArray(init(list))
+    seq.toArray(init(list))
   ).to.eql(
-	[1,2]
+    [1,2]
   );
   next();
 });
@@ -355,64 +355,6 @@ describe('関数の使い方', () => {
           "a"
         );
         /* #@range_end(identity_function_test) */
-        next();
-      });
-      it('関数とリストの類似性', (next) => {
-        var match = (data, pattern) => {
-          return data(pattern);
-        };
-        var empty = (pattern) => {
-          return pattern.empty;
-        };
-        var cons = (value, list) => {
-          return (pattern) => {
-            return pattern.cons(value, list);
-          };
-        };
-        var isEmpty = (list) => {
-          return match(list, { // match関数で分岐する
-            empty: true,
-            cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
-              return false;
-            },
-          });
-        };
-        var head = (list) => {
-          return match(list, {
-            empty: undefined, // 空のリストには先頭要素はありません
-            cons: (head, tail) => {
-              return head;
-            },
-          });
-        };
-        var tail = (list) => {
-          return match(list, {
-            empty: undefined,  // 空のリストには末尾要素はありません
-            cons: (head, tail) => {
-              return tail;
-            },
-          });
-        };
-        /*
-          ~~~haskell
-          list2fct :: Eq a => [(a,b)] -> a -> b
-          list2fct [] _ = error "function not total"
-          list2fct ((u,v):uvs) x | x == u = v
-          | otherwise = list2fct uvs x
-          fct2list :: (a -> b) -> [a] -> [(a,b)]
-          fct2list f xs = [ (x, f x) | x <- xs ]
-          ~~~
-        */
-        // var list2function = (list) => {
-        //    return (any) => {
-        //      if(head(list)) {
-        //        if(head(list) === any){
-        //          return
-        //        } else {
-        //        }
-        //    } else {
-        //    }
-        // };
         next();
       });
     });
@@ -1300,7 +1242,8 @@ describe('関数の使い方', () => {
             }
           };
         };
-        /* テスト */
+        /* #@range_end(multiplyOf_curried) */
+        /* #@range_begin(multiplyOf_curried_test) */
         var twoFold = multiplyOf(2);
         var threeFold = multiplyOf(3);
         expect(
@@ -1313,7 +1256,7 @@ describe('関数の使い方', () => {
         ).to.eql(
           true
         );
-        /* #@range_end(multiplyOf_curried) */
+        /* #@range_end(multiplyOf_curried_test) */
         next();
       });
 
@@ -1494,64 +1437,64 @@ describe('関数の使い方', () => {
         });
         describe("pipe関数による合成", () => {
           it("composeでlastを定義する", (next) => {
-			var compose = (f) => {
-			  var self = this;
-			  return (g) => {
-				return (arg) => {
-				  return f.call(self,
-								g.call(self,arg));
-				};
-			  };
-			};
-			var last = (list) => {
-			  return compose.call(seq,
-								  seq.head)(seq.reverse)(list);
-			};
-			var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
-			expect(
-			  last(sequence)
-			).to.eql(
-			  4
-			);
-			next();
+            var compose = (f) => {
+              var self = this;
+              return (g) => {
+                return (arg) => {
+                  return f.call(self,
+                                g.call(self,arg));
+                };
+              };
+            };
+            var last = (list) => {
+              return compose.call(seq,
+                                  seq.head)(seq.reverse)(list);
+            };
+            var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+            expect(
+              last(sequence)
+            ).to.eql(
+              4
+            );
+            next();
           });
           it("pipeでlastを定義する", (next) => {
-			var compose = (f) => {
-			  var self = this;
-			  return (g) => {
-				return (arg) => {
-				  return f.call(self,
-								g.call(self,arg));
-				};
-			  };
-			};
-			/* #@range_begin(last_with_pipe) */
-			var flip = (fun) => {
-			  var self = this;
-			  return  (f) => {
-				return (g) => {
-				  return fun.call(self, g)(f); // return fun(g)(f);
-				};
-			  };
-			};
-			var pipe = (fun) => {
-			  var self = this;
-			  expect(fun).to.a('function');
-			  return flip.call(self,
-							   compose)(fun);
-			};
-			var last = (list) => {
-			  return pipe.call(seq,
-							   seq.reverse)(seq.head)(list);
-			};
-			var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
-			expect(
-			  last(sequence)
-			).to.eql(
-			  4
-			);
-			/* #@range_end(last_with_pipe) */
-			next();
+            var compose = (f) => {
+              var self = this;
+              return (g) => {
+                return (arg) => {
+                  return f.call(self,
+                                g.call(self,arg));
+                };
+              };
+            };
+            /* #@range_begin(last_with_pipe) */
+            var flip = (fun) => {
+              var self = this;
+              return  (f) => {
+                return (g) => {
+                  return fun.call(self, g)(f); // return fun(g)(f);
+                };
+              };
+            };
+            var pipe = (fun) => {
+              var self = this;
+              expect(fun).to.a('function');
+              return flip.call(self,
+                               compose)(fun);
+            };
+            var last = (list) => {
+              return pipe.call(seq,
+                               seq.reverse)(seq.head)(list);
+            };
+            var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+            expect(
+              last(sequence)
+            ).to.eql(
+              4
+            );
+            /* #@range_end(last_with_pipe) */
+            next();
           });
         });
         // it("'compose two argument functions'", function(next) {
@@ -1655,262 +1598,133 @@ describe('関数の使い方', () => {
         next();
       });
     });
-    describe('不変なデータ型を作る', () => {
-      it('不変なオブジェクト型を作る', (next) => {
-        // var objects = {
-        //   empty: {
-        //   },
-        //   set: (key,value,obj) => {
-        //     expect(obj).to.an('object');
-        //     obj[key] = value;
-        //     return obj;
-        //   },
-        //   get: (key,obj) => {
-        //     expect(obj).to.an('object');
-        //     return obj[key];
-        //   },
-        //   isEmpty: (obj) => {
-        //     expect(obj).to.an('object');
-        //     var hasOwnProperty = Object.prototype.hasOwnProperty;
-        //     for(var key in obj){
-        //       if(hasOwnProperty.call(obj, key))
-        //         return false;
-        //     }
-        //   },
-        //   isNotEmpty: (obj) => {
-        //     expect(obj).to.an('object');
-        //     return ! this.objects.isEmpty(obj);
-        //   },
-        // };
-        /* #@range_begin(immutable_object_type) */
-        var objects = {
-          empty: (key) => {
+    describe('クロージャーで状態をカプセル化する', () => {
+      describe('関数とデータの類似性', (next) => {
+        it('関数とリストの類似性', (next) => {
+          var match = (data, pattern) => {
+            return data(pattern);
+          };
+          var empty = (pattern) => {
+            return pattern.empty;
+          };
+          var cons = (value, list) => {
+            return (pattern) => {
+              return pattern.cons(value, list);
+            };
+          };
+          var isEmpty = (list) => {
+            return match(list, { // match関数で分岐する
+              empty: true,
+              cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+                return false;
+              },
+            });
+          };
+          var head = (list) => {
+            return match(list, {
+              empty: undefined, // 空のリストには先頭要素はありません
+              cons: (head, tail) => {
+                return head;
+              },
+            });
+          };
+          var tail = (list) => {
+            return match(list, {
+              empty: undefined,  // 空のリストには末尾要素はありません
+              cons: (head, tail) => {
+                return tail;
+              },
+            });
+          };
+          /*
+            ~~~haskell
+            list2fct :: Eq a => [(a,b)] -> a -> b
+            list2fct [] _ = error "function not total"
+            list2fct ((u,v):uvs) x | x == u = v
+            | otherwise = list2fct uvs x
+            fct2list :: (a -> b) -> [a] -> [(a,b)]
+            fct2list f xs = [ (x, f x) | x <- xs ]
+            ~~~
+          */
+          // var list2function = (list) => {
+          //    return (any) => {
+          //      if(head(list)) {
+          //        if(head(list) === any){
+          //          return
+          //        } else {
+          //        }
+          //    } else {
+          //    }
+          // };
+          next();
+        });
+        describe('クロージャーによる「環境」の実装', () => {
+          /* #@range_begin(environment_in_closure) */
+          // ## 空の環境
+          var emptyEnv = (variable) => {
             return undefined;
-          },
-          get: (key, obj) => {
-            return obj(key);
-          },
-          set: (key, value, obj) => {
-            var self = this;
-            return (key2) => {
-              if(key === key2) {
+          };
+          /* 変数名に対応する値を環境から取りだす */
+          var lookupEnv = (identifier, env) => {
+            return env(identifier);
+          };
+          /* 環境を拡張する */
+          var extendEnv = (identifier, value, env) => {
+            return (queryIdentifier) => {
+              if(identifier === queryIdentifier) {
                 return value;
               } else {
-                return self.get(key2,obj)
+                return lookupEnv(queryIdentifier,env);
               }
-            }
-          }
-        };
-        /* #@range_end(immutable_object_type) */
-        /* #@range_begin(immutable_object_type_test) */
-        expect(
-          objects.get("R2D2", objects.set("R2D2", "Star Wars", objects.set("HAL9000","2001: a space odessay",objects.empty)))
-        ).to.eql(
-          "Star Wars"
-        )
-        expect(
-          objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
-        ).to.eql(
-          undefined
-        )
-        expect(
-          objects.get("HAL9000", objects.set.call(objects,"C3PO", "Star Wars", objects.set.call(objects,"R2D2", "Star Wars", objects.set.call(objects,"HAL9000","2001: a space odessay",objects.empty))))
-        ).to.eql(
-          "2001: a space odessay"
-        )
-        /* #@range_end(immutable_object_type_test) */
-        next();
-      });
-      it('不変なオブジェクト型を作る(改良版)', (next) => {
-        /* #@range_begin(immutable_object_type_improved) */
-        var objects = {
-          empty: (_) => {
-            return undefined;
-          },
-          get: (key, obj) => {
-            return obj(key);
-          },
-          set: (key, value, obj) => {
-            var self = this;
-            return (key2) => {
-              if(key === key2) {
-                return value;
-              } else {
-                return self.get(key2,obj)
-              }
-            }
-          },
-          fromObject: (obj) => {
-            var self = this;
-            var keys = (o) => {
-              var result = [];
-              for(var prop in o) {
-                if(o.hasOwnProperty(prop))
-                  result.push(prop);
-              }
-              return result;
             };
-            return keys(obj).reduce((accumulator, key) => {
-              return self.set.call(self,key, obj[key], accumulator);
-            }, self.empty)
-          }
-        };
-        /* #@range_end(immutable_object_type_improved) */
-        /* #@range_begin(immutable_object_type_improved_test) */
-        expect(
-          objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
-        ).to.eql(
-          undefined
-        );
-        expect(
-          objects.get("HAL9000", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
-        ).to.eql(
-          "2001: a space odessay"
-        );
-        expect(
-          objects.get("R2D2", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
-        ).to.eql(
-          "Star Wars"
-        );
-        /* #@range_end(immutable_object_type_improved_test) */
-        next();
+          };
+          /* #@range_end(environment_in_closure) */
+          it('extendEnvで環境を作り、 lookupEnv で環境を探る', (next) => {
+            /* #@range_begin(environment_in_closure_test) */
+            expect(
+              lookupEnv("a", emptyEnv)
+            ).to.be(
+              undefined
+            );
+            var newEnv = extendEnv('a',1, emptyEnv);
+            expect(
+              lookupEnv("a", newEnv)
+            ).to.be(
+              1
+            );
+            expect(((_) => {
+              // 空の辞書を作成する
+              var initEnv = emptyEnv;
+              // var a = 1 を実行して、辞書を拡張する
+              var firstEnv = extendEnv("a", 1, initEnv);
+              // var b = 3 を実行して、辞書を拡張する
+              var secondEnv = extendEnv("b",3, firstEnv);
+              // 辞書から b の値を参照する
+              return lookupEnv("b",secondEnv);
+            })()).to.eql(
+              3
+            );
+            expect(((_) => {
+              // 空の辞書を作成する
+              var initEnv = emptyEnv;
+              // var x = 1 を実行して、辞書を拡張する
+              var xEnv = extendEnv("x", 1, initEnv);
+              // var z = 2 を実行して、辞書を拡張する
+              var zEnv = extendEnv("z", 2, xEnv);
+              // 内部のスコープで var x = 3 を実行して、辞書を拡張する
+              var xEnvInner = extendEnv("x",3, zEnv);
+              // 内部のスコープで var y = 4 を実行して、辞書を拡張する
+              var innerMostEnv = extendEnv("y",4, xEnvInner);
+              // 一番内側のスコープを利用して x + y + z を計算する
+              return lookupEnv("x",innerMostEnv) + lookupEnv("y",innerMostEnv) + lookupEnv("z",innerMostEnv) ;
+            })()).to.eql(
+              3 + 4 + 2
+            );
+            /* #@range_end(environment_in_closure_test) */
+            next();
+          });
+        });
       });
-      it('不変なリスト型', (next) => {
-        // (define (cons x y)
-        //   (lambda (m) (m x y)))
-        // (define (car z)
-        //   (z (lambda (p q) p)))
-        // (define (cdr z)
-        //   (z (lambda (p q) q)))
-        /* #@range_begin(immutable_list) */
-        var seq = {
-          empty: (index) => {
-            return true;
-          },
-          cons: (head,tail) => {
-            return (f) => {
-              return f(head,tail);
-            };
-          },
-          head: (array) => {
-            return array((head,tail) => {
-              return head;
-            });
-          },
-          tail: (array) => {
-            return array((head,tail) => {
-              return tail;
-            });
-          },
-          at: (index,array) => {
-            if(index === 0){
-              return this.head(array);
-            } else {
-              return this.at(index -1, this.tail(array));
-            }
-          }
-        };
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.empty)));
-        expect(
-          seq.head(list)
-        ).to.eql(
-          1
-        )
-        expect(
-          seq.head(seq.tail(list))
-        ).to.eql(
-          2
-        )
-        expect(
-          seq.at(0,list)
-        ).to.eql(
-          1
-        )
-        expect(
-          seq.at(1,list)
-        ).to.eql(
-          2
-        )
-        expect(
-          seq.at(2,list)
-        ).to.eql(
-          3
-        )
-        /* #@range_end(immutable_list) */
-        next();
-      });
-      // it('不変な配列型', (next) => {
-      //   var arrays = {
-      //     empty: [],
-      //     cons: (any,array) => {
-      //       expect(array).to.an('array');
-      //       return [any].concat(array);
-      //     },
-      //     head: (ary) => {
-      //       expect(ary).to.an('array');
-      //       return ary[0];
-      //     },
-      //     tail: (ary) => {
-      //       expect(ary).to.an('array');
-      //       expect(self.isNonEmpty(ary)).to.be.ok();
-      //       return ary.slice(1,ary.length);
-      //     },
-      //     get: (index,ary) => {
-      //       expect(index).to.be.a('number');
-      //       expect(ary).to.an('array');
-      //       return ary[index];
-      //     },
-      //     isEmpty: (ary) => {
-      //       expect(ary).to.an('array');
-      //       return self.equal.call(self,ary.length)(0);
-      //     },
-      //     isNotEmpty: (ary) => {
-      //       expect(ary).to.an('array');
-      //       return self.not.call(self,self.arrays.isEmpty(ary));
-      //     }
-      //   };
-      //   expect(
-      //     arrays.cons(1,arrays.empty)
-      //   ).to.eql(
-      //     [1]
-      //   )
-      //   next();
-      // });
-      it('不変なストリーム型', (next) => {
-        /* #@range_begin(immutable_stream) */
-        var stream = {
-          empty: (index) => {
-            return true;
-          },
-          cons: (head,tailThunk) => {
-            return (f) => {
-              return f(head,tailThunk);
-            };
-          },
-          head: (lazyList) => {
-            return lazyList((head,tailThunk) => {
-              return head;
-            });
-          },
-          tail: (lazyList) => {
-            return lazyList((head,tailThunk) => {
-              return tailThunk();
-            });
-          },
-          at: (index,lazyList) => {
-            if(index === 0){
-              return this.head(lazyList);
-            } else {
-              return this.at(index -1, this.tail(lazyList));
-            }
-          }
-        };
-
-        /* #@range_end(immutable_stream) */
-        next();
-      });
-    });
-    describe('クロージャー', () => {
       it('クロージャーの変数バインディング', (next) => {
         /* #@range_begin(free_variable_in_closure) */
         var outerFunction = (outerArgument) => {
@@ -1922,13 +1736,545 @@ describe('関数の使い方', () => {
         /* #@range_end(free_variable_in_closure) */
         next();
       });
-      describe('ジェネレーター', () => {
+      describe('クロージャーと参照透過性', () => {
+        it('multiplyOf関数は参照透過である', (next) => {
+          var multiplyOf = (n) => {
+            return (m) => {
+              if(m % n === 0) {
+                return true;
+              } else {
+                return false;
+              }
+            };
+          };
+          /* #@range_begin(multiplyOf_is_transparent) */
+          expect(
+            multiplyOf(2)(4)
+          ).to.eql(
+            multiplyOf(2)(4)
+          );
+          expect(
+            multiplyOf(3)(5)
+          ).to.eql(
+            multiplyOf(3)(5)
+          );
+          /* #@range_end(multiplyOf_is_transparent) */
+          next();
+        });
+        it('参照透過でないクロジャーの例', (next) => {
+          /* #@range_begin(counter_is_not_transparent) */
+          var counter = (init) => {
+            var _init = init;
+            return (_) => {
+              _init = _init + 1;
+              return _init;
+            };
+          };
+          var counterFromZero = counter(0);
+          expect(
+            counterFromZero()
+          ).not.to.eql( // notで一致しないことをテストしている
+            counterFromZero()
+          );
+          /* #@range_end(counter_is_not_transparent) */
+          next();
+        });
+        it('参照透過でないクロジャーの利用法', (next) => {
+          // チャーチ数 church numeral
+          var zero = (f) => {
+            return (x) => {
+              return x;
+            };
+          };
+          var one = (f) => {
+            return (x) => {
+              return f(x);
+            };
+          };
+          var two = (f) => {
+            return (x) => {
+              return f(f(x));
+            };
+          };
+          var three = (f) => {
+            return (x) => {
+              return f(f(f(x)));
+            };
+          };
+          var succ = (n) => {
+            return (f) => {
+              return (x) => {
+                return f(n(f)(x));
+              };
+            };
+          };
+          var add = (m) => {
+            return (n) => {
+              return (f) => {
+                return (x) =>{
+                  return m(f)(n(f)(x));
+                };
+              };
+            };
+          };
+          var counter = (init) => {
+            var _init = init;
+            return (_) => {
+              _init = _init + 1;
+              return _init;
+            };
+          };
+          /* #@range_begin(closure_as_counter) */
+          expect(
+            one(counter(0))()
+          ).to.eql(
+            1
+          );
+          expect(
+            two(counter(0))()
+          ).to.eql(
+            2
+          );
+          expect(
+            add(one)(two)(counter(0))()
+          ).to.eql(
+            3
+          );
+          /* #@range_end(closure_as_counter) */
+          next();
+        });
+      });
+      describe('不変なデータ型を作る', () => {
+        it('不変なオブジェクト型を作る', (next) => {
+          // var objects = {
+          //   empty: {
+          //   },
+          //   set: (key,value,obj) => {
+          //     expect(obj).to.an('object');
+          //     obj[key] = value;
+          //     return obj;
+          //   },
+          //   get: (key,obj) => {
+          //     expect(obj).to.an('object');
+          //     return obj[key];
+          //   },
+          //   isEmpty: (obj) => {
+          //     expect(obj).to.an('object');
+          //     var hasOwnProperty = Object.prototype.hasOwnProperty;
+          //     for(var key in obj){
+          //       if(hasOwnProperty.call(obj, key))
+          //         return false;
+          //     }
+          //   },
+          //   isNotEmpty: (obj) => {
+          //     expect(obj).to.an('object');
+          //     return ! this.objects.isEmpty(obj);
+          //   },
+          // };
+          /* #@range_begin(immutable_object_type) */
+          var objects = {
+            empty: (key) => {
+              return undefined;
+            },
+            get: (key, obj) => {
+              return obj(key);
+            },
+            set: (key, value, obj) => {
+              var self = this;
+              return (key2) => {
+                if(key === key2) {
+                  return value;
+                } else {
+                  return self.get(key2,obj)
+                }
+              }
+            }
+          };
+          /* #@range_end(immutable_object_type) */
+          /* #@range_begin(immutable_object_type_test) */
+          expect(
+            objects.get("R2D2", objects.set("R2D2", "Star Wars", objects.set("HAL9000","2001: a space odessay",objects.empty)))
+          ).to.eql(
+            "Star Wars"
+          )
+          expect(
+            objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
+          ).to.eql(
+            undefined
+          )
+          expect(
+            objects.get("HAL9000", objects.set.call(objects,"C3PO", "Star Wars", objects.set.call(objects,"R2D2", "Star Wars", objects.set.call(objects,"HAL9000","2001: a space odessay",objects.empty))))
+          ).to.eql(
+            "2001: a space odessay"
+          )
+          /* #@range_end(immutable_object_type_test) */
+          next();
+        });
+        it('不変なオブジェクト型を作る(改良版)', (next) => {
+          /* #@range_begin(immutable_object_type_improved) */
+          var objects = {
+            empty: (_) => {
+              return undefined;
+            },
+            get: (key, obj) => {
+              return obj(key);
+            },
+            set: (key, value, obj) => {
+              var self = this;
+              return (key2) => {
+                if(key === key2) {
+                  return value;
+                } else {
+                  return self.get(key2,obj)
+                }
+              }
+            },
+            fromObject: (obj) => {
+              var self = this;
+              var keys = (o) => {
+                var result = [];
+                for(var prop in o) {
+                  if(o.hasOwnProperty(prop))
+                    result.push(prop);
+                }
+                return result;
+              };
+              return keys(obj).reduce((accumulator, key) => {
+                return self.set.call(self,key, obj[key], accumulator);
+              }, self.empty)
+            }
+          };
+          /* #@range_end(immutable_object_type_improved) */
+          /* #@range_begin(immutable_object_type_improved_test) */
+          expect(
+            objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
+          ).to.eql(
+            undefined
+          );
+          expect(
+            objects.get("HAL9000", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
+          ).to.eql(
+            "2001: a space odessay"
+          );
+          expect(
+            objects.get("R2D2", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
+          ).to.eql(
+            "Star Wars"
+          );
+          /* #@range_end(immutable_object_type_improved_test) */
+          next();
+        });
+        it('不変なリスト型', (next) => {
+          // (define (cons x y)
+          //   (lambda (m) (m x y)))
+          // (define (car z)
+          //   (z (lambda (p q) p)))
+          // (define (cdr z)
+          //   (z (lambda (p q) q)))
+          /* #@range_begin(immutable_list) */
+          var seq = {
+            empty: (index) => {
+              return true;
+            },
+            cons: (head,tail) => {
+              return (f) => {
+                return f(head,tail);
+              };
+            },
+            head: (array) => {
+              return array((head,tail) => {
+                return head;
+              });
+            },
+            tail: (array) => {
+              return array((head,tail) => {
+                return tail;
+              });
+            },
+            at: (index,array) => {
+              if(index === 0){
+                return this.head(array);
+              } else {
+                return this.at(index -1, this.tail(array));
+              }
+            }
+          };
+          var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.empty)));
+          expect(
+            seq.head(list)
+          ).to.eql(
+            1
+          )
+          expect(
+            seq.head(seq.tail(list))
+          ).to.eql(
+            2
+          )
+          expect(
+            seq.at(0,list)
+          ).to.eql(
+            1
+          )
+          expect(
+            seq.at(1,list)
+          ).to.eql(
+            2
+          )
+          expect(
+            seq.at(2,list)
+          ).to.eql(
+            3
+          )
+          /* #@range_end(immutable_list) */
+          next();
+        });
+        // it('不変な配列型', (next) => {
+        //   var arrays = {
+        //     empty: [],
+        //     cons: (any,array) => {
+        //       expect(array).to.an('array');
+        //       return [any].concat(array);
+        //     },
+        //     head: (ary) => {
+        //       expect(ary).to.an('array');
+        //       return ary[0];
+        //     },
+        //     tail: (ary) => {
+        //       expect(ary).to.an('array');
+        //       expect(self.isNonEmpty(ary)).to.be.ok();
+        //       return ary.slice(1,ary.length);
+        //     },
+        //     get: (index,ary) => {
+        //       expect(index).to.be.a('number');
+        //       expect(ary).to.an('array');
+        //       return ary[index];
+        //     },
+        //     isEmpty: (ary) => {
+        //       expect(ary).to.an('array');
+        //       return self.equal.call(self,ary.length)(0);
+        //     },
+        //     isNotEmpty: (ary) => {
+        //       expect(ary).to.an('array');
+        //       return self.not.call(self,self.arrays.isEmpty(ary));
+        //     }
+        //   };
+        //   expect(
+        //     arrays.cons(1,arrays.empty)
+        //   ).to.eql(
+        //     [1]
+        //   )
+        //   next();
+        // });
+        describe('代数的ストリーム型', () => {
+          /* #@range_begin(algebraic_stream) */
+		  var empty = (_) => {
+			return (pattern) => {
+			  expect(pattern).to.an('object');
+			  return pattern.empty(_);
+			};
+		  };
+		  var cons = (head,tailThunk) => {
+			expect(tailThunk).to.a('function');
+			return (pattern) => {
+			  expect(pattern).to.an('object');
+			  return pattern.cons(head,tailThunk);
+			};
+		  };
+		  // head:: STREAM -> MAYBE[STREAM]
+		  var head = (lazyList) => {
+			return match(lazyList,{
+			  empty: (_) => {
+				return undefined;
+			  },
+			  cons: (value, tailThunk) => {
+				return value;
+			  }
+			});
+		  };
+		  // tail:: STREAM -> MAYBE[STREAM]
+		  var tail = (lazyList) => {
+			return match(lazyList,{
+			  empty: (_) => {
+				return undefined;
+			  },
+			  cons: (head, tailThunk) => {
+				return tailThunk();
+			  }
+			});
+		  };
+		  var isEmpty = (lazyList) => {
+			return match(lazyList,{
+			  empty: (_) => {
+				return true;
+			  },
+			  cons: (head1,tailThunk1) => {
+				return false;
+			  }
+			});
+		  };
+		  var concat = (xs) => {
+			return (ysThunk) => {
+			  return match(xs,{
+				empty: (_) => {
+				  return ysThunk();
+				},
+				cons: (head,tailThunk) => {
+				  return cons(head,(_) => {
+					return concat(tailThunk())(ysThunk);
+				  });
+				}
+			  });
+			};
+		  };
+		  // ### stream#toArray
+		  var toArray = (lazyList) => {
+			return match(lazyList,{
+			  empty: (_) => {
+				return [];
+			  },
+			  cons: (head,tailThunk) => {
+				return match(tailThunk(),{
+				  empty: (_) => {
+					return [head];
+				  },
+				  cons: (head_,tailThunk_) => {
+					return [head].concat(toArray(tailThunk()));
+				  }
+				});
+			  }
+			});
+		  };
+		  // ### stream#fromList
+		  var fromArray = (array) => {
+	  		return array.reduce((accumulator, item) => {
+	  		  return concat(accumulator)(cons(item, (_) => {
+				return empty();
+			  }));
+			});
+		  };
+		  /* #@range_end(algebraic_stream) */
+		  it("stream#cons", (next) => {
+			var stream = cons(1, (_) => {
+			  return cons(2,(_) => {
+				return empty();
+			  });
+			});
+			expect(
+			  head(stream)
+			).to.eql(
+			  1
+			);
+			next();
+		  });
+		  it("stream#tail", (next) => {
+			// stream = [1,2]
+			var stream = cons(1, (_) => {
+			  return cons(2,(_) => {
+				return empty();
+			  });
+			});
+			expect(
+			  tail(stream)
+			).to.a("function");
+			expect(
+			  head(tail(stream))
+			).to.eql(
+			  2
+			);
+			next();
+		  });
+		  it("無限ストリーム", (next) => {
+			/* #@range_begin(infinite_stream) */
+			// ones = [1,1,1,1,...]
+			var ones = cons(1, (_) => {
+			  return ones;
+			});
+			expect(
+			  head(ones)
+			).to.eql(
+			  1
+			);
+			expect(
+			  head(tail(ones))
+			).to.eql(
+			  1
+			);
+			/* #@range_end(infinite_stream) */
+			next();
+		  });
+		  it("代数的ストリーム型は不変ではない", (next) => {
+			var stream = cons({key: 1}, (_) => {
+			  return cons(2,(_) => {
+				return empty();
+			  });
+			});
+			expect(
+			  head(stream).key
+			).to.eql(
+			  1
+			);
+			var object = head(stream);
+			object.key = 2;
+			expect(
+			  head(stream).key
+			).to.eql(
+			  2 // 1が2に変更されている
+			);
+			next();
+		  });
+        });
+        describe('不変なストリーム型', () => {
+          /* #@range_begin(immutable_stream) */
+          var empty = (index) => {
+              return true;
+          };
+          var cons = (head,tailThunk) => {
+            return (f) => {
+              return f(head,tailThunk);
+            };
+          };
+          var head = (lazyList) => {
+            return lazyList((head,tailThunk) => {
+              return head;
+            });
+          };
+          var tail = (lazyList) => {
+            return lazyList((head,tailThunk) => {
+              return tailThunk();
+            });
+          };
+          /* #@range_end(immutable_stream) */
+		  it("関数的ストリーム型は不変である", (next) => {
+			var stream = cons({key: 1}, (_) => {
+			  return cons(2,(_) => {
+				return empty();
+			  });
+			});
+			expect(
+			  head(stream).key
+			).to.eql(
+			  1
+			);
+			var object = head(stream);
+			object.key = 2;
+			expect(
+			  head(stream).key
+			).to.eql(
+			  2 // 1が2に変更されている
+			);
+			next();
+		  });
+        });
+      });
+      describe('クロージャーでジェネレーターを作る', () => {
         /* #@range_begin(generator_in_closure) */
         var generator = (seed) => {
           return (current) => {
             return (stepFunction) => {
               return stream.cons(current(seed),
-                                 (_) => { return generator(stepFunction(seed))(current)(stepFunction) })
+                                 (_) => { 
+                                   return generator(stepFunction(seed))(current)(stepFunction) 
+                                 });
             };
           };
         };
@@ -1966,7 +2312,7 @@ describe('関数の使い方', () => {
 
         // });
       });
-    });
+    }); // クロージャーで状態をカプセル化する
     describe('関数を渡す', () => {
       describe('コールバックを渡す', () => {
         it('直接コールする', (next) => {

@@ -157,21 +157,21 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
           <span class="hljs-comment">/* #@range_end(turing_example_succ) */</span>
           
           expect(
-			<span class="hljs-comment">/* #@range_begin(turing_example_succ_test) */</span>
+            <span class="hljs-comment">/* #@range_begin(turing_example_succ_test) */</span>
             machine(code,<span class="hljs-comment">// 命令コード</span>
                     tape,        <span class="hljs-comment">// テープ</span>
                     <span class="hljs-string">'q0'</span>,        <span class="hljs-comment">// 初期状態</span>
                     <span class="hljs-string">'q4'</span>)       <span class="hljs-comment">// 終了状態</span>
-			<span class="hljs-comment">/* #@range_end(turing_example_succ_test) */</span>
+            <span class="hljs-comment">/* #@range_end(turing_example_succ_test) */</span>
           ).to.eql(
-			<span class="hljs-comment">/* #@range_begin(turing_example_succ_test_result) */</span>
+            <span class="hljs-comment">/* #@range_begin(turing_example_succ_test_result) */</span>
             {
               <span class="hljs-string">'-1'</span>: <span class="hljs-string">'B'</span>,
               <span class="hljs-string">'0'</span>: <span class="hljs-string">'1'</span>,
               <span class="hljs-string">'1'</span>: <span class="hljs-string">'1'</span>,
               <span class="hljs-string">'2'</span>: <span class="hljs-string">'B'</span>
             }
-			<span class="hljs-comment">/* #@range_end(turing_example_succ_test_result) */</span>
+            <span class="hljs-comment">/* #@range_end(turing_example_succ_test_result) */</span>
           );
           next();
         });
@@ -182,19 +182,19 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
     describe(<span class="hljs-string">'さまざまなバインド関数 '</span>, () =&gt; {
       it(<span class="hljs-string">'JavaScriptのbind関数'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(bind_in_javascript) */</span>
-		<span class="hljs-keyword">var</span> foo = (y) =&gt; {
-		  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x + y; 
-		};
-		<span class="hljs-keyword">var</span> object = { x : <span class="hljs-number">1</span> };
-		<span class="hljs-keyword">var</span> bar = foo.bind(object);
+        <span class="hljs-keyword">var</span> foo = (y) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x + y; 
+        };
+        <span class="hljs-keyword">var</span> object = { x : <span class="hljs-number">1</span> };
+        <span class="hljs-keyword">var</span> bar = foo.bind(object);
         <span class="hljs-comment">/* #@range_end(bind_in_javascript) */</span>
         expect(
           bar(<span class="hljs-number">2</span>)
-		).to.eql(
+        ).to.eql(
           <span class="hljs-number">3</span>
         );
         next();
-	  });
+      });
       it(<span class="hljs-string">'monadのbind関数'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(bind_in_monad) */</span>
         <span class="hljs-keyword">var</span> bind = (instance) =&gt; {
@@ -203,19 +203,19 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
           };
         }
         <span class="hljs-comment">/* #@range_end(bind_in_monad) */</span>
-		expect(
+        expect(
           <span class="hljs-comment">/* #@range_begin(bind_in_monad_usage) */</span>
           bind(<span class="hljs-number">2</span> * <span class="hljs-number">3</span>)((n) =&gt; {
             <span class="hljs-keyword">return</span> n * <span class="hljs-number">4</span>;
           })
           <span class="hljs-comment">/* #@range_end(bind_in_monad_usage) */</span>
-		).to.eql(
+        ).to.eql(
           <span class="hljs-comment">/* #@range_begin(bind_in_monad_usage_answer) */</span>
             <span class="hljs-number">24</span> 
           <span class="hljs-comment">/* #@range_end(bind_in_monad_usage_answer) */</span>
-		);
+        );
         next();
-	  });
+      });
     });
     describe(<span class="hljs-string">'置換モデル'</span>, () =&gt; {
       it(<span class="hljs-string">'単純なλ式の簡約'</span>, (next) =&gt; {

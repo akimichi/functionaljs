@@ -80,7 +80,7 @@
       <span class="hljs-comment">/* #@range_end(integer_construction) */</span>
       next();
     });
-	<span class="hljs-comment">/*
+    <span class="hljs-comment">/*
     describe('型決定のタイミング', () =&gt; {
       it('NaNはエラーの場所を発見しにくくする', (next) =&gt; {
          var one = 1;
@@ -92,10 +92,10 @@
          ).to.eql(
             11   // 1 * 2 + (3 + 4) = 10 を期待する
          );
-		 next();
+         next();
        });
     })
-	*/</span>
+    */</span>
   });
   describe(<span class="hljs-string">'基本型'</span>, () =&gt; {
     it(<span class="hljs-string">'未定義の変数'</span>, (next) =&gt; {
@@ -874,8 +874,8 @@ expect(
           }
         ).to.throwException((e)=&gt; {
           expect(e).to.be.a(
-			<span class="hljs-built_in">ReferenceError</span>
-		  );
+            <span class="hljs-built_in">ReferenceError</span>
+          );
         });
         <span class="hljs-comment">/* #@range_end(function_creates_scope) */</span>
         expect(
@@ -1039,7 +1039,7 @@ expect(
         <span class="hljs-comment">/* #@range_begin(free_variable_in_function_test) */</span>
         expect(
           (_) =&gt; {
-            add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>) 
+            add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
           }
         ).to.throwException((exception)=&gt; {
           expect(exception).to.be.a(
@@ -1056,7 +1056,7 @@ expect(
             <span class="hljs-keyword">return</span> x + y;
           };
           <span class="hljs-keyword">return</span> add;
-        }
+        };
         <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span>
         <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
         expect(
@@ -1122,9 +1122,9 @@ expect(
             <span class="hljs-keyword">if</span>(variable === queryVariable) {
               <span class="hljs-keyword">return</span> value;
             } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> lookupEnv(queryVariable,env)
+              <span class="hljs-keyword">return</span> lookupEnv(queryVariable,env);
             }
-          }
+          };
         };
         <span class="hljs-comment">/* #@range_end(environment_implemented) */</span>
         <span class="hljs-comment">/* #@range_begin(environment_implemented_usage) */</span>

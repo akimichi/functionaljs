@@ -73,7 +73,7 @@ describe('関数型言語を作る', () => {
           lambda: (variable, arg) => {
             expect(
               variable
-            ).to.a('function')
+            ).to.a('function');
           }
         });
         next();

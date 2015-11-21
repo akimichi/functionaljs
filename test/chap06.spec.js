@@ -2067,161 +2067,208 @@ describe('関数の使い方', () => {
         // });
         describe('代数的ストリーム型', () => {
           /* #@range_begin(algebraic_stream) */
-		  var empty = (_) => {
-			return (pattern) => {
-			  expect(pattern).to.an('object');
-			  return pattern.empty(_);
-			};
-		  };
-		  var cons = (head,tailThunk) => {
-			expect(tailThunk).to.a('function');
-			return (pattern) => {
-			  expect(pattern).to.an('object');
-			  return pattern.cons(head,tailThunk);
-			};
-		  };
-		  // head:: STREAM -> MAYBE[STREAM]
-		  var head = (lazyList) => {
-			return match(lazyList,{
-			  empty: (_) => {
-				return undefined;
-			  },
-			  cons: (value, tailThunk) => {
-				return value;
-			  }
-			});
-		  };
-		  // tail:: STREAM -> MAYBE[STREAM]
-		  var tail = (lazyList) => {
-			return match(lazyList,{
-			  empty: (_) => {
-				return undefined;
-			  },
-			  cons: (head, tailThunk) => {
-				return tailThunk();
-			  }
-			});
-		  };
-		  var isEmpty = (lazyList) => {
-			return match(lazyList,{
-			  empty: (_) => {
-				return true;
-			  },
-			  cons: (head1,tailThunk1) => {
-				return false;
-			  }
-			});
-		  };
-		  var concat = (xs) => {
-			return (ysThunk) => {
-			  return match(xs,{
+          var empty = (_) => {
+            return (pattern) => {
+              expect(pattern).to.an('object');
+              return pattern.empty(_);
+            };
+          };
+          var cons = (head,tailThunk) => {
+            expect(tailThunk).to.a('function');
+            return (pattern) => {
+              expect(pattern).to.an('object');
+              return pattern.cons(head,tailThunk);
+            };
+          };
+          // head:: STREAM -> MAYBE[STREAM]
+          var head = (lazyList) => {
+            return match(lazyList,{
+              empty: (_) => {
+                return undefined;
+              },
+              cons: (value, tailThunk) => {
+                return value;
+              }
+            });
+          };
+          // tail:: STREAM -> MAYBE[STREAM]
+          var tail = (lazyList) => {
+            return match(lazyList,{
+              empty: (_) => {
+                return undefined;
+              },
+              cons: (head, tailThunk) => {
+                return tailThunk();
+              }
+            });
+          };
+          var isEmpty = (lazyList) => {
+            return match(lazyList,{
+              empty: (_) => {
+                return true;
+              },
+              cons: (head1,tailThunk1) => {
+                return false;
+              }
+            });
+          };
+          var concat = (xs) => {
+            return (ysThunk) => {
+              return match(xs,{
+                empty: (_) => {
+                  return ysThunk();
+                },
+                cons: (head,tailThunk) => {
+                  return cons(head,(_) => {
+                    return concat(tailThunk())(ysThunk);
+                  });
+                }
+              });
+            };
+          };
+          /* #@range_end(algebraic_stream) */
+          /* #@range_begin(algebraic_stream_helpers) */
+          // ### stream#toArray
+          var toArray = (lazyList) => {
+            return match(lazyList,{
+              empty: (_) => {
+                return [];
+              },
+              cons: (head,tailThunk) => {
+                return match(tailThunk(),{
+                  empty: (_) => {
+                    return [head];
+                  },
+                  cons: (head_,tailThunk_) => {
+                    return [head].concat(toArray(tailThunk()));
+                  }
+                });
+              }
+            });
+          };
+          // ### stream#fromList
+          var fromArray = (array) => {
+            return array.reduce((accumulator, item) => {
+              return concat(accumulator)(cons(item, (_) => {
+                return empty();
+              }));
+            });
+          };
+          // ### stream#take
+		  // take:: STREAM -> NUMBER -> STREAM
+          var take = (lazyList) => {
+			return (number) => {
+			  expect(number).to.a('number');
+			  expect(number).to.be.greaterThan(-1);
+			  return match(lazyList,{
 				empty: (_) => {
-				  return ysThunk();
+				  return empty();
 				},
 				cons: (head,tailThunk) => {
-				  return cons(head,(_) => {
-					return concat(tailThunk())(ysThunk);
-				  });
+				  if(number === 0) {
+					return empty();
+					} else {
+					  return cons(head,(_) => {
+						return take(tailThunk())(number -1);
+					  });
+					}
 				}
 			  });
 			};
-		  };
-		  // ### stream#toArray
-		  var toArray = (lazyList) => {
-			return match(lazyList,{
-			  empty: (_) => {
-				return [];
-			  },
-			  cons: (head,tailThunk) => {
-				return match(tailThunk(),{
-				  empty: (_) => {
-					return [head];
-				  },
-				  cons: (head_,tailThunk_) => {
-					return [head].concat(toArray(tailThunk()));
-				  }
-				});
-			  }
-			});
-		  };
-		  // ### stream#fromList
-		  var fromArray = (array) => {
-	  		return array.reduce((accumulator, item) => {
-	  		  return concat(accumulator)(cons(item, (_) => {
-				return empty();
-			  }));
-			});
-		  };
-		  /* #@range_end(algebraic_stream) */
-		  it("stream#cons", (next) => {
-			var stream = cons(1, (_) => {
-			  return cons(2,(_) => {
-				return empty();
+          };
+          /* #@range_end(algebraic_stream_helpers) */
+          it("stream#cons", (next) => {
+            var stream = cons(1, (_) => {
+              return cons(2,(_) => {
+                return empty();
+              });
+            });
+            expect(
+              head(stream)
+            ).to.eql(
+              1
+            );
+            next();
+          });
+          it("stream#tail", (next) => {
+            // stream = [1,2]
+            var stream = cons(1, (_) => {
+              return cons(2,(_) => {
+                return empty();
+              });
+            });
+            expect(
+              tail(stream)
+            ).to.a("function");
+            expect(
+              head(tail(stream))
+            ).to.eql(
+              2
+            );
+            next();
+          });
+          it("無限ストリーム", (next) => {
+            /* #@range_begin(infinite_stream) */
+            // ones = [1,1,1,1,...]
+            var ones = cons(1, (_) => {
+              return ones;
+            });
+            expect(
+              head(ones)
+            ).to.eql(
+              1
+            );
+            expect(
+              head(tail(ones))
+            ).to.eql(
+              1
+            );
+            /* #@range_end(infinite_stream) */
+            /* #@range_begin(infinite_integer) */
+            // ones = [1,2,3,4,...]
+			var intgersFrom = (n) => {
+			  return cons(n, (_) => {
+				return intgersFrom(n + 1);
 			  });
-			});
-			expect(
-			  head(stream)
-			).to.eql(
-			  1
-			);
-			next();
-		  });
-		  it("stream#tail", (next) => {
-			// stream = [1,2]
-			var stream = cons(1, (_) => {
-			  return cons(2,(_) => {
-				return empty();
-			  });
-			});
-			expect(
-			  tail(stream)
-			).to.a("function");
-			expect(
-			  head(tail(stream))
-			).to.eql(
-			  2
-			);
-			next();
-		  });
-		  it("無限ストリーム", (next) => {
-			/* #@range_begin(infinite_stream) */
-			// ones = [1,1,1,1,...]
-			var ones = cons(1, (_) => {
-			  return ones;
-			});
-			expect(
-			  head(ones)
-			).to.eql(
-			  1
-			);
-			expect(
-			  head(tail(ones))
-			).to.eql(
-			  1
-			);
-			/* #@range_end(infinite_stream) */
-			next();
-		  });
-		  it("代数的ストリーム型は不変ではない", (next) => {
-			var stream = cons({key: 1}, (_) => {
-			  return cons(2,(_) => {
-				return empty();
-			  });
-			});
-			expect(
-			  head(stream).key
-			).to.eql(
-			  1
-			);
-			var object = head(stream);
-			object.key = 2;
-			expect(
-			  head(stream).key
-			).to.eql(
-			  2 // 1が2に変更されている
-			);
-			next();
-		  });
+			};
+            expect(
+              head(intgersFrom(1))
+            ).to.eql(
+              1
+            );
+            expect(
+              head(tail(intgersFrom(1)))
+            ).to.eql(
+              2
+            );
+            expect(
+              toArray(take(intgersFrom(1))(10))
+            ).to.eql(
+              [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
+            );
+            /* #@range_end(infinite_integer) */
+            next();
+          });
+          it("代数的ストリーム型は不変ではない", (next) => {
+            var stream = cons({key: 1}, (_) => {
+              return cons(2,(_) => {
+                return empty();
+              });
+            });
+            expect(
+              head(stream).key
+            ).to.eql(
+              1
+            );
+            var object = head(stream);
+            object.key = 2;
+            expect(
+              head(stream).key
+            ).to.eql(
+              2 // 1が2に変更されている
+            );
+            next();
+          });
         });
         describe('不変なストリーム型', () => {
           /* #@range_begin(immutable_stream) */
@@ -2244,26 +2291,26 @@ describe('関数の使い方', () => {
             });
           };
           /* #@range_end(immutable_stream) */
-		  it("関数的ストリーム型は不変である", (next) => {
-			var stream = cons({key: 1}, (_) => {
-			  return cons(2,(_) => {
-				return empty();
-			  });
-			});
-			expect(
-			  head(stream).key
-			).to.eql(
-			  1
-			);
-			var object = head(stream);
-			object.key = 2;
-			expect(
-			  head(stream).key
-			).to.eql(
-			  2 // 1が2に変更されている
-			);
-			next();
-		  });
+          it("関数的ストリーム型は不変である", (next) => {
+            var stream = cons({key: 1}, (_) => {
+              return cons(2,(_) => {
+                return empty();
+              });
+            });
+            expect(
+              head(stream).key
+            ).to.eql(
+              1
+            );
+            var object = head(stream);
+            object.key = 2;
+            expect(
+              head(stream).key
+            ).to.eql(
+              2 // 1が2に変更されている
+            );
+            next();
+          });
         });
       });
       describe('クロージャーでジェネレーターを作る', () => {

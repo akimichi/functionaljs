@@ -142,7 +142,6 @@ var seq  = {
       };
     };
   },
-  /* #@range_begin(list_map) */
   // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
   map: (list, transform) => {
     var self = this;
@@ -155,7 +154,6 @@ var seq  = {
       }
     });
   },
-  /* #@range_end(list_map) */
   /* #@range_begin(list_reverse) */
   reverse: (list) => {
     var self = this;
@@ -824,18 +822,7 @@ describe('関数の使い方', () => {
               };
             };
           },
-          /* #@range_begin(list_map) */
           // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-          // map: (list, transform) => {
-          //   return this.match(list,{
-          //     empty: (_) => {
-          //       return this.empty();
-          //     },
-          //     cons: (x,xs) => {
-          //       return this.cons(transform(x),this.map(xs,transform));
-          //     }
-          //   });
-          // },
           map: (list, transform) => {
             var self = this;
             return self.match(list,{
@@ -847,7 +834,6 @@ describe('関数の使い方', () => {
               }
             });
           },
-          /* #@range_end(list_map) */
           /* #@range_begin(list_reverse) */
           // reverse: (list, accumulator) => {
           //    var self = this;
@@ -2484,6 +2470,59 @@ describe('関数の使い方', () => {
 			);
 			next();
           });
+          // it('リストのmap', (next) => {
+		  // 	/* #@range_begin(list_map) */
+		  // 	var map = (list) => {
+		  // 	  return (callback) => {
+		  // 		return match(list,{
+		  // 		  empty: (_) => {
+		  // 			return seq.empty();
+		  // 		  },
+		  // 		  cons: (head, tailThunk) => {
+		  // 			return stream.cons(callback(head), (_) => {
+		  // 			  return map(tailThunk())(callback);
+		  // 			});
+		  // 		  }
+		  // 		});
+		  // 	  };
+		  // 	};
+		  // 	/* #@range_end(list_map) */
+		  // 	/* #@range_begin(list_map_test) */
+		  // 	var numberStream = stream.cons(1, (_) => {
+		  // 	  return stream.cons(2,(_) => {
+		  // 		return stream.empty();
+		  // 	  });
+		  // 	});
+		  // 	var double = (number) => {
+		  // 	  return number * 2;
+		  // 	};
+		  // 	var doubled_stream = map(numberStream)(double);
+		  // 	expect(
+		  // 	  stream.head(doubled_stream)
+		  // 	).to.eql(
+		  // 	  2
+		  // 	);
+		  // 	expect(
+		  // 	  stream.toArray(doubled_stream)
+		  // 	).to.eql(
+		  // 	  [2,4]
+		  // 	);
+		  // 	var stringStream = stream.cons("a", (_) => {
+		  // 	  return stream.cons("b",(_) => {
+		  // 		return stream.empty();
+		  // 	  });
+		  // 	});
+		  // 	var upper = (string) => {
+		  // 	  return string.toUpperCase();
+		  // 	};
+		  // 	expect(
+		  // 	  stream.toArray(map(stringStream)(upper))
+		  // 	).to.eql(
+		  // 	  ["A","B"]
+		  // 	);
+		  // 	/* #@range_end(list_map_test) */
+		  // 	next();
+          // });
           it('ストリームのmap', (next) => {
 			/* #@range_begin(stream_map) */
 			var map = (lazyList) => {

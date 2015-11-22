@@ -144,16 +144,6 @@ var seq  = {
   },
   /* #@range_begin(list_map) */
   // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-  // map: (list, transform) => {
-  //   return this.match(list,{
-  //     empty: (_) => {
-  //       return this.empty();
-  //     },
-  //     cons: (x,xs) => {
-  //       return this.cons(transform(x),this.map(xs,transform));
-  //     }
-  //   });
-  // },
   map: (list, transform) => {
     var self = this;
     return match(list,{
@@ -281,6 +271,169 @@ it('seqのテスト', (next) => {
   next();
 });
 
+var stream = {
+  empty: (_) => {
+    return (pattern) => {
+      expect(pattern).to.an('object');
+      return pattern.empty();
+    };
+  },
+  cons: (head,tailThunk) => {
+    expect(tailThunk).to.a('function');
+    return (pattern) => {
+      expect(pattern).to.an('object');
+      return pattern.cons(head,tailThunk);
+    };
+  },
+  // head:: STREAM -> MAYBE[STREAM]
+  head: (lazyList) => {
+    return match(lazyList,{
+      empty: (_) => {
+        return undefined;
+      },
+      cons: (value, tailThunk) => {
+        return value;
+      }
+    });
+  },
+  // tail:: STREAM -> MAYBE[STREAM]
+  tail: (lazyList) => {
+    return match(lazyList,{
+      empty: (_) => {
+        return undefined;
+      },
+      cons: (head, tailThunk) => {
+        return tailThunk();
+      }
+    });
+  },
+  isEmpty: (lazyList) => {
+    return match(lazyList,{
+      empty: (_) => {
+        return true;
+      },
+      cons: (head,tailThunk) => {
+        return false;
+      }
+    });
+  },
+  // ## stream#map
+  map: (lazyList) => {
+    return (transform) => {
+      return match(lazyList,{
+        empty: (_) => {
+          return stream.empty();
+        },
+        cons: (head,tailThunk) => {
+          return stream.cons(transform(head),(_) => {
+            return stream.map(tailThunk())(transform);
+		  });
+        }
+      });
+    };
+  },
+  // ## stream#concat
+  concat: (xs) => {
+    return (ysThunk) => {
+      return match(xs,{
+        empty: (_) => {
+          return ysThunk();
+        },
+        cons: (head,tailThunk) => {
+          return stream.cons(head,(_) => {
+            return stream.concat(tailThunk())(ysThunk);
+          });
+        }
+      });
+    };
+  },
+  // ## stream#flatten
+  // flatten :: STREAM[STREAM[T]] => STREAM[T]
+  flatten: (lazyList) => {
+    return match(lazyList,{
+      empty: (_) => {
+        return stream.empty();
+      },
+      cons: (head,tailThunk) => {
+        return stream.concat(head)((_) => {
+          return stream.flatten(tailThunk());
+        });
+      }
+    });
+  },
+  toArray: (lazyList) => {
+    return match(lazyList,{
+      empty: (_) => {
+        return [];
+      },
+      cons: (head,tailThunk) => {
+        return match(tailThunk(),{
+          empty: (_) => {
+            return [head];
+          },
+          cons: (head_,tailThunk_) => {
+            return [head].concat(stream.toArray(tailThunk()));
+          }
+        });
+      }
+    });
+  },
+  // ### stream#fromList
+  fromArray: (array) => {
+    return array.reduce((accumulator, item) => {
+      return stream.concat(accumulator)(stream.cons(item, (_) => {
+        return stream.empty();
+      }));
+    });
+  },
+  // ### stream#take
+  // take:: STREAM -> NUMBER -> STREAM
+  take: (lazyList) => {
+	return (number) => {
+	  expect(number).to.a('number');
+	  expect(number).to.be.greaterThan(-1);
+	  return match(lazyList,{
+		empty: (_) => {
+		  return stream.empty();
+		},
+		cons: (head,tailThunk) => {
+		  if(number === 0) {
+			return stream.empty();
+		  } else {
+			return stream.cons(head,(_) => {
+			  return stream.take(tailThunk())(number -1);
+			});
+		  }
+		}
+	  });
+	};
+  }
+}; // stream
+
+describe('streamのテスト', () => {
+  it('stream#map', (next) => {
+	var lazyList = stream.cons(1, (_) => {
+	  return stream.cons(2,(_) => {
+		return stream.empty();
+	  });
+	});
+	var doubled_stream = stream.map(lazyList)((item) => {
+	  return item * 2;
+	});
+	expect(
+	  stream.head(doubled_stream)
+	).to.eql(
+	  2
+	);
+	expect(
+	  stream.head(stream.tail(doubled_stream))
+	).to.eql(
+	  4
+	);
+	
+	next();
+  });
+});
 
 // 関数の使い方
 // ========
@@ -748,15 +901,6 @@ describe('関数の使い方', () => {
             return toArrayAux(list, []);
           }
           /* #@range_end(list_toarray) */
-          // toArray: (list) => {
-          //   var self = this;
-          //   return self.foldr(list)([])(function (item) {
-          //     return (accumulator) => {
-          //       return [item].concat(accumulator);
-          //       // return accumulator.concat(item);
-          //     };
-          //   });
-          // },
         };
         it('factorialの例', (next) => {
           /* #@range_begin(naive_factorial) */
@@ -843,23 +987,10 @@ describe('関数の使い方', () => {
                 return accumulator;  // 空のリストの場合は終了
               },
               cons: (head, tail) => {
-                return reverse(tail, seq.cons(head, accumulator))
-              },
+                return reverse(tail, seq.cons(head, accumulator));
+              }
             });
           };
-          // var toArray = (list) => {
-          //   var toArrayAux = (list,accumulator) => {
-          //     return seq.match(list, {
-          //       empty: (_) => {
-          //         return accumulator;  // 空のリストの場合は終了
-          //       },
-          //       cons: (head, tail) => {
-          //         return toArrayAux(tail, accumulator.concat(head))
-          //       },
-          //     });
-          //   };
-          //   return toArrayAux(list, [])
-          // };
           // /**************** テスト ****************/
           /* #@range_begin(list_reverse_test) */
           var list = seq.cons(1, seq.cons(2,seq.empty()));
@@ -1136,75 +1267,6 @@ describe('関数の使い方', () => {
     });
   }); // 関数の純粋性
   describe('高階関数', () => {
-    // var seq = {
-    //   match: (data, pattern) => {
-    //     return data(pattern);
-    //   },
-    //   empty: (pattern) => {
-    //     return pattern.empty;
-    //   },
-    //   cons: (value, list) => {
-    //     return (pattern) => {
-    //       return pattern.cons(value, list);
-    //     };
-    //   },
-    //   isEmpty: (list) => {
-    //     return match(list, { // match関数で分岐する
-    //       empty: true,
-    //       cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
-    //         return false;
-    //       }
-    //     });
-    //   },
-    //   head: (list) => {
-    //     return match(list, {
-    //       empty: undefined, // 空のリストには先頭要素はありません
-    //       cons: (head, tail) => {
-    //         return head;
-    //       }
-    //     });
-    //   },
-    //   tail: (list) => {
-    //     return match(list, {
-    //       empty: undefined,  // 空のリストには末尾要素はありません
-    //       cons: (head, tail) => {
-    //         return tail;
-    //       }
-    //     });
-    //   }
-    // };
-    var stream = {
-      empty: (index) => {
-        return true;
-      },
-      cons: (head,tailThunk) => {
-        return (f) => {
-          return f(head,tailThunk);
-        };
-      },
-      head: (lazyList) => {
-        return lazyList((head,tailThunk) => {
-          return head;
-        });
-      },
-      tail: (lazyList) => {
-        return lazyList((head,tailThunk) => {
-          return tailThunk();
-        });
-      },
-      at: (index,lazyList) => {
-        if(index === 0){
-          return this.head(lazyList);
-        } else {
-          return this.at(index -1, this.tail(lazyList));
-        }
-      },
-      // map: (lazyList, transform) => {
-      //   var x = transform(this.head(lazyList));
-      //   var xs = this.tail(lazyList);
-      //   return this.cons(x, this.map(xs, transform));
-      // }
-    };
     describe('カリー化', () => {
       it('カリー化された関数の単純な例', (next) => {
         /* #@range_begin(simple_curried_function) */
@@ -2423,18 +2485,57 @@ describe('関数の使い方', () => {
 			next();
           });
           it('ストリームのmap', (next) => {
-			var map = (stream) => {
+			/* #@range_begin(stream_map) */
+			var map = (lazyList) => {
 			  return (callback) => {
-				return match(stream,{
+				return match(lazyList,{
 				  empty: (_) => {
-					return ;
+					return stream.empty();
 				  },
 				  cons: (head, tailThunk) => {
-					callback(head)
+					return stream.cons(callback(head), (_) => {
+					  return map(tailThunk())(callback);
+					});
 				  }
 				});
 			  };
 			};
+			/* #@range_end(stream_map) */
+			/* #@range_begin(stream_map_test) */
+			var numberStream = stream.cons(1, (_) => {
+			  return stream.cons(2,(_) => {
+				return stream.empty();
+			  });
+			});
+			var double = (number) => {
+			  return number * 2;
+			};
+			var doubled_stream = map(numberStream)(double);
+			expect(
+			  stream.head(doubled_stream)
+			).to.eql(
+			  2
+			);
+			expect(
+			  stream.toArray(doubled_stream)
+			).to.eql(
+			  [2,4]
+			);
+			var stringStream = stream.cons("a", (_) => {
+			  return stream.cons("b",(_) => {
+				return stream.empty();
+			  });
+			});
+			var upper = (string) => {
+			  return string.toUpperCase();
+			};
+			expect(
+			  stream.toArray(map(stringStream)(upper))
+			).to.eql(
+			  ["A","B"]
+			);
+			/* #@range_end(stream_map_test) */
+
 			// var request = {
 			//   login: (user, password) => {
 			// 	return (pattern) => {

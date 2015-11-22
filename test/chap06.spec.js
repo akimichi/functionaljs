@@ -15,6 +15,14 @@ var match = (data, pattern) => {
   return data(pattern);
 };
 
+var flip = (fun) => {
+  return  (f) => {
+    return (g) => {
+      return fun(g)(f);
+    };
+  };
+};
+
 var id = (any) => {
   return any;
 };
@@ -29,21 +37,6 @@ var compose = (f) => {
 
 
 var seq  = {
-  match: (data, pattern) => {
-    return data(pattern);
-  },
-  // compose: (f,g) => {
-  //    return (arg) => {
-  //     return f(g(arg));
-  //    };
-  // },
-  flip: (fun) => {
-    return  (f) => {
-      return (g) => {
-        return fun(g)(f);
-      };
-    };
-  },
   empty: (_) => {
     return (pattern) => {
       return pattern.empty();
@@ -56,7 +49,7 @@ var seq  = {
   },
   head: (list) => {
     var self = this;
-    return self.match(list, {
+    return match(list, {
       empty: (_) => {
         return undefined;
       },
@@ -67,7 +60,7 @@ var seq  = {
   },
   tail: (list) => {
     var self = this;
-    return self.match(list, {
+    return match(list, {
       empty: (_) => {
         return undefined;
       },
@@ -78,7 +71,7 @@ var seq  = {
   },
   isEmpty: (list) => {
     var self = this;
-    return self.match(list, {
+    return match(list, {
       empty: (_) => {
         return true;
       },
@@ -100,12 +93,12 @@ var seq  = {
   },
   last: (list) => {
     var self = this;
-    return self.match(list, {
+    return match(list, {
       empty: (_) => {
         return undefined;
       },
       cons: (head, tail) => {
-        return self.match(tail, {
+        return match(tail, {
           empty: (_) => {
             return head;
           },
@@ -163,7 +156,7 @@ var seq  = {
   // },
   map: (list, transform) => {
     var self = this;
-    return self.match(list,{
+    return match(list,{
       empty: (_) => {
         return self.empty();
       },
@@ -177,7 +170,7 @@ var seq  = {
   reverse: (list) => {
     var self = this;
     var reverseAux = (list, accumulator) => {
-      return self.match(list, {
+      return match(list, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -195,7 +188,7 @@ var seq  = {
     return (predicate) => {
       expect(predicate).to.a('function');
       var filterAux = (list, accumulator) => {
-        return self.match(list,{
+        return match(list,{
           empty: (_) => {
             return accumulator;
           },
@@ -216,7 +209,7 @@ var seq  = {
   toArray: (list) => {
     var self = this;
     var toArrayAux = (list,accumulator) => {
-      return self.match(list, {
+      return match(list, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -2380,51 +2373,90 @@ describe('関数の使い方', () => {
         });
         it('コールバックを呼び出す', (next) => {
           /* #@range_begin(call_callback) */
-          var succ = function(n){
+          var succ = (n) => {
             return n + 1;
           };
-          var call_callback = function(n, callback){
-            return callback(n);
-          };
+          var call_callback = (callback) => {
+			return (arg) => {
+              return callback(arg);
+			};
+		  };
           expect(
-            call_callback(2,succ)
+            call_callback(succ)(2)
           ).to.eql(
             3
           );
           /* #@range_end(call_callback) */
           next();
         });
-        it('イベント駆動', (next) => {
-          var processEvent = (event) => {
-            return (callback) => {
-              return callback(event);
-            };
-          };
-          var anEvent = {"temperture": 26.0};
-          expect(
-            processEvent(anEvent)((theEvent) => {
-              return theEvent.temperture;
-            })
-          ).to.eql(
-            26
-          );
-          var extract = (key) => {
-            return (object) => {
-              return object[key]
-            };
-          };
-          var extractTemperture = (event) => {
-            return processEvent(event)(extract("temperture"));
-            // return processEvent(event)((theEvent) => {
-            //   return theEvent.temperture;
-            // })
-          };
-          expect(
-            extractTemperture(anEvent)
-          ).to.eql(
-            26
-          );
-          next();
+        describe('イベント駆動', () => {
+          it('イベントを処理する', (next) => {
+			var processEvent = (event) => {
+              return (callback) => {
+				return callback(event);
+              };
+			};
+			var anEvent = {"temperture": 26.0};
+			expect(
+              processEvent(anEvent)((theEvent) => {
+				return theEvent.temperture;
+              })
+			).to.eql(
+              26
+			);
+			// var extract = (key) => {
+            //   return (object) => {
+			// 	return object[key];
+            //   };
+			// };
+			var extractTemperture = (event) => {
+              // return processEvent(event)(extract("temperture"));
+              return processEvent(event)((theEvent) => {
+                return theEvent.temperture;
+              });
+			};
+			expect(
+              extractTemperture(anEvent)
+			).to.eql(
+              26
+			);
+			next();
+          });
+          it('ストリームのmap', (next) => {
+			var map = (stream) => {
+			  return (callback) => {
+				return match(stream,{
+				  empty: (_) => {
+					return ;
+				  },
+				  cons: (head, tailThunk) => {
+					callback(head)
+				  }
+				});
+			  };
+			};
+			// var request = {
+			//   login: (user, password) => {
+			// 	return (pattern) => {
+			// 	  expect(pattern).to.an('object');
+			// 	  return pattern.login(user, password);
+			// 	};
+			//   },
+			//   logout: (session) => {
+			// 	return (pattern) => {
+			// 	  expect(pattern).to.an('object');
+			// 	  return pattern.logout(session);
+			// 	};
+			//   }
+			// };
+			// var subscribe = (init) => {
+			//   var subscriptions = init;
+			//   return (request) => {
+			// 	return subscriptions.concat([request]);
+			//   };
+			// };
+			next();
+          });
         });
       });
       describe('畳み込み関数で反復処理を渡す', () => {

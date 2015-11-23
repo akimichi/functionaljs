@@ -2965,6 +2965,78 @@ describe('関数の使い方', () => {
         });
       }); // 畳み込み関数で反復処理を渡す
       describe('継続を渡す', () => {
+        describe("継続の導入例", () => {
+          it("算術の継続", (next) => {
+			/* #@range_begin(continuation_in_arithmetic) */
+            var succ = (n) => {
+              return n + 1;
+            };
+            var continuation = (any) => { // 値をそのまま返すだけの継続
+              return any;
+            };
+            expect(
+              id(succ(1))
+            ).to.eql(
+              2
+            );
+            var succCPS = (n, continues) => {
+              return continues(n + 1);
+            };
+            expect(
+              succCPS(1, id)
+            ).to.eql(
+              2
+            );
+            var multiply = (n,m) => {
+              return n * m;
+            };
+            expect(
+              multiply(succ(1), 3)
+            ).to.eql(
+              6
+            );
+            var multiplyCPS = (n,m, continues) => {
+              return continues(n * m);
+            };
+            expect(
+              multiplyCPS(succCPS(1, continuation), 3,continuation) // 継続を渡す
+            ).to.eql(
+              6
+            );
+            /* #@range_end(continuation_in_arithmetic) */
+			next();
+          });
+          it("継続としての蓄積変数", (next) => {
+			/* #@range_begin(accumulator_as_continuation) */
+            var succCPS = (n, accumulator) => {
+              return n + 1 + accumulator;
+            };
+            expect(
+              succCPS(1, 0)
+            ).to.eql(
+              2
+            );
+            var multiplyCPS = (n,m, accumulator) => {
+              return n * m * accumulator;
+            };
+            expect(
+              multiplyCPS(succCPS(1, 0), 3, 1) // 蓄積変数を渡す
+            ).to.eql(
+              6
+            );
+            expect(
+              multiplyCPS(succCPS(1, 0), succCPS(3, 0), 1) // 蓄積変数を渡す
+            ).to.eql(
+              8
+            );
+            /* #@range_end(accumulator_as_continuation) */
+			next();
+          });
+          it("クライアントサーバー通信の継続", (next) => {
+			
+			next();
+          });
+        });
         it("継続による反復処理", (next) => {
           /* #@range_begin(loop_cps) */
           var loop = (predicate, accumulator) => {
@@ -3475,7 +3547,7 @@ describe('関数の使い方', () => {
             false
           );
           next();
-        })
+        });
         it("'list#cons'", (next) => {
           seq.match(seq.cons(1,seq.empty()),{
             empty: (_) => {
@@ -3486,7 +3558,7 @@ describe('関数の使い方', () => {
             }
           });
           next();
-        })
+        });
         it("'list#head'", (next) => {
           expect(
             seq.head(seq.cons(1,seq.empty()))

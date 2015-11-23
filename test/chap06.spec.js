@@ -3067,10 +3067,77 @@ describe('関数の使い方', () => {
       });
     }); // 関数を渡す
     describe('コンビネーター', () => {
+      /* #@range_begin(not_combinator) */
+      it('論理コンビネータ', (next) => {
+        var not = (f) => {
+          return (arg) => {
+            return ! f(arg);
+          };
+        };
+        var multiplyOf = (n) => {
+          return (m) => {
+            if(m % n === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          };
+        };
+        var even = multiplyOf(2);
+        expect(
+          even(2)
+        ).to.eql(
+          true
+        );
+        var odd = not(even);
+        expect(
+          odd(2)
+        ).to.eql(
+          false
+        );
+        expect(
+          odd(3)
+        ).to.eql(
+          true
+        );
+        /* #@range_end(not_combinator) */
+        var or = (f) => {
+          return (g) => {
+            return (arg) => {
+              return f(arg) || g(arg);
+            };
+          };
+        };
+        var and = (f) => {
+          return (g) => {
+            return (arg) => {
+              return f(arg) && g(arg);
+            };
+          };
+        };
+        var positive = (n) => {
+          return n > 0;
+        };
+        var isZero = (n) => {
+          return n === 0;
+        };
+        var negative = or(positive)(not(isZero));
+        expect(
+          negative(-3)
+        ).to.eql(
+          true
+        );
+        expect(
+          negative(0)
+        ).to.eql(
+          false
+        );
+        next();
+      });
       it('パイプライン', (next) => {
         var pipe = (f, g) => {
           return (input) => {
-            return compose(f,g)(input)
+            return compose(f,g)(input);
           };
         };
         var pipelines = (combinators) => {
@@ -3082,116 +3149,274 @@ describe('関数の使い方', () => {
         };
         next();
       });
-      it('コンビネーター・ライブラリー', (next) => {
-        /* #@range_begin(combinator_library) */
-        var id = (any) => {
-          return any;
-        };
-        var get = (key) => {
-          return (obj) => {
-            return obj[key];
+      describe('コンビネーター・ライブラリー', () => {
+        describe('オブジェクト型検証コンビネータ', () => {
+          var hasOwnProperty = Object.prototype.hasOwnProperty;
+          var isEmpty = (obj) => {
+            // null and undefined are "empty"
+            if (obj == null) return true;
+            // Assume if it has a length property with a non-zero value
+            // that that property is correct.
+            if (obj.length > 0)    return false;
+            if (obj.length === 0)  return true;
+            // Otherwise, does it have any properties of its own?
+            // Note that this doesn't handle
+            // toString and valueOf enumeration bugs in IE < 9
+            for (var key in obj) {
+              if (hasOwnProperty.call(obj, key)) return false;
+            }
+            return true;
           };
-        };
-        var isEqual = (n1) => {
-          return (n2) => {
-            return n2 === n1;
+
+          /* パース結果の代数的データ型 */
+          var result = {
+            failed: (message) => {
+              return (pattern) => {
+                return pattern.failed(message);
+              };
+            },
+            successful: (value, inputObject) => {
+              return (pattern) => {
+                return pattern.successful(value, inputObject);
+              };
+            }
           };
-        };
-        var isLessThan = (n1) => {
-          return (n2) => {
-            return n1 > n2;
+          // validate: PARSER -> JSON -> PARSERESULT
+          var validate = (validator, continues, continuesInFailure) => {
+            return (inputObject) => {
+              return validator(inputObject, continues, continuesInFailure);
+            };
           };
-        };
-        var isMoreThan = (n1) => {
-          return (n2) => {
-            return n1 < n2;
+          /* 基本パーサー */
+          // succeed:: ANY => LIST => RESULT
+          var succeed = (value, continues, continuesInFailure) => {
+            return (inputObject) => {
+              return continues(result.successful(value, inputObject));
+            };
           };
-        };
-        var not = (predicate) => {
-          return (data) => {
-            return ! predicate(data);
-          }
-        };
-        var within = (lower) => {
-          return (upper) => {
+          // fail:: (ANY) => LIST => PARSERESULT
+          var fail = (message, continues, continuesInFailure) => {
+            return (inputObject) => {
+              return continuesInFailure(result.failed(message));
+            };
+          };
+          var continues = {
+	  	    normally: (result) => {
+	  	      return result;
+	  	    },
+            abnormally: (exception) => {
+              return exception;
+	  	    }
+          };
+          it('succeed', (next) => {
+            var object = {
+              key: 1
+            };
+            match(validate(succeed(true, continues.normally, continues.abnormally)(object)),{
+              failed: () => {
+                expect().fail();
+              },
+              successful: (value, theObject) => {
+                expect(
+                  value
+                ).to.eql(
+                  1
+                );
+                expect(
+                  theObject
+                ).to.eql(
+                  object
+                );
+              }
+            });
+            next();
+          });
+          it('fail', (next) => {
+            var object = {
+              key: 1
+            };
+            match(validate(fail("failed", continues.normally, continues.abnormally)(object)),{
+              failed: (message) => {
+                expect(
+                  message
+                ).to.eql(
+                  "failed"
+                );
+              },
+              successful: (value, theObject) => {
+                expect().fail();
+              }
+            });
+            next();
+          });
+          var hasKey = (key, continues, continuesInFailure) => {
+            return (inputObject) => {
+              if(isEmpty(inputObject)) {
+                return continuesInFailure(fail("empty", continues, continuesInFailure)(inputObject));
+              } else {
+                for (var theKey in inputObject) {
+                  if (hasOwnProperty.call(inputObject, key)) {
+                    return continues(succeed(true, continues, continuesInFailure)(inputObject));
+                  }
+                }
+                return continuesInFailure(fail(key + " is not found", continues, continuesInFailure)(inputObject));
+              }
+            };
+          };
+          it('hasKey', (next) => {
+            var inputObject = {
+              "key": 1
+            };
+            match(validate(hasKey("key", continues.normally, continues.abnormally)(inputObject)),{
+              failed: (message) => {
+                expect().fail();
+              },
+              successful: (value, inputObject) => {
+                expect(
+                  value
+                ).to.eql(
+                  true
+                );
+              }
+            });
+            match(validate(hasKey("nokey", continues.normally, continues.abnormally)({})),{
+              failed: (message) => {
+                expect(
+                  message
+                ).to.eql(
+                  'empty'
+                );
+              },
+              successful: (value, inputObject) => {
+                expect().fail();
+              }
+            });
+            match(validate(hasKey("nokey", continues.normally, continues.abnormally)(inputObject)),{
+              failed: (message) => {
+                expect(
+                  message
+                ).to.eql(
+                  'nokey is not found'
+                );
+              },
+              successful: (value, inputObject) => {
+                expect().fail();
+              }
+            });
+            next();
+          });
+        });
+        it('ケージ監視', (next) => {
+          /* #@range_begin(combinator_library) */
+          var id = (any) => {
+            return any;
+          };
+          var get = (key) => {
+            return (obj) => {
+              return obj[key];
+            };
+          };
+          var isEqual = (n1) => {
+            return (n2) => {
+              return n2 === n1;
+            };
+          };
+          var isLessThan = (n1) => {
+            return (n2) => {
+              return n1 > n2;
+            };
+          };
+          var isMoreThan = (n1) => {
+            return (n2) => {
+              return n1 < n2;
+            };
+          };
+          var not = (predicate) => {
             return (data) => {
-              return (extractor) => {
-                return and(extractor, isMoreThan(lower))(extractor, isLessThan(upper))(data);
+              return ! predicate(data);
+            }
+          };
+          var within = (lower) => {
+            return (upper) => {
+              return (data) => {
+                return (extractor) => {
+                  return and(extractor, isMoreThan(lower))(extractor, isLessThan(upper))(data);
+                };
               };
             };
           };
-        };
-        var and = (firstExtractor, firstPredicate) => {
-          return (nextExtractor, nextPredicate) => {
-            return (data) => {
-              var firstResult = firstPredicate(firstExtractor(data))
-              if(! firstResult) {
-                return false;
-              } else {
-                return nextPredicate(nextExtractor(data));
+          var and = (firstExtractor, firstPredicate) => {
+            return (nextExtractor, nextPredicate) => {
+              return (data) => {
+                var firstResult = firstPredicate(firstExtractor(data))
+                if(! firstResult) {
+                  return false;
+                } else {
+                  return nextPredicate(nextExtractor(data));
+                }
               }
-            }
+            };
           };
-        };
-        var or = (firstExtractor, firstPredicate) => {
-          return (nextExtractor, nextPredicate) => {
-            return (data) => {
-              var firstResult = firstPredicate(firstExtractor(data))
-              if(firstResult) {
-                return true;
-              } else {
-                return nextPredicate(nextExtractor(data));
+          var or = (firstExtractor, firstPredicate) => {
+            return (nextExtractor, nextPredicate) => {
+              return (data) => {
+                var firstResult = firstPredicate(firstExtractor(data))
+                if(firstResult) {
+                  return true;
+                } else {
+                  return nextPredicate(nextExtractor(data));
+                }
               }
-            }
+            };
           };
-        };
-        /* #@range_end(combinator_library) */
-        /* #@range_begin(combinator_library_test) */
-        var data = {
-          temp: 24,
-          time: new Date("2013/2/15 17:57:27")
-        };
-        expect(((_) => {
-          var getTemp = (data) => {
-            return get('temp')(data);
+          /* #@range_end(combinator_library) */
+          /* #@range_begin(combinator_library_test) */
+          var data = {
+            temp: 24,
+            time: new Date("2013/2/15 17:57:27")
           };
-          var getHour = (data) => {
-            return get('time')(data).getHours();
-          };
-          return and(getTemp, isMoreThan(20))(getHour, isEqual(17))(data)
-        })()).to.eql(
-          true
-        )
-        expect(((_) => {
-          var getTemp = (data) => {
-            return get('temp')(data);
-          };
-          var getHour = (data) => {
-            return get('time')(data).getHours();
-          };
-          return or(getTemp, isMoreThan(30))(getHour, isEqual(17))(data)
-        })()).to.eql(
-          true
-        )
-        expect(
-          within(20)(30)(get('temp')(data))(id)
-        ).to.eql(
-          true
-        )
-        expect(
-          within(20)(30)(data)(get('temp'))
-        ).to.eql(
-          true
-        )
-        expect(
-          within(20)(30)(data)((data) => {
-            return get('temp')(data)
-          })
-        ).to.eql(
-          true
-        )
-        /* #@range_end(combinator_library_test) */
-        next();
+          expect(((_) => {
+            var getTemp = (data) => {
+              return get('temp')(data);
+            };
+            var getHour = (data) => {
+              return get('time')(data).getHours();
+            };
+            return and(getTemp, isMoreThan(20))(getHour, isEqual(17))(data)
+          })()).to.eql(
+            true
+          )
+          expect(((_) => {
+            var getTemp = (data) => {
+              return get('temp')(data);
+            };
+            var getHour = (data) => {
+              return get('time')(data).getHours();
+            };
+            return or(getTemp, isMoreThan(30))(getHour, isEqual(17))(data)
+          })()).to.eql(
+            true
+          )
+          expect(
+            within(20)(30)(get('temp')(data))(id)
+          ).to.eql(
+            true
+          )
+          expect(
+            within(20)(30)(data)(get('temp'))
+          ).to.eql(
+            true
+          )
+          expect(
+            within(20)(30)(data)((data) => {
+              return get('temp')(data)
+            })
+          ).to.eql(
+            true
+          )
+          /* #@range_end(combinator_library_test) */
+          next();
+        });
       });
     });
     describe('モナドを作る', () => {

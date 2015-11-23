@@ -145,7 +145,7 @@ describe('パーサーコンビネーター', () => {
     it('succeed', (next) => {
       match(parse(succeed(1)("hello")),{
         failed: () => {
-          expect().fail()
+          expect().fail();
         },
         successful: (value, seq) => {
           expect(
@@ -162,7 +162,7 @@ describe('パーサーコンビネーター', () => {
       });
       match(parse(succeed(['+', '-']))(""),{
         failed: () => {
-          expect().fail()
+          expect().fail();
         },
         successful: (value, input) => {
           expect(
@@ -179,7 +179,7 @@ describe('パーサーコンビネーター', () => {
       });
       match(parse(succeed(10))(""),{
         failed: () => {
-          expect().fail()
+          expect().fail();
         },
         successful: (value, input) => {
           expect(

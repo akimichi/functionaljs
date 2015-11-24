@@ -3249,6 +3249,57 @@ describe('関数の使い方', () => {
             });
             next();
           });
+          var is = (predicate, continues, continuesInFailure) => {
+            return (target) => {
+              if(predicate(target)){
+                return continues(succeed(true, continues, continuesInFailure)(target));
+              } else {
+                return continuesInFailure(fail("is not", continues, continuesInFailure)(target));
+              }
+            };
+          };
+          var typeOf = (target) => {
+            if(target === undefined || target === null)
+              return String(target);
+            var classToType = {
+              '[object Boolean]': 'boolean',
+              '[object Number]': 'number',
+              '[object String]': 'string',
+              '[object Function]': 'function',
+              '[object Array]': 'array',
+              '[object Date]': 'date',
+              '[object RegExp]': 'regexp',
+              '[object Object]': 'object'
+            };
+            return classToType[Object.prototype.toString.call(target)];
+          };
+          var bool = (value) => {
+            return typeOf(value) === 'boolean';
+          };
+          var string = (value) => {
+            return typeOf(value) === 'string';
+          };
+          var number = (value) => {
+            return typeOf(value) === 'number';
+          };
+          it('is', (next) => {
+            /* #@range_begin(is_number_test) */
+            var target = 1;
+            match(validate(is(number, continues.normally, continues.abnormally)(target)),{
+              failed: (message) => {
+                expect().fail();
+              },
+              successful: (value, target) => {
+                expect(
+                  value
+                ).to.eql(
+                  true
+                );
+              }
+            });
+            /* #@range_end(is_number_test) */
+            next();
+          });
           var hasKey = (key, continues, continuesInFailure) => {
             return (inputObject) => {
               if(isEmpty(inputObject)) {

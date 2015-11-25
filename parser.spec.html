@@ -242,7 +242,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
     it(<span class="hljs-string">'succeed'</span>, (next) =&gt; {
       match(parse(succeed(<span class="hljs-number">1</span>)(<span class="hljs-string">"hello"</span>)),{
         failed: () =&gt; {
-          expect().fail()
+          expect().fail();
         },
         successful: (value, seq) =&gt; {
           expect(
@@ -259,7 +259,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       });
       match(parse(succeed([<span class="hljs-string">'+'</span>, <span class="hljs-string">'-'</span>]))(<span class="hljs-string">""</span>),{
         failed: () =&gt; {
-          expect().fail()
+          expect().fail();
         },
         successful: (value, input) =&gt; {
           expect(
@@ -276,7 +276,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       });
       match(parse(succeed(<span class="hljs-number">10</span>))(<span class="hljs-string">""</span>),{
         failed: () =&gt; {
-          expect().fail()
+          expect().fail();
         },
         successful: (value, input) =&gt; {
           expect(

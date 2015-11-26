@@ -2219,8 +2219,26 @@ describe('高階関数', () => {
         );
         /* #@range_end(loop_cps) */
         next();
-      });
-    });
+      }); 
+      it("継続による非決定計算", (next) => {
+        /*
+          (define (eval-amb exp env succeed fail)
+            (if (null? (cdr exp)) ; (car exp) is the word AMB
+                (fail) ; no more args, call failure cont.
+                (eval (cadr exp) ; Otherwise evaluate the first arg
+                  env
+                  succeed ; with my same success continuation
+                  (lambda () ; but with a new failure continuation:
+                    (eval-amb (cons ’amb (cddr exp)) ; try the next argument
+                      env
+                      succeed
+                      fail)))))
+        */
+        /* #@range_begin(amb) */
+        /* #@range_end(amb) */
+        next();
+      }); 
+    }); // 継続を渡す
   }); // 関数を渡す
   describe('コンビネーター', () => {
     /* #@range_begin(not_combinator) */

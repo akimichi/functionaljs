@@ -3,7 +3,8 @@
 var expect = require('expect.js');
 
 var match = (data, pattern) => {
-  return data(pattern);
+  return data.call(pattern, pattern);
+  // return data(pattern);
 };
 
 var id = (any) => {
@@ -2221,20 +2222,122 @@ describe('高階関数', () => {
         next();
       }); 
       it("継続による非決定計算", (next) => {
-        /*
-          (define (eval-amb exp env succeed fail)
-            (if (null? (cdr exp)) ; (car exp) is the word AMB
-                (fail) ; no more args, call failure cont.
-                (eval (cadr exp) ; Otherwise evaluate the first arg
-                  env
-                  succeed ; with my same success continuation
-                  (lambda () ; but with a new failure continuation:
-                    (eval-amb (cons ’amb (cddr exp)) ; try the next argument
-                      env
-                      succeed
-                      fail)))))
-        */
+        // (define (eval-amb exp env succeed fail)
+        //   (if (null? (cdr exp)) ; (car exp) is the word AMB
+        //       (fail) ; no more args, call failure cont.
+        //       (eval (cadr exp) ; Otherwise evaluate the first arg
+        //         env
+        //         succeed ; with my same success continuation
+        //         (lambda () ; but with a new failure continuation:
+        //           (eval-amb (cons ’amb (cddr exp)) ; try the next argument
+        //           env
+        //           succeed
+        //           fail)))))
         /* #@range_begin(amb) */
+        // var match = (exp, pattern) => {
+        //   return exp.call(pattern, pattern);
+        // };
+        var evalAmb = (amb, continues, continuesOnFailure) => {
+          var self = this;
+          return match.call(self, amb, {
+            amb: (seq) => {
+              return match.call(list, seq, {
+                empty: (_) => {
+                  return continuesOnFailure();
+                },
+                cons: (head, tail) => {
+                  var newContinuesOnFailure = (_) => {
+                    return calculate(amb(tail), continues, continuesOnFailure);
+                  };
+                  return calculate(head, continues, newContinuesOnFailure);
+                }
+              });
+            }
+          });
+        };
+        var calculate = (exp, continues, continuesOnFailure) => {
+          var self = this;
+          return match.call(self, exp, {
+            amb: (seq) => {
+              return evalAmb(exp, continues, continuesOnFailure);
+            },
+            num: (x) => {
+              return continues(x);
+            },
+            add: (x, y) => {
+              return calculate.call(self, x, continues, continuesOnFailure) 
+                + calculate.call(self, y, continues, continuesOnFailure);
+            },
+            mul: (x, y) => {
+              return calculate.call(self, x, continues, continuesOnFailure) * calculate.call(self,y, continues, continuesOnFailure);
+            }
+          });
+        };
+            // eq: (exp1, exp2) => {
+            //   if(calculate(exp1, continues, continuesOnFailure) === calculate(exp2, continues, continuesOnFailure)){
+                
+            //   } else {
+            //   }
+              
+            // },
+        var amb = (list) => {
+          return (pattern) => {
+            return pattern.amb(list);
+          };
+        };
+        var num = (n) => {
+          return (pattern) => {
+            return pattern.num(n);
+          };
+        };
+        var add = (x, y) => {
+          return (pattern) => {
+            return pattern.add(x, y);
+          };
+        };
+        var mul = (x, y) => {
+          return (pattern) => {
+            return pattern.mul(x, y);
+          };
+        };
+        var continues = {
+	  	  normally: (result) => {
+	  	    return result;
+	  	  },
+          onFailure: (exception) => {
+            return exception;
+	  	  }
+        };
+        var exp = add(num(1), mul(num(2), num(3)));
+        expect(
+          calculate(exp, continues.normally, continues.onFailure)
+        ).to.eql(
+          7
+        );
+        var exp = add(num(1), mul(num(2), num(3)));
+        expect(
+          calculate(exp, continues.normally, continues.onFailure)
+        ).to.eql(
+          7
+        );
+        // ambExp = amb[1,2] + 1  = amb[2, 3]
+        var ambExp = add(amb(list.cons(num(1),list.cons(num(2), list.empty()))), 
+                         num(1));
+        expect(
+          calculate(ambExp, continues.normally, continues.onFailure)
+        ).to.eql(
+          2
+        );
+        // // ambExp = [1,2] + (2 * 3) = [6, 12]
+        // var ambExp = add(
+        //   amb(
+        //     list.cons(num(1),list.cons(num(2), list.empty()))), 
+        //   mul(num(2), num(3)));
+        // expect(
+        //   calculate(ambExp, continues.normally, continues.abnormally)
+        // ).to.eql(
+        //   7
+        // );
         /* #@range_end(amb) */
         next();
       }); 

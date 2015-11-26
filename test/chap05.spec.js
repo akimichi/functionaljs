@@ -864,28 +864,28 @@ describe('プログラムをコントロールする仕組み', () => {
         isEmpty(empty)         // empty は空のリストではある
       ).to.eql(
         true
-      )
+      );
       expect(
         isEmpty(cons(1,empty)) // [1] は空のリストではない
       ).to.eql(
         false
-      )
+      );
       expect(
         head(cons(1,empty))    // [1]の先頭要素は 1 である
       ).to.be(
         1
-      )
+      );
       expect(
         head(tail(cons(1,cons(2,empty)))) // [1,2]の2番目の要素は2である
       ).to.be(
         2
-      )
+      );
       /* #@range_end(list_in_algebraic_datatype_test) */
       expect(
         isEmpty(tail(cons(1,empty)))     // [1]の末尾要素は空のリストである
       ).to.be(
         true
-      )
+      );
       next();
     });
     it('男女の別をsum型で表現する', (next) => {
@@ -925,9 +925,9 @@ describe('プログラムをコントロールする仕組み', () => {
               /* estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662 */
               EBV: 0.250 * Math.pow(data.height,3) + 0.625 * data.weight - 0.662
             };
-          },
+          }
         });
-      }
+      };
       var man = male({
         weight: 72,
         height: 175
@@ -938,10 +938,10 @@ describe('プログラムをコントロールする仕組み', () => {
       });
       expect(
         evaluate(man).BMI
-      ).to.be(23.510204081632654)
+      ).to.be(23.510204081632654);
       expect(
         evaluate(woman).TBW
-      ).to.be(27)
+      ).to.be(27);
       next();
     });
     it('数式の例', (next) => {
@@ -982,7 +982,7 @@ describe('プログラムをコントロールする仕組み', () => {
         calculate(exp)
       ).to.eql(
         7
-      )
+      );
       /* #@range_end(algebraic_datatype) */
       next();
     });

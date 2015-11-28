@@ -36,6 +36,56 @@ var id = (any) => {
   return any;
 };
 
+// 'string' module
+// ==============
+/* #@range_begin(string_module) */
+var string = {
+  head: (str) => {
+    expect(str).to.a('string');
+    return str[0];
+  },
+  tail: (str) => {
+    expect(str).to.a('string');
+    return str.substring(1);
+  },
+  isEmpty: (str) => {
+    return str.length === 0;
+  },
+  toArray: (str) => {
+    expect(str).to.a('string');
+    var glue = (item) => {
+      return (rest) => {
+        return [item].concat(rest);
+      };
+    };
+    if(string.isEmpty(str)) {
+      return [];
+    } else {
+      return [string.head(str)].concat(string.toArray(string.tail(str)));
+    }
+  }
+};
+/* #@range_end(string_module) */
+
+it('stringのテスト', (next) => {
+  expect(
+    string.head("abc")
+  ).to.eql(
+    'a'
+  );
+  expect(
+    string.tail("abc")
+  ).to.eql(
+    'bc'
+  );
+  expect(
+    string.toArray("abc")
+  ).to.eql(
+    ['a','b','c']
+  );
+  next();
+});
+
 var list  = {
   empty: (_) => {
     return (pattern) => {
@@ -110,7 +160,7 @@ var list  = {
       }
     });
   },
-  // concat:: LIST[LIST[T]] -> LIST[T]
+  // join:: LIST[LIST[T]] -> LIST[T]
   join: (list_of_list) => {
     var self = this;
     if(self.isEmpty(list_of_list)){
@@ -121,7 +171,6 @@ var list  = {
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
   foldr: (seq) => {
-    var self = this;
     return (accumulator) => {
       return (glue) => {
         expect(glue).to.a('function');
@@ -187,6 +236,39 @@ var list  = {
       return filterAux(seq, list.empty());
     };
   },
+  // list#length
+  length: (seq) => {
+    return match(seq,{
+      empty: (_) => {
+        return 0;
+      },
+      cons: (head,tail) => {
+        return list.foldr(seq)(0)((item) => {
+          return (accumulator) => {
+            return 1 + accumulator;
+          };
+        });
+      }
+    });
+  },
+  any: (seq) => {
+    return (predicate) => {
+      expect(predicate).to.a('function');
+      return match(seq,{
+        empty: (_) => {
+          return false;
+        },
+        cons: (head,tail) => {
+          if(truthy(predicate(head))) {
+            return true;
+          } else {
+            return list.any(tail)(predicate);
+          }
+        }
+      });
+      // return compose(self.list.or.bind(self))(self.flip.bind(self)(self.list.map.bind(self))(predicate))(list);
+    };
+  },
   /* #@range_end(list_filter) */
   toArray: (seq) => {
     var self = this;
@@ -201,7 +283,22 @@ var list  = {
       });
     };
     return toArrayAux(seq, []);
+  },
+  // fromArray: (array) => {
+  //   return array.reduce((accumulator, item) => {
+  //     return list.concat(accumulator)(list.cons(item, list.empty()));
+  //   });
+  // },
+  /* #@range_begin(list_fromString) */
+  fromString: (str) => {
+    expect(str).to.a('string');
+    if(string.isEmpty(str)) {
+      return list.empty();
+    } else {
+      return list.cons(string.head(str), list.fromString(string.tail(str)));
+    }
   }
+  /* #@range_end(list_fromString) */
 };
 
 it('listのテスト', (next) => {
@@ -210,6 +307,11 @@ it('listのテスト', (next) => {
                                      list.cons(3,
                                                list.cons(4,
                                                          list.empty()))));
+  expect(
+    list.length(sequence)
+  ).to.eql(
+    4
+  );
   expect(
     list.head(sequence)
   ).to.eql(
@@ -246,6 +348,17 @@ it('listのテスト', (next) => {
     list.toArray(init(seq))
   ).to.eql(
     [1,2]
+  );
+
+  // expect(
+  //   list.toArray(list.fromArray([1,2,3]))
+  // ).to.eql(
+  //   [1,2]
+  // );
+  expect(
+    list.toArray(list.fromString("abc"))
+  ).to.eql(
+    ['a','b','c']
   );
   next();
 });
@@ -2470,14 +2583,15 @@ describe('高階関数', () => {
       var pipelines = (combinators) => {
         return (input) => {
           return combinators.reduce((accumulator, combinator) => {
-            return compose(combinator,accumulator)
+            return compose(combinator,accumulator);
           });
         };
       };
       next();
     });
     describe('コンビネーター・ライブラリー', () => {
-      describe('基本型検証コンビネータ', () => {
+      describe('数値型検証コンビネータ', () => {
+        /* #@range_begin(number_combinator) */
         // is:: FUNC[ANY -> BOOL] -> ANY -> BOOL
         var is = (predicate) => {
           expect(predicate).to.a('function');
@@ -2544,7 +2658,6 @@ describe('高階関数', () => {
         var positive = (n) => {
           return n > 0;
         };
-        //var isNegative = or(positive)(not(isZero));
         var isNegative = or(is(positive))(not(isZero));
         it('isNegative', (next) => {
           expect(
@@ -2554,6 +2667,13 @@ describe('高階関数', () => {
           );
           next();
         });
+        var greater = (n) => {
+          return (m) => {
+            return n < m;
+          };
+        };
+        /* #@range_end(number_combinator) */
+        /* #@range_begin(number_combinator_greater) */
         var greater = (n) => {
           return (m) => {
             return n < m;
@@ -2577,6 +2697,8 @@ describe('高階関数', () => {
           );
           next();
         });
+        /* #@range_end(number_combinator_greater) */
+        /* #@range_begin(number_combinator_smaller) */
         var smaller = flip(greater);
         it('smaller', (next) => {
           expect(
@@ -2596,6 +2718,7 @@ describe('高階関数', () => {
           );
           next();
         });
+        /* #@range_end(number_combinator_smaller) */
         
         var gcd = (x) => {
           return (y) => {
@@ -2655,7 +2778,7 @@ describe('高階関数', () => {
             return list.cons(leastDivisorOfN, factors(n / leastDivisorOfN));
           }
         };
-        it('factors', (next) => {
+        it('factorsで素因数分解を求める', (next) => {
           expect(
             list.toArray(factors(84))
           ).to.eql(
@@ -2676,6 +2799,79 @@ describe('高階関数', () => {
         //   expect(n).to.a('number');
         //   return cond(positive)(n)(- n);
         // };
+      });
+      describe('文字列検証コンビネータ', () => {
+        // is:: FUNC[ANY -> BOOL] -> ANY -> BOOL
+        var is = (predicate) => {
+          expect(predicate).to.a('function');
+          return (target) => {
+            return truthy(predicate(target));
+          };
+        };
+        var not = (predicate) => {
+          expect(predicate).to.a('function');
+          return (target) => {
+            return ! is(predicate)(target);
+          };
+        };
+        // eq:: ANY -> ANY -> BOOL
+        var eq = (x) => {
+          return (y) => {
+            return x === y;
+          };
+        };
+        var greater = (n) => {
+          return (m) => {
+            return n < m;
+          };
+        };
+        var smaller = flip(greater);
+        var or = (f,g) => {
+          return (arg) => {
+            return f(arg) || g(arg);
+          };
+        };
+        var and = (f,g) => {
+          return (arg) => {
+            return f(arg) && g(arg);
+          };
+        };
+        it('文字列の長さをチェックする', (next) => {
+          /* #@range_begin(list_length_check) */
+          // 文字列をリスト型に変換する
+          var stringAsList = list.fromString("abcd");
+          // 文字列の長さが6より長いかどうかを判定する
+          expect(
+            is(greater(6))(list.length(stringAsList))
+          ).to.be(
+            false
+          );
+          // 文字列の長さが3より長く6より短いかどうかを判定する
+          expect(
+            and(greater(3),
+                smaller(6))(list.length(stringAsList))
+          ).to.be(
+            true
+          );
+          /* #@range_end(list_length_check) */
+          expect(
+            is(greater(3))(list.length(stringAsList))
+          ).to.be(
+            true
+          );
+          next();
+        });
+        it('ある文字があるかどうかを list.any でチェックする', (next) => {
+          var stringAsList = list.fromString("abXd");
+          expect(
+            list.any(stringAsList)((ch) => {
+              return ch === 'X';
+            })
+          ).to.be(
+            true
+          );
+          next();
+        });
       });
       describe('オブジェクト型検証コンビネータ', () => {
         var hasOwnProperty = Object.prototype.hasOwnProperty;

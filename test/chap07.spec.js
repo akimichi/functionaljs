@@ -16,6 +16,11 @@ var compose = (f,g) => {
     return f(g(arg));
   };
 };
+var pipe = (fun) => {
+  expect(fun).to.a('function');
+  return flip(compose)(fun);
+};
+
 
 var flip = (fun) => {
   return  (f) => {
@@ -501,6 +506,7 @@ var stream = {
       });
     };
   },
+  /* #@range_begin(stream_filter) */
   filter: (lazyList) => {
 	return (predicate) => {
       expect(predicate).to.a('function');
@@ -520,6 +526,7 @@ var stream = {
 	  });
 	};
   }
+  /* #@range_end(stream_filter) */
 }; // stream
 
 describe('streamのテスト', () => {
@@ -1603,6 +1610,54 @@ describe('高階関数', () => {
             /* #@range_end(infinite_even_integer) */
             next();
           });
+          it("filterで無限の素数列を作る", (next) => {
+            var multiplyOf = (n) => {
+              return (m) => {
+                if(m % n === 0) {
+                  return true;
+                } else {
+                  return false;
+                }
+              };
+            };
+            /* #@range_begin(infinite_primes) */
+	        var leastDivisor = (n) => {
+	          expect(n).to.a('number');
+	          var leastDivisorHelper = (k, n) => {
+	            expect(k).to.a('number');
+	            expect(n).to.a('number');
+	            if(multiplyOf(k)(n)) {
+	              return k;
+	            } else {
+	              if(n < (k * k)) {
+	                return n;
+	              } else {
+	                return leastDivisorHelper(k+1, n);
+	              }
+	            };
+	          };
+	          return leastDivisorHelper(2,n);
+	        };
+	        var isPrime = (n) => {
+	          if(n < 1) {
+	            return new Error("argument not positive");
+	          }
+	          if(n === 1) {
+	            return false;
+	          } else {
+	            return leastDivisor(n)  === n ;
+	          }
+	        };
+            
+            var primes = stream.filter(intgersFrom(1))(isPrime);
+            expect(
+              toArray(stream.take(primes)(10))
+            ).to.eql(
+              [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
+            );
+            /* #@range_end(infinite_primes) */
+            next();
+          });
         });
         it("代数的ストリーム型は不変ではない", (next) => {
           var stream = cons({key: 1}, (_) => {
@@ -2506,13 +2561,8 @@ describe('高階関数', () => {
     }); // 継続を渡す
   }); // 関数を渡す
   describe('コンビネーター', () => {
-    /* #@range_begin(not_combinator) */
-    it('論理コンビネータ', (next) => {
-      var not = (f) => {
-        return (arg) => {
-          return ! f(arg);
-        };
-      };
+    it('multiplyOfコンビネータ', (next) => {
+      /* #@range_begin(multiplyOf_combinator) */
       var multiplyOf = (n) => {
         return (m) => {
           if(m % n === 0) {
@@ -2523,12 +2573,35 @@ describe('高階関数', () => {
         };
       };
       var even = multiplyOf(2);
+      
       expect(
         even(2)
       ).to.eql(
         true
       );
-      var odd = not(even);
+      /* #@range_end(multiplyOf_combinator) */
+      next();
+    }); 
+    it('論理コンビネータ', (next) => {
+      var multiplyOf = (n) => {
+        return (m) => {
+          if(m % n === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      };
+      var even = multiplyOf(2);
+      /* #@range_begin(not_combinator) */
+      // not :: FUNC[ANY -> BOOL] -> ANY -> BOOL
+      var not = (predicate) => { // predicate:: NUMBER->BOOL
+        return (arg) => { // ANY->BOOL型の関数を返す
+          return ! predicate(arg); // !演算子で論理を反転させる
+        };
+      };
+      var odd = not(even); // notコンビネータでodd関数を定義する
+
       expect(
         odd(2)
       ).to.eql(
@@ -2540,27 +2613,29 @@ describe('高階関数', () => {
         true
       );
       /* #@range_end(not_combinator) */
-      var or = (f) => {
-        return (g) => {
-          return (arg) => {
-            return f(arg) || g(arg);
-          };
+      /* #@range_begin(and_or_combinator) */
+      /* 「もしくは」を表す論理和  */
+      /* or:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
+      var or = (f,g) => {
+        return (arg) => {
+          return f(arg) || g(arg);
         };
       };
-      var and = (f) => {
-        return (g) => {
-          return (arg) => {
-            return f(arg) && g(arg);
-          };
+      /* 「かつ」を表す論理積  */
+      /* and:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
+      var and = (f,g) => {
+        return (arg) => {
+          return f(arg) && g(arg);
         };
       };
+      /* #@range_end(and_or_combinator) */
       var positive = (n) => {
         return n > 0;
       };
-      var isZero = (n) => {
+      var zero = (n) => {
         return n === 0;
       };
-      var negative = or(positive)(not(isZero));
+      var negative = or(positive, not(zero));
       expect(
         negative(-3)
       ).to.eql(
@@ -2635,18 +2710,14 @@ describe('高階関数', () => {
         var even = multiplyOf(2);
         // odd:: NUM -> BOOL
         var odd = not(even);
-        var or = (f) => {
-          return (g) => {
-            return (arg) => {
-              return f(arg) || g(arg);
-            };
+        var or = (f,g) => {
+          return (arg) => {
+            return f(arg) || g(arg);
           };
         };
-        var and = (f) => {
-          return (g) => {
-            return (arg) => {
-              return f(arg) && g(arg);
-            };
+        var and = (f,g) => {
+          return (arg) => {
+            return f(arg) && g(arg);
           };
         };
         var zero = (n) => {
@@ -2657,7 +2728,7 @@ describe('高階関数', () => {
         var positive = (n) => {
           return n > 0;
         };
-        var isNegative = or(is(positive))(not(isZero));
+        var isNegative = or(is(positive),not(isZero));
         it('isNegative', (next) => {
           expect(
             isNegative(0)

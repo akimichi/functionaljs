@@ -11,11 +11,9 @@ var double = (number) => {
 };
 
 
-var compose = (f) => {
-  return (g) => {
-    return (arg) => {
-      return f(g(arg));
-    };
+var compose = (f,g) => {
+  return (arg) => {
+    return f(g(arg));
   };
 };
 
@@ -341,7 +339,8 @@ it('listのテスト', (next) => {
   // init = reverse . tail . reverse
   var init = (seq) => {
     var self = this;
-    return compose(list.reverse)(compose(list.tail)(list.reverse))(seq);
+    return compose(list.reverse,
+                   compose(list.tail,list.reverse))(seq);
   };
   var seq = list.cons(1, list.cons(2,list.cons(3,list.empty())));
   expect(

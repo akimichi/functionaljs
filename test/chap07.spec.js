@@ -2,6 +2,31 @@
 
 var expect = require('expect.js');
 
+var truthy = (any) => {
+  return any !== false && any != null;
+};
+
+var double = (number) => {
+  return number * 2;
+};
+
+
+var compose = (f) => {
+  return (g) => {
+    return (arg) => {
+      return f(g(arg));
+    };
+  };
+};
+
+var flip = (fun) => {
+  return  (f) => {
+    return (g) => {
+      return fun(g)(f);
+    };
+  };
+};
+
 var match = (data, pattern) => {
   return data.call(pattern, pattern);
   // return data(pattern);
@@ -139,6 +164,7 @@ var list  = {
     return reverseAux(seq, list.empty());
   },
   /* #@range_end(list_reverse) */
+  // ## list.filter
   /* #@range_begin(list_filter) */
   filter: (seq) => {
     var self = this;
@@ -224,22 +250,6 @@ it('listのテスト', (next) => {
   next();
 });
 
-var truthy = (any) => {
-  return any !== false && any != null;
-};
-
-var double = (number) => {
-  return number * 2;
-};
-
-
-var compose = (f) => {
-  return (g) => {
-    return (arg) => {
-      return f(g(arg));
-    };
-  };
-};
 
 
 var stream = {
@@ -378,6 +388,25 @@ var stream = {
         }
       });
     };
+  },
+  filter: (lazyList) => {
+	return (predicate) => {
+      expect(predicate).to.a('function');
+	  return match(lazyList,{
+		empty: (_) => {
+          return stream.empty();
+		},
+		cons: (head,tailThunk) => {
+		  if(predicate(head)){
+			return stream.cons(head,(_) => {
+			  return stream.filter(tailThunk())(predicate);
+			});
+		  } else {
+			return stream.filter(tailThunk())(predicate);
+		  }
+		}
+	  });
+	};
   }
 }; // stream
 
@@ -1400,7 +1429,7 @@ describe('高階関数', () => {
           );
           next();
         });
-        it("無限ストリーム", (next) => {
+        describe("無限ストリーム", () => {
           /* #@range_begin(infinite_stream) */
           // ones = [1,1,1,1,...]
           var ones = cons(1, (_) => {
@@ -1424,23 +1453,44 @@ describe('高階関数', () => {
               return intgersFrom(n + 1);
             });
           };
-          expect(
-            head(intgersFrom(1))
-          ).to.eql(
-            1
-          );
-          expect(
-            head(tail(intgersFrom(1)))
-          ).to.eql(
-            2
-          );
-          expect(
-            toArray(take(intgersFrom(1))(10))
-          ).to.eql(
-            [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
-          );
-          /* #@range_end(infinite_integer) */
-          next();
+          it("無限の整数列をテストする", (next) => {
+            expect(
+              head(intgersFrom(1))
+            ).to.eql(
+              1
+            );
+            expect(
+              head(tail(intgersFrom(1)))
+            ).to.eql(
+              2
+            );
+            expect(
+              toArray(take(intgersFrom(1))(10))
+            ).to.eql(
+              [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
+            );
+            /* #@range_end(infinite_integer) */
+            next();
+          });
+          it("filterで無限の偶数列を作る", (next) => {
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+            /* #@range_begin(infinite_even_integer) */
+            var evenIntegers = stream.filter(intgersFrom(1))(even);
+            expect(
+              head(evenIntegers)
+            ).to.eql(
+              2
+            );
+            expect(
+              toArray(stream.take(evenIntegers)(4))
+            ).to.eql(
+              [ 2, 4, 6, 8 ]
+            );
+            /* #@range_end(infinite_even_integer) */
+            next();
+          });
         });
         it("代数的ストリーム型は不変ではない", (next) => {
           var stream = cons({key: 1}, (_) => {
@@ -2427,6 +2477,206 @@ describe('高階関数', () => {
       next();
     });
     describe('コンビネーター・ライブラリー', () => {
+      describe('基本型検証コンビネータ', () => {
+        // is:: FUNC[ANY -> BOOL] -> ANY -> BOOL
+        var is = (predicate) => {
+          expect(predicate).to.a('function');
+          return (target) => {
+            return truthy(predicate(target));
+          };
+        };
+        var not = (predicate) => {
+          expect(predicate).to.a('function');
+          return (target) => {
+            return ! is(predicate)(target);
+          };
+        };
+        // eq:: ANY -> ANY -> BOOL
+        var eq = (x) => {
+          return (y) => {
+            return x === y;
+          };
+        };
+        var remainder = (n) => {
+          return (m) => {
+            return n % m;
+          };
+        };
+        it('remainder', (next) => {
+          expect(
+            remainder(10)(3)
+          ).to.eql(
+            1
+          );
+          next();
+        });
+        // multiplyOf:: NUM -> NUM -> BOOL
+        var multiplyOf = (n) => {
+          expect(n).to.a('number');
+          return (m) => {
+            expect(n).to.a('number');
+            return eq(remainder(m)(n))(0);
+          };
+        };
+        // even:: NUM -> BOOL
+        var even = multiplyOf(2);
+        // odd:: NUM -> BOOL
+        var odd = not(even);
+        var or = (f) => {
+          return (g) => {
+            return (arg) => {
+              return f(arg) || g(arg);
+            };
+          };
+        };
+        var and = (f) => {
+          return (g) => {
+            return (arg) => {
+              return f(arg) && g(arg);
+            };
+          };
+        };
+        var zero = (n) => {
+          return n === 0;
+        };
+        var isZero = is(zero);
+        // positive:: NUM -> BOOL
+        var positive = (n) => {
+          return n > 0;
+        };
+        //var isNegative = or(positive)(not(isZero));
+        var isNegative = or(is(positive))(not(isZero));
+        it('isNegative', (next) => {
+          expect(
+            isNegative(0)
+          ).to.eql(
+            false
+          );
+          next();
+        });
+        var greater = (n) => {
+          return (m) => {
+            return n < m;
+          };
+        };
+        it('greater', (next) => {
+          expect(
+            is(greater(0))(1)
+          ).to.eql(
+            true
+          );
+          expect(
+            is(greater(0))(0)
+          ).to.eql(
+            false
+          );
+          expect(
+            is(greater(0))(-1)
+          ).to.eql(
+            false
+          );
+          next();
+        });
+        var smaller = flip(greater);
+        it('smaller', (next) => {
+          expect(
+            is(smaller(0))(1)
+          ).to.eql(
+            false
+          );
+          expect(
+            is(smaller(0))(0)
+          ).to.eql(
+            false
+          );
+          expect(
+            is(smaller(0))(-1)
+          ).to.eql(
+            true
+          );
+          next();
+        });
+        
+        var gcd = (x) => {
+          return (y) => {
+            if(is(zero)(y)){
+              return x;
+            } else {
+              if(is(zero)(x)){
+                return new Error("gcd(0)(0) is not defined");
+              } else {
+                return gcd(y)(remainder(x)(y));
+              }            
+            }
+          };
+        };
+        it('gcd', (next) => {
+          expect(
+            gcd(36)(12)
+          ).to.eql(
+            12
+          );
+          next();
+        });
+        var leastDivisor = (n) => {
+          expect(n).to.a('number');
+          var leastDivisorHelper = (k, n) => {
+            expect(k).to.a('number');
+            expect(n).to.a('number');
+            if(multiplyOf(k)(n)) {
+              return k;
+            } else {
+              if(is(greater(n))(k * k)) {
+                return n;
+              } else {
+                return leastDivisorHelper(k+1, n);
+              }
+            };
+          };
+          return leastDivisorHelper(2,n);
+        };
+        /*
+          c.f. Haskell Road, p.19
+          ~~~haskell
+          factors :: Integer -> [Integer]
+          factors n | n < 1 = error "argument not positive"
+                    | n == 1 = []
+                    | otherwise = p : factors (div n p) where p = ld n
+          ~~~
+        */
+        var factors = (n) => {
+          if(n < 1) {
+            return new Error("argument not positive");
+          }
+          if(n === 1) {
+            return list.empty();
+          } else {
+            var leastDivisorOfN = leastDivisor(n);
+            return list.cons(leastDivisorOfN, factors(n / leastDivisorOfN));
+          }
+        };
+        it('factors', (next) => {
+          expect(
+            list.toArray(factors(84))
+          ).to.eql(
+            [2,2,3,7]
+          );
+          next();
+        });
+        
+        // var cond = (predicate) => {
+        //   return (thenClause) => {
+        //     return (elseClause) => {
+        //       if(truthy(predicate)
+        //     };
+        //   };
+        // };
+        // // abs:: NUM -> NUM
+        // var abs = (n) => {
+        //   expect(n).to.a('number');
+        //   return cond(positive)(n)(- n);
+        // };
+      });
       describe('オブジェクト型検証コンビネータ', () => {
         var hasOwnProperty = Object.prototype.hasOwnProperty;
         var isEmpty = (obj) => {

@@ -308,13 +308,6 @@ describe('関数型言語を作る', () => {
               }
               //            };
             };
-            // var load = (object) => {
-            //   return matcher(object, {
-            //     number: (value) => {
-            //       return number(value);
-            //     }
-            //   });
-            // };
             it('ローダーをテストする', (next) => {
               expect(
                 evaluate(load({"number" : 2}, emptyEnv))
@@ -323,6 +316,36 @@ describe('関数型言語を作る', () => {
               );
               next();
             });
+            // var eventSystem = (_) => {
+            //   var object = _; 
+            //   var listener = [];
+            //   return {
+            //     on: (key, callback) => { 
+            //       return callback(object[key]);
+            //     },
+            //     listen: (target) => {
+            //       object = target;
+            //     }
+            //   };
+            // };
+            // var event = eventSystem();
+            // event.on("number",(value) => {
+            //   return number(value);
+            // }, (exp) => {
+              
+            // });
+            // event.on("variable",(value) => {
+            //   return variable(value);
+            // });
+            // event.listen(object);
+            // it('ローダーをテストする', (next) => {
+            //   expect(
+            //     evaluate(event.listen({"number" : 2}, emptyEnv))
+            //   ).to.eql(
+            //     1
+            //   );
+            //   next();
+            // });
           });
         });
         // describe('ファイル操作', () => {

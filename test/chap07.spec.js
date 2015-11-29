@@ -1807,7 +1807,7 @@ describe('高階関数', () => {
         next();
       });
       describe('イベント駆動', () => {
-        it('イベントを処理する', (next) => {
+        it('オブジェクトの値をイベント駆動で取得する', (next) => {
           var processEvent = (event) => {
             return (callback) => {
               return callback(event);
@@ -1827,7 +1827,6 @@ describe('高階関数', () => {
           //   };
           // };
           var extractTemperture = (event) => {
-            // return processEvent(event)(extract("temperture"));
             return processEvent(event)((theEvent) => {
               return theEvent.temperture;
             });
@@ -1839,270 +1838,340 @@ describe('高階関数', () => {
           );
           next();
         });
-        it('リストのmap', (next) => {
-          /* #@range_begin(list_map) */
-          var map = (seq) => {
-            return (callback) => {
+        it('イベント駆動システムを実装する', (next) => {
+          // var merge = (obj1,obj2) => {
+          //   var mergedObject = {};
+          //   for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
+          //   for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
+          //   return mergedObject;
+          // };
+          var merge = (obj1,obj2) => {
+            for (var attrname in obj2) { 
+              obj1[attrname] = 
+                obj2[attrname]; 
+            }
+            return obj1;
+          };
+          // var eventSystem = (init) => {
+          //   var subscriptions = init;
+          //   return (self) => {
+          //     return {
+          //       subscribe: (eventName, callback) => {
+          //         merge(self.subscriptions,{
+          //           eventName: eventName,
+          //           callback: callback
+          //         });
+          //       },
+          //       trigger: (eventName, arg) => {
+          //         eventName.subscriptions[eventName].callback(arg);
+          //       }
+          //     };
+          //   };
+          // };
+          // var initilizedEventSystem = eventSystem({})(eventSystem);
+          var emptyEventSystem = (eventName) => {
+            return undefined;
+          };
+          var lookupEventSystem = (eventName, eventSystem) => {
+            return eventSystem(eventName);
+          };
+          var subscribeEventSystem = (eventName, callback, eventSystem) => {
+            return (queryEventName) => {
+              if(eventName === queryEventName) {
+                return callback;
+              } else {
+                return lookupEventSystem(queryEventName,eventSystem);
+              }
+            };
+          };
+          
+          var eventSystem = subscribeEventSystem("started", (_) => {
+            return "event started";
+          }, emptyEventSystem);
+          eventSystem = subscribeEventSystem("terminated", (exitCode) => {
+            return "event terminated with " + exitCode;
+          }, eventSystem);
+          expect(
+            lookupEventSystem("started", eventSystem)()
+          ).to.eql(
+            "event started"
+          );
+          expect(
+            lookupEventSystem("terminated", eventSystem)(503)
+          ).to.eql(
+            "event terminated with 503"
+          );
+          // expect(
+          //   eventSystem.trigger("started", null)
+          // ).to.eql(
+          //   26
+          // );
+          next();
+        });
+      });
+      it('リストのmap', (next) => {
+        /* #@range_begin(list_map) */
+        var map = (seq) => {
+          return (callback) => {
+            return match(seq,{
+              empty: (_) => {
+                return list.empty();
+              },
+              cons: (head, tail) => {
+                return stream.cons(callback(head), map(tail)(callback));
+              }
+            });
+          };
+        };
+        /* #@range_end(list_map) */
+        /* #@range_begin(list_map_test) */
+        var numberList = list.cons(1, list.cons(2,list.empty()));
+        var double = (number) => {
+          return number * 2;
+        };
+        var doubledList = map(numberList)(double);
+        expect(
+          list.head(doubledList)
+        ).to.eql(
+          2
+        );
+        expect(
+          list.toArray(doubledList)
+        ).to.eql(
+          [2,4]
+        );
+        var stringList = list.cons("a", list.cons("b",list.empty()));
+        var upper = (string) => {
+          return string.toUpperCase();
+        };
+        expect(
+          list.toArray(map(stringList)(upper))
+        ).to.eql(
+          ["A","B"]
+        );
+        /* #@range_end(list_map_test) */
+        next();
+      });
+      describe('リストの再帰関数', () => {
+        it('リストの合計', (next) => {
+          /* #@range_begin(list_sum) */
+          var sum = (seq) => {
+            return (accumulator) => {
               return match(seq,{
                 empty: (_) => {
-                  return list.empty();
+                  return accumulator;
                 },
                 cons: (head, tail) => {
-                  return stream.cons(callback(head), map(tail)(callback));
+                  return sum(tail)(accumulator + head);
                 }
               });
             };
           };
-          /* #@range_end(list_map) */
-          /* #@range_begin(list_map_test) */
-          var numberList = list.cons(1, list.cons(2,list.empty()));
-          var double = (number) => {
-            return number * 2;
+          var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
+          expect(
+            sum(numberList)(0)
+          ).to.eql(
+            6
+          );
+          /* #@range_end(list_sum) */
+          /* #@range_begin(list_sum_callback) */
+          var sumWithCallbak = (seq) => {
+            return (accumulator) => {
+              return (callback) => {
+                return match(seq,{
+                  empty: (_) => {
+                    return accumulator;
+                  },
+                  cons: (head, tail) => {
+                    return sumWithCallbak(tail)(callback(accumulator)(head))(callback);
+                  }
+                });
+              };
+            };
           };
-          var doubledList = map(numberList)(double);
-          expect(
-            list.head(doubledList)
-          ).to.eql(
-            2
-          );
-          expect(
-            list.toArray(doubledList)
-          ).to.eql(
-            [2,4]
-          );
-          var stringList = list.cons("a", list.cons("b",list.empty()));
-          var upper = (string) => {
-            return string.toUpperCase();
+          var add = (n) => {
+            return (m) => {
+              return n + m;
+            };
           };
           expect(
-            list.toArray(map(stringList)(upper))
+            sumWithCallbak(numberList)(0)(add)
           ).to.eql(
-            ["A","B"]
+            6
           );
-          /* #@range_end(list_map_test) */
+          /* #@range_end(list_sum_callback) */
           next();
         });
-        describe('リストの再帰関数', () => {
-          it('リストの合計', (next) => {
-            /* #@range_begin(list_sum) */
-            var sum = (seq) => {
-              return (accumulator) => {
-                return match(seq,{
-                  empty: (_) => {
-                    return accumulator;
-                  },
-                  cons: (head, tail) => {
-                    return sum(tail)(accumulator + head);
-                  }
-                });
-              };
-            };
-            var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
-            expect(
-              sum(numberList)(0)
-            ).to.eql(
-              6
-            );
-            /* #@range_end(list_sum) */
-            /* #@range_begin(list_sum_callback) */
-            var sumWithCallbak = (seq) => {
-              return (accumulator) => {
-                return (callback) => {
-                  return match(seq,{
-                    empty: (_) => {
-                      return accumulator;
-                    },
-                    cons: (head, tail) => {
-                      return sumWithCallbak(tail)(callback(accumulator)(head))(callback);
-                    }
-                  });
-                };
-              };
-            };
-            var add = (n) => {
-              return (m) => {
-                return n + m;
-              };
-            };
-            expect(
-              sumWithCallbak(numberList)(0)(add)
-            ).to.eql(
-              6
-            );
-            /* #@range_end(list_sum_callback) */
-            next();
-          });
-          it('リストの長さ', (next) => {
-            /* #@range_begin(list_length) */
-            var length = (seq) => {
-              return (accumulator) => {
-                return match(seq,{
-                  empty: (_) => {
-                    return accumulator;
-                  },
-                  cons: (head, tail) => {
-                    return length(tail)(accumulator + 1);
-                  }
-                });
-              };
-            };
-            var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
-            expect(
-              length(numberList)(0)
-            ).to.eql(
-              3
-            );
-            /* #@range_end(list_length) */
-            /* #@range_begin(list_length_callback) */
-            var lengthWithCallbak = (seq) => {
-              return (accumulator) => {
-                return (callback) => {
-                  return match(seq,{
-                    empty: (_) => {
-                      return accumulator;
-                    },
-                    cons: (head, tail) => {
-                      return lengthWithCallbak(tail)(callback(accumulator))(callback);
-                    }
-                  });
-                };
-              };
-            };
-            var add = (n) => {
-              return (m) => {
-                return n + m;
-              };
-            };
-            expect(
-              lengthWithCallbak(numberList)(0)(add(1))
-            ).to.eql(
-              3
-            );
-            /* #@range_end(list_length_callback) */
-            next();
-          });
-          // it('リストの逆転', (next) => {
-          //   /* #@range_begin(list_reverse) */
-          //   var length = (seq) => {
-          //  return (accumulator) => {
-          //    return match(seq,{
-          //      empty: (_) => {
-          //        return accumulator;
-          //      },
-          //      cons: (head, tail) => {
-          //        return length(tail)(accumulator + 1);
-          //      }
-          //    });
-          //  };
-          //   };
-          //   var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
-          //   expect(
-          //  length(numberList)(0)
-          //   ).to.eql(
-          //  3
-          //   );
-          //   /* #@range_end(list_reverse) */
-          //   var lengthWithCallbak = (seq) => {
-          //      return (accumulator) => {
-          //        return (callback) => {
-          //          return match(seq,{
-          //            empty: (_) => {
-          //              return accumulator;
-          //            },
-          //          cons: (head, tail) => {
-          //            return lengthWithCallbak(tail)(callback(accumulator))(callback);
-          //          }
-          //          });
-          //        };
-          //      };
-          //   };
-          //   var add = (n) => {
-          //      return (m) => {
-          //        return n + m;
-          //      };
-          //   };
-          //   expect(
-          //      lengthWithCallbak(numberList)(0)(add(1))
-          //   ).to.eql(
-          //      3
-          //   );
-          //   next();
-          // });
-        });
-        it('ストリームのmap', (next) => {
-          /* #@range_begin(stream_map) */
-          var map = (lazyList) => {
-            return (callback) => {
-              return match(lazyList,{
-                empty: (_) => {
-                  return stream.empty();
+        it('リストの長さ', (next) => {
+          /* #@range_begin(list_length) */
+          var length = (seq) => {
+            return (accumulator) => {
+              return match(seq,{
+                 empty: (_) => {
+                  return accumulator;
                 },
-                cons: (head, tailThunk) => {
-                  return stream.cons(callback(head), (_) => {
-                    return map(tailThunk())(callback);
-                  });
+                cons: (head, tail) => {
+                  return length(tail)(accumulator + 1);
                 }
               });
             };
           };
-          /* #@range_end(stream_map) */
-          /* #@range_begin(stream_map_test) */
-          var numberStream = stream.cons(1, (_) => {
-            return stream.cons(2,(_) => {
-              return stream.empty();
-            });
-          });
-          var double = (number) => {
-            return number * 2;
+          var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
+          expect(
+            length(numberList)(0)
+          ).to.eql(
+            3
+          );
+          /* #@range_end(list_length) */
+          /* #@range_begin(list_length_callback) */
+          var lengthWithCallbak = (seq) => {
+            return (accumulator) => {
+              return (callback) => {
+                return match(seq,{
+                  empty: (_) => {
+                    return accumulator;
+                  },
+                  cons: (head, tail) => {
+                    return lengthWithCallbak(tail)(callback(accumulator))(callback);
+                  }
+                });
+              };
+            };
           };
-          var doubled_stream = map(numberStream)(double);
-          expect(
-            stream.head(doubled_stream)
-          ).to.eql(
-            2
-          );
-          expect(
-            stream.toArray(doubled_stream)
-          ).to.eql(
-            [2,4]
-          );
-          var stringStream = stream.cons("a", (_) => {
-            return stream.cons("b",(_) => {
-              return stream.empty();
-            });
-          });
-          var upper = (string) => {
-            return string.toUpperCase();
+          var add = (n) => {
+            return (m) => {
+              return n + m;
+            };
           };
           expect(
-            stream.toArray(map(stringStream)(upper))
+            lengthWithCallbak(numberList)(0)(add(1))
           ).to.eql(
-            ["A","B"]
+            3
           );
-          /* #@range_end(stream_map_test) */
-
-          // var request = {
-          //   login: (user, password) => {
-          //  return (pattern) => {
-          //    expect(pattern).to.an('object');
-          //    return pattern.login(user, password);
-          //  };
-          //   },
-          //   logout: (session) => {
-          //  return (pattern) => {
-          //    expect(pattern).to.an('object');
-          //    return pattern.logout(session);
-          //  };
-          //   }
-          // };
-          // var subscribe = (init) => {
-          //   var subscriptions = init;
-          //   return (request) => {
-          //  return subscriptions.concat([request]);
-          //   };
-          // };
+          /* #@range_end(list_length_callback) */
           next();
         });
+        // it('リストの逆転', (next) => {
+        //   /* #@range_begin(list_reverse) */
+        //   var length = (seq) => {
+        //  return (accumulator) => {
+        //    return match(seq,{
+        //      empty: (_) => {
+        //        return accumulator;
+        //      },
+        //      cons: (head, tail) => {
+        //        return length(tail)(accumulator + 1);
+        //      }
+        //    });
+        //  };
+        //   };
+        //   var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
+        //   expect(
+        //  length(numberList)(0)
+        //   ).to.eql(
+        //  3
+        //   );
+        //   /* #@range_end(list_reverse) */
+        //   var lengthWithCallbak = (seq) => {
+        //      return (accumulator) => {
+        //        return (callback) => {
+        //          return match(seq,{
+        //            empty: (_) => {
+        //              return accumulator;
+        //            },
+        //          cons: (head, tail) => {
+        //            return lengthWithCallbak(tail)(callback(accumulator))(callback);
+        //          }
+        //          });
+        //        };
+        //      };
+        //   };
+        //   var add = (n) => {
+        //      return (m) => {
+        //        return n + m;
+        //      };
+        //   };
+        //   expect(
+        //      lengthWithCallbak(numberList)(0)(add(1))
+        //   ).to.eql(
+        //      3
+        //   );
+        //   next();
+        // });
+      });
+      it('ストリームのmap', (next) => {
+        /* #@range_begin(stream_map) */
+        var map = (lazyList) => {
+          return (callback) => {
+            return match(lazyList,{
+              empty: (_) => {
+                return stream.empty();
+              },
+              cons: (head, tailThunk) => {
+                return stream.cons(callback(head), (_) => {
+                  return map(tailThunk())(callback);
+                });
+              }
+            });
+          };
+        };
+        /* #@range_end(stream_map) */
+        /* #@range_begin(stream_map_test) */
+        var numberStream = stream.cons(1, (_) => {
+          return stream.cons(2,(_) => {
+            return stream.empty();
+          });
+        });
+        var double = (number) => {
+          return number * 2;
+        };
+        var doubled_stream = map(numberStream)(double);
+        expect(
+          stream.head(doubled_stream)
+        ).to.eql(
+          2
+        );
+        expect(
+          stream.toArray(doubled_stream)
+        ).to.eql(
+          [2,4]
+        );
+        var stringStream = stream.cons("a", (_) => {
+          return stream.cons("b",(_) => {
+            return stream.empty();
+          });
+        });
+        var upper = (string) => {
+          return string.toUpperCase();
+        };
+        expect(
+          stream.toArray(map(stringStream)(upper))
+        ).to.eql(
+          ["A","B"]
+        );
+        /* #@range_end(stream_map_test) */
+
+        // var request = {
+        //   login: (user, password) => {
+        //  return (pattern) => {
+        //    expect(pattern).to.an('object');
+        //    return pattern.login(user, password);
+        //  };
+        //   },
+        //   logout: (session) => {
+        //  return (pattern) => {
+        //    expect(pattern).to.an('object');
+        //    return pattern.logout(session);
+        //  };
+        //   }
+        // };
+        // var subscribe = (init) => {
+        //   var subscriptions = init;
+        //   return (request) => {
+        //  return subscriptions.concat([request]);
+        //   };
+        // };
+        next();
       });
     });
     describe('畳み込み関数で反復処理を渡す', () => {

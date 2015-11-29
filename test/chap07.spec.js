@@ -1840,18 +1840,12 @@ describe('高階関数', () => {
         });
         it('イベント駆動システムを実装する', (next) => {
           // var merge = (obj1,obj2) => {
-          //   var mergedObject = {};
-          //   for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
-          //   for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
-          //   return mergedObject;
+          //   for (var attrname in obj2) { 
+          //     obj1[attrname] = 
+          //       obj2[attrname]; 
+          //   }
+          //   return obj1;
           // };
-          var merge = (obj1,obj2) => {
-            for (var attrname in obj2) { 
-              obj1[attrname] = 
-                obj2[attrname]; 
-            }
-            return obj1;
-          };
           // var eventSystem = (init) => {
           //   var subscriptions = init;
           //   return (self) => {
@@ -1869,51 +1863,63 @@ describe('高階関数', () => {
           //   };
           // };
           // var initilizedEventSystem = eventSystem({})(eventSystem);
-          var emptyEventSystem = (eventName) => {
-            return undefined;
+          /* #@range_begin(event_driven_system) */
+          var es = {
+            empty: (eventName) => {
+              return undefined;
+            },
+            lookup: (eventName, eventSystem) => {
+              return eventSystem(eventName);
+            },
+            on: (eventName, callback, eventSystem) => {
+              return (queryEventName) => {
+                if(eventName === queryEventName) {
+                  return callback;
+                } else {
+                  return es.lookup(queryEventName, eventSystem);
+                }
+              };
+            },
+            emit: (eventName, arg, eventSystem) => {
+              return es.lookup(eventName, eventSystem)(arg);
+            }
           };
-          var lookupEventSystem = (eventName, eventSystem) => {
-            return eventSystem(eventName);
-          };
-          var subscribeEventSystem = (eventName, callback, eventSystem) => {
-            return (queryEventName) => {
-              if(eventName === queryEventName) {
-                return callback;
-              } else {
-                return lookupEventSystem(queryEventName,eventSystem);
-              }
-            };
-          };
-          var triggerEvent = (eventName, arg, eventSystem) => {
-            return lookupEventSystem(eventName,eventSystem)(arg);
-          };
-
-          var eventSystem = subscribeEventSystem("started", (_) => {
+          /* #@range_end(event_driven_system) */
+          /* #@range_begin(event_driven_system_test) */
+          // イベント駆動システムを初期化する
+          var eventSystem = es.empty; 
+          // イベント started を登録する
+          eventSystem = es.on("started", (_) => {
             return "event started";
-          }, emptyEventSystem);
-          eventSystem = subscribeEventSystem("terminated", (exitCode) => {
+          }, eventSystem);
+          // イベント terminated を登録する
+          eventSystem = es.on("terminated", (exitCode) => {  
             return "event terminated with " + exitCode;
           }, eventSystem);
+          /**** テスト ****/
+          // イベント started を生じさせる
           expect(
-            lookupEventSystem("started", eventSystem)()
+            es.emit("started", null, eventSystem)
+          ).to.eql(
+            "event started"
+          );
+          // イベント terminated を生じさせる
+          expect(
+            es.emit("terminated",404, eventSystem)
+          ).to.eql(
+            "event terminated with 404"
+          );
+          /* #@range_end(event_driven_system_test) */
+          expect(
+            es.lookup("started", eventSystem)()
           ).to.eql(
             "event started"
           );
           expect(
-            lookupEventSystem("terminated", eventSystem)(503)
+            es.lookup("terminated", eventSystem)(503)
           ).to.eql(
             "event terminated with 503"
           );
-          expect(
-            triggerEvent("terminated",404, eventSystem)
-          ).to.eql(
-            "event terminated with 404"
-          );
-          // expect(
-          //   eventSystem.trigger("started", null)
-          // ).to.eql(
-          //   26
-          // );
           next();
         });
       });

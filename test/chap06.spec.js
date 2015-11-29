@@ -312,7 +312,7 @@ describe('関数の使い方', () => {
         /* #@range_end(strict_evaluation_in_javascript) */
 
       });
-      describe('再帰的な関数の適用', () => {
+      describe('再帰的な関数適用', () => {
         var seq  = {
           match: (data, pattern) => {
             return data(pattern);
@@ -500,42 +500,86 @@ describe('関数の使い方', () => {
           }
           /* #@range_end(list_toarray) */
         };
-        it('factorialの例', (next) => {
-          /* #@range_begin(naive_factorial) */
-          var factorial = (n) => {
-            if (n === 1) {
-              return 1;
+        it('dividesTimesの例', (next) => {
+          /* #@range_begin(dividesTimes) */
+          var multiplyOf = (n,m) => {
+            if(m % n === 0) {
+              return true;
             } else {
-              return n * factorial(n - 1);
+              return false;
             }
           };
           expect(
-            factorial(3)
+            multiplyOf(3,6)
           ).to.eql(
-            6
+            true
           );
-          /* #@range_end(naive_factorial) */
-          next();
-        });
-        it('末尾再帰によるfactorialの例', (next) => {
-          /* #@range_begin(tail_recursive_factorial) */
-          var factorial = (n) => {
-            var factorialRec = (n, accumulator) => {
-              if (n === 1) {
-                return 1 * accumulator;
+          var dividesTimes = (n, m) => {
+            var dividesTimesHelper = (n,m,accumulator) => {
+              if(n > m) {
+                return accumulator;
               } else {
-                return factorialRec(n - 1, n * accumulator);
-              };
+                if(multiplyOf(n,m)) {
+                  return dividesTimesHelper(n,m - n,accumulator + 1);
+                } else {
+                  return accumulator;
+                  // return dividesTimesHelper(n,m,accumulator);
+                }
+              }
             };
-            return factorialRec(n, 1);
+            return dividesTimesHelper(n,m,0);
           };
           expect(
-            factorial(3)
+            dividesTimes(3,6)
           ).to.eql(
-            6
+            2
           );
-          /* #@range_end(tail_recursive_factorial) */
+          expect(
+            dividesTimes(3,7)
+          ).to.eql(
+            0
+          );
+          /* #@range_end(dividesTimes) */
           next();
+        });
+        describe('factorialの例', () => {
+          it('素朴なfactorialの例', (next) => {
+            /* #@range_begin(naive_factorial) */
+            var factorial = (n) => {
+              if (n === 1) {
+                return 1;
+              } else {
+                return n * factorial(n - 1);
+              }
+            };
+            expect(
+              factorial(3)
+            ).to.eql(
+              6
+            );
+            /* #@range_end(naive_factorial) */
+            next();
+          });
+          it('末尾再帰によるfactorialの例', (next) => {
+            /* #@range_begin(tail_recursive_factorial) */
+            var factorial = (n) => {
+              var factorialRec = (n, accumulator) => {
+                if (n === 1) {
+                  return 1 * accumulator;
+                } else {
+                  return factorialRec(n - 1, n * accumulator);
+                };
+              };
+              return factorialRec(n, 1);
+            };
+            expect(
+              factorial(3)
+            ).to.eql(
+              6
+            );
+            /* #@range_end(tail_recursive_factorial) */
+            next();
+          });
         });
         it('list#lastをテストする', (next) => {
           /* #@range_begin(list_last_test) */

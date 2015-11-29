@@ -1,6 +1,8 @@
 "use strict";
 
 var expect = require('expect.js');
+var sys = require('sys');
+var fs = require('fs');
 
 
 var match = (exp, pattern) => {
@@ -121,6 +123,7 @@ describe('関数型言語を作る', () => {
         /* #@range_end(evaluation_function) */
         describe('evaluate関数で式を評価する', () => {
           it('数値を評価する', (next) => {
+            // fs.writeFileSync('/tmp/nodejs-labo-test.json',  JSON.stringify(number(2), null, '    '));
             expect(
               evaluate(number(2), emptyEnv)
             ).to.be(
@@ -161,6 +164,7 @@ describe('関数型言語を作る', () => {
           it('identity関数', (next) => {
             /* λx.x */
             var identity = lambda(variable("x"),variable("x"));
+            
             expect(
               evaluate(identity, emptyEnv)
             ).to.a(
@@ -246,6 +250,92 @@ describe('関数型言語を作る', () => {
             next();
           });
         });
+        describe('プリティプリンタを作る', () => {
+          var prettyPrint = (exp) => {
+            return match(exp,{
+              /* 数値 */
+              number: (value) => {
+                return {
+                  number: value
+                };
+              },
+              /* 変数 */
+              variable: (name) => {
+                return {
+                  variable: name
+                };
+              },
+              /* λ式 */
+              lambda: (variable, bodyExp) => {
+                return {
+                  lambda: {
+                    variable: variable,
+                    bodyExp: prettyPrint(bodyExp)
+                  }
+                };
+              },
+              /* 関数適用評価 */
+              application: (variable, arg) => {
+                return {
+                  application: {
+                    variable: variable,
+                    arg: prettyPrint(arg)
+                  }
+                };
+              }
+            });
+          };
+          it('prettyPrintをテストする', (next) => {
+            expect(
+              prettyPrint(number(2))
+            ).to.eql(
+              {"number" : 2}
+            );
+            next();
+          });
+          describe('ローダーを作る', () => {
+            var load = (object) => {
+              //            return (callback) => {
+              for (var key in object) {
+                switch (key){
+	            case "number":
+                  return number(parseInt(object[key],10));
+		          break;
+	            default:
+		          throw new Error();
+		          break;
+	            }
+              }
+              //            };
+            };
+            // var load = (object) => {
+            //   return matcher(object, {
+            //     number: (value) => {
+            //       return number(value);
+            //     }
+            //   });
+            // };
+            it('ローダーをテストする', (next) => {
+              expect(
+                evaluate(load({"number" : 2}, emptyEnv))
+              ).to.eql(
+                2
+              );
+              next();
+            });
+          });
+        });
+        // describe('ファイル操作', () => {
+        //   it('数値を評価する', (next) => {
+        //     fs.writeFileSync('/tmp/nodejs-labo-test.json',  JSON.stringify(number(2), null, '    '));
+        //     expect(
+        //       JSON.parse(fs.readFileSync('/tmp/nodejs-labo-test.json', 'utf8'))
+        //     ).to.eql(
+        //       2
+        //     );
+        //     next();
+        //   });
+        // });
       });
     }); // 
     // describe('式と値を分離した評価器', () => {

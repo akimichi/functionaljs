@@ -1884,7 +1884,10 @@ describe('高階関数', () => {
               }
             };
           };
-          
+          var triggerEvent = (eventName, arg, eventSystem) => {
+            return lookupEventSystem(eventName,eventSystem)(arg);
+          };
+
           var eventSystem = subscribeEventSystem("started", (_) => {
             return "event started";
           }, emptyEventSystem);
@@ -1900,6 +1903,11 @@ describe('高階関数', () => {
             lookupEventSystem("terminated", eventSystem)(503)
           ).to.eql(
             "event terminated with 503"
+          );
+          expect(
+            triggerEvent("terminated",404, eventSystem)
+          ).to.eql(
+            "event terminated with 404"
           );
           // expect(
           //   eventSystem.trigger("started", null)

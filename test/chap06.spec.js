@@ -142,7 +142,7 @@ describe('関数の使い方', () => {
           /* #@range_begin(definition_thunk_force) */
           var thunk = (func) => {
             return (arg) => {
-              return (_) => {
+              return (_) => { // サンクを返す
                 return func(arg);
               };
             };
@@ -157,14 +157,18 @@ describe('関数の使い方', () => {
               if(force(thunkX) === 0){
                 return 0;
               } else {
-                return force(thunkX) * force(thunkY);
+                return thunkX() * thunkY(); // サンクを評価する
               }
             };
             var id = (any) => {
               return any;
             };
             expect(
-              multiply(thunk(id)(0),thunk(id)(2))
+              multiply((_) => { // サンクで包む
+                return 0;
+              }, (_) => {
+                return 2;
+              })
             ).to.eql(
               0
             );
@@ -175,14 +179,18 @@ describe('関数の使い方', () => {
             /* #@range_begin(functionalIf_via_thunk) */
             var functionalIf = (predicate, trueClauseThunk, falseClauseThunk) => {
               if(predicate){
-                return force(trueClauseThunk); // 判定式が真の場合に実行する
+                return trueClauseThunk(); // 判定式が真の場合に実行する
               } else {
-                return force(falseClauseThunk);  // 判定式が真の場合に実行する
+                return falseClauseThunk();  // 判定式が真の場合に実行する
               }
             };
             /* テスト */
             expect(
-              functionalIf((2 < 3), thunk(id)(2), thunk(id)(3))
+              functionalIf((2 < 3), (_) => {
+                return 2;
+              }, (_) => {
+                return 3;
+              })
             ).to.eql(
               2
             );
@@ -231,71 +239,71 @@ describe('関数の使い方', () => {
                     return tailThunk();
                   }
                 });
-              },
-              isEmpty: (lazyList) => {
-                return match(lazyList,{
-                  empty: (_) => {
-                    return true;
-                  },
-                  cons: (head,tailThunk) => {
-                    return false;
-                  }
-                });
-              },
-              map: (lazyList) => {
-                return (transform) => {
-                  return match(lazyList,{
-                    empty: (_) => {
-                      return stream.empty();
-                    },
-                    cons: (head,tailThunk) => {
-                      return stream.cons(transform(head),(_) => {
-                        return stream.map(tailThunk())(transform)});
-                    }
-                  });
-                };
-              },
-              // ## stream#concat
-              concat: (xs) => {
-                return (ysThunk) => {
-                  return match(xs,{
-                    empty: (_) => {
-                      return ysThunk();
-                    },
-                    cons: (head,tailThunk) => {
-                      return stream.cons(head,(_) => {
-                        return stream.concat(tailThunk())(ysThunk);
-                      });
-                    }
-                  });
-                };
-              },
-              // ## stream#flatten
-              // flatten :: STREAM[STREAM[T]] => STREAM[T]
-              flatten: (lazyList) => {
-                return match(lazyList,{
-                  empty: (_) => {
-                    return stream.empty();
-                  },
-                  cons: (head,tailThunk) => {
-                    return stream.concat(head)((_) => {
-                      return stream.flatten(tailThunk());
-                    });
-                  }
-                });
               }
             };
             /* #@range_end(stream_with_thunk) */
+              // isEmpty: (lazyList) => {
+              //   return match(lazyList,{
+              //     empty: (_) => {
+              //       return true;
+              //     },
+              //     cons: (head,tailThunk) => {
+              //       return false;
+              //     }
+              //   });
+              // },
+              // map: (lazyList) => {
+              //   return (transform) => {
+              //     return match(lazyList,{
+              //       empty: (_) => {
+              //         return stream.empty();
+              //       },
+              //       cons: (head,tailThunk) => {
+              //         return stream.cons(transform(head),(_) => {
+              //           return stream.map(tailThunk())(transform)});
+              //       }
+              //     });
+              //   };
+              // },
+              // // ## stream#concat
+              // concat: (xs) => {
+              //   return (ysThunk) => {
+              //     return match(xs,{
+              //       empty: (_) => {
+              //         return ysThunk();
+              //       },
+              //       cons: (head,tailThunk) => {
+              //         return stream.cons(head,(_) => {
+              //           return stream.concat(tailThunk())(ysThunk);
+              //         });
+              //       }
+              //     });
+              //   };
+              // },
+              // // ## stream#flatten
+              // // flatten :: STREAM[STREAM[T]] => STREAM[T]
+              // flatten: (lazyList) => {
+              //   return match(lazyList,{
+              //     empty: (_) => {
+              //       return stream.empty();
+              //     },
+              //     cons: (head,tailThunk) => {
+              //       return stream.concat(head)((_) => {
+              //         return stream.flatten(tailThunk());
+              //       });
+              //     }
+              //   });
+              // }
             it("stream#cons", (next) => {
+              // var lazyList = stream.cons(1, (_) => {
+              //   return stream.cons(2,thunk(stream.empty)());
+              // });
               /* #@range_begin(stream_with_thunk_test) */
               var lazyList = stream.cons(1, (_) => {
-                return stream.cons(2,thunk(stream.empty)());
+                return stream.cons(2,(_) => {
+                  return stream.empty();
+                });
               });
-              // var lazyList = stream.cons(1, (_) => {
-              //   return stream.cons(2,(_) => {
-              //     return stream.empty();
-              //   });
-              // });
               expect(
                 stream.head(lazyList)
               ).to.eql(
@@ -577,45 +585,6 @@ describe('関数の使い方', () => {
           );
           /* #@range_end(dividesTimes) */
           next();
-        });
-        describe('factorialの例', () => {
-          it('素朴なfactorialの例', (next) => {
-            /* #@range_begin(naive_factorial) */
-            var factorial = (n) => {
-              if (n === 1) {
-                return 1;
-              } else {
-                return n * factorial(n - 1);
-              }
-            };
-            expect(
-              factorial(3)
-            ).to.eql(
-              6
-            );
-            /* #@range_end(naive_factorial) */
-            next();
-          });
-          it('末尾再帰によるfactorialの例', (next) => {
-            /* #@range_begin(tail_recursive_factorial) */
-            var factorial = (n) => {
-              var factorialRec = (n, accumulator) => {
-                if (n === 1) {
-                  return 1 * accumulator;
-                } else {
-                  return factorialRec(n - 1, n * accumulator);
-                };
-              };
-              return factorialRec(n, 1);
-            };
-            expect(
-              factorial(3)
-            ).to.eql(
-              6
-            );
-            /* #@range_end(tail_recursive_factorial) */
-            next();
-          });
         });
         it('list#lastをテストする', (next) => {
           /* #@range_begin(list_last_test) */

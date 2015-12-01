@@ -3,6 +3,204 @@
 var expect = require('expect.js');
 var util = require('util');
 
+var truthy = (any) => {
+  return any !== false && any != null;
+};
+
+var match = (data, pattern) => {
+  return data.call(pattern, pattern);
+};
+
+var list  = {
+  empty: (_) => {
+    return (pattern) => {
+      return pattern.empty();
+    };
+  },
+  cons: (head, tail) => {
+    return (pattern) => {
+      return pattern.cons(head, tail);
+    };
+  },
+  head: (seq) => {
+    return match(seq, {
+      empty: (_) => {
+        return undefined;
+      },
+      cons: (head, tail) => {
+        return head;
+      }
+    });
+  },
+  tail: (seq) => {
+    return match(seq, {
+      empty: (_) => {
+        return undefined;
+      },
+      cons: (head, tail) => {
+        return tail;
+      }
+    });
+  },
+  isEmpty: (seq) => {
+    return match(seq, {
+      empty: (_) => {
+        return true;
+      },
+      cons: (head, tail) => {
+        return false;
+      }
+    });
+  },
+  // list#concat
+  // concat:: LIST[T] -> LIST[T] -> LIST[T]
+  concat: (xs) => {
+    return (ys) => {
+      if(list.isEmpty(xs)){
+        return ys;
+      } else {
+        return list.cons(list.head(xs),(list.concat(list.tail(xs))(ys)));
+      }
+    };
+  },
+  last: (seq) => {
+    return match(seq, {
+      empty: (_) => {
+        return undefined;
+      },
+      cons: (head, tail) => {
+        return match(tail, {
+          empty: (_) => {
+            return head;
+          },
+          cons: (head, _) => {
+            return list.last(tail);
+          }
+        });
+      }
+    });
+  },
+  // join:: LIST[LIST[T]] -> LIST[T]
+  join: (list_of_list) => {
+    if(self.isEmpty(list_of_list)){
+      return list.empty();
+    } else {
+      return list.concat(list.head(list_of_list))(list.join(list.tail(list_of_list)));
+    }
+  },
+  // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
+  foldr: (seq) => {
+    return (accumulator) => {
+      return (glue) => {
+        expect(glue).to.a('function');
+        return match(seq,{
+          empty: (_) => {
+            return accumulator;
+          },
+          cons: (head, tail) => {
+            return glue(head)(list.foldr(tail)(accumulator)(glue));
+          }
+        });
+      };
+    };
+  },
+  // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
+  map: (seq, transform) => {
+    return match(seq,{
+      empty: (_) => {
+        return list.empty();
+      },
+      cons: (x,xs) => {
+        return list.cons(transform(x),list.map(xs,transform));
+      }
+    });
+  },
+  /* #@range_begin(list_reverse) */
+  reverse: (seq) => {
+    var reverseAux = (seq, accumulator) => {
+      return match(seq, {
+        empty: (_) => {
+          return accumulator;  // 空のリストの場合は終了
+        },
+        cons: (head, tail) => {
+          return reverseAux(tail, list.cons(head, accumulator));
+        }
+      });
+    };
+    return reverseAux(seq, list.empty());
+  },
+  /* #@range_end(list_reverse) */
+  // ## list.filter
+  /* #@range_begin(list_filter) */
+  filter: (seq) => {
+    return (predicate) => {
+      expect(predicate).to.a('function');
+      var filterAux = (seq, accumulator) => {
+        return match(seq,{
+          empty: (_) => {
+            return accumulator;
+          },
+          cons: (head,tail) => {
+            if(predicate(head) === true){
+              return list.concat(list.concat(accumulator)(list.cons(head, list.empty())))(filterAux(tail, accumulator));
+            } else  {
+              return filterAux(tail, accumulator);
+            }
+          }
+        });
+      };
+      return filterAux(seq, list.empty());
+    };
+  },
+  // list#length
+  length: (seq) => {
+    return match(seq,{
+      empty: (_) => {
+        return 0;
+      },
+      cons: (head,tail) => {
+        return list.foldr(seq)(0)((item) => {
+          return (accumulator) => {
+            return 1 + accumulator;
+          };
+        });
+      }
+    });
+  },
+  any: (seq) => {
+    return (predicate) => {
+      expect(predicate).to.a('function');
+      return match(seq,{
+        empty: (_) => {
+          return false;
+        },
+        cons: (head,tail) => {
+          if(truthy(predicate(head))) {
+            return true;
+          } else {
+            return list.any(tail)(predicate);
+          }
+        }
+      });
+      // return compose(self.list.or.bind(self))(self.flip.bind(self)(self.list.map.bind(self))(predicate))(list);
+    };
+  },
+  /* #@range_end(list_filter) */
+  toArray: (seq) => {
+    var toArrayAux = (seq,accumulator) => {
+      return match(seq, {
+        empty: (_) => {
+          return accumulator;  // 空のリストの場合は終了
+        },
+        cons: (head, tail) => {
+          return toArrayAux(tail, accumulator.concat(head));
+        }
+      });
+    };
+    return toArrayAux(seq, []);
+  }
+};
+
 // プログラムをコントロールする仕組み
 // ============================
 describe('プログラムをコントロールする仕組み', () => {
@@ -1087,22 +1285,46 @@ describe('プログラムをコントロールする仕組み', () => {
         next();
       });
     });
-    describe('再帰処理', () => {
-      var list = {
-        empty: [],
-        cons: (n, list) => {
-          return [n].concat(list);
-        },
-        head: (list) => {
-          return list[0];
-        },
-        tail: (list) => {
-          return list.slice(1,list.length);
-        },
-        isEmpty: (list) => {
-          return list.length === 0;
-        }
-      };
+    describe('再帰による反復処理', () => {
+      describe('factorialの例', () => {
+        it('素朴なfactorialの例', (next) => {
+          /* #@range_begin(naive_factorial) */
+          var factorial = (n) => {
+            if (n === 1) {
+              return 1;
+            } else {
+              return n * factorial(n - 1);
+            }
+          };
+          expect(
+            factorial(3)
+          ).to.eql(
+            6
+          );
+          /* #@range_end(naive_factorial) */
+          next();
+        });
+        it('末尾再帰によるfactorialの例', (next) => {
+          /* #@range_begin(tail_recursive_factorial) */
+          var factorial = (n) => {
+            var factorialRec = (n, accumulator) => {
+              if (n === 1) {
+                return 1 * accumulator;
+              } else {
+                return factorialRec(n - 1, n * accumulator);
+              };
+            };
+            return factorialRec(n, 1);
+          };
+          expect(
+            factorial(3)
+          ).to.eql(
+            6
+          );
+          /* #@range_end(tail_recursive_factorial) */
+          next();
+        });
+      });
       it('lengthの例', (next) => {
         var match = (exp, pattern) => {
           return exp.call(pattern, pattern);
@@ -1120,24 +1342,24 @@ describe('プログラムをコントロールする仕組み', () => {
             empty: true,
             cons: (head, tail) => {
               return false;
-            },
-          })
+            }
+          });
         };
         var head = (list) => {
           return match(list, {
             empty: undefined,
             cons: (head, tail) => {
               return head;
-            },
-          })
+            }
+          });
         };
         var tail = (list) => {
           return match(list, {
             empty: undefined,
             cons: (head, tail) => {
               return tail;
-            },
-          })
+            }
+          });
         };
         /* #@range_begin(recursive_length) */
         var length = (list, accumulator) => {
@@ -1145,25 +1367,25 @@ describe('プログラムをコントロールする仕組み', () => {
             empty: accumulator,
             cons: (head, tail) => {
               return length(tail, accumulator + 1); // length関数を再帰的に呼び出す
-            },
-          })
+            }
+          });
         };
         /************************ テスト ************************/
         expect(
           length(empty, 0)                        // []の長さは0
         ).to.eql(
           0
-        )
+        );
         expect(
           length(cons(1,empty), 0)                // [1]の長さは1
         ).to.eql(
           1
-        )
+        );
         expect(
           length(cons(1,cons(2,cons(3,empty))),0) // [1,2,3]の長さは3
         ).to.eql(
           3
-        )
+        );
         /* #@range_end(recursive_length) */
         /* #@range_begin(recursive_sum) */
         var sum = (list, accumulator) => {
@@ -1171,24 +1393,24 @@ describe('プログラムをコントロールする仕組み', () => {
             empty: accumulator,
             cons: (head, tail) => {
               return sum(tail, accumulator + head);
-            },
-          })
+            }
+          });
         };
         expect(
           sum(empty, 0)
         ).to.eql(
           0
-        )
+        );
         expect(
           sum(cons(1,empty), 0)
         ).to.eql(
           1
-        )
+        );
         expect(
           sum(cons(1,cons(2,cons(3,empty))),0)
         ).to.eql(
           6
-        )
+        );
         /* #@range_end(recursive_sum) */
         next();
       });
@@ -1227,6 +1449,51 @@ describe('プログラムをコントロールする仕組み', () => {
         ).to.eql(
           6
         );
+        it('リストのmap', (next) => {
+          /* #@range_begin(list_map) */
+          var map = (seq) => {
+            return (callback) => {
+              return match(seq,{
+                empty: (_) => {
+                  return list.empty();
+                },
+                cons: (head, tail) => {
+                  return list.cons(callback(head), map(tail)(callback));
+                }
+              });
+            };
+          };
+          /* #@range_end(list_map) */
+          /* #@range_begin(list_map_test) */
+          var numberList = list.cons(1,
+                                     list.cons(2,
+                                               list.empty()));
+          var double = (number) => {
+            return number * 2;
+          };
+          var doubledList = map(numberList)(double);
+          expect(
+            list.head(doubledList)
+          ).to.eql(
+            2
+          );
+          expect(
+            list.toArray(doubledList)
+          ).to.eql(
+            [2,4]
+          );
+          var stringList = list.cons("a", list.cons("b",list.empty()));
+          var upper = (string) => {
+            return string.toUpperCase();
+          };
+          expect(
+            list.toArray(map(stringList)(upper))
+          ).to.eql(
+            ["A","B"]
+          );
+          /* #@range_end(list_map_test) */
+          next();
+        });
       });
       describe('sumの例', () => {
         /* #@range_begin(recursive_sum) */

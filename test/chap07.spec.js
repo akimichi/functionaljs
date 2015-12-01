@@ -1923,49 +1923,6 @@ describe('高階関数', () => {
           next();
         });
       });
-      it('リストのmap', (next) => {
-        /* #@range_begin(list_map) */
-        var map = (seq) => {
-          return (callback) => {
-            return match(seq,{
-              empty: (_) => {
-                return list.empty();
-              },
-              cons: (head, tail) => {
-                return stream.cons(callback(head), map(tail)(callback));
-              }
-            });
-          };
-        };
-        /* #@range_end(list_map) */
-        /* #@range_begin(list_map_test) */
-        var numberList = list.cons(1, list.cons(2,list.empty()));
-        var double = (number) => {
-          return number * 2;
-        };
-        var doubledList = map(numberList)(double);
-        expect(
-          list.head(doubledList)
-        ).to.eql(
-          2
-        );
-        expect(
-          list.toArray(doubledList)
-        ).to.eql(
-          [2,4]
-        );
-        var stringList = list.cons("a", list.cons("b",list.empty()));
-        var upper = (string) => {
-          return string.toUpperCase();
-        };
-        expect(
-          list.toArray(map(stringList)(upper))
-        ).to.eql(
-          ["A","B"]
-        );
-        /* #@range_end(list_map_test) */
-        next();
-      });
       describe('リストの再帰関数', () => {
         it('リストの合計', (next) => {
           /* #@range_begin(list_sum) */

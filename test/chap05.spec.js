@@ -1451,19 +1451,34 @@ describe('プログラムをコントロールする仕組み', () => {
         );
         it('リストのmap', (next) => {
           /* #@range_begin(list_map) */
-          var map = (seq) => {
-            return (callback) => {
-              return match(seq,{
+          var map = (seq,callback) => {
+            return match(seq,{
+              empty: (_) => {
+                return list.empty();
+              },
+              cons: (head, tail) => {
+                return list.cons(callback(head), 
+                                 map(tail,callback));
+              }
+            });
+          };
+          /* #@range_end(list_map) */
+          
+          /* #@range_begin(list_toArray) */
+          var toArray = (seq,callback) => {
+            var toArrayAux = (seq,accumulator) => {
+              return match(seq, {
                 empty: (_) => {
-                  return list.empty();
+                  return accumulator;  // 空のリストの場合は終了
                 },
                 cons: (head, tail) => {
-                  return list.cons(callback(head), map(tail)(callback));
+                  return toArrayAux(tail, accumulator.concat(head));
                 }
               });
             };
+            return toArrayAux(seq, []);
           };
-          /* #@range_end(list_map) */
+          /* #@range_end(list_toArray) */
           /* #@range_begin(list_map_test) */
           var numberList = list.cons(1,
                                      list.cons(2,
@@ -1471,14 +1486,14 @@ describe('プログラムをコントロールする仕組み', () => {
           var double = (number) => {
             return number * 2;
           };
-          var doubledList = map(numberList)(double);
+          var doubledList = map(numberList,double);
           expect(
             list.head(doubledList)
           ).to.eql(
             2
           );
           expect(
-            list.toArray(doubledList)
+            toArray(doubledList)
           ).to.eql(
             [2,4]
           );
@@ -1487,7 +1502,7 @@ describe('プログラムをコントロールする仕組み', () => {
             return string.toUpperCase();
           };
           expect(
-            list.toArray(map(stringList)(upper))
+            toArray(map(stringList,upper))
           ).to.eql(
             ["A","B"]
           );

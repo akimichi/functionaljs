@@ -680,21 +680,23 @@ describe('関数の使い方', () => {
           );
           /* #@range_end(function_applied_twice) */
           /* #@range_begin(function_applied_ntimes) */
-          var applyNtimes = (n) => {
-            return (func) => {
+          var applyNTimes = (n, func) => {
+            var applyNTimesHelper = (n, func) => {
               return (init) => {
                 return (accumulator) => {
                   if(n === 0) {
                     return accumulator;
                   } else {
-                    return applyNtimes(n - 1)(func)(init)(func(accumulator));
+                    return applyNTimesHelper(n - 1,func)(init)(func(accumulator));
                   };
                 };
               };
             };
+            return applyNTimesHelper(n,func)(0);
           };
           expect(
-            applyNtimes(4)(succ)(0)(0) // succ(succ(succ(succ(0))))
+            applyNTimes(4,succ)(0)
+            // applyNTimes(4)(succ)(0)(0) // succ(succ(succ(succ(0))))
           ).to.eql(
             4
           );

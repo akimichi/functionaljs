@@ -126,6 +126,28 @@ describe('関数の使い方', () => {
         var force = (thunk) => {
           return thunk();
         };
+        describe('関数の評価戦略', () => {
+          /* #@range_begin(strict_evaluation_in_javascript) */
+          var left = (x,y) => {
+            return x;
+          };
+          expect(
+            left(1, 2)
+          ).to.eql(
+            1
+          );
+          var infiniteLoop = (_) => {
+            return infiniteLoop(_);
+          };
+
+          /* このテストは実行されると無限ループになるのでコメントアウトしています
+             expect(
+             left(1, infiniteLoop())
+             ).to.be.ok()
+          */
+          /* #@range_end(strict_evaluation_in_javascript) */
+
+        });
         it('thunkによる遅延評価', (next) => {
           /* #@range_begin(nonstrict_function_via_thunk) */
           var multiply = (thunkX,thunkY) => {
@@ -159,6 +181,8 @@ describe('関数の使い方', () => {
           /* #@range_end(nonstrict_function_via_thunk) */
           next();
         });
+        // describe('thunkを使う', () => {
+
         it('thunkによる条件式', (next) => {
           /* #@range_begin(functionalIf_via_thunk) */
           var functionalIf = (predicate, trueClauseThunk, falseClauseThunk) => {
@@ -183,6 +207,7 @@ describe('関数の使い方', () => {
           next();
         });
         describe('thunkによるStream型', () => {
+          /* #@range_begin(stream_with_thunk) */
           var stream = {
             empty: (_) => {
               return (pattern) => {
@@ -272,7 +297,9 @@ describe('関数の使い方', () => {
               });
             }
           };
+          /* #@range_end(stream_with_thunk) */
           it("stream#cons", (next) => {
+            /* #@range_begin(stream_with_thunk_test) */
             var lazyList = stream.cons(1, (_) => {
               return stream.cons(2,thunk(stream.empty)());
             });
@@ -286,31 +313,51 @@ describe('関数の使い方', () => {
             ).to.eql(
               1
             );
+            /* #@range_end(stream_with_thunk_test) */
             next();
           });
+          describe("無限ストリーム", () => {
+            /* #@range_begin(infinite_stream) */
+            // ones = [1,1,1,1,...]
+            var ones = stream.cons(1, (_) => {
+              return ones;
+            });
+            expect(
+              stream.head(ones)
+            ).to.eql(
+              1
+            );
+            expect(
+              stream.head(stream.tail(ones))
+            ).to.eql(
+              1
+            );
+            /* #@range_end(infinite_stream) */
+            /* #@range_begin(infinite_integer) */
+            // ones = [1,2,3,4,...]
+            var intgersFrom = (n) => {
+              return stream.cons(n, (_) => {
+                return intgersFrom(n + 1);
+              });
+            };
+            /* #@range_end(infinite_integer) */
+            it("無限の整数列をテストする", (next) => {
+              /* #@range_begin(infinite_integer_test) */
+              expect(
+                stream.head(intgersFrom(1))
+              ).to.eql(
+                1
+              );
+              expect(
+                stream.head(stream.tail(intgersFrom(1)))
+              ).to.eql(
+                2
+              );
+              /* #@range_end(infinite_integer_test) */
+              next();
+            });
+          });
         });
-      });
-      describe('関数の評価戦略', () => {
-        /* #@range_begin(strict_evaluation_in_javascript) */
-        var left = (x,y) => {
-          return x;
-        };
-        expect(
-          left(1, 2)
-        ).to.eql(
-          1
-        );
-        var infiniteLoop = (_) => {
-          return infiniteLoop(_);
-        };
-
-        /* このテストは実行されると無限ループになるのでコメントアウトしています
-           expect(
-           left(1, infiniteLoop())
-           ).to.be.ok()
-        */
-        /* #@range_end(strict_evaluation_in_javascript) */
-
       });
       describe('再帰的な関数適用', () => {
         var seq  = {

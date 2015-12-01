@@ -71,23 +71,18 @@ describe('プログラムをコントロールする仕組み', () => {
     // });
     it("三項演算子", (next) => {
       /* ##@range_begin(trinary_if) */
-      var signum = (n) => {
-        return (n > 0)?  1 : (n === 0)? 0 : -1;
+      var even = (n) => {
+        return (n % 2) === 0 ?  true : false;
       };
       expect(
-        signum(3)
+        even(2)
       ).to.eql(
-        1
+        true
       );
       expect(
-        signum(-3)
+        even(3)
       ).to.eql(
-          -1
-      );
-      expect(
-        signum(0)
-      ).to.eql(
-        0
+        false
       );
       /* ##@range_end(trinary_if) */
       next();
@@ -187,7 +182,7 @@ describe('プログラムをコントロールする仕組み', () => {
           even(2)
         ).to.eql(
           true
-        )
+        );
         /* #@range_end(functional_if_test) */
 
         /* #@range_begin(multiplyOf)            */
@@ -348,7 +343,7 @@ describe('プログラムをコントロールする仕組み', () => {
             message: "unknown: " + light
           };
         }
-      }
+      };
       /* #@range_end(signal) */
       next();
     });
@@ -362,7 +357,7 @@ describe('プログラムをコントロールする仕組み', () => {
         default:
           return false;
         }
-      }
+      };
       /* テスト */
       expect(
         switch_for_mutable([1,2,3])
@@ -839,7 +834,7 @@ describe('プログラムをコントロールする仕組み', () => {
           empty: true,
           cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
             return false;
-          },
+          }
         });
       };
       var head = (list) => {
@@ -855,7 +850,7 @@ describe('プログラムをコントロールする仕組み', () => {
           empty: undefined,  // 空のリストには末尾要素はありません
           cons: (head, tail) => {
             return tail;
-          },
+          }
         });
       };
       /* #@range_end(list_function_using_algebraic_datatype) */

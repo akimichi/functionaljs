@@ -1613,6 +1613,47 @@ describe('プログラムをコントロールする仕組み', () => {
           next();
         });
       });
-    });
+      describe('自然数の総和', () => {
+        it('再帰版と一般形', (next) => {
+          /* #@range_begin(triangularRecurrenceForm) */
+	      var natural_sum = (n) => {
+		    if(n === 1){
+		      return 1;
+		    } else {
+		      return natural_sum(n-1) + n;
+		    }
+	      };
+          expect(
+            natural_sum(2)
+          ).to.eql(
+            3
+          );
+          expect(
+            natural_sum(3)
+          ).to.eql(
+            6
+          );
+          /* #@range_end(triangularRecurrenceForm) */
+          // 自然数の総和(一般形)
+          /* #@range_begin(triangularClosedForm) */
+	      var closedForm = (n) => {
+		    return (n*(1 + n))/2;
+	      };
+          expect(
+            natural_sum(2)
+          ).to.eql(
+            closedForm(2)
+          );
+          expect(
+            natural_sum(12)
+          ).to.eql(
+            closedForm(12)
+          );
+          /* #@range_end(triangularClosedForm) */
+          next();
+        });
+        
+      });
+    }); // 再帰による反復処理
   });
 });

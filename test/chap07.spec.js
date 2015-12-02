@@ -3388,14 +3388,13 @@ describe('高階関数', () => {
         next();
       });
     });
-    describe('Maybeモナド', () => {
+    describe('Maybeモナドを作る', () => {
       var id = (any) => {
         return any;
       };
       var match = (exp, pattern) => {
         return exp.call(pattern, pattern);
       };
-      it('代数的データ型を作る')
       describe('Maybeモナドを作る', () => {
         /* #@range_begin(maybe_monad) */
         var just = (value) => {

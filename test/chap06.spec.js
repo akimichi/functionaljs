@@ -828,20 +828,25 @@ describe('関数の使い方', () => {
       describe('ファイル操作が参照透過性を損なうこと', () => {
         /* #@range_begin(fileio_destroys_referential_transparency) */
         var fs = require('fs');
-        after(() => { // テストの終了時に実行される
+        before(() => { // テストの実行前に実行される
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
         });
         it('ファイルを操作する', (next) => {
           var text = fs.readFileSync("test/resources/file.txt", 'utf8');
-          fs.writeFileSync('test/resources/file.txt', "This is another test.")
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
-          ).not.to.be(
-            text
+          ).to.eql(
+            "This is a test."
           );
+          fs.writeFileSync('test/resources/file.txt', "This is another test.");
+          expect(
+            fs.readFileSync("test/resources/file.txt", 'utf8')
+          ).not.to.be( // notで否定をテストしている
+            "This is a test."
+          );
+          /* #@range_end(fileio_destroys_referential_transparency) */
           next();
         });
-        /* #@range_end(fileio_destroys_referential_transparency) */
       });
     });
     describe('副作用の分離', () => {

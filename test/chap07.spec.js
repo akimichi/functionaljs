@@ -3402,11 +3402,11 @@ describe('高階関数', () => {
             return pattern.just(value);
           };
         };
-        var nothing = ((_) => {
+        var nothing = (_) => {
           return (pattern) => {
             return pattern.nothing(_);
           };
-        })(null);
+        };
         var unit = (value) => {
           if(value){
             return just(value);
@@ -3448,7 +3448,7 @@ describe('高階関数', () => {
                 return unit(transform(value));
               },
               nothing: (_) => {
-                return nothing;
+                return nothing(_);
               }
             });
           };
@@ -3461,13 +3461,13 @@ describe('高階関数', () => {
                 return transform(value);
               },
               nothing: (_) => {
-                return nothing;
+                return nothing(_);
               }
             });
           };
         };
         /* #@range_end(maybe_monad) */
-        it("map id == id", function(next){
+        it("map id == id", (next) => {
           /* #@range_begin(maybe_monad_test) */
           var justOne = just(1);
           expect(
@@ -3476,7 +3476,7 @@ describe('高階関数', () => {
             true
           );
           expect(
-            isEqual(map(nothing)(id))(id(nothing))
+            isEqual(map(nothing())(id))(id(nothing()))
           ).to.be(
             true
           );
@@ -3503,7 +3503,7 @@ describe('高階関数', () => {
             true
           );
           expect(
-            isEqual(add(justOne)(nothing))(nothing)
+            isEqual(add(justOne)(nothing()))(nothing())
           ).to.eql(
             true
           );

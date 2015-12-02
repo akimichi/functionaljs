@@ -3485,25 +3485,23 @@ describe('高階関数', () => {
         });
         it("add(maybe, maybe)", (next) => {
           /* #@range_begin(maybe_monad_add_test) */
-          var add = (maybeA) => {
-            return (maybeB) => {
-              return flatMap(maybeA)((a) => {
-                return flatMap(maybeB)((b) => {
-                  return unit(a + b);
-                });
+          var add = (maybeA,maybeB) => {
+            return flatMap(maybeA)((a) => {
+              return flatMap(maybeB)((b) => {
+                return unit(a + b);
               });
-            };
+            });
           };
           var justOne = just(1);
           var justTwo = just(2);
           var justThree = just(3);
           expect(
-            isEqual(add(justOne)(justTwo))(justThree)
+            isEqual(add(justOne,justTwo))(justThree)
           ).to.eql(
             true
           );
           expect(
-            isEqual(add(justOne)(nothing()))(nothing())
+            isEqual(add(justOne,nothing()))(nothing())
           ).to.eql(
             true
           );

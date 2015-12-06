@@ -4058,7 +4058,7 @@ describe('高階関数', () => {
               _
             ).to.eql(
               null
-            )
+            );
           },
           just: (value) => {
             return expect().fail()
@@ -4359,5 +4359,71 @@ describe('高階関数', () => {
 
       });
     }); // streamモナド
+    describe('IOモナド', () => {
+      var fs = require('fs');
+      // ## 'IO' monad module
+      /* #@range_begin(io_monad_definition) */
+      var IO = {
+        unit: (sideeffect) => {
+          var self = this;
+          return {
+            run: sideeffect
+          };
+        },
+        empty: () => {
+          var self = this;
+          return self.monad.IO.unit(() => {
+            // do nothing
+          });
+        },
+        join: (io1, io2) => {
+          return self.monad.IO.unit(() => {
+            io1.run();
+            io2.run();
+          });
+        },
+        // map :: IO[A] => FUN[A => B] => IO[B]
+        map: (io) => {
+          var self = this;
+          return (transform) => { // transform :: A => B
+            return self.monad.IO.unit(() => {
+              return transform(io.run());
+            });
+          };
+        },
+        // flatMap :: IO[A] => FUN[A => IO[B]] => IO[B]
+        flatMap: (io) => {
+          var self = this;
+          return (transform) => {
+            return self.monad.IO.unit(() => {
+              return transform(io.run()).run();
+            });
+          };
+        },
+        // readFile:: STRING -> IO[STRING]
+        readFile: (path) => {
+          var self = this;
+          return self.monad.IO.unit(() => {
+            return fs.readFileSync(path, 'utf8');
+          });
+        },
+        // writeFile:: STRING -> IO()
+        writeFile: (path, content) => {
+          var self = this;
+          return self.monad.IO.unit(() => {
+            fs.writeFileSync(path, content);
+          });
+        },
+        // print:: STRING -> IO()
+        print: (message) => {
+          var self = this;
+          return self.monad.IO.unit(() => {
+            console.log(message);
+            return message;
+          });
+        }
+      }; // IO module
+      /* #@range_end(io_monad_definition) */
+    }); // IOモナド
   }); // モナド
 });

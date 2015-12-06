@@ -252,21 +252,18 @@ describe('プログラムをコントロールする仕組み', () => {
       next();
     });
     */
-    // it('ifは文である', (next) => {
-    //   /* ##@range_begin(if_statement) */
-    //   var result = if(true) {
-    //  true;
-    //   } else {
-    //  false;
-    //   }
-    //   expect(
-    //     result
-    //   ).to.eql(
-    //     10
-    //   );
-    //   /* ##@range_end(if_statement) */
-    //   next();
-    // });
+    it('returnで関数を抜ける', (next) => {
+      /* ##@range_begin(even_function_again) */
+      var even = (n) => {
+        if((n % 2) === 0) {
+          return true;       // return で even関数を抜けて true を返す
+        } else {
+          return false;      // return で even関数を抜けて false を返す
+        }
+      };
+      /* ##@range_end(even_function_again) */
+      next();
+    });
     it("三項演算子", (next) => {
       /* ##@range_begin(trinary_if) */
       var even = (n) => {
@@ -1011,8 +1008,10 @@ describe('プログラムをコントロールする仕組み', () => {
     it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
       /* リストの代数的データ型 */
-      var empty = (pattern) => {
-        return pattern.empty;
+      var empty = (_) => {
+        return (pattern) => {
+          return pattern.empty(_);
+        };
       };
       var cons = (value, list) => {
         return (pattern) => {
@@ -1029,7 +1028,9 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_begin(list_function_using_algebraic_datatype) */
       var isEmpty = (list) => {
         return match(list, { // match関数で分岐する
-          empty: true,
+          empty: (_) => {
+            return true;
+          },
           cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
             return false;
           }
@@ -1037,7 +1038,9 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       var head = (list) => {
         return match(list, {
-          empty: undefined, // 空のリストには先頭要素はありません
+          empty: (_) => {
+            return undefined; // 空のリストには先頭要素はありません
+          },
           cons: (head, tail) => {
             return head;
           },
@@ -1045,7 +1048,9 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       var tail = (list) => {
         return match(list, {
-          empty: undefined,  // 空のリストには末尾要素はありません
+          empty: (_) => {
+            return undefined;  // 空のリストには末尾要素はありません
+          },
           cons: (head, tail) => {
             return tail;
           }
@@ -1054,28 +1059,28 @@ describe('プログラムをコントロールする仕組み', () => {
       /* #@range_end(list_function_using_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */
       expect(
-        isEmpty(empty)         // empty は空のリストではある
+        isEmpty(empty())         // empty は空のリストではある
       ).to.eql(
         true
       );
       expect(
-        isEmpty(cons(1,empty)) // [1] は空のリストではない
+        isEmpty(cons(1,empty())) // [1] は空のリストではない
       ).to.eql(
         false
       );
       expect(
-        head(cons(1,empty))    // [1]の先頭要素は 1 である
+        head(cons(1,empty()))    // [1]の先頭要素は 1 である
       ).to.be(
         1
       );
       expect(
-        head(tail(cons(1,cons(2,empty)))) // [1,2]の2番目の要素は2である
+        head(tail(cons(1,cons(2,empty())))) // [1,2]の2番目の要素は2である
       ).to.be(
         2
       );
       /* #@range_end(list_in_algebraic_datatype_test) */
       expect(
-        isEmpty(tail(cons(1,empty)))     // [1]の末尾要素は空のリストである
+        isEmpty(tail(cons(1,empty())))     // [1]の末尾要素は空のリストである
       ).to.be(
         true
       );
@@ -1286,6 +1291,163 @@ describe('プログラムをコントロールする仕組み', () => {
       });
     });
     describe('再帰による反復処理', () => {
+      describe('複利法の例', () => {
+        // f(n) = f(n-1) * (1 + r)
+        /* #@range_begin(compound_interest) */
+        var compoundInterest = (principal, interest, nthYear) => {
+          if (nthYear === 0) {
+            return principal;
+          } else {
+            return compoundInterest(principal, interest, nthYear - 1) * (1 + interest);
+          }
+        };
+        /* #@range_end(compound_interest) */
+        it("複利の計算", (next) => {
+          expect(
+            compoundInterest(100000, 0.02, 1)
+          ).to.eql(
+            102000
+          );
+          expect(
+            compoundInterest(100000, 0.02, 2)
+          ).to.eql(
+            104040
+          );
+          expect(
+            compoundInterest(100000, 0.02, 25)
+          ).to.eql(
+            164060.59944647306
+          );
+          next();
+        });
+      });
+      describe('lengthの例', () => {
+        var match = (exp, pattern) => {
+          return exp.call(pattern, pattern);
+        };
+        var empty = (_) => {
+          return (pattern) => {
+            return pattern.empty(_);
+          };
+        };
+        var cons = (x, xs) => {
+          return (pattern) => {
+            return pattern.cons(x, xs);
+          };
+        };
+        var isEmpty = (list) => {
+          return match(list, {
+            empty: (_) => {
+              return true;
+            },
+            cons: (head, tail) => {
+              return false;
+            }
+          });
+        };
+        var head = (list) => {
+          return match(list, {
+            empty: (_) => {
+              return undefined;
+            },
+            cons: (head, tail) => {
+              return head;
+            }
+          });
+        };
+        var tail = (list) => {
+          return match(list, {
+            empty: (_) => {
+              return undefined;
+            },
+            cons: (head, tail) => {
+              return tail;
+            }
+          });
+        };
+        it('蓄積変数を持つlength関数', (next) => {
+          /* #@range_begin(recursive_length) */
+          var length = (list, accumulator) => {
+            return match(list, {
+              empty: (_) => {
+                return accumulator;
+              },
+              cons: (head, tail) => {
+                return length(tail, accumulator + 1); // length関数を再帰的に呼び出す
+              }
+            });
+          };
+          /************************ テスト ************************/
+          expect(
+            length(empty(), 0)                        // []の長さは0
+          ).to.eql(
+            0
+          );
+          expect(
+            length(cons(1,empty()), 0)                // [1]の長さは1
+          ).to.eql(
+            1
+          );
+          expect(
+            length(cons(1,cons(2,cons(3,empty()))),0) // [1,2,3]の長さは3
+          ).to.eql(
+            3
+          );
+          /* #@range_end(recursive_length) */
+          /* #@range_begin(recursive_sum) */
+          var sum = (list, accumulator) => {
+            return match(list, {
+              empty: (_) => {
+                return accumulator;
+              },
+              cons: (head, tail) => {
+                return sum(tail, accumulator + head);
+              }
+            });
+          };
+          expect(
+            sum(empty(), 0)
+          ).to.eql(
+            0
+          );
+          expect(
+            sum(cons(1,empty()), 0)
+          ).to.eql(
+            1
+          );
+          expect(
+            sum(cons(1,cons(2,cons(3,empty()))),0)
+          ).to.eql(
+            6
+          );
+          /* #@range_end(recursive_sum) */
+          next();
+        });
+        it('蓄積変数を持たないlength関数', (next) => {
+          /* #@range_begin(recursive_length_without_accumulator) */
+          var length = (list) => {
+            var lengthHelper = (seq, accumulator) => { // 蓄積変数を利用した補助関数
+              return match(seq, {
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return lengthHelper(tail, accumulator + 1);
+                }
+              });
+            };
+            return lengthHelper(list, 0);  // 補助関数に蓄積変数を渡して呼び出す
+          };
+          /************************ テスト ************************/
+          expect(
+            length(cons(1,cons(2,cons(3,empty())))) // [1,2,3]の長さは 3
+          ).to.eql(
+            3
+          );
+          /* #@range_end(recursive_length_without_accumulator) */
+          next();
+        });
+        });
       describe('factorialの例', () => {
         it('素朴なfactorialの例', (next) => {
           /* #@range_begin(naive_factorial) */
@@ -1324,95 +1486,6 @@ describe('プログラムをコントロールする仕組み', () => {
           /* #@range_end(tail_recursive_factorial) */
           next();
         });
-      });
-      it('lengthの例', (next) => {
-        var match = (exp, pattern) => {
-          return exp.call(pattern, pattern);
-        };
-        var empty = (pattern) => {
-          return pattern.empty;
-        };
-        var cons = (x, xs) => {
-          return (pattern) => {
-            return pattern.cons(x, xs);
-          };
-        };
-        var isEmpty = (list) => {
-          return match(list, {
-            empty: true,
-            cons: (head, tail) => {
-              return false;
-            }
-          });
-        };
-        var head = (list) => {
-          return match(list, {
-            empty: undefined,
-            cons: (head, tail) => {
-              return head;
-            }
-          });
-        };
-        var tail = (list) => {
-          return match(list, {
-            empty: undefined,
-            cons: (head, tail) => {
-              return tail;
-            }
-          });
-        };
-        /* #@range_begin(recursive_length) */
-        var length = (list, accumulator) => {
-          return match(list, {
-            empty: accumulator,
-            cons: (head, tail) => {
-              return length(tail, accumulator + 1); // length関数を再帰的に呼び出す
-            }
-          });
-        };
-        /************************ テスト ************************/
-        expect(
-          length(empty, 0)                        // []の長さは0
-        ).to.eql(
-          0
-        );
-        expect(
-          length(cons(1,empty), 0)                // [1]の長さは1
-        ).to.eql(
-          1
-        );
-        expect(
-          length(cons(1,cons(2,cons(3,empty))),0) // [1,2,3]の長さは3
-        ).to.eql(
-          3
-        );
-        /* #@range_end(recursive_length) */
-        /* #@range_begin(recursive_sum) */
-        var sum = (list, accumulator) => {
-          return match(list, {
-            empty: accumulator,
-            cons: (head, tail) => {
-              return sum(tail, accumulator + head);
-            }
-          });
-        };
-        expect(
-          sum(empty, 0)
-        ).to.eql(
-          0
-        );
-        expect(
-          sum(cons(1,empty), 0)
-        ).to.eql(
-          1
-        );
-        expect(
-          sum(cons(1,cons(2,cons(3,empty))),0)
-        ).to.eql(
-          6
-        );
-        /* #@range_end(recursive_sum) */
-        next();
       });
       describe('mapの例', () => {
         /* #@range_begin(recursive_map) */

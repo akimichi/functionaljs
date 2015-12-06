@@ -239,6 +239,37 @@ describe('関数の使い方', () => {
                     return tailThunk();
                   }
                 });
+              },
+              map: (lazyList) => {
+                return (transform) => {
+                  return match(lazyList,{
+                    empty: (_) => {
+                      return stream.empty();
+                    },
+                    cons: (head,tailThunk) => {
+                      return stream.cons(transform(head),(_) => {
+                        return stream.map(tailThunk())(transform);
+                      });
+                    }
+                  });
+                };
+              },
+              toArray: (lazyList) => {
+                return match(lazyList,{
+                  empty: (_) => {
+                    return [];
+                  },
+                  cons: (head,tailThunk) => {
+                    return match(tailThunk(),{
+                      empty: (_) => {
+                        return [head];
+                      },
+                      cons: (head_,tailThunk_) => {
+                        return [head].concat(stream.toArray(tailThunk()));
+                      }
+                    });
+                  }
+                });
               }
             };
             /* #@range_end(stream_with_thunk) */
@@ -310,6 +341,25 @@ describe('関数の使い方', () => {
                 1
               );
               /* #@range_end(stream_with_thunk_test) */
+              next();
+            });
+            it("stream#map", (next) => {
+              /* #@range_begin(stream_map_test) */
+              var lazyList = stream.cons('a', (_) => {
+                return stream.cons('b',(_) => {
+                  return stream.empty();
+                });
+              });
+              var capitalise = (ch) => {
+                return ch.toUpperCase();
+              };
+
+              expect(
+                stream.toArray(stream.map(lazyList)(capitalise))
+              ).to.eql(
+                ["A","B"]
+              );
+              /* #@range_end(stream_map_test) */
               next();
             });
             describe("無限ストリーム", () => {

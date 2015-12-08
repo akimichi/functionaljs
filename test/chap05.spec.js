@@ -1143,38 +1143,40 @@ describe('プログラムをコントロールする仕組み', () => {
       next();
     });
     it('数式の例', (next) => {
-      /* #@range_begin(algebraic_datatype) */
       var match = (exp, pattern) => {
         return exp.call(pattern, pattern);
       };
+      /* #@range_begin(algebraic_datatype) */
       var num = (n) => {
         return (pattern) => {
           return pattern.num(n);
         };
       };
-      var add = (x, y) => {
+      var add = (exp1, exp2) => {
         return (pattern) => {
-          return pattern.add(x, y);
+          return pattern.add(exp1, exp2);
         };
       };
-      var mul = (x, y) => {
+      var mul = (exp1, exp2) => {
         return (pattern) => {
-          return pattern.mul(x, y);
+          return pattern.mul(exp1, exp2);
         };
       };
       var calculate = (exp) => {
         return match(exp, { // パターンマッチを実行する
-          num: (x) => {
-            return x;
+          num: (n) => {
+            return n;
           },
-          add: (x, y) => {
-            return calculate(x) + calculate(y);
+          add: (exp1, exp2) => {
+            return calculate(exp1) + calculate(exp2); // calculateの再帰呼び出し
           },
-          mul: (x, y) => {
-            return calculate(x) * calculate(y);
+          mul: (exp1, exp2) => {
+            return calculate(exp1) * calculate(exp2); // calculateの再帰呼び出し
           }
         });
       };
+      /**** テスト ****/
+      // 1 + (2 * 3) を計算する
       var exp = add(num(1), mul(num(2), num(3)));
       expect(
         calculate(exp)
@@ -1426,18 +1428,28 @@ describe('プログラムをコントロールする仕組み', () => {
         it('蓄積変数を持たないlength関数', (next) => {
           /* #@range_begin(recursive_length_without_accumulator) */
           var length = (list) => {
-            var lengthHelper = (seq, accumulator) => { // 蓄積変数を利用した補助関数
-              return match(seq, {
-                empty: (_) => {
-                  return accumulator;
-                },
-                cons: (head, tail) => {
-                  return lengthHelper(tail, accumulator + 1);
-                }
-              });
-            };
-            return lengthHelper(list, 0);  // 補助関数に蓄積変数を渡して呼び出す
+            return match(list, {
+              empty: (_) => {
+                return 0;
+              },
+              cons: (head, tail) => {
+                return 1 + length(tail);
+              }
+            });
           };
+          // var length = (list) => {
+          //   var lengthHelper = (seq, accumulator) => { // 蓄積変数を利用した補助関数
+          //     return match(seq, {
+          //       empty: (_) => {
+          //         return accumulator;
+          //       },
+          //       cons: (head, tail) => {
+          //         return lengthHelper(tail, accumulator + 1);
+          //       }
+          //     });
+          //   };
+          //   return lengthHelper(list, 0);  // 補助関数に蓄積変数を渡して呼び出す
+          // };
           /************************ テスト ************************/
           expect(
             length(cons(1,cons(2,cons(3,empty())))) // [1,2,3]の長さは 3
@@ -1524,14 +1536,15 @@ describe('プログラムをコントロールする仕組み', () => {
         );
         it('リストのmap', (next) => {
           /* #@range_begin(list_map) */
-          var map = (seq,callback) => {
+          // map :: LIST[T] -> FUN[T -> T] -> LIST[T]
+          var map = (seq,transform) => {
             return match(seq,{
               empty: (_) => {
                 return list.empty();
               },
               cons: (head, tail) => {
-                return list.cons(callback(head), 
-                                 map(tail,callback));
+                return list.cons(transform(head), 
+                                 map(tail,transform));
               }
             });
           };
@@ -1580,6 +1593,50 @@ describe('プログラムをコントロールする仕組み', () => {
             ["A","B"]
           );
           /* #@range_end(list_map_test) */
+          next();
+        });
+        it('リストの連結', (next) => {
+          var toArray = (seq,callback) => {
+            var toArrayAux = (seq,accumulator) => {
+              return match(seq, {
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return toArrayAux(tail, accumulator.concat(head));
+                }
+              });
+            };
+            return toArrayAux(seq, []);
+          };
+          /* #@range_begin(list_concat) */
+          // concat :: (LIST[T], LIST[T]) -> LIST[T]
+          var concat = (xs, ys) => {
+            return match(xs,{
+              empty: (_) => {
+                return ys;
+              },
+              cons: (head, tail) => {
+                return list.cons(head,
+                                 concat(tail,ys));
+              }
+            });
+          };
+          /* #@range_end(list_concat) */
+          
+          /* #@range_begin(list_concat_test) */
+          var xs = list.cons(1,
+                             list.cons(2,
+                                       list.empty()));
+          var ys = list.cons(3,
+                             list.cons(4,
+                                       list.empty()));
+          expect(
+            toArray(concat(xs,ys))
+          ).to.eql(
+            [1,2,3,4]
+          );
+          /* #@range_end(list_concat_test) */
           next();
         });
       });

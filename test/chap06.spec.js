@@ -93,50 +93,136 @@ describe('関数の使い方', () => {
       return infiniteLoop(_);
     };
     describe('関数の定義', () => {
-      it('関数の変数へのバインド', (next) => {
-        /* #@range_begin(function_bound_to_variable) */
-        var id = (any) => {
+      it('恒等関数の定義', (next) => {
+        /* #@range_begin(identity_function_definition) */
+        var identity = (any) => {
           return any;
         };
-        /* #@range_end(function_bound_to_variable) */
+        expect(
+          identity(1)
+        ).to.eql(
+          1
+        );
+        /* #@range_end(identity_function_definition) */
         /* #@range_begin(identity_function_test) */
         expect(
-          id(1)
+          identity(1)
         ).to.eql(
           1
         );
         expect(
-          id("a")
+          identity("a")
         ).to.eql(
           "a"
         );
         /* #@range_end(identity_function_test) */
         next();
       });
+      it('引数を参照しない関数', (next) => {
+        /* #@range_begin(constant_function) */
+        var zero = (x) => {
+          return 0;
+        };
+        expect(
+          zero(1)
+        ).to.eql(
+          0
+        );
+        expect(
+          zero("a")
+        ).to.eql(
+          0
+        );
+        /* #@range_end(constant_function) */
+        /* #@range_begin(left_function) */
+        var left = (x,y) => {
+          return x;
+        };
+        expect(
+          left(1,2)
+        ).to.eql(
+          1
+        );
+        /* #@range_end(left_function) */
+        next();
+      });
+      it('関数の変数へのバインド', (next) => {
+        /* #@range_begin(function_bound_to_variable) */
+        var id = (any) => {
+          return any;
+        };
+        /* #@range_end(function_bound_to_variable) */
+        next();
+      });
     });
     describe('関数の適用', () => {
       describe('関数適用と置換ルール', () => {
         describe('関数の評価戦略', () => {
-          /* #@range_begin(strict_evaluation_in_javascript) */
-          var left = (x,y) => {
-            return x;
-          };
-          expect(
-            left(1, 2)
-          ).to.eql(
-            1
-          );
-          var infiniteLoop = (_) => {
-            return infiniteLoop(_);
-          };
+          it('JavaScriptの正格評価', (next) => {
+            /* #@range_begin(strict_evaluation_in_javascript) */
+            var left = (x,y) => {
+              return x;
+            };
+            expect(
+              left(1, 2)
+            ).to.eql(
+              1
+            );
+            var infiniteLoop = (_) => {
+              return infiniteLoop(_);
+            };
 
-          /* このテストは実行されると無限ループになるのでコメントアウトしています
-             expect(
-             left(1, infiniteLoop())
-             ).to.be.ok()
-          */
-          /* #@range_end(strict_evaluation_in_javascript) */
-
+            /* このテストは実行されると無限ループになるのでコメントアウトしています
+               expect(
+               left(1, infiniteLoop())
+               ).to.be.ok()
+            */
+            /* #@range_end(strict_evaluation_in_javascript) */
+            next();
+          });
+          it('条件文と遅延評価', (next) => {
+            /* #@range_begin(conditional_is_nonstrict) */
+            var infiniteLoop = () => {
+              return infiniteLoop();
+            };
+            
+            var conditional = (n) => {
+              if(n === 1) {
+                return true;
+              } else {
+                return infiniteLoop();
+              }
+            };
+            expect(
+              conditional(1) 
+            ).to.eql(
+              true
+            );
+            /* #@range_end(conditional_is_nonstrict) */
+            next();
+          });
+          it('乗算の遅延評価', (next) => {
+            /* #@range_begin(multiply_lazy_evaluation) */
+            var multiply = (x,y) => {
+              if(x() === 0){
+                return 0;
+              } else {
+                return x() * y();
+              }
+            };
+            var number = (n) => {
+              return () => {
+                return n;
+              };
+            };
+            expect(
+              multiply(number(0),number(3))
+            ).to.eql(
+              0
+            );
+            /* #@range_end(multiply_lazy_evaluation) */
+            next();
+          });
         });
         describe('thunkを使う', () => {
           /* #@range_begin(definition_thunk_force) */
@@ -218,8 +304,8 @@ describe('関数の使い方', () => {
                   return pattern.cons(head,tailThunk);
                 };
               },
-              // head:: STREAM -> MAYBE[STREAM]
-              head: (lazyList) => {
+              // head:: STREAM[T] -> T 
+              head: (lazyList) => {      // ストリーム型headの定義は、リスト型headと同じ
                 return match(lazyList,{
                   empty: (_) => {
                     return undefined;
@@ -229,102 +315,104 @@ describe('関数の使い方', () => {
                   }
                 });
               },
-              // tail:: STREAM -> MAYBE[STREAM]
+              // tail:: STREAM[T] -> STREAM[T] 
               tail: (lazyList) => {
                 return match(lazyList,{
                   empty: (_) => {
                     return undefined;
                   },
                   cons: (head, tailThunk) => {
-                    return tailThunk();
-                  }
-                });
-              },
-              map: (lazyList) => {
-                return (transform) => {
-                  return match(lazyList,{
-                    empty: (_) => {
-                      return stream.empty();
-                    },
-                    cons: (head,tailThunk) => {
-                      return stream.cons(transform(head),(_) => {
-                        return stream.map(tailThunk())(transform);
-                      });
-                    }
-                  });
-                };
-              },
-              toArray: (lazyList) => {
-                return match(lazyList,{
-                  empty: (_) => {
-                    return [];
-                  },
-                  cons: (head,tailThunk) => {
-                    return match(tailThunk(),{
-                      empty: (_) => {
-                        return [head];
-                      },
-                      cons: (head_,tailThunk_) => {
-                        return [head].concat(stream.toArray(tailThunk()));
-                      }
-                    });
+                    return tailThunk();  // サンクを評価する
                   }
                 });
               }
             };
             /* #@range_end(stream_with_thunk) */
-              // isEmpty: (lazyList) => {
-              //   return match(lazyList,{
-              //     empty: (_) => {
-              //       return true;
-              //     },
-              //     cons: (head,tailThunk) => {
-              //       return false;
-              //     }
-              //   });
-              // },
-              // map: (lazyList) => {
-              //   return (transform) => {
-              //     return match(lazyList,{
-              //       empty: (_) => {
-              //         return stream.empty();
-              //       },
-              //       cons: (head,tailThunk) => {
-              //         return stream.cons(transform(head),(_) => {
-              //           return stream.map(tailThunk())(transform)});
-              //       }
-              //     });
-              //   };
-              // },
-              // // ## stream#concat
-              // concat: (xs) => {
-              //   return (ysThunk) => {
-              //     return match(xs,{
-              //       empty: (_) => {
-              //         return ysThunk();
-              //       },
-              //       cons: (head,tailThunk) => {
-              //         return stream.cons(head,(_) => {
-              //           return stream.concat(tailThunk())(ysThunk);
-              //         });
-              //       }
-              //     });
-              //   };
-              // },
-              // // ## stream#flatten
-              // // flatten :: STREAM[STREAM[T]] => STREAM[T]
-              // flatten: (lazyList) => {
-              //   return match(lazyList,{
-              //     empty: (_) => {
-              //       return stream.empty();
-              //     },
-              //     cons: (head,tailThunk) => {
-              //       return stream.concat(head)((_) => {
-              //         return stream.flatten(tailThunk());
-              //       });
-              //     }
-              //   });
-              // }
+              //},
+              //map: (lazyList) => {
+                //return (transform) => {
+                  //return match(lazyList,{
+                    //empty: (_) => {
+                      //return stream.empty();
+                    //},
+                    //cons: (head,tailThunk) => {
+                      //return stream.cons(transform(head),(_) => {
+                        //return stream.map(tailThunk())(transform);
+                      //});
+                    //}
+                  //});
+                //};
+              //},
+              //toArray: (lazyList) => {
+                //return match(lazyList,{
+                  //empty: (_) => {
+                    //return [];
+                  //},
+                  //cons: (head,tailThunk) => {
+                    //return match(tailThunk(),{
+                      //empty: (_) => {
+                        //return [head];
+                      //},
+                      //cons: (head_,tailThunk_) => {
+                        //return [head].concat(stream.toArray(tailThunk()));
+                      //}
+                    //});
+                  //}
+                //});
+              //}
+            //};
+            // isEmpty: (lazyList) => {
+            //   return match(lazyList,{
+            //     empty: (_) => {
+            //       return true;
+            //     },
+            //     cons: (head,tailThunk) => {
+            //       return false;
+            //     }
+            //   });
+            // },
+            // map: (lazyList) => {
+            //   return (transform) => {
+            //     return match(lazyList,{
+            //       empty: (_) => {
+            //         return stream.empty();
+            //       },
+            //       cons: (head,tailThunk) => {
+            //         return stream.cons(transform(head),(_) => {
+            //           return stream.map(tailThunk())(transform)});
+            //       }
+            //     });
+            //   };
+            // },
+            // // ## stream#concat
+            // concat: (xs) => {
+            //   return (ysThunk) => {
+            //     return match(xs,{
+            //       empty: (_) => {
+            //         return ysThunk();
+            //       },
+            //       cons: (head,tailThunk) => {
+            //         return stream.cons(head,(_) => {
+            //           return stream.concat(tailThunk())(ysThunk);
+            //         });
+            //       }
+            //     });
+            //   };
+            // },
+            // // ## stream#flatten
+            // // flatten :: STREAM[STREAM[T]] => STREAM[T]
+            // flatten: (lazyList) => {
+            //   return match(lazyList,{
+            //     empty: (_) => {
+            //       return stream.empty();
+            //     },
+            //     cons: (head,tailThunk) => {
+            //       return stream.concat(head)((_) => {
+            //         return stream.flatten(tailThunk());
+            //       });
+            //     }
+            //   });
+            // }
             it("stream#cons", (next) => {
               // var lazyList = stream.cons(1, (_) => {
               //   return stream.cons(2,thunk(stream.empty)());
@@ -343,30 +431,30 @@ describe('関数の使い方', () => {
               /* #@range_end(stream_with_thunk_test) */
               next();
             });
-            it("stream#map", (next) => {
-              /* #@range_begin(stream_map_test) */
-              var lazyList = stream.cons('a', (_) => {
-                return stream.cons('b',(_) => {
-                  return stream.empty();
-                });
-              });
-              var capitalise = (ch) => {
-                return ch.toUpperCase();
-              };
+            //it("stream#map", (next) => {
+            //  /* #@range_begin(stream_map_test) */
+            //  var lazyList = stream.cons('a', (_) => {
+            //    return stream.cons('b',(_) => {
+            //      return stream.empty();
+            //    });
+            //  });
+            //  var capitalise = (ch) => {
+            //    return ch.toUpperCase();
+            //  };
 
-              expect(
-                stream.toArray(stream.map(lazyList)(capitalise))
-              ).to.eql(
-                ["A","B"]
-              );
-              /* #@range_end(stream_map_test) */
-              next();
-            });
+            //  expect(
+            //    stream.toArray(stream.map(lazyList)(capitalise))
+            //  ).to.eql(
+            //    ["A","B"]
+            //  );
+            //  /* #@range_end(stream_map_test) */
+            //  next();
+            //});
             describe("無限ストリーム", () => {
-              /* #@range_begin(infinite_stream) */
+              /* #@range_begin(infinite_one) */
               // ones = [1,1,1,1,...]
               var ones = stream.cons(1, (_) => {
-                return ones;
+                return ones; // onesを再帰呼出し
               });
               expect(
                 stream.head(ones)
@@ -378,7 +466,7 @@ describe('関数の使い方', () => {
               ).to.eql(
                 1
               );
-              /* #@range_end(infinite_stream) */
+              /* #@range_end(infinite_one) */
               /* #@range_begin(infinite_integer) */
               // ones = [1,2,3,4,...]
               var intgersFrom = (n) => {

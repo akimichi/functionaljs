@@ -283,9 +283,11 @@ describe('プログラムをコントロールする仕組み', () => {
       next();
     });
     describe('条件式を実装する', () => {
+      /* ##@range_begin(infiniteLoop) */
       var infiniteLoop = (_) => {
         return infiniteLoop(_);
       };
+      /* ##@range_end(infiniteLoop) */
       it('ifの非正格性', (next) => {
         /* ##@range_begin(if_nonstrict) */
         var infiniteLoop = (_) => {
@@ -399,12 +401,12 @@ describe('プログラムをコントロールする仕組み', () => {
           threeFold(2)
         ).to.eql(
           false
-        )
+        );
         expect(
           threeFold(3)
         ).to.eql(
           true
-        )
+        );
         /* #@range_end(multiplyOf)            */
         next();
       });

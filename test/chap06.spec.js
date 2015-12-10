@@ -953,19 +953,9 @@ describe('関数の使い方', () => {
   });
   describe('関数の純粋性', () => {
     describe('副作用が参照透過性を損なうこと', () => {
-      it('console.logが参照透過性を損なうこと', (next) => {
-        /* #@range_begin(log_destroys_referential_transparency) */
-        expect(
-          console.log("this is a test")
-        ).to.eql(
-          console.log("this is anoter test")
-        );
-        /* #@range_end(log_destroys_referential_transparency) */
-        next();
-      });
       describe('ファイル操作が参照透過性を損なうこと', () => {
         /* #@range_begin(fileio_destroys_referential_transparency) */
-        var fs = require('fs');
+        var fs = require('fs'); // fsモジュールを変数fsにバインドする
         before(() => { // テストの実行前に実行される
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
         });
@@ -979,12 +969,22 @@ describe('関数の使い方', () => {
           fs.writeFileSync('test/resources/file.txt', "This is another test.");
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
-          ).not.to.be( // notで否定をテストしている
-            "This is a test."
+          ).to.eql( 
+            "This is another test."
           );
           /* #@range_end(fileio_destroys_referential_transparency) */
           next();
         });
+      });
+      it('画面出力が参照透過性を損なうこと', (next) => {
+        /* #@range_begin(log_destroys_referential_transparency) */
+        expect(
+          console.log("this is a test")
+        ).to.eql(
+          console.log("this is anoter test")
+        );
+        /* #@range_end(log_destroys_referential_transparency) */
+        next();
       });
     });
     describe('副作用の分離', () => {
@@ -1026,10 +1026,9 @@ describe('関数の使い方', () => {
       it('tapコンビネーター', (next) => {
         /* #@range_begin(tap_combinator) */
         var tap = (target) => {
-          var original = target;
-          return function doSideEffect(sideEffect) {
+          //var original = target;
+          return (sideEffect) => {
             sideEffect(target);
-            expect(original).to.eql(target);
             return target;
           };
         };
@@ -1044,6 +1043,17 @@ describe('関数の使い方', () => {
         ).to.eql(
           1
         );
+        expect(
+          tap(target)(consoleSideEffect)
+        ).to.eql(
+          1
+        );
+        expect(
+          tap(2)(consoleSideEffect)
+        ).to.eql(
+          2
+        );
+        /* #@range_end(tap_combinator_test) */
         var updateSideEffect = (n) => {
           n = n + 1;
           return n;
@@ -1053,7 +1063,6 @@ describe('関数の使い方', () => {
         ).to.eql(
           target
         );
-        /* #@range_end(tap_combinator_test) */
         next();
       });
     });

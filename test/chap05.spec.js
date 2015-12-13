@@ -1431,7 +1431,7 @@ describe('プログラムをコントロールする仕組み', () => {
           /* #@range_begin(recursive_length_without_accumulator) */
           var length = (list) => {
             return match(list, {
-              empty: (_) => {
+              empty: (_) => {    // リストが空のときが終了条件となる
                 return 0;
               },
               cons: (head, tail) => {
@@ -1439,19 +1439,6 @@ describe('プログラムをコントロールする仕組み', () => {
               }
             });
           };
-          // var length = (list) => {
-          //   var lengthHelper = (seq, accumulator) => { // 蓄積変数を利用した補助関数
-          //     return match(seq, {
-          //       empty: (_) => {
-          //         return accumulator;
-          //       },
-          //       cons: (head, tail) => {
-          //         return lengthHelper(tail, accumulator + 1);
-          //       }
-          //     });
-          //   };
-          //   return lengthHelper(list, 0);  // 補助関数に蓄積変数を渡して呼び出す
-          // };
           /************************ テスト ************************/
           expect(
             length(cons(1,cons(2,cons(3,empty())))) // [1,2,3]の長さは 3

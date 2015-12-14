@@ -1148,7 +1148,7 @@ describe('プログラムをコントロールする仕組み', () => {
       var match = (exp, pattern) => {
         return exp.call(pattern, pattern);
       };
-      /* #@range_begin(algebraic_datatype) */
+      /* #@range_begin(expression_algebraic_datatype) */
       var num = (n) => {
         return (pattern) => {
           return pattern.num(n);
@@ -1164,6 +1164,8 @@ describe('プログラムをコントロールする仕組み', () => {
           return pattern.mul(exp1, exp2);
         };
       };
+      /* #@range_end(expression_algebraic_datatype) */
+      /* #@range_begin(expression_algebraic_datatype_recursion) */
       var calculate = (exp) => {
         return match(exp, { // パターンマッチを実行する
           num: (n) => {
@@ -1185,7 +1187,7 @@ describe('プログラムをコントロールする仕組み', () => {
       ).to.eql(
         7
       );
-      /* #@range_end(algebraic_datatype) */
+      /* #@range_end(expression_algebraic_datatype_recursion) */
       next();
     });
   });
@@ -1409,6 +1411,7 @@ describe('プログラムをコントロールする仕組み', () => {
               }
             });
           };
+          /**** テスト ****/
           expect(
             sum(empty(), 0)
           ).to.eql(
@@ -1425,6 +1428,40 @@ describe('プログラムをコントロールする仕組み', () => {
             6
           );
           /* #@range_end(recursive_sum) */
+          next();
+        });
+        it('蓄積変数を持たないsum関数', (next) => {
+          /* #@range_begin(recursive_sum_without_accumulator) */
+          var sum = (list) => {
+            var sumHelper = (list, accumulator) => {
+              return match(list, {
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return sumHelper(tail, accumulator + head);
+                }
+              });
+            };
+            return sumHelper(list,0);
+          };
+          /**** テスト ****/
+          expect(
+            sum(empty())
+          ).to.eql(
+            0
+          );
+          expect(
+            sum(cons(1,empty()))
+          ).to.eql(
+            1
+          );
+          expect(
+            sum(cons(1,cons(2,cons(3,empty()))))
+          ).to.eql(
+            6
+          );
+          /* #@range_end(recursive_sum_without_accumulator) */
           next();
         });
         it('蓄積変数を持たないlength関数', (next) => {

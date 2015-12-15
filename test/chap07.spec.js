@@ -574,6 +574,28 @@ describe('高階関数', () => {
       /* #@range_end(simple_curried_function) */
       next();
     });
+    it('カリー化されていない multiplyOf関数', (next) => {
+      /* #@range_begin(multiplyOf_uncurried) */
+      var multiplyOf = (n,m) => {
+        if(m % n === 0) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+      expect(
+        multiplyOf(2,4)
+      ).to.eql(
+        true
+      );
+      expect(
+        multiplyOf(3,4)
+      ).to.eql(
+        false
+      );
+      /* #@range_end(multiplyOf_uncurried) */
+      next();
+    });
     it('カリー化による関数の部品化', (next) => {
       /* #@range_begin(multiplyOf_curried) */
       var multiplyOf = (n) => {
@@ -607,12 +629,14 @@ describe('高階関数', () => {
       it('通常の関数をカリー化する', (next) => {
         /* #@range_begin(curry_function_definition) */
         var curry = (fun) => {
-          return function curried(x,optionalY){
+          return (x,optionalY) => {
             if(arguments.length > 1){
-              return fun.call(this, x,optionalY);
+              return fun(x, optionalY);
+              //return fun.call(this, x,optionalY);
             } else {
-              return function partiallyApplied(y) {
-                return fun.call(this, x,y);
+              return (y) =>  {
+                return fun(x, y);
+                // return fun.call(this, x,y);
               };
             }
           };
@@ -620,9 +644,8 @@ describe('高階関数', () => {
         var add = (x,y) => {
           return x + y;
         };
-        var curriedAdd = curry(add);
         expect(
-          curriedAdd(1)(2)
+          curry(add)(1)(2)
         ).to.eql(
           3
         );
@@ -696,21 +719,25 @@ describe('高階関数', () => {
         var negate = (x) => {
           return - x;
         };
-        var multiply = (x) => {
+        var add = (x) => {
           return (y) => {
-            return x * y;
+            return x + y;
+          };
+        };
+        var subtract = (x) => {
+          return (y) => {
+            return x - y;
           };
         };
         expect(
-          compose(negate)(multiply(2))(3)
+          compose(negate)(add(2))(3)
         ).to.eql(
-            -6
+            -5
         );
         /* #@range_end(compose_negate_multiply_successful) */
         next();
       });
       it('カリー化による関数の合成', (next) => {
-        /* #@range_begin(compose_and_uncurry) */
         var compose = (f) => {
           return (g) => {
             return (_) => {
@@ -726,6 +753,7 @@ describe('高階関数', () => {
             return result;
           };
         };
+        /* #@range_begin(compose_and_uncurry) */
         var negate = (x) => {
           return -x;
         };

@@ -189,16 +189,18 @@ var list  = {
     };
   },
   // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-  map: (seq, transform) => {
+  map: (seq) => {
     var self = this;
-    return match(seq,{
-      empty: (_) => {
-        return list.empty();
-      },
-      cons: (x,xs) => {
-        return list.cons(transform(x),list.map(xs,transform));
-      }
-    });
+    return (transform) => {
+      return match(seq,{
+        empty: (_) => {
+          return list.empty();
+        },
+        cons: (head,tail) => {
+          return list.cons(transform(head),list.map(tail)(transform));
+        }
+      });
+    };
   },
   /* #@range_begin(list_reverse) */
   reverse: (seq) => {
@@ -697,15 +699,21 @@ describe('高階関数', () => {
           };
         };
       };
-      var callee = (n) => {
-        return (callback) => {
-          return callback(n);
+      var subtract = (n) => {
+        return (m) => {
+          return n - m;
         };
       };
-      var succ = (n) => {
-        return n + 1;
-      };
-      expect(flip(callee)(succ)(2)).to.eql(3);
+      expect(
+        subtract(2)(1)
+      ).to.eql(
+        1
+      );
+      expect(
+        subtract(1)(2)
+      ).to.eql(
+        -1
+      );
       /* #@range_end(flip) */
       it('カリー化の合成で乗算と否定の合成は成功する', (next) => {
         /* #@range_begin(compose_negate_multiply_successful) */
@@ -892,6 +900,94 @@ describe('高階関数', () => {
       //   // );
       //   next();
       // });
+      it('再帰によるlast', (next) => {
+        /* #@range_begin(list_last_recursive) */
+        var last = (seq) => {
+          return match(seq, {
+            empty: (_) => {
+              return undefined;
+            },
+            cons: (head, tail) => {
+              return match(tail, {
+                empty: (_) => {
+                  return head;
+                },
+                cons: (head, _) => {
+                  return last(tail);
+                }
+              });
+            }
+          });
+        };
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          last(sequence)
+        ).to.eql(
+          4
+        );
+        /* #@range_end(list_last_recursive) */
+        next();
+      });
+      it('合成によるlast', (next) => {
+        /* #@range_begin(list_last_compose) */
+        var last = (seq) => {
+          return compose(list.head)(list.reverse)(seq);
+        };
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          last(sequence)
+        ).to.eql(
+          4
+        );
+        /* #@range_end(list_last_compose) */
+        next();
+      });
+      it('length関数の抽象的な定義', (next) => {
+        /* #@range_begin(abstract_length) */
+        // length = sum . map(\x -> 1)
+        var sum = (seq) => {
+          var sumHelper = (seq, accumulator) => {
+            return match(seq,{
+              empty: (_) => {
+                return accumulator;
+              },
+              cons: (head, tail) => {
+                return sumHelper(tail, accumulator + head);
+              }
+            });
+          };
+          return sumHelper(seq,0);
+        };
+        var one = (_) => {
+          return 1;
+        };
+        var length = (seq) => {
+          return compose(sum)(flip(list.map)(one))(seq);
+        };
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          length(sequence)
+        ).to.eql(
+          4
+        );
+        /* #@range_end(abstract_length) */
+        next();
+      });
+      it('init関数の抽象的な定義', (next) => {
+        /* #@range_begin(abstract_init) */
+        // init = reverse . tail . reverse 
+        var init = (seq) => {
+		  return compose(list.reverse)(compose(list.tail)(list.reverse))(seq);
+        };
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          list.toArray(init(sequence))
+        ).to.eql(
+          [1,2,3]
+        );
+        /* #@range_end(abstract_init) */
+        next();
+      });
     }); // 関数合成のカリー化
     it('リストの逆順を求める', (next) => {
       var seq = {

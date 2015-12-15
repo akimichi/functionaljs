@@ -1810,6 +1810,45 @@ describe('プログラムをコントロールする仕組み', () => {
         });
         
       });
+      describe('帰納法による証明', () => {
+        var length = (list) => {
+          return match(list, {
+            empty: (_) => {    // リストが空のときが終了条件となる
+              return 0;
+            },
+            cons: (head, tail) => {
+              return 1 + length(tail);
+            }
+          });
+        };
+        var concat = (xs, ys) => {
+          return match(xs,{
+            empty: (_) => {
+              return ys;
+            },
+            cons: (head, tail) => {
+              return list.cons(head,
+                               concat(tail,ys));
+            }
+          });
+        };
+        it('リストの長さに関する命題P', (next) => {
+          /* #@range_begin(statement_p_test) */
+          var xs = list.cons(1,
+                             list.cons(2,
+                                       list.empty()));
+          var ys = list.cons(3,
+                             list.cons(4,
+                                       list.empty()));
+          expect(
+            length(concat(xs, ys)) 
+          ).to.eql(
+            length(xs) + length(ys)
+          );
+          /* #@range_end(statement_p_test) */
+          next();
+        });
+      });
     }); // 再帰による反復処理
   });
 });

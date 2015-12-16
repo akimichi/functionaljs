@@ -1064,6 +1064,31 @@ describe('高階関数', () => {
     });
   });
   describe('クロージャーで状態をカプセル化する', () => {
+    describe('単純なクロージャーの例', (next) => {
+      it('counter関数の例', (next) => {
+        /* #@range_begin(counter_as_closure) */
+        var counter = (init) => {
+          var _init = init;
+          return (_) => {
+            _init = _init + 1;
+            return _init;
+          };
+        };
+        var counterFromZero = counter(0);
+        expect(
+          counterFromZero()
+        ).to.eql( 
+          1
+        );
+        expect(
+          counterFromZero()
+        ).to.eql( 
+          2
+        );
+        /* #@range_end(counter_as_closure) */
+        next();
+      });
+    });
     describe('関数とデータの類似性', (next) => {
       it('関数とリストの類似性', (next) => {
         var match = (data, pattern) => {

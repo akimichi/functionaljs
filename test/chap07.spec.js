@@ -943,6 +943,9 @@ describe('高階関数', () => {
         next();
       });
       it('length関数の抽象的な定義', (next) => {
+        var alwaysOne = (x) => {
+          return 1;
+        };
         /* #@range_begin(abstract_length) */
         // length = sum . map(\x -> 1)
         var sum = (seq) => {
@@ -958,11 +961,8 @@ describe('高階関数', () => {
           };
           return sumHelper(seq,0);
         };
-        var one = (_) => {
-          return 1;
-        };
         var length = (seq) => {
-          return compose(sum)(flip(list.map)(one))(seq);
+          return compose(sum)(flip(list.map)(alwaysOne))(seq);
         };
         var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(

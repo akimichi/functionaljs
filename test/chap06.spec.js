@@ -119,21 +119,21 @@ describe('関数の使い方', () => {
         next();
       });
       it('引数を参照しない関数', (next) => {
-        /* #@range_begin(constant_function) */
-        var zero = (x) => {
-          return 0;
+        /* #@range_begin(constant_one_function) */
+        var alwaysOne = (x) => {
+          return 1;
         };
         expect(
-          zero(1)
+          alwaysOne(1)
         ).to.eql(
-          0
+          1
         );
         expect(
-          zero("a")
+          alwaysOne("a")
         ).to.eql(
-          0
+          1
         );
-        /* #@range_end(constant_function) */
+        /* #@range_end(constant_one_function) */
         /* #@range_begin(left_function) */
         var left = (x,y) => {
           return x;

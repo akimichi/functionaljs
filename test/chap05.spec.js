@@ -187,17 +187,17 @@ var list  = {
   },
   /* #@range_end(list_filter) */
   toArray: (seq) => {
-    var toArrayAux = (seq,accumulator) => {
+    var toArrayHelper = (seq,accumulator) => {
       return match(seq, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
         cons: (head, tail) => {
-          return toArrayAux(tail, accumulator.concat(head));
+          return toArrayHelper(tail, accumulator.concat(head));
         }
       });
     };
-    return toArrayAux(seq, []);
+    return toArrayHelper(seq, []);
   }
 };
 
@@ -1010,12 +1010,12 @@ describe('プログラムをコントロールする仕組み', () => {
     it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
       /* リストの代数的データ型 */
-      var empty = (_) => {
+      var empty = (_) => { // 空のリスト
         return (pattern) => {
           return pattern.empty(_);
         };
       };
-      var cons = (value, list) => {
+      var cons = (value, list) => { // 空でないリスト
         return (pattern) => {
           return pattern.cons(value, list);
         };
@@ -1028,8 +1028,9 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       /* #@range_end(match_in_algebraic_datatype) */
       /* #@range_begin(list_function_using_algebraic_datatype) */
-      var isEmpty = (list) => {
-        return match(list, { // match関数で分岐する
+      // 引数 alist に渡されたリストが空のリストかどうかを判定する
+      var isEmpty = (alist) => {
+        return match(alist, { // match関数で分岐する
           empty: (_) => {
             return true;
           },
@@ -1038,18 +1039,20 @@ describe('プログラムをコントロールする仕組み', () => {
           }
         });
       };
-      var head = (list) => {
-        return match(list, {
+      // 引数alistに渡されたリストの先頭の要素を返す
+      var head = (alist) => {
+        return match(alist, {
           empty: (_) => {
             return undefined; // 空のリストには先頭要素はありません
           },
           cons: (head, tail) => {
             return head;
-          },
+          }
         });
       };
-      var tail = (list) => {
-        return match(list, {
+      // 引数 alist に渡されたリストの末尾のリストを返す
+      var tail = (alist) => {
+        return match(alist, {
           empty: (_) => {
             return undefined;  // 空のリストには末尾要素はありません
           },
@@ -1172,10 +1175,12 @@ describe('プログラムをコントロールする仕組み', () => {
             return n;
           },
           add: (exp1, exp2) => {
-            return calculate(exp1) + calculate(exp2); // calculateの再帰呼び出し
+            // calculateを再帰呼び出して足し算を実行する
+            return calculate(exp1) + calculate(exp2); 
           },
+            // calculateを再帰呼び出してかけ算を実行する
           mul: (exp1, exp2) => {
-            return calculate(exp1) * calculate(exp2); // calculateの再帰呼び出し
+            return calculate(exp1) * calculate(exp2); 
           }
         });
       };
@@ -1300,11 +1305,11 @@ describe('プログラムをコントロールする仕組み', () => {
       describe('複利法の例', () => {
         // f(n) = f(n-1) * (1 + r)
         /* #@range_begin(compound_interest) */
-        var compoundInterest = (principal, interest, nthYear) => {
+        var compoundInterest = (a, r, nthYear) => {
           if (nthYear === 0) {
-            return principal;
+            return a;
           } else {
-            return compoundInterest(principal, interest, nthYear - 1) * (1 + interest);
+            return compoundInterest(a, r, nthYear - 1) * (1 + r);
           }
         };
         /* #@range_end(compound_interest) */
@@ -1401,8 +1406,8 @@ describe('プログラムをコントロールする仕組み', () => {
           );
           /* #@range_end(recursive_length) */
           /* #@range_begin(recursive_sum) */
-          var sum = (list, accumulator) => {
-            return match(list, {
+          var sum = (alist, accumulator) => {
+            return match(alist, {
               empty: (_) => {
                 return accumulator;
               },
@@ -1450,11 +1455,6 @@ describe('プログラムをコントロールする仕組み', () => {
             sum(empty())
           ).to.eql(
             0
-          );
-          expect(
-            sum(cons(1,empty()))
-          ).to.eql(
-            1
           );
           expect(
             sum(cons(1,cons(2,cons(3,empty()))))
@@ -1578,17 +1578,17 @@ describe('プログラムをコントロールする仕組み', () => {
           
           /* #@range_begin(list_toArray) */
           var toArray = (seq,callback) => {
-            var toArrayAux = (seq,accumulator) => {
+            var toArrayHelper = (seq,accumulator) => {
               return match(seq, {
                 empty: (_) => {
-                  return accumulator;  // 空のリストの場合は終了
+                  return accumulator;  // 空のリストの場合は accumulator を返して終了する
                 },
-                cons: (head, tail) => {
-                  return toArrayAux(tail, accumulator.concat(head));
+                cons: (head, tail) => { // 空のリストでなければ、再帰的に処理する
+                  return toArrayHelper(tail, accumulator.concat(head));
                 }
               });
             };
-            return toArrayAux(seq, []);
+            return toArrayHelper(seq, []);
           };
           /* #@range_end(list_toArray) */
           /* #@range_begin(list_map_test) */
@@ -1640,10 +1640,10 @@ describe('プログラムをコントロールする仕組み', () => {
           var concat = (xs, ys) => {
             return match(xs,{
               empty: (_) => {
-                return ys;
+                return ys; // xsが空の場合は、ysを返す
               },
-              cons: (head, tail) => {
-                return list.cons(head,
+              cons: (head, tail) => { // xs が空でない場合は、xs と ys を連結させる
+                return list.cons(head,     
                                  concat(tail,ys));
               }
             });
@@ -1658,35 +1658,13 @@ describe('プログラムをコントロールする仕組み', () => {
                              list.cons(4,
                                        list.empty()));
           expect(
-            toArray(concat(xs,ys))
+            toArray(concat(xs,ys)) // toArray関数でリストを配列に変換する
           ).to.eql(
             [1,2,3,4]
           );
           /* #@range_end(list_concat_test) */
           next();
         });
-      });
-      describe('sumの例', () => {
-        /* #@range_begin(recursive_sum) */
-        var sum = (alist, accumulator) => {
-          if (list.isEmpty(alist)) {
-            return accumulator;
-          } else {
-            var x = list.head(alist);
-            var xs = list.tail(alist);
-            return sum(xs, accumulator + x);
-          }
-        };
-        /* #@range_end(recursive_sum) */
-        var alist = list.cons(1,
-                              list.cons(2,
-                                        list.cons(3,
-                                                  list.empty)));
-        expect(
-          sum(alist, 0)
-        ).to.eql(
-          6
-        );
       });
       describe('maximumの例', () => {
         /* #@range_begin(recursive_maximum) */

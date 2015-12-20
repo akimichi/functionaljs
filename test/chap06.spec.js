@@ -1080,7 +1080,8 @@ describe('関数の使い方', () => {
       describe('ファイル操作が参照透過性を損なうこと', () => {
         /* #@range_begin(fileio_destroys_referential_transparency) */
         var fs = require('fs'); // fsモジュールを変数fsにバインドする
-        before(() => { // テストの実行前に実行される
+        // テストの実行前に実行され、あらかじめ "This is a test." という文字列を file.txtに書きこんでおく。
+        before(() => { 
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
         });
         it('ファイルを操作する', (next) => {

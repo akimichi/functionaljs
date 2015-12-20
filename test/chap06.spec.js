@@ -555,8 +555,27 @@ describe('関数の使い方', () => {
                         }
                       }
                     });
-                  }
+                  },
                   /* #@range_end(stream_take) */
+                  /* #@range_begin(stream_filter) */
+                  // filter :: (STREAM[T], FUN(ANY=> BOOL) => STREAM[T])
+                  filter: (astream,predicate) => {
+                    return match(astream,{
+                      empty: (_) => {
+                        return stream.empty();
+                      },
+                      cons: (head,tailThunk) => {
+                        if(predicate(head)){
+                          return stream.cons(head,(_) => {
+                            return stream.filter(tailThunk(),predicate);
+                          });
+                        } else {
+                          return stream.filter(tailThunk(),predicate);
+                        }
+                      }
+                    });
+                  }
+                  /* #@range_end(stream_filter) */
                 };
                 expect(
                   stream.head(integersFrom(1))
@@ -575,6 +594,24 @@ describe('関数の使い方', () => {
                   [1,2,3,4]
                 );
                 /* #@range_end(infinite_integer_test) */
+                /* #@range_begin(stream_filter_test) */
+                expect(
+                  list.toArray(stream.take(integersFrom(1), 4))
+                ).to.eql(
+                  [1,2,3,4]
+                );
+                /* #@range_end(stream_filter_test) */
+                /* #@range_begin(infinite_even_integer) */
+                var even = (n) => {
+                  return 0 === (n % 2);
+                };
+                var evenIntegers = stream.filter(integersFrom(1),even);
+                expect(
+                  list.toArray(stream.take(evenIntegers, 4))
+                ).to.eql(
+                  [ 2, 4, 6, 8 ]
+                );
+                /* #@range_end(infinite_even_integer) */
                 next();
               });
             });

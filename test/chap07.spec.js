@@ -508,27 +508,24 @@ var stream = {
       });
     };
   },
-  /* #@range_begin(stream_filter) */
-  filter: (lazyList) => {
-	return (predicate) => {
-      expect(predicate).to.a('function');
-	  return match(lazyList,{
-		empty: (_) => {
+  filter: (astream) => {
+    return (predicate) => {
+      return match(astream,{
+        empty: (_) => {
           return stream.empty();
-		},
-		cons: (head,tailThunk) => {
-		  if(predicate(head)){
-			return stream.cons(head,(_) => {
-			  return stream.filter(tailThunk())(predicate);
-			});
-		  } else {
-			return stream.filter(tailThunk())(predicate);
-		  }
-		}
-	  });
-	};
+        },
+        cons: (head,tailThunk) => {
+          if(predicate(head)){
+            return stream.cons(head,(_) => {
+              return stream.filter(tailThunk())(predicate);
+            });
+          } else {
+            return stream.filter(tailThunk())(predicate);
+          }
+        }
+      });
+    };
   }
-  /* #@range_end(stream_filter) */
 }; // stream
 
 describe('streamのテスト', () => {

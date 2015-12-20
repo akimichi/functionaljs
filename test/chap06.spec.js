@@ -558,7 +558,7 @@ describe('関数の使い方', () => {
                   },
                   /* #@range_end(stream_take) */
                   /* #@range_begin(stream_filter) */
-                  // filter :: (STREAM[T], FUN(ANY=> BOOL) => STREAM[T])
+                  // filter :: (STREAM[T], FUN(T => BOOL)) => STREAM[T]
                   filter: (astream,predicate) => {
                     return match(astream,{
                       empty: (_) => {

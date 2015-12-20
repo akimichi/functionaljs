@@ -98,11 +98,6 @@ describe('関数の使い方', () => {
         var identity = (any) => {
           return any;
         };
-        expect(
-          identity(1)
-        ).to.eql(
-          1
-        );
         /* #@range_end(identity_function_definition) */
         /* #@range_begin(identity_function_test) */
         expect(
@@ -190,7 +185,7 @@ describe('関数の使い方', () => {
               if(n === 1) {
                 return true;
               } else {
-                return infiniteLoop();
+                return infiniteLoop(); // 条件文が真の場合には評価される
               }
             };
             expect(
@@ -211,7 +206,7 @@ describe('関数の使い方', () => {
               }
             };
             var number = (n) => {
-              return () => {
+              return () => { // サンクを返す
                 return n;
               };
             };
@@ -293,36 +288,28 @@ describe('関数の使い方', () => {
             var stream = {
               empty: (_) => {
                 return (pattern) => {
-                  expect(pattern).to.an('object');
                   return pattern.empty();
                 };
               },
               cons: (head,tailThunk) => {
-                expect(tailThunk).to.a('function');
                 return (pattern) => {
-                  expect(pattern).to.an('object');
                   return pattern.cons(head,tailThunk);
                 };
               },
               // head:: STREAM[T] -> T 
-              head: (lazyList) => {      // ストリーム型headの定義は、リスト型headと同じ
+              // ストリーム型headの定義は、リスト型headと同じ
+              head: (lazyList) => {      
                 return match(lazyList,{
-                  empty: (_) => {
-                    return undefined;
-                  },
-                  cons: (value, tailThunk) => {
-                    return value;
-                  }
+                  empty: (_) => { return undefined; },
+                  cons: (value, tailThunk) => { return value; }
                 });
               },
               // tail:: STREAM[T] -> STREAM[T] 
               tail: (lazyList) => {
                 return match(lazyList,{
-                  empty: (_) => {
-                    return undefined;
-                  },
+                  empty: (_) => { return undefined; },
                   cons: (head, tailThunk) => {
-                    return tailThunk();  // サンクを評価する
+                    return tailThunk();  // ここで初めてサンクを評価する
                   }
                 });
               }
@@ -469,23 +456,123 @@ describe('関数の使い方', () => {
               /* #@range_end(infinite_one) */
               /* #@range_begin(infinite_integer) */
               // ones = [1,2,3,4,...]
-              var intgersFrom = (n) => {
+              var integersFrom = (n) => {
                 return stream.cons(n, (_) => {
-                  return intgersFrom(n + 1);
+                  return integersFrom(n + 1);
                 });
               };
               /* #@range_end(infinite_integer) */
               it("無限の整数列をテストする", (next) => {
-                /* #@range_begin(infinite_integer_test) */
+                var list = {
+                  match: (data, pattern) => {
+                    return data(pattern);
+                  },
+                  empty: (_) => {
+                    return (pattern) => {
+                      return pattern.empty();
+                    };
+                  },
+                  cons: (value, list) => {
+                    return (pattern) => {
+                      return pattern.cons(value, list);
+                    };
+                  },
+                  isEmpty: (list) => {
+                    return match(list, { // match関数で分岐する
+                      empty: true,
+                      cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+                        return false;
+                      }
+                    });
+                  },
+                  head: (list) => {
+                    return match(list, {
+                      empty: undefined, // 空のリストには先頭要素はありません
+                      cons: (head, tail) => {
+                        return head;
+                      }
+                    });
+                  },
+                  tail: (list) => {
+                    return match(list, {
+                      empty: undefined,  // 空のリストには末尾要素はありません
+                      cons: (head, tail) => {
+                        return tail;
+                      }
+                    });
+                  },
+                  toArray: (alist) => {
+                    var toArrayAux = (alist,accumulator) => {
+                      return match(alist, {
+                        empty: (_) => {
+                          return accumulator;  
+                        },
+                        cons: (head, tail) => {
+                          return toArrayAux(tail, accumulator.concat(head));
+                        }
+                      });
+                    };
+                    return toArrayAux(alist, []);
+                  }
+                };
+                var stream = {
+                  empty: (_) => {
+                    return (pattern) => {
+                      return pattern.empty();
+                    };
+                  },
+                  cons: (head,tailThunk) => {
+                    return (pattern) => {
+                      return pattern.cons(head,tailThunk);
+                    };
+                  },
+                  head: (lazyList) => {      
+                    return match(lazyList,{
+                      empty: (_) => { return undefined; },
+                      cons: (value, tailThunk) => { return value; }
+                    });
+                  },
+                  tail: (lazyList) => {
+                    return match(lazyList,{
+                      empty: (_) => { return undefined; },
+                      cons: (head, tailThunk) => {
+                        return tailThunk();  // ここで初めてサンクを評価する
+                      }
+                    });
+                  },
+                  /* #@range_begin(stream_take) */
+                  // take:: (STREAM[T], NUM) => LIST[T]
+                  take: (astream, n) => {
+                    return match(astream,{
+                      empty: (_) => { 
+                        return list.empty();
+                      },
+                      cons: (head,tailThunk) => {
+                        if(n === 0) {
+                          return list.empty();
+                        } else {
+                          return list.cons(head,stream.take(tailThunk(),(n -1)));
+                        }
+                      }
+                    });
+                  }
+                  /* #@range_end(stream_take) */
+                };
                 expect(
-                  stream.head(intgersFrom(1))
+                  stream.head(integersFrom(1))
                 ).to.eql(
                   1
                 );
                 expect(
-                  stream.head(stream.tail(intgersFrom(1)))
+                  stream.head(stream.tail(integersFrom(1)))
                 ).to.eql(
                   2
+                );
+                /* #@range_begin(infinite_integer_test) */
+                expect(
+                  list.toArray(stream.take(integersFrom(1), 4))
+                ).to.eql(
+                  [1,2,3,4]
                 );
                 /* #@range_end(infinite_integer_test) */
                 next();

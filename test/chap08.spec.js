@@ -298,13 +298,13 @@ describe('関数型言語を作る', () => {
               //            return (callback) => {
               for (var key in object) {
                 switch (key){
-	            case "number":
+                case "number":
                   return number(parseInt(object[key],10));
-		          break;
-	            default:
-		          throw new Error();
-		          break;
-	            }
+                  break;
+                default:
+                  throw new Error();
+                  break;
+                }
               }
               //            };
             };
@@ -332,7 +332,7 @@ describe('関数型言語を作る', () => {
             // event.on("number",(value) => {
             //   return number(value);
             // }, (exp) => {
-              
+            
             // });
             // event.on("variable",(value) => {
             //   return variable(value);
@@ -451,17 +451,17 @@ describe('関数型言語を作る', () => {
     //   });
     //   it('変数を評価する', (next) => {
     //     var env = extendEnv("x",1, emptyEnv);
-	//   	match(evaluate(exp.variable("x"), env), {
-	//   	  value: (answer) => {
-	//   		expect(answer).to.eql(1);
-	//   	  }
-	//   	});
-	//   	// 自由変数の場合
-	//   	match(evaluate(exp.variable("y"), env), {
-	//   	  value: (answer) => {
-	//   		expect(answer).to.eql(undefined);
-	//   	  }
-	//   	});
+    //   	match(evaluate(exp.variable("x"), env), {
+    //   	  value: (answer) => {
+    //   		expect(answer).to.eql(1);
+    //   	  }
+    //   	});
+    //   	// 自由変数の場合
+    //   	match(evaluate(exp.variable("y"), env), {
+    //   	  value: (answer) => {
+    //   		expect(answer).to.eql(undefined);
+    //   	  }
+    //   	});
     //     next();
     //   });
     //   it('constant関数', (next) => {
@@ -474,11 +474,11 @@ describe('関数型言語を作る', () => {
     //     );
     //     // (λx.1)(2)
     //     var appliedExpression = exp.application(constant, exp.number(2));
-	//   	match(evaluate(appliedExpression, emptyEnv), {
-	//   	  value: (answer) => {
-	//   		expect(answer).to.eql(undefined);
-	//   	  }
-	//   	});
+    //   	match(evaluate(appliedExpression, emptyEnv), {
+    //   	  value: (answer) => {
+    //   		expect(answer).to.eql(undefined);
+    //   	  }
+    //   	});
     //     next();
     //   });
     // }); // 式と値を分離した評価器
@@ -560,26 +560,26 @@ describe('関数型言語を作る', () => {
             return continues(rator(rand));
           }
         });
-	  };
-	  describe('継続渡し評価器をテストする', () => {
-	  	var returns = (result) => {
-	  	  return result;
-	  	};
+      };
+      describe('継続渡し評価器をテストする', () => {
+        var returns = (result) => {
+          return result;
+        };
         it('数値を評価する', (next) => {
           expect(
             evaluateCPS(exp.number(2), emptyEnv, returns)
           ).to.eql(2);
-	  	  next();
+          next();
         });
         it('変数を評価する', (next) => {
           var env = extendEnv("x",1, emptyEnv, returns);
-	  	  expect(
+          expect(
             evaluateCPS(exp.variable("x"), env, returns)
           ).to.eql(
             1
           );
-	  	  // 自由変数の場合は、 abortが返る
-	  	  expect(
+          // 自由変数の場合は、 abortが返る
+          expect(
             evaluateCPS(exp.variable("y"), env, returns)
           ).to.eql(
             new Error("y not found")
@@ -593,9 +593,9 @@ describe('関数型言語を作る', () => {
           ).to.a(
             'function'
           );
-	  	  // (λx.1)(2)
+          // (λx.1)(2)
           var applied = exp.application(constant, exp.number(2));
-	  	  expect(
+          expect(
             evaluateCPS(applied, emptyEnv, returns)
           ).to.eql(
             1
@@ -610,9 +610,9 @@ describe('関数型言語を作る', () => {
           ).to.a(
             'function'
           );
-	  	  // (λx.x)(1) = 1 */
-	  	  var appliedExpression = exp.application(identity, exp.number(1));
-	  	  expect(
+          // (λx.x)(1) = 1 */
+          var appliedExpression = exp.application(identity, exp.number(1));
+          expect(
             evaluateCPS(appliedExpression, emptyEnv, returns)
           ).to.eql(
             1
@@ -626,25 +626,25 @@ describe('関数型言語を作る', () => {
           /* λx.λy.y */
           var falseFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("y")));
           var not = exp.lambda(exp.variable("x"),
-                           exp.application(
-                             exp.application(
-                               exp.variable("x"),falseFun),
-                             trueFun));
-          var and = exp.lambda(exp.variable("x"),
-                           exp.lambda(exp.variable("y"),
-                                  exp.application(
-                                    exp.application(exp.variable("x"),exp.variable("y")),
-                                    falseFun)));
-          var or = exp.lambda(exp.variable("x"),
-                          exp.lambda(exp.variable("y"),
+                               exp.application(
                                  exp.application(
-                                   exp.application(exp.variable("x"),trueFun),
-                                   exp.variable("y"))));
-          var cond = exp.lambda(exp.variable("pred"),
-                            exp.lambda(exp.variable("x"),
-                                   exp.lambda(exp.variable("y"),
+                                   exp.variable("x"),falseFun),
+                                 trueFun));
+          var and = exp.lambda(exp.variable("x"),
+                               exp.lambda(exp.variable("y"),
                                           exp.application(
-                                            exp.application(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
+                                            exp.application(exp.variable("x"),exp.variable("y")),
+                                            falseFun)));
+          var or = exp.lambda(exp.variable("x"),
+                              exp.lambda(exp.variable("y"),
+                                         exp.application(
+                                           exp.application(exp.variable("x"),trueFun),
+                                           exp.variable("y"))));
+          var cond = exp.lambda(exp.variable("pred"),
+                                exp.lambda(exp.variable("x"),
+                                           exp.lambda(exp.variable("y"),
+                                                      exp.application(
+                                                        exp.application(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
           // (λx.λy.x)(1)(0) = 1
           expect(
             evaluateCPS(
@@ -681,10 +681,10 @@ describe('関数型言語を作る', () => {
           next();
         });
         it('raiseを使う', (next) => {
-	  	  // (λx.raise)(2)
+          // (λx.raise)(2)
           var applied = exp.application(exp.lambda(exp.variable("x"),exp.raise("exception")),
                                         exp.number(2));
-	  	  expect(
+          expect(
             evaluateCPS(applied, emptyEnv, returns)
           ).to.eql(
             new Error("exception")
@@ -766,11 +766,11 @@ describe('関数型言語を作る', () => {
           variable: (name) => {
             var found = lookupEnv(name, env);
             if(found === undefined){
-               return continuesInFailure(new Error(name + " not found"));
-               // return new Error(name + " not found");
-             } else {
-               return continues(found);
-             }
+              return continuesInFailure(new Error(name + " not found"));
+              // return new Error(name + " not found");
+            } else {
+              return continues(found);
+            }
           },
           /* λ式の評価 */
           lambda: (exp, bodyExp) => {
@@ -798,28 +798,28 @@ describe('関数型言語を作る', () => {
         });
         /* #@range_end(continuation_passing_interpreter_evaluate) */
       };
-	  describe('例外捕捉評価器をテストする', () => {
-	  	var continuesNormally = (result) => {
-	  	  return result;
-	  	};
-	  	var continuesAbnormally = (exception) => {
+      describe('例外捕捉評価器をテストする', () => {
+        var continuesNormally = (result) => {
+          return result;
+        };
+        var continuesAbnormally = (exception) => {
           return exception;
-	  	};
+        };
         it('数値を評価する', (next) => {
           expect(
             evaluateCPS(exp.number(2), emptyEnv, continuesNormally, continuesAbnormally)
           ).to.eql(2);
-	  	  next();
+          next();
         });
         it('変数を評価する', (next) => {
           var env = extendEnv("x",1, emptyEnv, continuesNormally, continuesAbnormally);
-	  	  expect(
+          expect(
             evaluateCPS(exp.variable("x"), env, continuesNormally, continuesAbnormally)
           ).to.eql(
             1
           );
-	  	  // 自由変数の場合は、 例外が返る
-	  	  expect(
+          // 自由変数の場合は、 例外が返る
+          expect(
             evaluateCPS(exp.variable("y"), env, continuesNormally, continuesAbnormally)
           ).to.eql(
             new Error("y not found")
@@ -833,9 +833,9 @@ describe('関数型言語を作る', () => {
           ).to.a(
             'function'
           );
-	  	  // (λx.1)(2)
+          // (λx.1)(2)
           var applied = exp.application(constant, exp.number(2));
-	  	  expect(
+          expect(
             evaluateCPS(applied, emptyEnv, continuesNormally, continuesAbnormally)
           ).to.eql(
             1
@@ -850,9 +850,9 @@ describe('関数型言語を作る', () => {
           ).to.a(
             'function'
           );
-	  	  // (λx.x)(1) = 1 */
-	  	  var appliedExpression = exp.application(identity, exp.number(1));
-	  	  expect(
+          // (λx.x)(1) = 1 */
+          var appliedExpression = exp.application(identity, exp.number(1));
+          expect(
             evaluateCPS(appliedExpression, emptyEnv, continuesNormally, continuesAbnormally)
           ).to.eql(
             1
@@ -866,25 +866,25 @@ describe('関数型言語を作る', () => {
           /* λx.λy.y */
           var falseFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("y")));
           var not = exp.lambda(exp.variable("x"),
-                           exp.application(
-                             exp.application(
-                               exp.variable("x"),falseFun),
-                             trueFun));
-          var and = exp.lambda(exp.variable("x"),
-                           exp.lambda(exp.variable("y"),
-                                  exp.application(
-                                    exp.application(exp.variable("x"),exp.variable("y")),
-                                    falseFun)));
-          var or = exp.lambda(exp.variable("x"),
-                          exp.lambda(exp.variable("y"),
+                               exp.application(
                                  exp.application(
-                                   exp.application(exp.variable("x"),trueFun),
-                                   exp.variable("y"))));
-          var cond = exp.lambda(exp.variable("pred"),
-                            exp.lambda(exp.variable("x"),
-                                   exp.lambda(exp.variable("y"),
+                                   exp.variable("x"),falseFun),
+                                 trueFun));
+          var and = exp.lambda(exp.variable("x"),
+                               exp.lambda(exp.variable("y"),
                                           exp.application(
-                                            exp.application(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
+                                            exp.application(exp.variable("x"),exp.variable("y")),
+                                            falseFun)));
+          var or = exp.lambda(exp.variable("x"),
+                              exp.lambda(exp.variable("y"),
+                                         exp.application(
+                                           exp.application(exp.variable("x"),trueFun),
+                                           exp.variable("y"))));
+          var cond = exp.lambda(exp.variable("pred"),
+                                exp.lambda(exp.variable("x"),
+                                           exp.lambda(exp.variable("y"),
+                                                      exp.application(
+                                                        exp.application(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
           // (λx.λy.x)(1)(0) = 1
           expect(
             evaluateCPS(
@@ -930,20 +930,20 @@ describe('関数型言語を作る', () => {
             new Error("exception"), // caughtException
             exp.number(1) // failSafeExp
           );
-	  	  expect(
+          expect(
             evaluateCPS(tryExpression, emptyEnv, continuesNormally, continuesAbnormally)
           ).to.eql(
             1
           );
-	  	  // (λx.tryWith(raise, exception , 1))(0) = 1
+          // (λx.tryWith(raise, exception , 1))(0) = 1
           var catchException = exp.application(exp.lambda(exp.variable("x"),
-                                                   exp.tryWith(
-                                                     exp.raise(new Error("exception")),
-                                                     new Error("exception"),
-                                                     exp.number(1)
-                                                   )),
-                                        exp.number(0));
-	  	  expect(
+                                                          exp.tryWith(
+                                                            exp.raise(new Error("exception")),
+                                                            new Error("exception"),
+                                                            exp.number(1)
+                                                          )),
+                                               exp.number(0));
+          expect(
             evaluateCPS(catchException, emptyEnv, continuesNormally, continuesAbnormally)
           ).to.eql(
             1

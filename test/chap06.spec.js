@@ -1162,14 +1162,13 @@ describe('関数の使い方', () => {
         var consoleSideEffect = (any) => {
           console.log(any);
         };
-        var target = 1;
         expect(
-          tap(target)(consoleSideEffect)
+          tap(1)(consoleSideEffect)
         ).to.eql(
           1
         );
         expect(
-          tap(target)(consoleSideEffect)
+          tap(1)(consoleSideEffect)
         ).to.eql(
           1
         );
@@ -1184,9 +1183,9 @@ describe('関数の使い方', () => {
           return n;
         };
         expect(
-          tap(target)(updateSideEffect)
+          tap(3)(updateSideEffect)
         ).to.eql(
-          target
+          3
         );
         next();
       });

@@ -1305,11 +1305,11 @@ describe('プログラムをコントロールする仕組み', () => {
       describe('複利法の例', () => {
         // f(n) = f(n-1) * (1 + r)
         /* #@range_begin(compound_interest) */
-        var compoundInterest = (a, r, nthYear) => {
-          if (nthYear === 0) {
+        var compoundInterest = (a, r, n) => {
+          if (n === 0) {
             return a;
           } else {
-            return compoundInterest(a, r, nthYear - 1) * (1 + r);
+            return compoundInterest(a, r, n - 1) * (1 + r); // compoundInterestの再帰呼び出し
           }
         };
         /* #@range_end(compound_interest) */
@@ -1438,7 +1438,7 @@ describe('プログラムをコントロールする仕組み', () => {
         it('蓄積変数を持たないsum関数', (next) => {
           /* #@range_begin(recursive_sum_without_accumulator) */
           var sum = (list) => {
-            var sumHelper = (list, accumulator) => {
+            var sumHelper = (list, accumulator) => { // 蓄積変数を持つ補助関数
               return match(list, {
                 empty: (_) => {
                   return accumulator;
@@ -1448,7 +1448,7 @@ describe('プログラムをコントロールする仕組み', () => {
                 }
               });
             };
-            return sumHelper(list,0);
+            return sumHelper(list,0); // 補助関数を呼び出す
           };
           /**** テスト ****/
           expect(

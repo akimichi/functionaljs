@@ -607,12 +607,12 @@ describe('高階関数', () => {
         }
       };
       expect(
-        exponential(2,2)
+        exponential(2,2) // 2 * 2 = 4
       ).to.eql(
         4
       );
       expect(
-        exponential(2,3)
+        exponential(2,3) // 2 * 2 * 2 = 8
       ).to.eql(
         8
       );
@@ -641,6 +641,29 @@ describe('高階関数', () => {
         8
       );
       /* #@range_end(exponential_curried) */
+      /* #@range_begin(flip) */
+      var flip = (fun) => {
+        return  (f) => {
+          return (g) => {
+            return fun(g)(f);
+          };
+        };
+      };
+      /* #@range_end(flip) */
+      /* #@range_begin(flipped_exponential) */
+      var square = flip(exponential)(2); // 2乗を定義する
+      var cube = flip(exponential)(3);   // 3乗を定義する
+      expect(
+        square(2)
+      ).to.eql(
+        4
+      );
+      expect(
+        cube(2)
+      ).to.eql(
+        8
+      );
+      /* #@range_end(flipped_exponential) */
       next();
     });
     it('カリー化された関数の単純な例', (next) => {
@@ -814,8 +837,8 @@ describe('高階関数', () => {
         next();
       });
     });
-    describe('関数合成のカリー化', () => {
-      /* #@range_begin(compose_definition_curried) */
+    describe('関数合成', () => {
+      /* #@range_begin(compose_definition) */
       var compose = (f) => {
         return (g) => {
           return (arg) =>{
@@ -823,17 +846,30 @@ describe('高階関数', () => {
           };
         };
       };
-      /* #@range_end(compose_definition_curried) */
-
-      /* #@range_begin(flip) */
+      /* #@range_end(compose_definition) */
       var flip = (fun) => {
         return  (f) => {
           return (g) => {
             return fun(g)(f);
-            // return fun.call(this, g)(f);
           };
         };
       };
+
+      /* #@range_begin(compose_test) */
+      var f = (x) => {
+        return x * x + 1;
+      };
+      var g = (x) => {
+        return x - 2;
+      };
+      var fg = compose(f)(g); // f . g で合成された関数
+      
+      expect(
+       fg(2) // 2^2  -4 * 2 + 5 
+      ).to.eql(
+        1
+      );
+      /* #@range_end(compose_test) */
       var subtract = (n) => {
         return (m) => {
           return n - m;
@@ -849,7 +885,23 @@ describe('高階関数', () => {
       ).to.eql(
         -1
       );
-      /* #@range_end(flip) */
+      it('pipe関数で適用の順番を逆転する', (next) => {
+        /* #@range_begin(pipe_definition) */
+        var pipe = (fun) => {
+          return flip(compose)(fun);
+        };
+        /* #@range_end(pipe_definition) */
+        /* #@range_begin(pipe_test) */
+        var gf = pipe(g)(f);
+        
+        expect(
+          gf(2) // 2^2  -4 * 2 + 5 
+        ).to.eql(
+          1
+        );
+        /* #@range_end(pipe_test) */
+        next();
+      });
       it('カリー化の合成で乗算と否定の合成は成功する', (next) => {
         /* #@range_begin(compose_negate_multiply_successful) */
         var compose = (f) => {

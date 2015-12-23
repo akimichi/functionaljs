@@ -302,8 +302,20 @@ var list  = {
     } else {
       return list.cons(string.head(str), list.fromString(string.tail(str)));
     }
-  }
+  },
   /* #@range_end(list_fromString) */
+  at: (alist) => {
+    return (index) => {
+      expect(index).to.a('number');
+      expect(index).to.be.greaterThan(-1);
+      if (index === 0) {
+        return list.head(alist);
+      } else {
+          return list.at(list.tail(alist))(index - 1);
+      }
+    };
+  }
+
 };
 
 it('listのテスト', (next) => {
@@ -365,6 +377,16 @@ it('listのテスト', (next) => {
     list.toArray(list.fromString("abc"))
   ).to.eql(
     ['a','b','c']
+  );
+  expect(
+    list.at(seq)(0)
+  ).to.eql(
+    1
+  );
+  expect(
+    list.at(seq)(1)
+  ).to.eql(
+    2
   );
   next();
 });
@@ -525,6 +547,26 @@ var stream = {
         }
       });
     };
+  },
+  foldr: (astream) => {
+    return (accumulator) => {
+      return (glue) => {
+        expect(glue).to.a('function');
+        return match(astream,{
+          empty: (_) => {
+            return accumulator;
+          },
+          cons: (head,tailThunk) => {
+            return glue(head)(stream.foldr(tailThunk())(accumulator)(glue));
+          }
+        });
+      };
+    };
+  },
+  integersFrom: (from) => {
+    return stream.cons(from, (_) => {
+      return stream.integersFrom(from + 1);
+    });
   }
 }; // stream
 
@@ -555,6 +597,52 @@ describe('streamのテスト', () => {
 
 describe('高階関数', () => {
   describe('カリー化', () => {
+    it('カリー化されていない指数関数', (next) => {
+      /* #@range_begin(exponential_uncurried) */
+      var exponential = (base,index) => {
+        if(index === 0){
+          return 1;
+        } else {
+          return base * exponential(base,index - 1);
+        }
+      };
+      expect(
+        exponential(2,2)
+      ).to.eql(
+        4
+      );
+      expect(
+        exponential(2,3)
+      ).to.eql(
+        8
+      );
+      /* #@range_end(exponential_uncurried) */
+      next();
+    });
+    it('カリー化された指数関数', (next) => {
+      /* #@range_begin(exponential_curried) */
+      var exponential = (base) => {
+        return (index) => {
+          if(index === 0){
+            return 1;
+          } else {
+            return base * exponential(base)(index - 1);
+          }
+        };
+      };
+      expect(
+        exponential(2)(2)
+      ).to.eql(
+        4
+      );
+      expect(
+        exponential(2)(3)
+      ).to.eql(
+        8
+      );
+      /* #@range_end(exponential_curried) */
+      next();
+    });
     it('カリー化された関数の単純な例', (next) => {
       /* #@range_begin(simple_curried_function) */
       var add = function (x,y) {
@@ -623,7 +711,57 @@ describe('高階関数', () => {
       /* #@range_end(multiplyOf_curried_test) */
       next();
     });
-
+    describe('高階関数によるベクトル演算', () => {
+      var mkVector =  (alist) => {
+        return (index) => {
+          return list.at(alist)(index);
+        };
+      };
+      var zero = mkVector(list.cons(0, list.cons(0, list.empty())));
+      var add = (vs) => {
+        return (ws) => {
+          return (index) => {
+            return vs(index) + ws(index);
+          };
+        };
+      };
+      var innerProduct = (vs) => {
+        return (ws) => {
+          var product = (index) => {
+            return vs(index) * ws(index);
+          };
+          var innerProductHelper = (indexes, accumulator) => {
+            var index = stream.head(indexes);
+            if(truthy(vs(index)) && truthy(ws(index))) {
+              return innerProductHelper(stream.tail(indexes), accumulator + product(index));
+            } else {
+              return accumulator;
+            }
+          };
+          var naturals = stream.integersFrom(0);
+          return innerProductHelper(naturals, 0);
+        };
+      };
+      it('ベクトルの内積を innerProduct で計算する', (next) => {
+        var vs = mkVector(list.cons(1, list.cons(0, list.empty())));
+        var ws = mkVector(list.cons(0, list.cons(1, list.empty())));
+        expect(
+          innerProduct(vs)(ws)
+        ).to.eql(
+          0
+        );
+        expect(
+          innerProduct(mkVector(list.cons(-1, list.cons(-2, 
+                                                         list.cons(1,
+                                                                   list.empty())))))(
+            mkVector(list.cons(1, list.cons(-1, list.cons(2,list.empty()))))
+          )
+        ).to.eql(
+          3
+        );
+        next();
+      });
+    });
     describe('通常の関数とカリー化関数の相互変換', () => {
       it('通常の関数をカリー化する', (next) => {
         /* #@range_begin(curry_function_definition) */

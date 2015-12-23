@@ -14,7 +14,7 @@ var match = (exp, pattern) => {
 describe('関数型言語を作る', () => {
   describe('環境を作る', () => {
     /* #@range_begin(environment) */
-    // ## 環境
+    // 空の環境
     var emptyEnv = (variable) => {
       return undefined;
     };
@@ -48,9 +48,6 @@ describe('関数型言語を作る', () => {
     });
     describe('式を作る', () => {
       // ## 式の代数的データ構造
-      // var match = (exp, pattern) => {
-      //   return exp.call(pattern, pattern);
-      // };
       /* #@range_begin(expression_algaraic_datatype) */
       var number = (value) => {
         expect(value).to.a('number');
@@ -123,7 +120,6 @@ describe('関数型言語を作る', () => {
         /* #@range_end(evaluation_function) */
         describe('evaluate関数で式を評価する', () => {
           it('数値を評価する', (next) => {
-            // fs.writeFileSync('/tmp/nodejs-labo-test.json',  JSON.stringify(number(2), null, '    '));
             expect(
               evaluate(number(2), emptyEnv)
             ).to.be(
@@ -164,7 +160,6 @@ describe('関数型言語を作る', () => {
           it('identity関数', (next) => {
             /* λx.x */
             var identity = lambda(variable("x"),variable("x"));
-            
             expect(
               evaluate(identity, emptyEnv)
             ).to.a(

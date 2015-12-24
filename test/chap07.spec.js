@@ -904,13 +904,6 @@ describe('高階関数', () => {
       });
       it('カリー化の合成で乗算と否定の合成は成功する', (next) => {
         /* #@range_begin(compose_negate_multiply_successful) */
-        var compose = (f) => {
-          return (g) => {
-            return (arg) =>{
-              return f(g(arg));
-            };
-          };
-        };
         var negate = (x) => {
           return - x;
         };
@@ -932,51 +925,53 @@ describe('高階関数', () => {
         /* #@range_end(compose_negate_multiply_successful) */
         next();
       });
-      it('カリー化による関数の合成', (next) => {
-        var compose = (f) => {
-          return (g) => {
-            return (_) => {
-              return f(g.apply(this, arguments));
+      describe('カリー化による関数の合成', () => {
+        it('脱カリー化と関数合成', (next) => {
+          /* #@range_begin(compose_and_uncurry) */
+          var compose = (f) => {
+            return (g) => {
+              return (_) => {
+                return f(g.apply(this, arguments));
+              };
             };
           };
-        };
-        var uncurry = (fun) => {
-          return () => {
-            var result = fun;
-            for (var i = 0; i < arguments.length; i++)
-              result = result(arguments[i]);
-            return result;
+          var uncurry = (fun) => {
+            return () => {
+              var result = fun;
+              for (var i = 0; i < arguments.length; i++)
+                result = result(arguments[i]);
+              return result;
+            };
           };
-        };
-        /* #@range_begin(compose_and_uncurry) */
-        var negate = (x) => {
-          return -x;
-        };
-        var multiply = (x) => {
-          return (y) => {
-            return x * y;
+          var negate = (x) => {
+            return -x;
           };
-        };
-        expect(
-          compose(negate)(uncurry(multiply))(2,3)
-        ).to.eql(
-            -6
-        );
-        /* #@range_end(compose_and_uncurry) */
-        next();
-      });
-      it('マイナスのマイナスはプラス', (next) => {
-        /* #@range_begin(composition_example_negation_twice) */
-        var negate = (n) => {
-          return - n;
-        };
-        expect(
-          compose(negate)(negate)(2)
-        ).to.eql(
-          2
-        );
-        /* #@range_end(composition_example_negation_twice) */
-        next();
+          var multiply = (x) => {
+            return (y) => {
+              return x * y;
+            };
+          };
+          expect(
+            compose(negate)(uncurry(multiply))(2,3)
+          ).to.eql(
+              -6
+          );
+          /* #@range_end(compose_and_uncurry) */
+          next();
+        });
+        it('マイナスのマイナスはプラス', (next) => {
+          /* #@range_begin(composition_example_negation_twice) */
+          var negate = (n) => {
+            return - n;
+          };
+          expect(
+            compose(negate)(negate)(2)
+          ).to.eql(
+            2
+          );
+          /* #@range_end(composition_example_negation_twice) */
+          next();
+        });
       });
       it("1個の引数の関数を合成する", (next) => {
         var increment = function(n){
@@ -1133,8 +1128,6 @@ describe('高階関数', () => {
         var alwaysOne = (x) => {
           return 1;
         };
-        /* #@range_begin(abstract_length) */
-        // length = sum . map(\x -> 1)
         var sum = (seq) => {
           var sumHelper = (seq, accumulator) => {
             return match(seq,{
@@ -1148,6 +1141,8 @@ describe('高階関数', () => {
           };
           return sumHelper(seq,0);
         };
+        /* #@range_begin(abstract_length) */
+        // length = sum . map(\x -> 1)
         var length = (seq) => {
           return compose(sum)(flip(list.map)(alwaysOne))(seq);
         };

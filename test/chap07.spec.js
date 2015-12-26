@@ -1245,13 +1245,30 @@ describe('高階関数', () => {
       next();
     });
   });
+  describe('クロージャーの仕組み', () => {
+    it('環境と変数のバインディング', (next) => {
+      /* #@range_begin(variable_binding_in_environment) */
+      var foo = 1; // 変数fooに数値1をバインドする
+      var bar = "a string"; // 変数bar に文字列 "a string" をバインドする
+      /* #@range_end(variable_binding_in_environment) */
+      /* #@range_begin(variable_binding_in_environment_test) */
+      expect(
+        foo  // 環境から変数fooの値を取り出す
+      ).to.eql(
+        1
+      );
+      /* #@range_end(variable_binding_in_environment_test) */
+      next();
+      
+    });
+  });
   describe('クロージャーで状態をカプセル化する', () => {
     describe('単純なクロージャーの例', (next) => {
       it('counter関数の例', (next) => {
         /* #@range_begin(counter_as_closure) */
         var counter = (init) => {
           var _init = init;
-          return (_) => {
+          return (_) => {  // クロージャーを返す
             _init = _init + 1;
             return _init;
           };

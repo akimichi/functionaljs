@@ -314,8 +314,23 @@ var list  = {
           return list.at(list.tail(alist))(index - 1);
       }
     };
+  },
+  /* #@range_begin(list_generate) */
+  generate: (alist) => {
+    var theList = alist;
+    return (_) => {
+      return match(theList,{
+        empty: (_) => {
+          return undefined; 
+        },
+        cons: (head,tail) => {
+          theList = tail;
+          return head;
+        }
+      });
+    };
   }
-
+  /* #@range_end(list_generate) */
 };
 
 it('listのテスト', (next) => {
@@ -567,8 +582,48 @@ var stream = {
     return stream.cons(from, (_) => {
       return stream.integersFrom(from + 1);
     });
+  },
+  /* #@range_begin(stream_generate) */
+  generate: (astream) => {
+    var theStream = astream;
+    return (_) => {
+      return match(theStream,{
+        empty: (_) => {
+          return undefined; 
+        },
+        cons: (head,tailThunk) => {
+          theStream = tailThunk();
+          return head;
+        }
+      });
+    };
+  },
+  /* #@range_end(stream_generate) */
+  forAll: (astream) => {
+    return (predicate) => {
+      var forAllHelper = (astream) => { // 補助関数
+        return match(astream,{
+          empty: (_) => {
+            return true; 
+          },
+          cons: (head,tailThunk) => {
+            return predicate(head) && forAllHelper(tailThunk());
+          }
+        });
+      };
+      return match(astream,{
+        empty: (_) => {
+          return false; // 空のストリームの場合は、必ず false が返る
+        },
+        cons: (head,tailThunk) => {
+          return forAllHelper(astream);   
+          //return true && forAllHelper(astream);   
+        }
+      });
+    };
   }
-}; // stream
+
+}; // 
 
 describe('streamのテスト', () => {
   it('stream#map', (next) => {
@@ -590,7 +645,31 @@ describe('streamのテスト', () => {
     ).to.eql(
       4
     );
+    next();
+  });
+  it('stream#forAll', (next) => {
+    var evens = stream.cons(2, (_) => {
+      return stream.cons(4,(_) => {
+        return stream.empty();
+      });
+    });
     
+    expect(
+      stream.forAll(evens)((n) => { return n % 2 === 0; })
+    ).to.eql(
+      true
+    );
+    var integers = stream.cons(1, (_) => {
+      return stream.cons(2,(_) => {
+        return stream.empty();
+      });
+    });
+
+    expect(
+      stream.forAll(integers)((n) => { return n % 2 === 0; })
+    ).to.eql(
+      false
+    );
     next();
   });
 });
@@ -2191,50 +2270,108 @@ describe('高階関数', () => {
       });
     });
     describe('クロージャーでジェネレーターを作る', () => {
-      /* #@range_begin(generator_in_closure) */
-      var generator = (seed) => {
-        return (current) => {
-          return (stepFunction) => {
-            return stream.cons(current(seed),
-                               (_) => { 
-                                 return generator(stepFunction(seed))(current)(stepFunction) 
-                               });
+      it('リスト・ジェレネータ', (next) => {
+        /* #@range_begin(list_generator_test) */
+        var generator = list.generate(list.cons(1, list.cons(2, list.empty())));
+        expect(
+          generator()
+        ).to.eql(
+          1
+        );
+        expect(
+          generator()
+        ).to.eql(
+          2
+        );
+        /* #@range_end(list_generator_test) */
+        next();
+      });
+      it('ストリーム・ジェレネータ', (next) => {
+        /* #@range_begin(stream_generator_test) */
+        var generator = stream.generate(stream.cons(1, (_) => {
+          return stream.cons(2, (_) => {
+            return stream.empty();
+          });
+        }));
+        expect(
+          generator()
+        ).to.eql(
+          1
+        );
+        expect(
+          generator()
+        ).to.eql(
+          2
+        );
+        /* #@range_end(stream_generator_test) */
+        next();
+      });
+      describe('ジェレネータ・コンビネータ', () => {
+        var identity = (any) => { return any; };
+        var succ = (n) => { return n + 1; };
+        /* #@range_begin(generator_in_closure) */
+        var generator = (init) => {
+          return (current) => {
+            return (step) => {
+              return stream.cons(current(init),
+                                 (_) => { 
+                                   return generator(step(init))(current)(step);
+                                 });
+            };
           };
         };
-      };
-      var id = (any) => { return any; };
-      var succ = (n) => { return n + 1; };
-      var integers = generator(0)(id)(succ);
-      expect(
-        stream.head(integers)
-      ).to.eql(
-        0
-      );
-      expect(
-        stream.head(stream.tail(integers))
-      ).to.eql(
-        1
-      );
-      expect(
-        stream.head(stream.tail(stream.tail(integers)))
-      ).to.eql(
-        2
-      );
-      /* #@range_end(generator_in_closure) */
-      // describe('streamとgenerator', () => {
-      //   var integers = generator(0)(id)(succ);
-      //   var double = (n) => {
-      //     return n * 2;
-      //   };
-      //   var doubles = stream.map.call(stream,
-      //                                 integers, double);
-      //   expect(
-      //     stream.head(integers)
-      //   ).to.eql(
-      //     0
-      //   );
+        var integers = generator(0)(identity)(succ);
+        it('integers をテストする', (next) =>{
+          // expect(
+          //   integers()
+          // ).to.eql(0);
+          // expect(
+          //   counter()
+          // ).to.eql(1);
+          // expect(
+          //   counter()
+          // ).to.eql(2);
+          expect(
+            stream.head(integers)
+          ).to.eql(
+            0
+          );
+          expect(
+            stream.head(stream.tail(integers))
+          ).to.eql(
+            1
+          );
+          expect(
+            stream.head(stream.tail(stream.tail(integers)))
+          ).to.eql(
+            2
+          );
 
-      // });
+          /* #@range_end(generator_in_closure) */
+          // describe('streamとgenerator', () => {
+          //   var integers = generator(0)(id)(succ);
+          //   var double = (n) => {
+          //     return n * 2;
+          //   };
+          //   var doubles = stream.map.call(stream,
+          //                                 integers, double);
+          //   expect(
+          //     stream.head(integers)
+          //   ).to.eql(
+          //     0
+          //   );
+
+          // });
+          next();
+        });
+        it('ジェレネータによる単体テストの自動生成', (next) => {
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+          var evenIntegers = stream.filter(integers)(even);
+          next();
+        });
+      });
     });
   }); // クロージャーで状態をカプセル化する
   describe('関数を渡す', () => {

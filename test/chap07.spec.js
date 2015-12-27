@@ -617,13 +617,27 @@ var stream = {
         },
         cons: (head,tailThunk) => {
           return forAllHelper(astream);   
-          //return true && forAllHelper(astream);   
+        }
+      });
+    };
+  },
+  /* #@range_begin(stream_forEach) */
+  forEach: (astream) => {
+    return (callback) => {
+      return match(astream,{
+        empty: (_) => {
+          return undefined; 
+        },
+        cons: (head,tailThunk) => {
+          callback(head);
+          return stream.forEach(tailThunk())(callback);
         }
       });
     };
   }
+  /* #@range_end(stream_forEach) */
 
-}; // 
+}; // end of 'stream' module
 
 describe('streamのテスト', () => {
   it('stream#map', (next) => {
@@ -2365,10 +2379,19 @@ describe('高階関数', () => {
           next();
         });
         it('ジェレネータによる単体テストの自動生成', (next) => {
-            var even = (n) => {
-              return 0 === (n % 2);
-            };
+          /* #@range_begin(generate_unit_tests) */
+          var even = (n) => {
+            return 0 === (n % 2);
+          };
           var evenIntegers = stream.filter(integers)(even);
+          stream.forEach(stream.take(evenIntegers)(10))((n) => {
+            return expect(
+              even(n)
+            ).to.eql(
+              true
+            );
+          });
+          /* #@range_end(generate_unit_tests) */
           next();
         });
       });

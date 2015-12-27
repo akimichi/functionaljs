@@ -2336,15 +2336,6 @@ describe('高階関数', () => {
         };
         var integers = generator(0)(identity)(succ);
         it('integers をテストする', (next) =>{
-          // expect(
-          //   integers()
-          // ).to.eql(0);
-          // expect(
-          //   counter()
-          // ).to.eql(1);
-          // expect(
-          //   counter()
-          // ).to.eql(2);
           expect(
             stream.head(integers)
           ).to.eql(

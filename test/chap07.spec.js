@@ -1259,7 +1259,6 @@ describe('高階関数', () => {
       );
       /* #@range_end(variable_binding_in_environment_test) */
       next();
-      
     });
   });
   describe('クロージャーで状態をカプセル化する', () => {
@@ -1273,7 +1272,9 @@ describe('高階関数', () => {
             return _init;
           };
         };
+        /* #@range_end(counter_as_closure) */
         var counterFromZero = counter(0);
+        /* #@range_begin(counter_as_closure_test) */
         expect(
           counterFromZero()
         ).to.eql( 
@@ -1284,7 +1285,63 @@ describe('高階関数', () => {
         ).to.eql( 
           2
         );
-        /* #@range_end(counter_as_closure) */
+        /* #@range_end(counter_as_closure_test) */
+        /* #@range_begin(another_counter) */
+        var anoterCounterFromZero = counter(0);
+        expect(
+          anoterCounterFromZero()
+        ).to.eql( 
+          1
+        );
+        /* #@range_end(another_counter) */
+        next();
+      });
+      it('counter関数における、外側のスコープからのクロージャーによる自由変数の捕捉', (next) => {
+        var _init = 0;
+        var counter = (_) => {  // クロージャーを返す
+          _init = _init + 1;
+          return _init;
+        };
+        expect(
+          counter()
+        ).to.eql( 
+          1
+        );
+        _init = 100;
+        expect(
+          counter()
+        ).to.eql( 
+          101
+        );
+        next();
+      });
+      it('loopUntil関数における、外側のスコープからのクロージャーによる自由変数の捕捉', (next) => {
+        /* #@range_begin(captures_free_variable_outside_function) */
+        var loopUntil = (predicateThunk) => {
+          return (bodyThunk) => {
+            if(predicateThunk() === true){
+              bodyThunk();
+              return loopUntil(predicateThunk)(bodyThunk);
+            } else {
+              return undefined;
+            }
+          };
+        };
+        var i = 3;
+        var result = 0;
+        var largerThanZero = (_) => {
+          return i > 0;
+        };
+        loopUntil(largerThanZero)((_) => {
+          result = result + 1;
+          i = i - 1;
+        });
+        expect(
+          result
+        ).to.eql(
+          3
+        );
+        /* #@range_end(captures_free_variable_outside_function) */
         next();
       });
     });
@@ -1534,6 +1591,25 @@ describe('高階関数', () => {
       });
     });
     describe('不変なデータ型を作る', () => {
+      it('オブジェクト型は不変ではない', (next) => {
+        /* #@range_begin(object_is_not_immutable) */
+        var object = {
+          a: 1
+        };
+        expect(
+          object.a
+        ).to.eql(
+          1
+        );
+        object.a = 2;
+        expect(
+          object.a
+        ).to.eql(
+          2
+        );
+        /* #@range_end(object_is_not_immutable) */
+        next();
+      });
       it('不変なオブジェクト型を作る', (next) => {
         // var objects = {
         //   empty: {
@@ -1561,7 +1637,7 @@ describe('高階関数', () => {
         //   },
         // };
         /* #@range_begin(immutable_object_type) */
-        var objects = {
+        var object = {
           empty: (key) => {
             return undefined;
           },
@@ -1569,34 +1645,77 @@ describe('高階関数', () => {
             return obj(key);
           },
           set: (key, value, obj) => {
-            var self = this;
             return (key2) => {
               if(key === key2) {
                 return value;
               } else {
-                return self.get(key2,obj)
+                return object.get(key2,obj);
               }
-            }
+            };
           }
         };
         /* #@range_end(immutable_object_type) */
         /* #@range_begin(immutable_object_type_test) */
         expect(
-          objects.get("R2D2", objects.set("R2D2", "Star Wars", objects.set("HAL9000","2001: a space odessay",objects.empty)))
+          object.get("R2D2", 
+                      object.set("R2D2", "Star Wars", 
+                                  object.set("HAL9000","2001: a space odessay",
+                                              object.empty)))
         ).to.eql(
           "Star Wars"
-        )
+        );
         expect(
-          objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
+          object.get("R2D2", 
+                      object.set("HAL9000","2001: a space odessay",
+                                          object.empty))
         ).to.eql(
           undefined
-        )
+        );
         expect(
-          objects.get("HAL9000", objects.set.call(objects,"C3PO", "Star Wars", objects.set.call(objects,"R2D2", "Star Wars", objects.set.call(objects,"HAL9000","2001: a space odessay",objects.empty))))
+          object.get("HAL9000", 
+                      object.set("C3PO", "Star Wars", 
+                                  object.set("R2D2", "Star Wars", 
+                                              object.set("HAL9000","2001: a space odessay",
+                                                          object.empty))))
         ).to.eql(
           "2001: a space odessay"
-        )
+        );
         /* #@range_end(immutable_object_type_test) */
+        next();
+      });
+      it('カリー化された不変なオブジェクト型', (next) => {
+        /* #@range_begin(immutable_object_type_curried) */
+        var object = {
+          empty: (key) => {
+            return undefined;
+          },
+          get: (key) => {
+            return (obj) => {
+              return obj(key);
+            };
+          },
+          set: (key, value) => {
+            return (obj) => {
+              return (key2) => {
+                if(key === key2) {
+                  return value;
+                } else {
+                  return object.get(key2)(obj);
+                }
+              };
+            };
+          }
+        };
+        /* #@range_end(immutable_object_type_curried) */
+        /* #@range_begin(immutable_object_type_curried_test) */
+        expect(
+          compose(object.get("HAL9000"),
+                  compose(object.set("C3PO", "Star Wars"),
+                          object.set("HAL9000","2001: a space odessay")))(object.empty)
+        ).to.eql(
+          "2001: a space odessay"
+        );
+        /* #@range_end(immutable_object_type_curried_test) */
         next();
       });
       it('不変なオブジェクト型を作る(改良版)', (next) => {

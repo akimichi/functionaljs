@@ -688,6 +688,78 @@ describe('streamのテスト', () => {
   });
 });
 
+var maybe = {
+  just : (value) => {
+    return (pattern) => {
+      return pattern.just(value);
+    };
+  },
+  nothing : (_) => {
+    return (pattern) => {
+      return pattern.nothing(_);
+    };
+  },
+  unit : (value) => {
+    if(value){
+      return maybe.just(value);
+    } else {
+      return maybe.nothing(null);
+    }
+  },
+  flatMap : (maybe) => {
+    return (transform) => {
+      expect(transform).to.a('function');
+      return match(maybe,{
+        just: (value) => {
+          return transform(value);
+        },
+        nothing: (_) => {
+          return maybe.nothing(_);
+        }
+      });
+    };
+  },
+  isEqual : (maybeA) => {
+    return (maybeB) => {
+      return match(maybeA,{
+        just: (valueA) => {
+          return match(maybeB,{
+            just: (valueB) => {
+              return (valueA === valueB);
+            },
+            nothing: (_) => {
+              return false;
+            }
+          });
+        },
+        nothing: (_) => {
+          return match(maybeB,{
+            just: (_) => {
+              return false;
+            },
+            nothing: (_) => {
+              return true;
+            }
+          });
+        }
+      });
+    };
+  },
+  map : (maybe) => {
+    return (transform) => {
+      expect(transform).to.a('function');
+      return match(maybe,{
+        just: (value) => {
+          return maybe.unit(transform(value));
+        },
+        nothing: (_) => {
+          return maybe.nothing(_);
+        }
+      });
+    };
+  }
+};
+
 describe('高階関数', () => {
   describe('カリー化', () => {
     it('カリー化されていない指数関数', (next) => {
@@ -4330,15 +4402,13 @@ describe('高階関数', () => {
         /* #@range_begin(list_monad_definition) */
         // ### list#unit
         unit: (value) => {
-          var self = this;
-          return self.cons(value, list.empty());
+          return list.cons(value, list.empty());
         },
         // ### monad.list#flatMap
         flatMap: (instance) => {
-          var self = this;
           return (transform) => {
             expect(transform).to.a('function');
-            return self.join(self.map(instance)(transform.bind(self)));
+            return list.join(list.map(instance)(transform));
           };
         }
         /* #@range_end(list_monad_definition) */
@@ -4458,9 +4528,9 @@ describe('高階関数', () => {
           list.toArray(theList)
         ).to.eql(
           [1,2,3,4]
-        )
+        );
         next();
-      })
+      });
       it("'list#map'", (next) => {
         // list = [1,2,3,4]
         var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)));
@@ -4494,6 +4564,57 @@ describe('高階関数', () => {
           [1,-1,2,-2,3,-3]
         );
         next();
+      });
+      describe("listモナドを活用する",() => {
+        it("フィルターとして使う", (next) => {
+          var even = (n) => {
+            if(n % 2 === 0) {
+              return true;
+            } else {
+              return false;
+              }
+          };
+          var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          expect(
+            list.toArray(list.flatMap(theList)((item) => {
+              if(even(item)) {
+                return list.unit(item);
+              } else {
+                return list.empty();
+              }
+            }))
+          ).to.eql(
+            [2,4]
+          );
+          next();
+        });
+        it("maybeと一緒に使う", (next) => {
+          var theList = list.cons(maybe.just(1),list.cons(maybe.nothing(),list.cons(maybe.just(3),list.empty())));
+          expect(
+            list.toArray(list.flatMap(theList)((item) => {
+              return maybe.flatMap(item)((value) => {
+                return maybe.unit(value);
+              });
+            }))
+          ).to.eql(
+            [2,4]
+          );
+          next();
+        });
+        it("2段階のflatMap", (next) => {
+          var theNumberList = list.cons(1,list.cons(2,list.empty()));
+          var theStringList = list.cons("one",list.cons("two",list.empty()));
+          expect(
+            list.toArray(list.flatMap(theNumberList)((n) => {
+              return list.flatMap(theStringList)((s) => {
+                return list.unit([n,s]);
+              });
+            }))
+          ).to.eql(
+            [[1,"one"],[1,"two"],[2,"one"],[2,"two"]]
+          );
+          next();
+        });
       });
     });
     describe('Streamモナド', () => {

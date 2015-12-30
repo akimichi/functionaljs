@@ -3962,11 +3962,11 @@ describe('高階関数', () => {
       var identity = {
         // ## identity#unit
         unit: (value) => {
-          var self = this;
+          // var self = this;
           return value;
         },
         flatMap: (instance) => {
-          var self = this;
+          // var self = this;
           return (transform) => {
             expect(transform).to.a('function');
             return transform(instance);
@@ -3974,6 +3974,63 @@ describe('高階関数', () => {
         }
       };
       /* #@range_end(identity_monad) */
+      /* #@range_begin(identity_monad_introduces_context_and_binding) */
+      it("恒等モナドのflatMapは変数のバインディングに似ている", (next) => {
+        expect(
+          identity.flatMap(identity.unit(1))((one) => {    // var one = 1; 
+            return identity.flatMap(identity.unit(2))((two) => { // var two = 2;
+              return identity.unit(one + two); // return one + two;
+            });
+          })
+        ).to.eql(
+          3
+        );
+        /* #@range_end(identity_monad_introduces_context_and_binding) */
+        next();
+      });
+      describe("恒等モナドのモナド則", () => {
+        /* #@range_begin(identity_monad_laws) */
+        it("flatMap(m)(unit) == m", (next) => {
+          var instance = identity.unit(1);
+          expect(
+            identity.flatMap(instance)(identity.unit)
+          ).to.eql(
+            instance
+          );
+          next();
+        });
+        it("flatMap(unit(v))(f) == f(v)", (next) => {
+          var value = 1;
+          var instance = identity.unit(value);
+          var f = (n) => {
+            return n + 1;
+          };
+          expect(
+            identity.flatMap(instance)(f)
+          ).to.eql(
+            f(value)
+          );
+          next();
+        });
+        it("flatMap(flatMap(m)(g))(h) == flatMap(m)(¥x => flatMap(g(x))(h))", (next) => {
+          var instance = identity.unit(1);
+          var g = (n) => {
+            return identity.unit(n * n);
+          };
+          var h = (n) => {
+            return identity.unit(- n);
+          };
+          expect(
+            identity.flatMap(identity.flatMap(instance)(g))(h)
+          ).to.eql(
+            identity.flatMap(instance)((x) => {
+              return identity.flatMap(g(x))(h);
+            })
+          );
+          /* #@range_end(identity_monad_laws) */
+          next();
+        });
+      });
       it("identity#flatMap", (next) => {
         /* #@range_begin(identity_monad_test) */
         var instance = identity.unit(1);
@@ -4014,7 +4071,7 @@ describe('高階関数', () => {
         return exp.call(pattern, pattern);
       };
       describe('Maybeモナドを作る', () => {
-        /* #@range_begin(maybe_monad) */
+        /* #@range_begin(algebraic_type_maybe) */
         var just = (value) => {
           return (pattern) => {
             return pattern.just(value);
@@ -4025,6 +4082,8 @@ describe('高階関数', () => {
             return pattern.nothing(_);
           };
         };
+        /* #@range_end(algebraic_type_maybe) */
+        /* #@range_begin(maybe_monad) */
         var unit = (value) => {
           if(value){
             return just(value);
@@ -4032,6 +4091,21 @@ describe('高階関数', () => {
             return nothing(null);
           }
         };
+        var flatMap = (maybe) => {
+          return (transform) => {
+            expect(transform).to.a('function');
+            return match(maybe,{
+              just: (value) => {
+                return transform(value);
+              },
+              nothing: (_) => {
+                return nothing(_);
+              }
+            });
+          };
+        };
+        /* #@range_end(maybe_monad) */
+        /* #@range_begin(maybe_monad_helper) */
         var isEqual = (maybeA) => {
           return (maybeB) => {
             return match(maybeA,{
@@ -4071,20 +4145,7 @@ describe('高階関数', () => {
             });
           };
         };
-        var flatMap = (maybe) => {
-          return (transform) => {
-            expect(transform).to.a('function');
-            return match(maybe,{
-              just: (value) => {
-                return transform(value);
-              },
-              nothing: (_) => {
-                return nothing(_);
-              }
-            });
-          };
-        };
-        /* #@range_end(maybe_monad) */
+        /* #@range_end(maybe_monad_helper) */
         it("map id == id", (next) => {
           /* #@range_begin(maybe_monad_test) */
           var justOne = just(1);
@@ -4129,7 +4190,7 @@ describe('高階関数', () => {
       });
     });
     describe('Listモナド', () => {
-      var seq  = {
+      var list  = {
         match: (data, pattern) => {
           var self = this;
           return data(pattern);
@@ -4151,14 +4212,14 @@ describe('高階関数', () => {
             return pattern.empty();
           };
         },
-        cons: (value, list) => {
+        cons: (value, alist) => {
           return (pattern) => {
-            return pattern.cons(value, list);
+            return pattern.cons(value, alist);
           };
         },
-        head: (list) => {
+        head: (alist) => {
           var self = this;
-          return self.match(list, {
+          return self.match(alist, {
             empty: (_) => {
               return undefined;
             },
@@ -4167,9 +4228,9 @@ describe('高階関数', () => {
             },
           });
         },
-        tail: (list) => {
+        tail: (alist) => {
           var self = this;
-          return self.match(list, {
+          return self.match(alist, {
             empty: (_) => {
               return undefined;
             },
@@ -4178,9 +4239,9 @@ describe('高階関数', () => {
             },
           });
         },
-        isEmpty: (list) => {
+        isEmpty: (alist) => {
           var self = this;
-          return seq.match(list, {
+          return list.match(alist, {
             empty: (_) => {
               return true;
             },
@@ -4189,12 +4250,11 @@ describe('高階関数', () => {
             },
           });
         },
-        toArray: (list) => {
+        toArray: (alist) => {
           var self = this;
-          return self.foldr(list)([])(function (item) {
+          return self.foldr(alist)([])(function (item) {
             return (accumulator) => {
               return [item].concat(accumulator);
-              // return accumulator.concat(item);
             };
           });
         },
@@ -4215,20 +4275,20 @@ describe('高階関数', () => {
           if(self.isEmpty(list_of_list)){
             return self.empty();
           } else {
-            return self.concat(seq.head(list_of_list))(self.join(seq.tail(list_of_list)));
+            return self.concat(list.head(list_of_list))(self.join(list.tail(list_of_list)));
           }
         },
         // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
-        foldr: (list) => {
+        foldr: (alist) => {
           var self = this;
           return (accumulator) => {
             return (glue) => {
               expect(glue).to.a('function');
-              if(self.isEmpty(list)){
+              if(self.isEmpty(alist)){
                 return accumulator;
               } else {
-                var item = self.head(list);
-                var tail = self.tail(list);
+                var item = self.head(alist);
+                var tail = self.tail(alist);
                 return glue(item)(self.foldr(tail)(accumulator)(glue));
               }
             };
@@ -4236,11 +4296,11 @@ describe('高階関数', () => {
         },
         /* #@range_begin(list_monad_map) */
         // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-        map: (list) => {
+        map: (alist) => {
           var self = this;
           return (transform) => {
             expect(transform).to.a('function');
-            return seq.match(list,{
+            return list.match(alist,{
               empty: (_) => {
                 return self.empty;
               },
@@ -4271,7 +4331,7 @@ describe('高階関数', () => {
         // ### list#unit
         unit: (value) => {
           var self = this;
-          return self.cons(value, seq.empty());
+          return self.cons(value, list.empty());
         },
         // ### monad.list#flatMap
         flatMap: (instance) => {
@@ -4282,33 +4342,33 @@ describe('高階関数', () => {
           };
         }
         /* #@range_end(list_monad_definition) */
-      }; // end of seq
+      }; // end of list
       it("'list#empty'", (next) => {
-        seq.match(seq.empty,{
+        list.match(list.empty,{
           empty: (_) => {
             expect(true).ok();
           },
           cons: (x,xs) => {
-            expect().fail()
+            expect().fail();
           }
         });
         next();
-      })
+      });
       it("'list#isEmpty'", (next) => {
         expect(
-          seq.isEmpty(seq.empty())
+          list.isEmpty(list.empty())
         ).to.eql(
           true
         );
         expect(
-          seq.isEmpty(seq.cons(1,seq.empty()))
+          list.isEmpty(list.cons(1,list.empty()))
         ).to.eql(
           false
         );
         next();
       });
       it("'list#cons'", (next) => {
-        seq.match(seq.cons(1,seq.empty()),{
+        list.match(list.cons(1,list.empty()),{
           empty: (_) => {
             expect().fail()
           },
@@ -4320,68 +4380,68 @@ describe('高階関数', () => {
       });
       it("'list#head'", (next) => {
         expect(
-          seq.head(seq.cons(1,seq.empty()))
+          list.head(list.cons(1,list.empty()))
         ).to.eql(
           1
-        )
+        );
         next();
-      })
+      });
       it("'list#tail'", (next) => {
         expect(
-          seq.head(seq.tail(seq.cons(1,seq.cons(2,seq.empty()))))
+          list.head(list.tail(list.cons(1,list.cons(2,list.empty()))))
         ).to.eql(
           2
-        )
+        );
         next();
-      })
+      });
       it("'list#concat'", (next) => {
-        var list = seq.concat(seq.cons(1,seq.empty()))(seq.cons(2,seq.empty()));
+        var theList = list.concat(list.cons(1,list.empty()))(list.cons(2,list.empty()));
         expect(
-          seq.head(list)
+          list.head(theList)
         ).to.eql(
           1
-        )
+        );
         expect(
-          seq.head(seq.tail(list))
+          list.head(list.tail(theList))
         ).to.eql(
           2
-        )
+        );
         expect(
-          seq.isEmpty(seq.tail(seq.tail(list)))
+          list.isEmpty(list.tail(list.tail(theList)))
         ).to.eql(
           true
-        )
+        );
         next();
       });
       it("'list#join'", (next) => {
         // list = [[1,2],[3,4]]
-        var list_of_list = seq.cons(seq.cons(1,seq.cons(2,seq.empty())),
-                                    seq.cons(seq.cons(3,seq.cons(4,seq.empty())),
-                                             seq.empty));
+        var list_of_list = list.cons(list.cons(1,list.cons(2,list.empty())),
+                                    list.cons(list.cons(3,list.cons(4,list.empty())),
+                                             list.empty));
         // joined_list = [1,2,3,4]
-        var joined_list = seq.join(list_of_list)
+        var joined_list = list.join(list_of_list);
         expect(
-          seq.head(joined_list)
+          list.head(joined_list)
         ).to.eql(
           1
-        )
+        );
         expect(
-          seq.head(seq.tail(joined_list))
+          list.head(list.tail(joined_list))
         ).to.eql(
           2
-        )
+        );
         expect(
-          seq.isEmpty(seq.tail(seq.tail(joined_list)))
+          list.isEmpty(list.tail(list.tail(joined_list)))
         ).to.eql(
           false
-        )
+        );
         next();
       });
       it("'list#foldr'", (next) => {
         // list = [1,2,3,4]
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+        var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)))
         expect(
-          seq.foldr(list)(0)(function (item){
+          list.foldr(theList)(0)(function (item){
             return (accumulator) => {
               return accumulator + item;
             };
@@ -4393,9 +4453,9 @@ describe('高階関数', () => {
       })
       it("'list#toArray'", (next) => {
         // list = [1,2,3,4]
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+        var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)))
         expect(
-          seq.toArray(list)
+          list.toArray(theList)
         ).to.eql(
           [1,2,3,4]
         )
@@ -4403,32 +4463,32 @@ describe('高階関数', () => {
       })
       it("'list#map'", (next) => {
         // list = [1,2,3,4]
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()),seq.empty)))
+        var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)));
         expect(
-          seq.toArray(seq.map(list)(function (item){
+          list.toArray(list.map(theList)(function (item){
             return item * 2;
           }))
         ).to.eql(
           [2,4,6,8]
-        )
+        );
         next();
-      })
+      });
       it("'list#unit'", (next) => {
         // list = [1]
-        var list = seq.unit(1);
+        var theList = list.unit(1);
         expect(
-          seq.toArray(list)
+          list.toArray(theList)
         ).to.eql(
           [1]
-        )
+        );
         next();
-      })
+      });
       it("'list#flatMap'", (next) => {
         // list = [1,2,3]
-        var list = seq.concat(seq.unit(1))(seq.concat(seq.unit(2))(seq.unit(3)))
+        var theList = list.concat(list.unit(1))(list.concat(list.unit(2))(list.unit(3)));
         expect(
-          seq.toArray(seq.flatMap(list)(function (item){
-            return seq.concat(seq.unit(item))(seq.unit(- item));
+          list.toArray(list.flatMap(theList)(function (item){
+            return list.concat(list.unit(item))(list.unit(- item));
           }))
         ).to.eql(
           [1,-1,2,-2,3,-3]
@@ -5043,5 +5103,72 @@ describe('高階関数', () => {
       }; // IO module
       /* #@range_end(io_monad_definition) */
     }); // IOモナド
+    // describe("Variantモナド", () => {
+    //   var variant = {
+    //     unit: (value, key) => {
+    //       return (pattern) => {
+    //         return pattern[key](value);
+    //       };
+    //     },
+    //     flatMap: (instance) => {
+    //       return (transform) => {
+    //         return instance(transform);
+    //       };
+    //     },
+    //     match: (instance, pattern) => {
+    //       return flip(variant.flatMap)(pattern)(instance);
+    //     }
+    //   };
+    //   it("Maybe", (next) => {
+    //     var just = (value) => {
+    //       return variant.unit(value, 'just');
+    //     }; 
+    //     var nothing = (_) => {
+    //       return variant.unit(null, 'nothing');
+    //     }; 
+    //     var isEqual = (maybeA) => {
+    //       return (maybeB) => {
+    //         return variant.match(maybeA,{
+    //           just: (valueA) => {
+    //             return variant.match(maybeB,{
+    //               just: (valueB) => {
+    //                 return (valueA === valueB);
+    //               },
+    //               nothing: (_) => {
+    //                 return false;
+    //               }
+    //             });
+    //           },
+    //           nothing: (_) => {
+    //             return variant.match(maybeB,{
+    //               just: (_) => {
+    //                 return false;
+    //               },
+    //               nothing: (_) => {
+    //                 return true;
+    //               }
+    //             });
+    //           }
+    //         });
+    //       };
+    //     };
+    //     var add = (maybeA,maybeB) => {
+    //       return variant.flatMap(maybeA)((a) => {
+    //         return variant.flatMap(maybeB)((b) => {
+    //           return variant.unit(a + b);
+    //         });
+    //       });
+    //     };
+    //     var justOne = just(1);
+    //     var justTwo = just(2);
+    //     var justThree = just(3);
+    //     expect(
+    //       isEqual(add(justOne,justTwo))(justThree)
+    //     ).to.eql(
+    //       true
+    //     );
+    //     next();
+    //   });
+    // });
   }); // モナド
 });

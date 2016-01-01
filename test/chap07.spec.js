@@ -4032,13 +4032,10 @@ describe('高階関数', () => {
     describe('恒等モナド', () => {
       /* #@range_begin(identity_monad) */
       var identity = {
-        // ## identity#unit
         unit: (value) => {
-          // var self = this;
           return value;
         },
         flatMap: (instance) => {
-          // var self = this;
           return (transform) => {
             expect(transform).to.a('function');
             return transform(instance);
@@ -4046,18 +4043,43 @@ describe('高階関数', () => {
         }
       };
       /* #@range_end(identity_monad) */
-      /* #@range_begin(identity_monad_introduces_context_and_binding) */
-      it("恒等モナドのflatMapは変数のバインディングに似ている", (next) => {
+      it("恒等モナドのunit関数", (next) => {
+      /* #@range_begin(identity_monad_unit_test) */
         expect(
-          identity.flatMap(identity.unit(1))((one) => {    // var one = 1; 
-            return identity.flatMap(identity.unit(2))((two) => { // var two = 2;
-              return identity.unit(one + two); // return one + two;
+          identity.unit(1)
+        ).to.eql(
+          1
+        );
+        /* #@range_end(identity_monad_unit_test) */
+        next();
+      });
+      it("恒等モナドのflatMap関数", (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        /* #@range_begin(identity_monad_flatMap_test) */
+        expect(
+          identity.flatMap(identity.unit(1))((one) => {    
+            return identity.unit(succ(one));
+          })
+        ).to.eql(
+          2
+        );
+        expect(
+          succ(1)
+        ).to.eql(
+          2
+        );
+        expect(
+          identity.flatMap(identity.unit(1))((one) => {    
+            return identity.flatMap(identity.unit(2))((two) => { 
+              return identity.unit(one + two); 
             });
           })
         ).to.eql(
           3
         );
-        /* #@range_end(identity_monad_introduces_context_and_binding) */
+        /* #@range_end(identity_monad_flatMap_test) */
         next();
       });
       describe("恒等モナドのモナド則", () => {
@@ -4157,11 +4179,12 @@ describe('高階関数', () => {
         /* #@range_end(algebraic_type_maybe) */
         /* #@range_begin(maybe_monad) */
         var unit = (value) => {
-          if(value){
-            return just(value);
-          } else {
-            return nothing(null);
-          }
+          return just(value);
+          // if(value){
+          //   return just(value);
+          // } else {
+          //   return nothing(null);
+          // }
         };
         var flatMap = (maybe) => {
           return (transform) => {
@@ -5177,72 +5200,48 @@ describe('高階関数', () => {
         return instance();
       };
       // 
-      expect(run(unit(1))).to.eql(null);
+      expect(run(unit(1))).to.eql(1);
     });
     describe('IOモナド', () => {
       var fs = require('fs');
       // ## 'IO' monad module
       /* #@range_begin(io_monad_definition) */
       var IO = {
-        unit: (sideeffect) => {
-          var self = this;
-          return {
-            run: sideeffect
+        // unit:: a -> IO a
+        unit : (any) => {
+          return (_) =>  {
+            return any;
           };
         },
-        empty: () => {
-          var self = this;
-          return self.monad.IO.unit(() => {
-            // do nothing
-          });
-        },
-        join: (io1, io2) => {
-          return self.monad.IO.unit(() => {
-            io1.run();
-            io2.run();
-          });
-        },
-        // map :: IO[A] => FUN[A => B] => IO[B]
-        map: (io) => {
-          var self = this;
-          return (transform) => { // transform :: A => B
-            return self.monad.IO.unit(() => {
-              return transform(io.run());
-            });
+        // flatMap:: IO a -> (a -> IO b) -> IO b
+        flatMap : (instanceA) => {
+          return (actionAB) => { // actionAB:: a -> IO b
+            return IO.unit(IO.run(actionAB(IO.run(instanceA))));
           };
         },
-        // flatMap :: IO[A] => FUN[A => IO[B]] => IO[B]
-        flatMap: (io) => {
-          var self = this;
-          return (transform) => {
-            return self.monad.IO.unit(() => {
-              return transform(io.run()).run();
-            });
+        // run:: IO A -> A
+        run : (instance) => {
+          return instance();
+        },
+        readFile : (path) => {
+          return (io) => {
+            var content = fs.readFileSync(path, 'utf8');
+            return content;
           };
         },
-        // readFile:: STRING -> IO[STRING]
-        readFile: (path) => {
-          var self = this;
-          return self.monad.IO.unit(() => {
-            return fs.readFileSync(path, 'utf8');
-          });
+        writeFile : (content) => {
+          return (io) => {
+            console.log(content);
+            return null;
+          };
         },
-        // writeFile:: STRING -> IO()
-        writeFile: (path, content) => {
-          var self = this;
-          return self.monad.IO.unit(() => {
-            fs.writeFileSync(path, content);
-          });
-        },
-        // print:: STRING -> IO()
-        print: (message) => {
-          var self = this;
-          return self.monad.IO.unit(() => {
+        println : (message) => {
+          return (io) => {
             console.log(message);
-            return message;
-          });
+            return null;
+          };
         }
-      }; // IO module
+      }; // IO monad
       /* #@range_end(io_monad_definition) */
     }); // IOモナド
     // describe("Variantモナド", () => {

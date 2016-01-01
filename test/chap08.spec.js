@@ -73,6 +73,16 @@ describe('関数型言語を作る', () => {
           return pattern.application(variable, arg);
         };
       };
+      var add = (exp1,exp2) => {
+        return (pattern) => {
+          return pattern.add(exp1, exp2);
+        };
+      };
+      var mul = (exp1,exp2) => {
+        return (pattern) => {
+          return pattern.mul(exp1, exp2);
+        };
+      };
       it('式をテストする', (next) => {
         // λx.λy.x
         match(lambda(variable("x"),lambda(variable("y"),variable("x"))),{
@@ -114,6 +124,12 @@ describe('関数型言語を作る', () => {
               var rator = evaluate(variable, env);
               var rand = evaluate(arg, env);
               return rator(rand);
+            },
+            add: (exp1, exp2) => {
+              return number(evaluate(exp1, env) + evaluate(exp2, env));
+            },
+            mul: (exp1, exp2) => {
+              return number(evaluate(exp1, env) * evaluate(exp2, env));
             }
           });
         };
@@ -127,6 +143,14 @@ describe('関数型言語を作る', () => {
             );
             next();
           });
+          // it('演算子を評価する', (next) => {
+          //   expect(
+          //     evaluate(add(number(2),number(3), emptyEnv))
+          //   ).to.be(
+          //     2
+          //   );
+          //   next();
+          // });
           it('変数を評価する', (next) => {
             var env = extendEnv("x",1, emptyEnv);
             expect(
@@ -172,6 +196,16 @@ describe('関数型言語を作る', () => {
             );
             next();
           });
+          // it('例題', (next) => {
+          //   /* add(1,2) == 3 */
+            
+          //   expect(
+          //     evaluate(application(identity, number(1)), emptyEnv)
+          //   ).to.eql(
+          //     1
+          //   );
+          //   next();
+          // });
           it('ブール型を評価する', (next) => {
             /* λx.λy.x */
             var trueFun = lambda(variable("x"),lambda(variable("y"),variable("x")));

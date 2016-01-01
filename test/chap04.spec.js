@@ -540,7 +540,7 @@ describe('データの種類と特徴', () => {
         ];
         expect(
           addressbook[0].age(new Date())
-        ).to.be(103);
+        ).to.be(104);
         /* ##@range_end(object_can_embed_function) */
         /* ##@range_begin(embeded_function_invocation) */
         // expect(

@@ -150,8 +150,20 @@ var list  = {
   },
   // list#concat
   // concat:: LIST[LIST[T]] -> LIST[T]
-  concat: (list_of_list) => {
-    return list.foldr(list_of_list)(list.empty())(list.append);
+  // concat [] = []
+  // concat (xs:xss) = append(xs, xss)
+  // or,
+  // concat xss = foldr xss [] append
+  concat: (xss) => {
+    return match(xss,{
+      empty: (_) => {
+        return list.empty();
+      },
+      cons: (xs,xss) => {
+        return list.append(xs,xss);
+      }
+    });
+    // return list.foldr(list_of_list)(list.empty())(list.append);
   },
   // concat: (xs) => {
   //   var self = this;
@@ -504,33 +516,37 @@ var stream = {
     };
   },
   // ## stream#concat
-  concat: (xs) => {
-    return (ysThunk) => {
-      return match(xs,{
-        empty: (_) => {
-          return ysThunk();
-        },
-        cons: (head,tailThunk) => {
-          return stream.cons(head,(_) => {
-            return stream.concat(tailThunk())(ysThunk);
-          });
-        }
-      });
-    };
-  },
-  // ## stream#flatten
-  // flatten :: STREAM[STREAM[T]] => STREAM[T]
-  flatten: (lazyList) => {
-    return match(lazyList,{
+  // concat:: STREAM[STREAM[T]] -> STREAM[T]
+  concat: (astream) => {
+    var self = this;
+    return match(astream,{
       empty: (_) => {
         return stream.empty();
       },
       cons: (head,tailThunk) => {
-        return stream.concat(head)((_) => {
-          return stream.flatten(tailThunk());
-        });
+        return stream.append(head,tailThunk());
       }
     });
+  },
+  // concat: (xs) => {
+  //   return (ysThunk) => {
+  //     return match(xs,{
+  //       empty: (_) => {
+  //         return ysThunk();
+  //       }
+  //       ,
+  //       cons: (head,tailThunk) => {
+  //         return stream.cons(head,(_) => {
+  //           return stream.concat(tailThunk())(ysThunk);
+  //         });
+  //       }
+  //     });
+  //   };
+  // },
+  // ## stream#flatten
+  // flatten :: STREAM[STREAM[T]] => STREAM[T]
+  flatten: (astream) => {
+    return list.concat(astream);
   },
   toArray: (lazyList) => {
     return match(lazyList,{
@@ -549,14 +565,14 @@ var stream = {
       }
     });
   },
-  // ### stream#fromList
-  fromArray: (array) => {
-    return array.reduce((accumulator, item) => {
-      return stream.concat(accumulator)(stream.cons(item, (_) => {
-        return stream.empty();
-      }));
-    });
-  },
+  // ### stream#fromArray
+  // fromArray: (array) => {
+  //   return array.reduce((accumulator, item) => {
+  //     return stream.concat(accumulator)(stream.cons(item, (_) => {
+  //       return stream.empty();
+  //     }));
+  //   });
+  // },
   // ### stream#take
   // take:: STREAM -> NUMBER -> STREAM
   take: (lazyList) => {
@@ -1418,8 +1434,8 @@ describe('高階関数', () => {
           return seq.match(list, {
             empty: accumulator,  // 空のリストの場合は終了
             cons: (head, tail) => {
-              return reverse(tail)(seq.cons(head, accumulator))
-            },
+              return reverse(tail)(seq.cons(head, accumulator));
+            }
           });
         };
       };
@@ -1431,12 +1447,12 @@ describe('高階関数', () => {
                                   list, {
                                     empty: accumulator,  // 空のリストの場合は終了
                                     cons: (head, tail) => {
-                                      return toArrayAux(tail)(accumulator.concat(head))
+                                      return toArrayAux(tail)(accumulator.concat(head));
                                     }
                                   });
           };
         };
-        return toArrayAux(list)([])
+        return toArrayAux(list)([]);
       };
       /**************** テスト ****************/
       expect(
@@ -2123,20 +2139,6 @@ describe('高階関数', () => {
             }
           });
         };
-        var concat = (xs) => {
-          return (ysThunk) => {
-            return match(xs,{
-              empty: (_) => {
-                return ysThunk();
-              },
-              cons: (head,tailThunk) => {
-                return cons(head,(_) => {
-                  return concat(tailThunk())(ysThunk);
-                });
-              }
-            });
-          };
-        };
         /* #@range_end(algebraic_stream) */
         /* #@range_begin(algebraic_stream_helpers) */
         // ### stream#toArray
@@ -2155,14 +2157,6 @@ describe('高階関数', () => {
                 }
               });
             }
-          });
-        };
-        // ### stream#fromList
-        var fromArray = (array) => {
-          return array.reduce((accumulator, item) => {
-            return concat(accumulator)(cons(item, (_) => {
-              return empty();
-            }));
           });
         };
         // ### stream#take
@@ -2874,76 +2868,6 @@ describe('高階関数', () => {
       });
     });
     describe('畳み込み関数で反復処理を渡す', () => {
-      // var seq  = {
-      //   match: (data, pattern) => {
-      //     var self = this;
-      //     return data(pattern);
-      //   },
-      //   empty: (_) => {
-      //     return (pattern) => {
-      //       return pattern.empty();
-      //     };
-      //   },
-      //   cons: (value, list) => {
-      //     return (pattern) => {
-      //       return pattern.cons(value, list);
-      //     };
-      //   },
-      //   head: (list) => {
-      //     var self = this;
-      //     return self.match(list, {
-      //       empty: (_) => {
-      //         return undefined;
-      //       },
-      //       cons: (head, tail) => {
-      //         return head;
-      //       },
-      //     });
-      //   },
-      //   tail: (list) => {
-      //     var self = this;
-      //     return self.match(list, {
-      //       empty: (_) => {
-      //         return undefined;
-      //       },
-      //       cons: (head, tail) => {
-      //         return tail;
-      //       },
-      //     });
-      //   },
-      //   isEmpty: (list) => {
-      //     var self = this;
-      //     return seq.match(list, {
-      //       empty: (_) => {
-      //         return true;
-      //       },
-      //       cons: (head, tail) => {
-      //         return false;
-      //       },
-      //     });
-      //   },
-      // // concat:: LIST[T] -> LIST[T] -> LIST[T]
-      // concat: (xs) => {
-      //    var self = this;
-      //    return (ys) => {
-      //      if(self.isEmpty(xs)){
-      //        return ys;
-      //      } else {
-      //        return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
-      //      }
-      //    };
-      // },
-      /* #@range_begin(foldr_toArray) */
-      // toArray: (list) => {
-      //   var self = this;
-      //   return self.foldr(list)([])(function (item) {
-      //     return (accumulator) => {
-      //       return [item].concat(accumulator);
-      //     };
-      //   });
-      // }
-      /* #@range_end(foldr_toArray) */
-      // };
       describe('畳み込み関数foldr', () => {
         /* #@range_begin(list_foldr) */
         var foldr = (seq) => {
@@ -3061,7 +2985,6 @@ describe('高階関数', () => {
             return foldr(seq)(list.empty())((item) => {
               return (accumulator) => {
                 return list.append(accumulator)(list.cons(item,list.empty()));
-                // return list.concat(accumulator)(list.cons(item,list.empty()));
               };
             });
           };
@@ -4774,22 +4697,22 @@ describe('高階関数', () => {
             );
             next();
           });
-          it("[nothing()]", (next) => {
-            // var theList = list.unit(maybe.nothing());
-            var theList = list.cons(maybe.nothing(100),
-                                    list.empty());
-            var justList = list.flatMap(theList)((listItem) => {
-              return maybe.flatMap(listItem)((value) => {
-                return list.unit(value);
-              });
-            });
-            expect(
-              list.toArray(justList)
-            ).to.eql(
-              []
-            );
-            next();
-          });
+          // it("[nothing()]", (next) => {
+          //   // var theList = list.unit(maybe.nothing());
+          //   var theList = list.cons(maybe.nothing(100),
+          //                           list.empty());
+          //   var justList = list.flatMap(theList)((listItem) => {
+          //     return maybe.flatMap(listItem)((value) => {
+          //       return list.unit(value);
+          //     });
+          //   });
+          //   expect(
+          //     list.toArray(justList)
+          //   ).to.eql(
+          //     []
+          //   );
+          //   next();
+          // });
           // it("[just(1),nothing()]", (next) => {
           //   // theList:: LIST[MAYBE[NUM]]
           //   //           [just(1), nothing()]
@@ -4993,6 +4916,20 @@ describe('高階関数', () => {
           };
         },
         // ## stream#append
+        append: (xs) => {
+          return (ysThunk) => {
+            return match(xs,{
+              empty: (_) => {
+                return ysThunk();
+              },
+              cons: (head,tailThunk) => {
+                return stream.cons(head,(_) => {
+                  return stream.append(tailThunk())(ysThunk);
+                });
+              }
+            });
+          };
+        },
         // append: (stream1, stream2) => {
         //   // var self = this;
         //   return match(stream1,{
@@ -5013,20 +4950,31 @@ describe('高階関数', () => {
         //   });
         // },
         // ## stream#concat
-        concat: (xs) => {
-          return (ysThunk) => {
-            return match(xs,{
-              empty: (_) => {
-                return ysThunk();
-              },
-              cons: (head,tailThunk) => {
-                return stream.cons(head,(_) => {
-                  return stream.concat(tailThunk())(ysThunk);
-                });
-              }
-            });
-          };
+        // concat:: STREAM[STREAM[T]] -> STREAM[T]
+        concat: (astream) => {
+          return match(astream,{
+            empty: (_) => {
+              return stream.empty();
+            },
+            cons: (head,tailThunk) => {
+              return stream.append(head,tailThunk());
+            }
+          });
         },
+        // concat: (xs) => {
+        //   return (ysThunk) => {
+        //     return match(xs,{
+        //       empty: (_) => {
+        //         return ysThunk();
+        //       },
+        //       cons: (head,tailThunk) => {
+        //         return stream.cons(head,(_) => {
+        //           return stream.concat(tailThunk())(ysThunk);
+        //         });
+        //       }
+        //     });
+        //   };
+        // },
         // ## stream#flatten
         // flatten :: STREAM[STREAM[T]] => STREAM[T]
         flatten: (lazyList) => {
@@ -5035,7 +4983,7 @@ describe('高階関数', () => {
               return stream.empty();
             },
             cons: (head,tailThunk) => {
-              return stream.concat(head)((_) => {
+              return stream.append(head)((_) => {
                 return stream.flatten(tailThunk());
               });
             }
@@ -5143,7 +5091,7 @@ describe('高階関数', () => {
         );
         next();
       });
-      it("stream#concat", (next) => {
+      it("stream#append", (next) => {
         var xs = stream.cons(1, (_) => {
           return stream.empty();
         });
@@ -5152,14 +5100,14 @@ describe('高階関数', () => {
             return stream.empty();
           });
         };
-        var concatenatedStream = stream.concat(xs)(ysThunk);
+        var theStream = stream.append(xs)(ysThunk);
         expect(
-          maybe.get(stream.head(concatenatedStream))
+          maybe.get(stream.head(theStream))
         ).to.eql(
           1
         );
         expect(
-          maybe.get(stream.head(maybe.get(stream.tail(concatenatedStream))))
+          maybe.get(stream.head(maybe.get(stream.tail(theStream))))
         ).to.eql(
           2
         );

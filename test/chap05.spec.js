@@ -52,14 +52,14 @@ var list  = {
       }
     });
   },
-  // list#concat
-  // concat:: LIST[T] -> LIST[T] -> LIST[T]
-  concat: (xs) => {
+  // list#append
+  // append:: LIST[T] -> LIST[T] -> LIST[T]
+  append: (xs) => {
     return (ys) => {
       if(list.isEmpty(xs)){
         return ys;
       } else {
-        return list.cons(list.head(xs),(list.concat(list.tail(xs))(ys)));
+        return list.cons(list.head(xs),(list.append(list.tail(xs))(ys)));
       }
     };
   },
@@ -85,7 +85,7 @@ var list  = {
     if(self.isEmpty(list_of_list)){
       return list.empty();
     } else {
-      return list.concat(list.head(list_of_list))(list.join(list.tail(list_of_list)));
+      return list.append(list.head(list_of_list))(list.join(list.tail(list_of_list)));
     }
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
@@ -142,7 +142,7 @@ var list  = {
           },
           cons: (head,tail) => {
             if(predicate(head) === true){
-              return list.concat(list.concat(accumulator)(list.cons(head, list.empty())))(filterAux(tail, accumulator));
+              return list.append(list.append(accumulator)(list.cons(head, list.empty())))(filterAux(tail, accumulator));
             } else  {
               return filterAux(tail, accumulator);
             }
@@ -1635,22 +1635,22 @@ describe('プログラムをコントロールする仕組み', () => {
             };
             return toArrayAux(seq, []);
           };
-          /* #@range_begin(list_concat) */
-          // concat :: (LIST[T], LIST[T]) -> LIST[T]
-          var concat = (xs, ys) => {
+          /* #@range_begin(list_append) */
+          // append :: (LIST[T], LIST[T]) -> LIST[T]
+          var append = (xs, ys) => {
             return match(xs,{
               empty: (_) => {
                 return ys; // xsが空の場合は、ysを返す
               },
               cons: (head, tail) => { // xs が空でない場合は、xs と ys を連結させる
                 return list.cons(head,     
-                                 concat(tail,ys));
+                                 append(tail,ys));
               }
             });
           };
-          /* #@range_end(list_concat) */
+          /* #@range_end(list_append) */
           
-          /* #@range_begin(list_concat_test) */
+          /* #@range_begin(list_append_test) */
           var xs = list.cons(1,
                              list.cons(2,
                                        list.empty()));
@@ -1658,11 +1658,11 @@ describe('プログラムをコントロールする仕組み', () => {
                              list.cons(4,
                                        list.empty()));
           expect(
-            toArray(concat(xs,ys)) // toArray関数でリストを配列に変換する
+            toArray(append(xs,ys)) // toArray関数でリストを配列に変換する
           ).to.eql(
             [1,2,3,4]
           );
-          /* #@range_end(list_concat_test) */
+          /* #@range_end(list_append_test) */
           next();
         });
       });
@@ -1799,14 +1799,14 @@ describe('プログラムをコントロールする仕組み', () => {
             }
           });
         };
-        var concat = (xs, ys) => {
+        var append = (xs, ys) => {
           return match(xs,{
             empty: (_) => {
               return ys;
             },
             cons: (head, tail) => {
               return list.cons(head,
-                               concat(tail,ys));
+                               append(tail,ys));
             }
           });
         };
@@ -1819,7 +1819,7 @@ describe('プログラムをコントロールする仕組み', () => {
                              list.cons(4,
                                        list.empty()));
           expect(
-            length(concat(xs, ys)) 
+            length(append(xs, ys)) 
           ).to.eql(
             length(xs) + length(ys)
           );

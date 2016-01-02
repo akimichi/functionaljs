@@ -740,7 +740,8 @@ describe('streamのテスト', () => {
 
 var maybe = {
   match: (data, pattern) => {
-    return data.call(pattern,pattern);
+    return data(pattern);
+    // return data.call(pattern,pattern);
   },
   just : (value) => {
     return (pattern) => {
@@ -4266,7 +4267,8 @@ describe('高階関数', () => {
       var list  = {
         match: (data, pattern) => {
           console.log(pattern);
-          return data.call(pattern,pattern);
+           return data(pattern);
+          // return data.call(list,pattern);
         },
         empty: (_) => {
           return (pattern) => {
@@ -4332,15 +4334,15 @@ describe('高階関数', () => {
         // concat [] = []
         // concat (xs:xss) = xs ++ concat xss
         concat: (list_of_list) => {
-          return list.foldr(list_of_list)(list.empty())(list.append);
-          // return list.match(list_of_list, {
-          //   empty: (_) => {
-          //     return list.empty();
-          //   },
-          //   cons: (head, tail) => {
-          //     return list.append(head)(list.concat(tail));
-          //   }
-          // });
+          // return list.foldr(list_of_list)(list.empty())(list.append);
+          return list.match(list_of_list, {
+            empty: (_) => {
+              return list.empty();
+            },
+            cons: (head, tail) => {
+              return list.append(head)(list.concat(tail));
+            }
+          });
         },
         // map:: LIST[T] -> FUN[T->U] -> LIST[U]
         // map [] _ = []
@@ -4358,6 +4360,7 @@ describe('高階関数', () => {
             });
 		  };
         },
+        // ~~~haskell
         // flatten :: [[a]] -> [a]
         // flatten =  foldr (++) []
         // ~~~
@@ -4372,6 +4375,15 @@ describe('高階関数', () => {
             }
           });
         },
+        // ~~~haskell
+        // xs >>= f = concat (map f xs)
+        // ~~~
+        flatMap: (instanceM) => {
+          return (transform) => { // FUN[T->LIST[T]]
+            expect(transform).to.a('function');
+            return list.concat(list.map(instanceM)(transform));
+          };
+        },
         // flatMap xs f = concat (map f xs)
         // flatMap: (instanceM) => {
         //   return (transform) => { // FUN[T->LIST[T]]
@@ -4379,14 +4391,14 @@ describe('高階関数', () => {
         //     return list.concat(list.map(instanceM)(transform));
         //   };
         // },
-        flatMap: (instanceM) => {
-          return (transform) => { // FUN[T->LIST[T]]
-            expect(transform).to.a('function');
-            var transformed = list.map(instanceM)(transform);
-            return list.flatten(transformed);
-            // return list.flatten(list.map(instanceM)(transform));
-          };
-        },
+        // flatMap: (instanceM) => {
+        //   return (transform) => { // FUN[T->LIST[T]]
+        //     expect(transform).to.a('function');
+        //     var transformed = list.map(instanceM)(transform);
+        //     return list.flatten(transformed);
+        //     // return list.flatten(list.map(instanceM)(transform));
+        //   };
+        // },
         // ### monad.list#flatMap
         // flatMap: (instance) => {
         //   return (transform) => {
@@ -4640,58 +4652,58 @@ describe('高階関数', () => {
         });
         /* #@range_begin(list_maybe) */
         describe("maybeと一緒に使う", () => {
-          var maybe = {
-            match: (data, pattern) => {
-              return data.call(pattern,pattern);
-            },
-            just : (value) => {
-              return (pattern) => {
-                return pattern.just(value);
-              };
-            },
-            nothing : (_) => {
-              return (pattern) => {
-                expect(pattern).not.to.be.a('null');
-                // console.log(pattern);
-                return pattern.nothing(100);
-              };
-            },
-            unit : (value) => {
-              // return maybe.just(value);
-             if(value !== false && value != null){
-                return maybe.just(value);
-              } else {
-                return maybe.nothing(100);
-              }
-            },
-            flatMap : (maybeInstance) => {
-              return (transform) => {
-                expect(transform).to.a('function');
-                return maybe.match(maybeInstance,{
-                  just: (value) => {
-                    return transform(value);
-                  },
-                  nothing: (_) => {
-                    return maybe.nothing(100);
-                  }
-                });
-              };
-            },
-            // map : (maybeInstance) => {
-            //   return (transform) => {
-            //     expect(transform).to.a('function');
-            //     return maybe.match(maybeInstance,{
-            //       just: (value) => {
-            //         return maybe.unit(transform(value));
-            //         // return maybe.unit(transform(value));
-            //       },
-            //       nothing: (_) => {
-            //         return maybe.nothing(null);
-            //       }
-            //     });
-            //   };
-            // }
-          };
+          // var maybe = {
+          //   match: (data, pattern) => {
+          //     return data.call(maybe,pattern);
+          //   },
+          //   just : (value) => {
+          //     return (pattern) => {
+          //       return pattern.just(value);
+          //     };
+          //   },
+          //   nothing : (_) => {
+          //     return (pattern) => {
+          //       expect(pattern).not.to.be.a('null');
+          //       // console.log(pattern);
+          //       return pattern.nothing(null);
+          //     };
+          //   },
+          //   unit : (value) => {
+          //     return maybe.just(value);
+          //    // if(value !== false && value != null){
+          //    //    return maybe.just(value);
+          //    //  } else {
+          //    //    return maybe.nothing(null);
+          //    //  }
+          //   },
+          //   flatMap : (maybeInstance) => {
+          //     return (transform) => {
+          //       expect(transform).to.a('function');
+          //       return maybe.match(maybeInstance,{
+          //         just: (value) => {
+          //           return transform(value);
+          //         },
+          //         nothing: (_) => {
+          //           return maybe.nothing(null);
+          //         }
+          //       });
+          //     };
+          //   },
+          //   // map : (maybeInstance) => {
+          //   //   return (transform) => {
+          //   //     expect(transform).to.a('function');
+          //   //     return maybe.match(maybeInstance,{
+          //   //       just: (value) => {
+          //   //         return maybe.unit(transform(value));
+          //   //         // return maybe.unit(transform(value));
+          //   //       },
+          //   //       nothing: (_) => {
+          //   //         return maybe.nothing(null);
+          //   //       }
+          //   //     });
+          //   //   };
+          //   // }
+          // };
           it("[just(1)]", (next) => {
             var theList = list.cons(maybe.just(1),
                                     list.empty());
@@ -4709,7 +4721,7 @@ describe('高階関数', () => {
           });
           it("[just(1),just(2)]", (next) => {
             var theList = list.cons(maybe.just(1),
-                                    list.cons(maybe.just(2),list.empty(maybe.nothing())));
+                                    list.cons(maybe.just(2),list.empty()));
             var justList = list.flatMap(theList)((listItem) => {
               return maybe.flatMap(listItem)((value) => {
                 return list.unit(value);
@@ -4724,11 +4736,12 @@ describe('高階関数', () => {
           });
           // it("[nothing()]", (next) => {
           //   // var theList = list.unit(maybe.nothing());
-          //   var theList = list.cons(maybe.nothing(100),
+          //   var theList = list.cons(maybe.nothing(null),
           //                           list.empty());
           //   var justList = list.flatMap(theList)((listItem) => {
           //     return maybe.flatMap(listItem)((value) => {
           //       return list.unit(value);
+          //       // return list.unit(value);
           //     });
           //   });
           //   expect(
@@ -5323,58 +5336,57 @@ describe('高階関数', () => {
       expect(run(unit(1))).to.eql(1);
     });
     describe('IOモナド', () => {
-      describe('IOモナド(world)', () => {
-        var fs = require('fs');
-        // ## 'IO' monad module
-        /* #@range_begin(io_monad_definition) */
-        var IO = {
-          // unit:: a -> IO[a]
-          unit : (any) => {
-            return (world) =>  {  // 現在の外界
-              return pair.cons(any, world);
-            };
-          },
-          // run:: IO[A] -> A
-          run : (instance) => {
-            return (world) => {
-              return instance(world); // IOモナドのインスタンス(アクション)を現在の外界に適用する
-            };
-          },
-          // flatMap:: IO a -> (a -> IO b) -> IO b
-          // flatMap f g = \world ->
-          //                  case f world of
-          //                  (v, world') -> g v world'
-          flatMap : (instanceA) => {
-            return (actionAB) => { // actionAB:: a -> IO b
-              return (world) => {
-                return pair.match(IO.run(instanceA)(world))({
-                  cons: (value, newWorld) => {
-                    return IO.run(actionAB(value))(newWorld);
-                  }
-                });
-              };
-            };
-          },
-          readFile : (path) => {
-            return (io) => {
-              var content = fs.readFileSync(path, 'utf8');
-              return content;
-            };
-          },
-          writeFile : (content) => {
-            return (io) => {
-              console.log(content);
-              return null;
-            }
-          },
-          println : (message) => {
-            return (io) => {
-              console.log(message);
-              return null;
-            };
-          }
-        }; 
-      }); // IO monad with world 
+      // describe('IOモナド(world)', () => {
+      //   var fs = require('fs');
+      //   // ## 'IO' monad module
+      //   var IO = {
+      //     // unit:: a -> IO[a]
+      //     unit : (any) => {
+      //       return (world) =>  {  // 現在の外界
+      //         return pair.cons(any, world);
+      //       };
+      //     },
+      //     // run:: IO[A] -> A
+      //     run : (instance) => {
+      //       return (world) => {
+      //         return instance(world); // IOモナドのインスタンス(アクション)を現在の外界に適用する
+      //       };
+      //     },
+      //     // flatMap:: IO a -> (a -> IO b) -> IO b
+      //     // flatMap f g = \world ->
+      //     //                  case f world of
+      //     //                  (v, world') -> g v world'
+      //     flatMap : (instanceA) => {
+      //       return (actionAB) => { // actionAB:: a -> IO b
+      //         return (world) => {
+      //           return pair.match(IO.run(instanceA)(world))({
+      //             cons: (value, newWorld) => {
+      //               return IO.run(actionAB(value))(newWorld);
+      //             }
+      //           });
+      //         };
+      //       };
+      //     },
+      //     readFile : (path) => {
+      //       return (io) => {
+      //         var content = fs.readFileSync(path, 'utf8');
+      //         return content;
+      //       };
+      //     },
+      //     writeFile : (content) => {
+      //       return (io) => {
+      //         console.log(content);
+      //         return null;
+      //       }
+      //     },
+      //     println : (message) => {
+      //       return (io) => {
+      //         console.log(message);
+      //         return null;
+      //       };
+      //     }
+      //   }; 
+      // }); // IO monad with world 
       describe('IOモナド', () => {
         var fs = require('fs');
         // ## 'IO' monad module

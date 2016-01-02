@@ -83,18 +83,123 @@ describe('関数型言語を作る', () => {
           return pattern.mul(exp1, exp2);
         };
       };
-      it('式をテストする', (next) => {
-        // λx.λy.x
-        match(lambda(variable("x"),lambda(variable("y"),variable("x"))),{
-          lambda: (variable, arg) => {
-            expect(
-              variable
-            ).to.a('function');
-          }
+      var div = (exp1,exp2) => {
+        return (pattern) => {
+          return pattern.div(exp1, exp2);
+        };
+      };
+      describe('式をテストする', () => {
+        it("\\x.\\y.x", (next) => {
+          // λx.λy.x
+          match(lambda(variable("x"),lambda(variable("y"),variable("x"))),{
+            lambda: (variable, arg) => {
+              expect(
+                variable
+              ).to.a('function');
+            }
+          });
+          next();
         });
-        next();
       });
       /* #@range_end(expression_algaraic_datatype) */
+      describe('モナド的評価器を作る', () => {
+        describe('恒等モナド的評価器を作る', () => {
+          // ~~~haskell
+          // eval :: Monad m => Exp -> m Int
+          // eval (Const x) = return x
+          // eval (Div t u) = do { x <- eval t
+          //                       y <- eval u
+          //                       return (x div y)}
+          // ~~~
+          /* #@range_begin(identity_monad_evaluator) */
+          var ID = {
+            unit: (value) => {
+              return value;
+            },
+            flatMap: (instance) => {
+              return (transform) => {
+                expect(transform).to.a('function');
+                return transform(instance);
+              };
+            }
+          };
+          // evaluate:: (EXP, ENV) => ID[NUM]
+          var evaluate = (exp, env) => {
+            return match(exp,{
+              /* 数値の評価 */
+              number: (value) => {
+                return ID.unit(value);
+              },
+              /* 変数の評価 */
+              variable: (name) => {
+                return ID.unit(lookupEnv(name, env));
+              },
+              /* λ式の評価 */
+              lambda: (variable, bodyExp) => {
+                /* クロージャーを返す */
+                return (actualArg) => {
+                  return match(variable,{ // maybeを返すべきか？
+                    variable: (name) => {
+                      return evaluate(bodyExp, extendEnv(name, actualArg ,env));
+                    }
+                  });
+                };
+              },
+              /* 関数適用の評価 */
+              application: (variable, arg) => {
+                var rator = evaluate(variable, env);
+                var rand = evaluate(arg, env);
+                return ID.unit(rator(rand));
+              },
+              add: (exp1, exp2) => {
+                return ID.unit(evaluate(exp1, env) + evaluate(exp2, env));
+              },
+              mul: (exp1, exp2) => {
+                return ID.unit(evaluate(exp1, env) * evaluate(exp2, env));
+              },
+              div: (exp1, exp2) => {
+                return ID.unit(evaluate(exp1, env) / evaluate(exp2, env));
+              }
+            });
+          };
+          /* #@range_end(identity_monad_evaluator) */
+          it('数値を評価する', (next) => {
+            expect(
+              evaluate(number(2), emptyEnv)
+            ).to.be(
+              2
+            );
+            next();
+          });
+          it('演算を評価する', (next) => {
+            expect(
+              evaluate(add(number(1),number(2)), emptyEnv)
+            ).to.be(
+              3
+            );
+            expect(
+              evaluate(mul(number(2),number(3)), emptyEnv)
+            ).to.be(
+              6
+            );
+            next();
+          });
+          it('変数を評価する', (next) => {
+            var env = extendEnv("x",1, emptyEnv);
+            expect(
+              evaluate(variable("x"), env)
+            ).to.be(
+              1
+            );
+            expect(
+              evaluate(variable("y"), env)
+            ).to.be(
+              undefined
+            );
+            next();
+          });
+        });
+      });
       describe('評価器を作る', () => {
         // ## 式の評価関数
         /* #@range_begin(evaluation_function) */

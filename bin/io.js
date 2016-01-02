@@ -52,10 +52,10 @@ var println = (message) => {
 // };
 
 run(println("test"));
-run(readFile("./console.js"));
+run(readFile("./io.js"));
 
-flatMap(readFile("./console.js"))((content) => {
-  return flatMap(println(content))((_) => {
-    return unit(_);
-  });
-});
+// flatMap(readFile("./io.js"))((content) => {
+//   return flatMap(println(content))((_) => {
+//     return unit(_);
+//   });
+// });

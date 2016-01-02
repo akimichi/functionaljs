@@ -814,6 +814,31 @@ var maybe = {
   }
 };
 
+var pair = {
+  cons: (left, right) => {
+    return (pattern) => {
+      return pattern.cons(left, right);
+    };
+  },
+  match : (data, pattern) => {
+    return data.call(pair, pattern);
+  },
+  right: (tuple) => {
+    return match(tuple, {
+      cons: (left, right) => {
+        return right;
+      }
+    });
+  },
+  left: (tuple) => {
+    return match(tuple, {
+      cons: (left, right) => {
+        return left;
+      }
+    });
+  },
+};
+
 describe('高階関数', () => {
   describe('カリー化', () => {
     it('カリー化されていない指数関数', (next) => {
@@ -4930,25 +4955,6 @@ describe('高階関数', () => {
             });
           };
         },
-        // append: (stream1, stream2) => {
-        //   // var self = this;
-        //   return match(stream1,{
-        //     empty: (_) => {
-        //       return stream2;
-        //     },
-        //     cons: (head1,tailThunk1) => {
-        //       return match(stream2,{
-        //         empty: (_) => {
-        //           return stream1;
-        //         },
-        //         cons: (head2,tailThunk2) => {
-        //           return stream.cons(head1,() => {
-        //             return stream.append(tailThunk1(),stream2)});
-        //         }
-        //       });
-        //     }
-        //   });
-        // },
         // ## stream#concat
         // concat:: STREAM[STREAM[T]] -> STREAM[T]
         concat: (astream) => {
@@ -4961,20 +4967,6 @@ describe('高階関数', () => {
             }
           });
         },
-        // concat: (xs) => {
-        //   return (ysThunk) => {
-        //     return match(xs,{
-        //       empty: (_) => {
-        //         return ysThunk();
-        //       },
-        //       cons: (head,tailThunk) => {
-        //         return stream.cons(head,(_) => {
-        //           return stream.concat(tailThunk())(ysThunk);
-        //         });
-        //       }
-        //     });
-        //   };
-        // },
         // ## stream#flatten
         // flatten :: STREAM[STREAM[T]] => STREAM[T]
         flatten: (lazyList) => {
@@ -5331,46 +5323,100 @@ describe('高階関数', () => {
       expect(run(unit(1))).to.eql(1);
     });
     describe('IOモナド', () => {
-      var fs = require('fs');
-      // ## 'IO' monad module
-      /* #@range_begin(io_monad_definition) */
-      var IO = {
-        // unit:: a -> IO a
-        unit : (any) => {
-          return (_) =>  {
-            return any;
-          };
-        },
-        // flatMap:: IO a -> (a -> IO b) -> IO b
-        flatMap : (instanceA) => {
-          return (actionAB) => { // actionAB:: a -> IO b
-            return IO.unit(IO.run(actionAB(IO.run(instanceA))));
-          };
-        },
-        // run:: IO A -> A
-        run : (instance) => {
-          return instance();
-        },
-        readFile : (path) => {
-          return (io) => {
-            var content = fs.readFileSync(path, 'utf8');
-            return content;
-          };
-        },
-        writeFile : (content) => {
-          return (io) => {
-            console.log(content);
-            return null;
-          };
-        },
-        println : (message) => {
-          return (io) => {
-            console.log(message);
-            return null;
-          };
-        }
-      }; // IO monad
-      /* #@range_end(io_monad_definition) */
+      describe('IOモナド(world)', () => {
+        var fs = require('fs');
+        // ## 'IO' monad module
+        /* #@range_begin(io_monad_definition) */
+        var IO = {
+          // unit:: a -> IO[a]
+          unit : (any) => {
+            return (world) =>  {  // 現在の外界
+              return pair.cons(any, world);
+            };
+          },
+          // run:: IO[A] -> A
+          run : (instance) => {
+            return (world) => {
+              return instance(world); // IOモナドのインスタンス(アクション)を現在の外界に適用する
+            };
+          },
+          // flatMap:: IO a -> (a -> IO b) -> IO b
+          // flatMap f g = \world ->
+          //                  case f world of
+          //                  (v, world') -> g v world'
+          flatMap : (instanceA) => {
+            return (actionAB) => { // actionAB:: a -> IO b
+              return (world) => {
+                return pair.match(IO.run(instanceA)(world))({
+                  cons: (value, newWorld) => {
+                    return IO.run(actionAB(value))(newWorld);
+                  }
+                });
+              };
+            };
+          },
+          readFile : (path) => {
+            return (io) => {
+              var content = fs.readFileSync(path, 'utf8');
+              return content;
+            };
+          },
+          writeFile : (content) => {
+            return (io) => {
+              console.log(content);
+              return null;
+            }
+          },
+          println : (message) => {
+            return (io) => {
+              console.log(message);
+              return null;
+            };
+          }
+        }; 
+      }); // IO monad with world 
+      describe('IOモナド', () => {
+        var fs = require('fs');
+        // ## 'IO' monad module
+        /* #@range_begin(io_monad_definition) */
+        var IO = {
+          // unit:: a -> IO a
+          unit : (any) => {
+            return (_) =>  {
+              return any;
+            };
+          },
+          // flatMap:: IO a -> (a -> IO b) -> IO b
+          flatMap : (instanceA) => {
+            return (actionAB) => { // actionAB:: a -> IO b
+              return IO.unit(IO.run(actionAB(IO.run(instanceA))));
+            };
+          },
+          // run:: IO A -> A
+          run : (instance) => {
+            return instance();
+          },
+          readFile : (path) => {
+            return (io) => {
+              var content = fs.readFileSync(path, 'utf8');
+              return content;
+            };
+          },
+          writeFile : (content) => {
+            return (io) => {
+              console.log(content);
+              return null;
+            };
+          },
+          println : (message) => {
+            return (io) => {
+              console.log(message);
+              return null;
+            };
+          }
+        }; // IO monad
+        /* #@range_end(io_monad_definition) */
+      }); // IOモナド
     }); // IOモナド
     // describe("Variantモナド", () => {
     //   var variant = {

@@ -133,18 +133,36 @@ var list  = {
       }
     });
   },
-  // list#concat
-  // concat:: LIST[T] -> LIST[T] -> LIST[T]
-  concat: (xs) => {
-    var self = this;
+  // append:: LIST[T] -> LIST[T] -> LIST[T]
+  // append [] ys = ys
+  // append (x:xs) ys = x : (xs ++ ys)
+  append: (xs) => {
     return (ys) => {
-      if(list.isEmpty(xs)){
-        return ys;
-      } else {
-        return list.cons(list.head(xs),(list.concat(list.tail(xs))(ys)));
-      }
+      return match(xs, {
+        empty: (_) => {
+          return ys;
+        },
+        cons: (head, tail) => {
+          return list.cons(head, list.append(tail)(ys)); 
+        }
+      });
     };
   },
+  // list#concat
+  // concat:: LIST[LIST[T]] -> LIST[T]
+  concat: (list_of_list) => {
+    return list.foldr(list_of_list)(list.empty())(list.append);
+  },
+  // concat: (xs) => {
+  //   var self = this;
+  //   return (ys) => {
+  //     if(list.isEmpty(xs)){
+  //       return ys;
+  //     } else {
+  //       return list.cons(list.head(xs),(list.concat(list.tail(xs))(ys)));
+  //     }
+  //   };
+  // },
   last: (seq) => {
     var self = this;
     return match(seq, {
@@ -165,12 +183,13 @@ var list  = {
   },
   // join:: LIST[LIST[T]] -> LIST[T]
   join: (list_of_list) => {
-    var self = this;
-    if(self.isEmpty(list_of_list)){
-      return list.empty();
-    } else {
-      return list.concat(list.head(list_of_list))(list.join(list.tail(list_of_list)));
-    }
+    return list.concat(list_of_list);
+    // var self = this;
+    // if(self.isEmpty(list_of_list)){
+    //   return list.empty();
+    // } else {
+    //   return list.concat(list.head(list_of_list))(list.join(list.tail(list_of_list)));
+    // }
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
   foldr: (seq) => {
@@ -220,26 +239,41 @@ var list  = {
   /* #@range_end(list_reverse) */
   // ## list.filter
   /* #@range_begin(list_filter) */
-  filter: (seq) => {
-    var self = this;
+  filter: (alist) => {
     return (predicate) => {
-      expect(predicate).to.a('function');
-      var filterAux = (seq, accumulator) => {
-        return match(seq,{
-          empty: (_) => {
-            return accumulator;
-          },
-          cons: (head,tail) => {
-            if(predicate(head) === true){
-              return list.concat(list.concat(accumulator)(list.cons(head, list.empty())))(filterAux(tail, accumulator));
-            } else  {
-              return filterAux(tail, accumulator);
-            }
+      return match(alist,{
+        empty: (_) => {
+          return list.empty();
+        },
+        cons: (head,tail) => {
+          if(predicate(head)){
+            return list.cons(head,(_) => {
+              return list.filter(tail)(predicate);
+            });
+          } else {
+            return list.filter(tail)(predicate);
           }
-        });
-      };
-      return filterAux(seq, list.empty());
+        }
+      });
     };
+    // return (predicate) => {
+    //   expect(predicate).to.a('function');
+    //   var filterAux = (seq, accumulator) => {
+    //     return match(seq,{
+    //       empty: (_) => {
+    //         return accumulator;
+    //       },
+    //       cons: (head,tail) => {
+    //         if(predicate(head) === true){
+    //           return list.concat(list.concat(accumulator)(list.cons(head, list.empty())))(filterAux(tail, accumulator));
+    //         } else  {
+    //           return filterAux(tail, accumulator);
+    //         }
+    //       }
+    //     });
+    //   };
+    //   return filterAux(seq, list.empty());
+    // };
   },
   // list#length
   length: (seq) => {
@@ -291,7 +325,7 @@ var list  = {
   },
   // fromArray: (array) => {
   //   return array.reduce((accumulator, item) => {
-  //     return list.concat(accumulator)(list.cons(item, list.empty()));
+  //     return list.append(accumulator)(list.cons(item, list.empty()));
   //   });
   // },
   /* #@range_begin(list_fromString) */
@@ -3026,7 +3060,8 @@ describe('高階関数', () => {
           var reverse = (seq) => {
             return foldr(seq)(list.empty())((item) => {
               return (accumulator) => {
-                return list.concat(accumulator)(list.cons(item,list.empty()));
+                return list.append(accumulator)(list.cons(item,list.empty()));
+                // return list.concat(accumulator)(list.cons(item,list.empty()));
               };
             });
           };
@@ -4282,6 +4317,7 @@ describe('高階関数', () => {
     describe('Listモナド', () => {
       var list  = {
         match: (data, pattern) => {
+          console.log(pattern);
           return data.call(pattern,pattern);
         },
         empty: (_) => {
@@ -4348,15 +4384,15 @@ describe('高階関数', () => {
         // concat [] = []
         // concat (xs:xss) = xs ++ concat xss
         concat: (list_of_list) => {
-          // return list.foldr(list_of_list)(list.empty());
-          return list.match(list_of_list, {
-            empty: (_) => {
-              return list.empty();
-            },
-            cons: (head, tail) => {
-              return list.append(head)(list.concat(tail));
-            }
-          });
+          return list.foldr(list_of_list)(list.empty())(list.append);
+          // return list.match(list_of_list, {
+          //   empty: (_) => {
+          //     return list.empty();
+          //   },
+          //   cons: (head, tail) => {
+          //     return list.append(head)(list.concat(tail));
+          //   }
+          // });
         },
         // map:: LIST[T] -> FUN[T->U] -> LIST[U]
         // map [] _ = []
@@ -4389,18 +4425,20 @@ describe('高階関数', () => {
           });
         },
         // flatMap xs f = concat (map f xs)
-        flatMap: (instanceM) => {
-          return (transform) => { // FUN[T->LIST[T]]
-            expect(transform).to.a('function');
-            return list.concat(list.map(instanceM)(transform));
-          };
-        },
         // flatMap: (instanceM) => {
         //   return (transform) => { // FUN[T->LIST[T]]
         //     expect(transform).to.a('function');
-        //     return list.flatten(list.map(instanceM)(transform));
+        //     return list.concat(list.map(instanceM)(transform));
         //   };
         // },
+        flatMap: (instanceM) => {
+          return (transform) => { // FUN[T->LIST[T]]
+            expect(transform).to.a('function');
+            var transformed = list.map(instanceM)(transform);
+            return list.flatten(transformed);
+            // return list.flatten(list.map(instanceM)(transform));
+          };
+        },
         // ### monad.list#flatMap
         // flatMap: (instance) => {
         //   return (transform) => {
@@ -4590,11 +4628,15 @@ describe('高階関数', () => {
       });
       it("'list#unit'", (next) => {
         // list = [1]
-        var theList = list.unit(1);
         expect(
-          list.toArray(theList)
+          list.toArray(list.unit(1))
         ).to.eql(
           [1]
+        );
+        expect(
+          list.toArray(list.unit(null))
+        ).to.eql(
+          [null]
         );
         next();
       });
@@ -4662,16 +4704,16 @@ describe('高階関数', () => {
             nothing : (_) => {
               return (pattern) => {
                 expect(pattern).not.to.be.a('null');
-                console.log(pattern);
-                return pattern.nothing(_);
+                // console.log(pattern);
+                return pattern.nothing(100);
               };
             },
             unit : (value) => {
               // return maybe.just(value);
-              if(value){
+             if(value !== false && value != null){
                 return maybe.just(value);
               } else {
-                return maybe.nothing(null);
+                return maybe.nothing(100);
               }
             },
             flatMap : (maybeInstance) => {
@@ -4682,24 +4724,25 @@ describe('高階関数', () => {
                     return transform(value);
                   },
                   nothing: (_) => {
-                    return maybe.nothing(_);
+                    return maybe.nothing(100);
                   }
                 });
               };
             },
-            map : (maybeInstance) => {
-              return (transform) => {
-                expect(transform).to.a('function');
-                return maybe.match(maybeInstance,{
-                  just: (value) => {
-                    return maybe.unit(transform(value));
-                  },
-                  nothing: (_) => {
-                    return maybe.nothing(_);
-                  }
-                });
-              };
-            }
+            // map : (maybeInstance) => {
+            //   return (transform) => {
+            //     expect(transform).to.a('function');
+            //     return maybe.match(maybeInstance,{
+            //       just: (value) => {
+            //         return maybe.unit(transform(value));
+            //         // return maybe.unit(transform(value));
+            //       },
+            //       nothing: (_) => {
+            //         return maybe.nothing(null);
+            //       }
+            //     });
+            //   };
+            // }
           };
           it("[just(1)]", (next) => {
             var theList = list.cons(maybe.just(1),
@@ -4718,9 +4761,9 @@ describe('高階関数', () => {
           });
           it("[just(1),just(2)]", (next) => {
             var theList = list.cons(maybe.just(1),
-                                    list.cons(maybe.just(2),list.empty()));
-            var justList = list.flatMap(theList)((maybeItem) => {
-              return maybe.flatMap(maybeItem)((value) => {
+                                    list.cons(maybe.just(2),list.empty(maybe.nothing())));
+            var justList = list.flatMap(theList)((listItem) => {
+              return maybe.flatMap(listItem)((value) => {
                 return list.unit(value);
               });
             });
@@ -4732,17 +4775,18 @@ describe('高階関数', () => {
             next();
           });
           it("[nothing()]", (next) => {
-            var theList = list.cons(maybe.nothing(),
+            // var theList = list.unit(maybe.nothing());
+            var theList = list.cons(maybe.nothing(100),
                                     list.empty());
-            var justList = list.flatMap(theList)((maybeItem) => {
-              return maybe.flatMap(maybeItem)((value) => {
+            var justList = list.flatMap(theList)((listItem) => {
+              return maybe.flatMap(listItem)((value) => {
                 return list.unit(value);
               });
             });
             expect(
               list.toArray(justList)
             ).to.eql(
-              [1]
+              []
             );
             next();
           });

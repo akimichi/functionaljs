@@ -53,8 +53,8 @@ var left = (tuple) => {
 // unit:: a -> IO a
 var unit = (any) => {
   return (world) =>  {  // 現在の外界
-    return [any, world];
-    // return cons(any, world);
+    // return [any, world];
+    return cons(any, world);
   };
 };
 
@@ -67,12 +67,12 @@ var done = (any) => {
 var run = (instance) => {
   return (world) => {
     var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
-    return newPair[0];
-    // return match(newPair)({
-    //   cons: (value, newWorld) => {
-    //     return value;
-    //   }
-    // });
+    // return newPair[0];
+    return match(newPair,{
+      cons: (value, newWorld) => {
+        return value;
+      }
+    });
   };
 };
 
@@ -81,19 +81,17 @@ var flatMap = (instanceA) => {
   return (actionAB) => { // actionAB:: a -> IO b
     return (world) => {
 
-      var newPair = instanceA(world);
-      var value = newPair[0];
-      var newWorld = newPair[1];
-      return actionAB(value)(newWorld);
-
-      // return unit(run(actionAB(run(instanceA))))(world);
-
       // var newPair = instanceA(world);
-      // return pair.match(newPair)({
-      //   cons: (value, newWorld) => {
-      //     return actionAB(value)(newWorld);
-      //   }
-      // });
+      // var value = newPair[0];
+      // var newWorld = newPair[1];
+      // return actionAB(value)(newWorld);
+
+      var newPair = instanceA(world);
+      return match(newPair,{
+        cons: (value, newWorld) => {
+          return actionAB(value)(newWorld);
+        }
+      });
 
       // return unit(run(actionAB(run(instanceA))));
       // return pair.match(run(instanceA)(world))({

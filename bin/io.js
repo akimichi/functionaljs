@@ -7,6 +7,11 @@ var unit = (any) => {
   };
 };
 
+// done:: T -> IO T
+var done = (any) => {
+  return unit();
+};
+
 // flatMap:: IO a -> (a -> IO b) -> IO b
 var flatMap = (instanceA) => {
   return (actionAB) => { // actionAB:: a -> IO b
@@ -54,8 +59,8 @@ var println = (message) => {
 run(println("test"));
 run(readFile("./io.js"));
 
-// flatMap(readFile("./io.js"))((content) => {
-//   return flatMap(println(content))((_) => {
-//     return unit(_);
-//   });
-// });
+flatMap(readFile("./io.js"))((content) => {
+  return flatMap(println(content))((_) => {
+    return done();
+  });
+});

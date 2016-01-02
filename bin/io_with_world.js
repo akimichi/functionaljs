@@ -53,10 +53,12 @@ var left = (tuple) => {
 // unit:: a -> IO a
 var unit = (any) => {
   return (world) =>  {  // 現在の外界
-    return cons(any, world);
+    return [any, world];
+    // return cons(any, world);
   };
 };
 
+// done:: T -> IO T
 var done = (any) => {
   return unit();
 };
@@ -65,11 +67,12 @@ var done = (any) => {
 var run = (instance) => {
   return (world) => {
     var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
-    return match(newPair)({
-      cons: (value, newWorld) => {
-        return value;
-      }
-    });
+    return newPair[0];
+    // return match(newPair)({
+    //   cons: (value, newWorld) => {
+    //     return value;
+    //   }
+    // });
   };
 };
 
@@ -77,7 +80,14 @@ var run = (instance) => {
 var flatMap = (instanceA) => {
   return (actionAB) => { // actionAB:: a -> IO b
     return (world) => {
-      return unit(run(actionAB(run(instanceA))));
+
+      var newPair = instanceA(world);
+      var value = newPair[0];
+      var newWorld = newPair[1];
+      return actionAB(value)(newWorld);
+
+      // return unit(run(actionAB(run(instanceA))))(world);
+
       // var newPair = instanceA(world);
       // return pair.match(newPair)({
       //   cons: (value, newWorld) => {
@@ -95,6 +105,7 @@ var flatMap = (instanceA) => {
   };
 };
 
+// println:: STRING => IO[null]
 var println = (message) => {
   return (world) => {
     console.log(message);
@@ -102,11 +113,12 @@ var println = (message) => {
   };
 };
 
+// return:: STRING => IO[STRING]
 var readFile = (path) => {
-  return (io) => {
+  return (world) => {
     var fs = require('fs');
     var content = fs.readFileSync(path, 'utf8');
-    return content;
+    return unit(content)(world);
   };
 };
 
@@ -116,8 +128,6 @@ var readFile = (path) => {
 //     return null;
 //   };
 // };
-
-
 
 // var readln = function(io) {
 //   var fs = require('fs');
@@ -133,12 +143,10 @@ var initialWorld = true;
 // run(println("test"));
 // run(readFile(initialWorld)("./io_with_world.js"));
 run(println("test"))(initialWorld);
-// run(readFile("./io_with_world.js"))(initialWorld);
+run(readFile("./io_with_world.js"))(initialWorld);
 
-
-// flatMap(readFile("./io_with_world.js"))((content) => {
-//   return unit(println(content));
-//   // return flatMap(println(content))((_) => {
-//   //   return done();
-//   // })(true);
-// })(initialWorld);
+flatMap(readFile("./io_with_world.js"))((content) => {
+  return flatMap(println(content))((_) => {
+    return done(_);
+  });
+})(initialWorld);

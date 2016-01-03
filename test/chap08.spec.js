@@ -5,10 +5,6 @@ var sys = require('sys');
 var fs = require('fs');
 
 
-// var match = (exp, pattern) => {
-//   return exp.call(pattern, pattern);
-// };
-
 var pair = {
   match : (data, pattern) => {
     return data.call(pair, pattern);
@@ -72,8 +68,6 @@ var list  = {
     });
   },
   // append:: LIST[T] -> LIST[T] -> LIST[T]
-  // append [] ys = ys
-  // append (x:xs) ys = x : (xs ++ ys)
   append: (xs) => {
     return (ys) => {
       return list.match(xs, {
@@ -87,11 +81,6 @@ var list  = {
     };
   },
   // list#concat
-  // concat:: LIST[LIST[T]] -> LIST[T]
-  // concat [] = []
-  // concat (xs:xss) = append(xs, xss)
-  // or,
-  // concat xss = foldr xss [] append
   concat: (xss) => {
     return list.match(xss,{
       empty: (_) => {
@@ -101,11 +90,23 @@ var list  = {
         return list.append(xs,xss);
       }
     });
-    // return list.foldr(list_of_list)(list.empty())(list.append);
   },
   // join:: LIST[LIST[T]] -> LIST[T]
   join: (list_of_list) => {
     return list.concat(list_of_list);
+  },
+  // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
+  map: (alist) => {
+    return (transform) => {
+      return list.match(alist,{
+        empty: (_) => {
+          return list.empty();
+        },
+        cons: (head,tail) => {
+          return list.cons(transform(head),list.map(tail)(transform));
+        }
+      });
+    };
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
   foldr: (alist) => {
@@ -123,31 +124,12 @@ var list  = {
       };
     };
   },
-  // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-  map: (alist) => {
-    return (transform) => {
-      return list.match(alist,{
-        empty: (_) => {
-          return list.empty();
-        },
-        cons: (head,tail) => {
-          return list.cons(transform(head),list.map(tail)(transform));
-        }
-      });
-    };
-  },
   toArray: (alist) => {
-    var toArrayAux = (seq,accumulator) => {
-      return list.match(seq, {
-        empty: (_) => {
-          return accumulator;  // 空のリストの場合は終了
-        },
-        cons: (head, tail) => {
-          return toArrayAux(tail, accumulator.concat(head));
-        }
-      });
-    };
-    return toArrayAux(alist, []);
+    return list.foldr(alist)([])((item) => {
+      return (accumulator) => {
+        return [item].concat(accumulator); 
+      };
+    });
   }
 };
 
@@ -468,18 +450,25 @@ describe('関数型言語を作る', () => {
             flatMap: (instance) => {
               return (transform) => {
                 expect(transform).to.a('function');
-                var currentLogMessage = pair.left(instance);
-                var currentValue = pair.right(instance);
-                var newPair = transform(currentValue);
-                return pair.cons(
-                  list.append(currentLogMessage)(pair.left(newPair)),
-                  pair.right(newPair));
+                return pair.match(instance,{
+                  cons: (message, value) => {
+                    var newInstance = transform(value);
+                    return pair.cons(
+                      list.append(message)(pair.left(newInstance)),
+                      pair.right(newInstance));
+                  }
+                });
+                // var currentLogMessage = pair.left(instance);
+                // var currentValue = pair.right(instance);
+                // var newPair = transform(currentValue);
+                // return pair.cons(
+                //   list.append(currentLogMessage)(pair.left(newPair)),
+                //   pair.right(newPair));
               };
             },
             output: (value) => {
-              return pair.cons(list.unit(value), null);
-              // return pair.cons(list.empty(), value);
-              // return pair.cons(list.unit(String(value)), null);
+              return pair.cons(list.unit(String(value)), null);
+              // return pair.cons(list.unit(value), null);
             }
           };
           /* #@range_end(logger_monad) */
@@ -550,31 +539,77 @@ describe('関数型言語を作る', () => {
             });
           };
           it('LOG評価器で数値を評価する', (next) => {
-            expect(
-              pair.right(evaluate(
-                exp.log(exp.number(2)), 
-                emptyEnv))
-            ).to.be(
-              2
-            );
-            expect(
-              list.toArray(pair.left(evaluate(exp.log(exp.number(2)), emptyEnv)))
-            ).to.eql(
-              [2]
-            );
+            /* #@range_begin(log_interpreter_number) */
+            pair.match(evaluate(exp.log(exp.number(2)), emptyEnv),{
+              cons: (log, value) => {
+                expect( // 結果の値をテストする
+                  value
+                ).to.be(
+                  2
+                );
+                expect( // 保存されたログを見る
+                  list.toArray(log)
+                ).to.eql(
+                  [2]
+                );
+              }
+            });
+            /* #@range_end(log_interpreter_number) */
+            // expect(
+            //   pair.right(evaluate(
+            //     exp.log(exp.number(2)), 
+            //     emptyEnv))
+            // ).to.be(
+            //   2
+            // );
+            // expect(
+            //   list.toArray(pair.left(evaluate(exp.log(exp.number(2)), emptyEnv)))
+            // ).to.eql(
+            //   [2]
+            // );
             next();
           });
           it('LOG評価器で演算を評価する', (next) => {
-            expect(
-              pair.right(evaluate(exp.add(exp.number(1),exp.number(2)), emptyEnv))
-            ).to.be(
-              3
-            );
-            expect(
-              pair.right(evaluate(exp.mul(exp.number(2),exp.number(3)), emptyEnv))
-            ).to.be(
-              6
-            );
+            /* #@range_begin(log_interpreter_evaluation_strategy) */
+            pair.match(evaluate(exp.log(exp.add(exp.number(1),exp.number(2))), emptyEnv),{
+              cons: (log, value) => {
+                expect(
+                  value
+                ).to.be(
+                  3
+                );
+                expect(
+                  list.toArray(log)
+                ).to.eql(
+                  [3]
+                );
+              }
+            });
+            pair.match(evaluate(exp.log(exp.add(exp.log(exp.number(1)),exp.log(exp.number(2)))), emptyEnv),{
+              cons: (log, value) => {
+                expect(
+                  value
+                ).to.be(
+                  3
+                );
+                expect(
+                  list.toArray(log)
+                ).to.eql(
+                  [1,2,3]
+                );
+              }
+            });
+            /* #@range_end(log_interpreter_evaluation_strategy) */
+            // expect(
+            //   pair.right(evaluate(exp.add(exp.number(1),exp.number(2)), emptyEnv))
+            // ).to.be(
+            //   3
+            // );
+            // expect(
+            //   pair.right(evaluate(exp.mul(exp.number(2),exp.number(3)), emptyEnv))
+            // ).to.be(
+            //   6
+            // );
             next();
           });
           it('LOG評価器で変数を評価する', (next) => {

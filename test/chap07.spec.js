@@ -4781,6 +4781,39 @@ describe('高階関数', () => {
         });
       });
     });
+    describe('Treeモナド', () => {
+      var tree  = {
+        match: (data, pattern) => {
+          return data.call(tree,pattern);
+        },
+        leaf: (value) => {
+          return (pattern) => {
+            return pattern.leaf(value);
+          };
+        },
+        node: (treeL, treeR) => {
+          return (pattern) => {
+            return pattern.node(treeL, treeR);
+          };
+        },
+        unit: (value) => {
+          return tree.leaf(value);
+        },
+        flatMap: (instanceM) => {
+          return (transform) => {
+            return tree.match(instanceM,{
+              leaf: (value) => {
+                return transform(value);
+              },
+              node: (treeL, treeR) => {
+                return tree.node(tree.flatMap(treeL)(transform),
+                                 tree.flatMap(treeL)(transform));
+              }
+            }); 
+          };
+        }
+      };
+    });
     describe('Streamモナド', () => {
       var match = (data, pattern) => {
         return data(pattern);

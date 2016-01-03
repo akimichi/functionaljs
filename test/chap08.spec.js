@@ -145,21 +145,41 @@ describe('関数型言語を作る', () => {
                   });
                 };
               },
+              add: (expL, expR) => {
+                return ID.flatMap(evaluate(expL, env))((valueR) => {
+                  return ID.flatMap(evaluate(expR, env))((valueL) => {
+                    return ID.unit(valueL + valueR); 
+                  });
+                // return ID.unit(evaluate(exp1, env) + evaluate(exp2, env));
+                });
+              },
+              mul: (expL, expR) => {
+                return ID.flatMap(evaluate(expL, env))((valueR) => {
+                  return ID.flatMap(evaluate(expR, env))((valueL) => {
+                    return ID.unit(valueL * valueR); 
+                  });
+                });
+                // return ID.unit(evaluate(exp1, env) * evaluate(exp2, env));
+              },
+              div: (expL, expR) => {
+                return ID.flatMap(evaluate(expL, env))((valueR) => {
+                  return ID.flatMap(evaluate(expR, env))((valueL) => {
+                    return ID.unit(valueL / valueR); 
+                  });
+                });
+                // return ID.unit(evaluate(exp1, env) / evaluate(exp2, env));
+              },
               /* 関数適用の評価 */
-              application: (variable, arg) => {
-                var rator = evaluate(variable, env);
-                var rand = evaluate(arg, env);
-                return ID.unit(rator(rand));
+              application: (func, arg) => {
+                return ID.flatMap(evaluate(func, env))((closure) => {
+                  return ID.flatMap(evaluate(arg, env))((actualArg) => {
+                    return ID.unit(closure(actualArg)); 
+                  });
+                });
+                // var rator = evaluate(variable, env);
+                // var rand = evaluate(arg, env);
+                // return ID.unit(rator(rand));
               },
-              add: (exp1, exp2) => {
-                return ID.unit(evaluate(exp1, env) + evaluate(exp2, env));
-              },
-              mul: (exp1, exp2) => {
-                return ID.unit(evaluate(exp1, env) * evaluate(exp2, env));
-              },
-              div: (exp1, exp2) => {
-                return ID.unit(evaluate(exp1, env) / evaluate(exp2, env));
-              }
             });
           };
           /* #@range_end(identity_monad_evaluator) */
@@ -195,6 +215,18 @@ describe('関数型言語を作る', () => {
               evaluate(variable("y"), env)
             ).to.be(
               undefined
+            );
+            next();
+          });
+          it('関数適用を評価する', (next) => {
+            // \x.add(x,x)(2)
+            var exp = application(lambda(variable("x"),
+                                         add(variable("x"),variable("x"))),
+                                  number(2));
+            expect(
+              evaluate(exp, emptyEnv)
+            ).to.be(
+              4
             );
             next();
           });

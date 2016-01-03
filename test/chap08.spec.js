@@ -476,14 +476,6 @@ describe('関数型言語を作る', () => {
           // evaluate:: (EXP, ENV) => ID[NUM]
           var evaluate = (anExp, env) => {
             return exp.match(anExp,{
-              /* 数値の評価 */
-              number: (value) => {
-                return LOG.unit(value);
-              },
-              /* 変数の評価 */
-              variable: (name) => {
-                return LOG.unit(lookupEnv(name, env));
-              },
               log: (anExp) => {
                 return LOG.flatMap(evaluate(anExp, env))((value) => {
                   return LOG.flatMap(LOG.output(value))((_) => {
@@ -492,6 +484,14 @@ describe('関数型言語を作る', () => {
                 });
               },
           /* #@range_end(logger_monad_evaluator) */
+              /* 数値の評価 */
+              number: (value) => {
+                return LOG.unit(value);
+              },
+              /* 変数の評価 */
+              variable: (name) => {
+                return LOG.unit(lookupEnv(name, env));
+              },
               /* λ式の評価 */
               lambda: (variable, bodyExp) => {
                 /* クロージャーを返す */

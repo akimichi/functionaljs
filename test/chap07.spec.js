@@ -2450,7 +2450,25 @@ describe('高階関数', () => {
         /* #@range_end(stream_generator_test) */
         next();
       });
-      describe('ジェレネータ・コンビネータ', () => {
+      describe('streamからジェネレータを作る', () => {
+        /* #@range_begin(generator_from_stream) */
+        var generate = (stream) => {
+          var _stream = stream;
+          return () => {
+            return stream.match(_stream, {
+              empty: () => {
+                return undefined;
+              },
+              cons: (head, tailThunk) => {
+                _stream = tailThunk;
+                return head;
+              }
+            });
+          };
+        };
+        /* #@range_end(generator_from_stream) */
+      });
+      describe('ジェネレータ・コンビネータ', () => {
         var identity = (any) => { return any; };
         var succ = (n) => { return n + 1; };
         /* #@range_begin(generator_in_closure) */

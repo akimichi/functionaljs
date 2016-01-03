@@ -837,7 +837,7 @@ var pair = {
         return left;
       }
     });
-  },
+  }
 };
 
 describe('高階関数', () => {

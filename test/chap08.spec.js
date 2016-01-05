@@ -175,24 +175,24 @@ describe('関数型言語を作る', () => {
     describe('プログラムの構成要素(式と値)を作る', () => {
       // ## 値の代数的データ構造
       /* #@range_begin(value_algaraic_datatype) */
-      var value = {
-        number : (numberValue) => {
-          expect(numberValue).to.a('number');
-          return () => {
-            return numberValue;
-          };
-        },
-        closure: (lambdaExpression) => {
-          expect(lambdaExpression).to.a('function');
-          return () => {
-            return lambdaExpression;
-          };
-        },
-        // 補助関数
-        match : (data, pattern) => {
-          return data.call(value, pattern);
-        }
-      };
+      // var value = {
+      //   number : (numberValue) => {
+      //     expect(numberValue).to.a('number');
+      //     return () => {
+      //       return numberValue;
+      //     };
+      //   },
+      //   closure: (lambdaExpression) => {
+      //     expect(lambdaExpression).to.a('function');
+      //     return () => {
+      //       return lambdaExpression;
+      //     };
+      //   },
+      //   // 補助関数
+      //   match : (data, pattern) => {
+      //     return data.call(value, pattern);
+      //   }
+      // };
       /* #@range_end(value_algaraic_datatype) */
       // ## 式の代数的データ構造
       /* #@range_begin(expression_algaraic_datatype) */
@@ -224,9 +224,9 @@ describe('関数型言語を作る', () => {
             return pattern.app(variable, arg);
           };
         },
-        add : (exp1,exp2) => {
+        plus : (exp1,exp2) => {
           return (pattern) => {
-            return pattern.add(exp1, exp2);
+            return pattern.plus(exp1, exp2);
           };
         },
         mul : (exp1,exp2) => {
@@ -307,7 +307,7 @@ describe('関数型言語を作る', () => {
                   });
                 });
               },
-              add: (expL, expR) => {
+              plus: (expL, expR) => {
                 return ID.flatMap(evaluate(expL, env))((valueR) => {
                   return ID.flatMap(evaluate(expR, env))((valueL) => {
                     return ID.unit(valueL + valueR); 
@@ -341,7 +341,7 @@ describe('関数型言語を作る', () => {
           });
           it('ID評価器で演算を評価する', (next) => {
             expect(
-              evaluate(exp.add(exp.num(1),exp.num(2)), emptyEnv)
+              evaluate(exp.plus(exp.num(1),exp.num(2)), emptyEnv)
             ).to.be(
               ID.unit(3)
             );
@@ -378,9 +378,9 @@ describe('関数型言語を作る', () => {
             next();
           });
           it('ID評価器で関数適用を評価する', (next) => {
-            // \x.add(x,x)(2)
+            // \x.plus(x,x)(2)
             var expression = exp.app(exp.lambda(exp.variable("x"),
-                                                        exp.add(exp.variable("x"),exp.variable("x"))),
+                                                        exp.plus(exp.variable("x"),exp.variable("x"))),
                                              exp.num(2));
             expect(
               evaluate(expression, emptyEnv)
@@ -450,9 +450,9 @@ describe('関数型言語を作る', () => {
                 return pattern.app(variable, arg);
               };
             },
-            add : (exp1,exp2) => {
+            plus : (exp1,exp2) => {
               return (pattern) => {
-                return pattern.add(exp1, exp2);
+                return pattern.plus(exp1, exp2);
               };
             },
             mul : (exp1,exp2) => {
@@ -482,17 +482,10 @@ describe('関数型言語を作る', () => {
                       pair.right(newInstance));
                   }
                 });
-                // var currentLogMessage = pair.left(instance);
-                // var currentValue = pair.right(instance);
-                // var newPair = transform(currentValue);
-                // return pair.cons(
-                //   list.append(currentLogMessage)(pair.left(newPair)),
-                //   pair.right(newPair));
               };
             },
             output: (value) => {
               return pair.cons(list.unit(String(value)), null);
-              // return pair.cons(list.unit(value), null);
             }
           };
           /* #@range_end(logger_monad) */
@@ -539,7 +532,7 @@ describe('関数型言語を作る', () => {
                   });
                 });
               },
-              add: (expL, expR) => {
+              plus: (expL, expR) => {
                 return LOG.flatMap(evaluate(expL, env))((valueR) => {
                   return LOG.flatMap(evaluate(expR, env))((valueL) => {
                     return LOG.unit(valueL + valueR); 
@@ -595,7 +588,7 @@ describe('関数型言語を作る', () => {
           });
           it('LOG評価器で演算を評価する', (next) => {
             /* #@range_begin(log_interpreter_evaluation_strategy) */
-            pair.match(evaluate(exp.log(exp.add(exp.number(1),exp.number(2))), emptyEnv),{
+            pair.match(evaluate(exp.log(exp.plus(exp.number(1),exp.number(2))), emptyEnv),{
               cons: (log, value) => {
                 expect(
                   value
@@ -609,7 +602,7 @@ describe('関数型言語を作る', () => {
                 );
               }
             });
-            pair.match(evaluate(exp.log(exp.add(exp.log(exp.number(1)),exp.log(exp.number(2)))), emptyEnv),{
+            pair.match(evaluate(exp.log(exp.plus(exp.log(exp.number(1)),exp.log(exp.number(2)))), emptyEnv),{
               cons: (log, value) => {
                 expect(
                   value
@@ -641,9 +634,9 @@ describe('関数型言語を作る', () => {
             next();
           });
           it('LOG評価器で関数適用を評価する', (next) => {
-            // \x.add(x,x)(2)
+            // \x.plus(x,x)(2)
             var expression = exp.app(exp.lambda(exp.variable("x"),
-                                                        exp.add(exp.variable("x"),exp.variable("x"))),
+                                                        exp.plus(exp.variable("x"),exp.variable("x"))),
                                              exp.number(2));
             expect(
               pair.right(evaluate(expression, emptyEnv))

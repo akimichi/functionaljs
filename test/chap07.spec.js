@@ -455,6 +455,9 @@ it('listのテスト', (next) => {
 
 
 var stream = {
+  match: (data, pattern) => {
+    return data.call(stream, pattern);
+  },
   empty: (_) => {
     return (pattern) => {
       expect(pattern).to.an('object');
@@ -2452,21 +2455,48 @@ describe('高階関数', () => {
       });
       describe('streamからジェネレータを作る', () => {
         /* #@range_begin(generator_from_stream) */
-        var generate = (stream) => {
-          var _stream = stream;
+        var generate = (astream) => {
+          var _stream = astream;
           return () => {
             return stream.match(_stream, {
               empty: () => {
                 return undefined;
               },
               cons: (head, tailThunk) => {
-                _stream = tailThunk;
+                _stream = tailThunk();
                 return head;
               }
             });
           };
         };
         /* #@range_end(generator_from_stream) */
+        it('整数列のジェネレータ',(next) => {
+          var integersFrom = (from) => {
+            return stream.cons(from, (_) => {
+              return integersFrom(from + 1);
+            });
+          };
+        /* #@range_begin(integer_generator) */
+          var integers = integersFrom(0);
+          var intGenerator = generate(integers);
+          expect(
+            intGenerator()
+          ).to.eql(
+            0
+          );
+          expect(
+            intGenerator()
+          ).to.eql(
+            1
+          );
+          expect(
+            intGenerator()
+          ).to.eql(
+            2
+          );
+          /* #@range_end(integer_generator) */
+          next();
+        });
       });
       describe('ジェネレータ・コンビネータ', () => {
         var identity = (any) => { return any; };
@@ -2540,14 +2570,14 @@ describe('高階関数', () => {
     describe('コールバックを渡す', () => {
       it('直接コールする', (next) => {
         /* #@range_begin(direct_call) */
-        var succ = function(n){
+        var succ = (n) => {
           return n + 1;
         };
-        var directCall = function(n){
+        var directCallSucc = (n) => {
           return succ(n);
         };
         expect(
-          directCall(2)
+          directCallSucc(2)
         ).to.eql(
           3
         );
@@ -2555,17 +2585,18 @@ describe('高階関数', () => {
         next();
       });
       it('コールバックを呼び出す', (next) => {
-        /* #@range_begin(call_callback) */
         var succ = (n) => {
           return n + 1;
         };
-        var call_callback = (callback) => {
+        /* #@range_begin(call_callback) */
+        var setupCallback = (callback) => {
           return (arg) => {
             return callback(arg);
           };
         };
+        var requestCallbackSucc = setupCallback(succ);
         expect(
-          call_callback(succ)(2)
+          requestCallbackSucc(2)
         ).to.eql(
           3
         );
@@ -4826,6 +4857,19 @@ describe('高階関数', () => {
               node: (treeL, treeR) => {
                 return tree.node(tree.flatMap(treeL)(transform),
                                  tree.flatMap(treeL)(transform));
+              }
+            }); 
+          };
+        },
+        map: (instanceM) => {
+          return (transform) => {
+            return tree.match(instanceM,{
+              leaf: (value) => {
+                return tree.leaf(transform(value));
+              },
+              node: (treeL, treeR) => {
+                return tree.node(tree.map(treeL)(transform),
+                                 tree.map(treeL)(transform));
               }
             }); 
           };

@@ -95,14 +95,14 @@ var list  = {
       return pattern.empty();
     };
   },
-  cons: (value, seq) => {
+  cons: (value, alist) => {
     return (pattern) => {
-      return pattern.cons(value, seq);
+      return pattern.cons(value, alist);
     };
   },
-  head: (seq) => {
+  head: (alist) => {
     var self = this;
-    return match(seq, {
+    return match(alist, {
       empty: (_) => {
         return undefined;
       },
@@ -111,9 +111,9 @@ var list  = {
       }
     });
   },
-  tail: (seq) => {
+  tail: (alist) => {
     var self = this;
-    return match(seq, {
+    return match(alist, {
       empty: (_) => {
         return undefined;
       },
@@ -122,9 +122,9 @@ var list  = {
       }
     });
   },
-  isEmpty: (seq) => {
+  isEmpty: (alist) => {
     var self = this;
-    return match(seq, {
+    return match(alist, {
       empty: (_) => {
         return true;
       },
@@ -175,9 +175,9 @@ var list  = {
   //     }
   //   };
   // },
-  last: (seq) => {
+  last: (alist) => {
     var self = this;
-    return match(seq, {
+    return match(alist, {
       empty: (_) => {
         return undefined;
       },
@@ -204,11 +204,11 @@ var list  = {
     // }
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
-  foldr: (seq) => {
+  foldr: (alist) => {
     return (accumulator) => {
       return (glue) => {
         expect(glue).to.a('function');
-        return match(seq,{
+        return match(alist,{
           empty: (_) => {
             return accumulator;
           },
@@ -220,10 +220,10 @@ var list  = {
     };
   },
   // map:: LIST[T] -> FUNC[T -> T] -> LIST[T]
-  map: (seq) => {
+  map: (alist) => {
     var self = this;
     return (transform) => {
-      return match(seq,{
+      return match(alist,{
         empty: (_) => {
           return list.empty();
         },
@@ -234,10 +234,10 @@ var list  = {
     };
   },
   /* #@range_begin(list_reverse) */
-  reverse: (seq) => {
+  reverse: (alist) => {
     var self = this;
-    var reverseAux = (seq, accumulator) => {
-      return match(seq, {
+    var reverseAux = (alist, accumulator) => {
+      return match(alist, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -246,7 +246,7 @@ var list  = {
         }
       });
     };
-    return reverseAux(seq, list.empty());
+    return reverseAux(alist, list.empty());
   },
   /* #@range_end(list_reverse) */
   // ## list.filter
@@ -270,8 +270,8 @@ var list  = {
     };
     // return (predicate) => {
     //   expect(predicate).to.a('function');
-    //   var filterAux = (seq, accumulator) => {
-    //     return match(seq,{
+    //   var filterAux = (alist, accumulator) => {
+    //     return match(alist,{
     //       empty: (_) => {
     //         return accumulator;
     //       },
@@ -284,17 +284,17 @@ var list  = {
     //       }
     //     });
     //   };
-    //   return filterAux(seq, list.empty());
+    //   return filterAux(alist, list.empty());
     // };
   },
   // list#length
-  length: (seq) => {
-    return match(seq,{
+  length: (alist) => {
+    return match(alist,{
       empty: (_) => {
         return 0;
       },
       cons: (head,tail) => {
-        return list.foldr(seq)(0)((item) => {
+        return list.foldr(alist)(0)((item) => {
           return (accumulator) => {
             return 1 + accumulator;
           };
@@ -302,10 +302,10 @@ var list  = {
       }
     });
   },
-  any: (seq) => {
+  any: (alist) => {
     return (predicate) => {
       expect(predicate).to.a('function');
-      return match(seq,{
+      return match(alist,{
         empty: (_) => {
           return false;
         },
@@ -321,10 +321,10 @@ var list  = {
     };
   },
   /* #@range_end(list_filter) */
-  toArray: (seq) => {
+  toArray: (alist) => {
     var self = this;
-    var toArrayAux = (seq,accumulator) => {
-      return match(seq, {
+    var toArrayAux = (alist,accumulator) => {
+      return match(alist, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -333,7 +333,7 @@ var list  = {
         }
       });
     };
-    return toArrayAux(seq, []);
+    return toArrayAux(alist, []);
   },
   // fromArray: (array) => {
   //   return array.reduce((accumulator, item) => {
@@ -417,10 +417,10 @@ it('listのテスト', (next) => {
     4
   );
   // init = reverse . tail . reverse
-  var init = (seq) => {
+  var init = (alist) => {
     var self = this;
     return compose(list.reverse,
-                   compose(list.tail,list.reverse))(seq);
+                   compose(list.tail,list.reverse))(alist);
   };
   var seq = list.cons(1, list.cons(2,list.cons(3,list.empty())));
   expect(
@@ -843,6 +843,25 @@ var pair = {
   }
 };
 
+var objects = {
+  empty: (_) => {
+    return undefined;
+  },
+  get: (key, obj) => {
+    expect(obj).to.a('function');
+    return obj(key);
+  },
+  set: (key, value, obj) => {
+    return (key2) => {
+      if(key === key2) {
+        return value;
+      } else {
+        return objects.get(key2,obj);
+      }
+    };
+  }
+};
+
 describe('高階関数', () => {
   describe('カリー化', () => {
     it('カリー化されていない指数関数', (next) => {
@@ -1255,8 +1274,8 @@ describe('高階関数', () => {
               };
             };
           };
-          var last = (seq) => {
-            return compose(list.head)(list.reverse)(seq);
+          var last = (alist) => {
+            return compose(list.head)(list.reverse)(alist);
           };
           var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
           expect(
@@ -1291,8 +1310,8 @@ describe('高階関数', () => {
             return flip.call(self,
                              compose)(fun);
           };
-          var last = (seq) => {
-            return pipe(list.reverse)(list.head)(seq);
+          var last = (alist) => {
+            return pipe(list.reverse)(list.head)(alist);
           };
           var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
           expect(
@@ -1332,8 +1351,8 @@ describe('高階関数', () => {
       // });
       it('再帰によるlast', (next) => {
         /* #@range_begin(list_last_recursive) */
-        var last = (seq) => {
-          return match(seq, {
+        var last = (alist) => {
+          return match(alist, {
             empty: (_) => {
               return undefined;
             },
@@ -1360,8 +1379,8 @@ describe('高階関数', () => {
       });
       it('合成によるlast', (next) => {
         /* #@range_begin(list_last_compose) */
-        var last = (seq) => {
-          return compose(list.head)(list.reverse)(seq);
+        var last = (alist) => {
+          return compose(list.head)(list.reverse)(alist);
         };
         var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(
@@ -1376,9 +1395,9 @@ describe('高階関数', () => {
         var alwaysOne = (x) => {
           return 1;
         };
-        var sum = (seq) => {
-          var sumHelper = (seq, accumulator) => {
-            return match(seq,{
+        var sum = (alist) => {
+          var sumHelper = (alist, accumulator) => {
+            return match(alist,{
               empty: (_) => {
                 return accumulator;
               },
@@ -1387,12 +1406,12 @@ describe('高階関数', () => {
               }
             });
           };
-          return sumHelper(seq,0);
+          return sumHelper(alist,0);
         };
         /* #@range_begin(abstract_length) */
         // length = sum . map(\x -> 1)
-        var length = (seq) => {
-          return compose(sum)(flip(list.map)(alwaysOne))(seq);
+        var length = (alist) => {
+          return compose(sum)(flip(list.map)(alwaysOne))(alist);
         };
         var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(
@@ -1406,8 +1425,8 @@ describe('高階関数', () => {
       it('init関数の抽象的な定義', (next) => {
         /* #@range_begin(abstract_init) */
         // init = reverse . tail . reverse 
-        var init = (seq) => {
-		  return compose(list.reverse)(compose(list.tail)(list.reverse))(seq);
+        var init = (alist) => {
+		  return compose(list.reverse)(compose(list.tail)(list.reverse))(alist);
         };
         var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(
@@ -1420,9 +1439,9 @@ describe('高階関数', () => {
       });
     }); // 関数合成のカリー化
     it('リストの逆順を求める', (next) => {
-      var seq = {
+      var list = {
         match: (data, pattern) => {
-          return data(pattern);
+          return data.call(list, pattern);
         },
         empty: (pattern) => {
           return pattern.empty;
@@ -1437,7 +1456,7 @@ describe('高階関数', () => {
             empty: true,
             cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
               return false;
-            },
+            }
           });
         },
         head: (list) => {
@@ -1445,7 +1464,7 @@ describe('高階関数', () => {
             empty: undefined, // 空のリストには先頭要素はありません
             cons: (head, tail) => {
               return head;
-            },
+            }
           });
         },
         tail: (list) => {
@@ -1453,39 +1472,38 @@ describe('高階関数', () => {
             empty: undefined,  // 空のリストには末尾要素はありません
             cons: (head, tail) => {
               return tail;
-            },
+            }
           });
         }
       };
       /* #@range_begin(list_reverse) */
-      var reverse = (list) => {
+      var reverse = (alist) => {
         return (accumulator) => {
-          return seq.match(list, {
+          return list.match(alist, {
             empty: accumulator,  // 空のリストの場合は終了
             cons: (head, tail) => {
-              return reverse(tail)(seq.cons(head, accumulator));
+              return reverse(tail)(list.cons(head, accumulator));
             }
           });
         };
       };
       // toArray:: LIST -> ARRAY -> ARRAY
-      var toArray = (list) => {
-        var toArrayAux = (list) => {
+      var toArray = (alist) => {
+        var toArrayAux = (alist) => {
           return (accumulator) => {
-            return seq.match.call(seq,
-                                  list, {
-                                    empty: accumulator,  // 空のリストの場合は終了
-                                    cons: (head, tail) => {
-                                      return toArrayAux(tail)(accumulator.concat(head));
-                                    }
-                                  });
+            return list.match(alist, {
+              empty: accumulator,  // 空のリストの場合は終了
+              cons: (head, tail) => {
+                return toArrayAux(tail)(accumulator.concat(head));
+              }
+            });
           };
         };
-        return toArrayAux(list)([]);
+        return toArrayAux(alist)([]);
       };
       /**************** テスト ****************/
       expect(
-        toArray(reverse(seq.cons(1, seq.cons(2,seq.empty)))(seq.empty))
+        toArray(reverse(list.cons(1, list.cons(2,list.empty)))(list.empty))
       ).to.eql(
         [2,1]
       );
@@ -1983,7 +2001,7 @@ describe('高階関数', () => {
               } else {
                 return self.get(key2,obj)
               }
-            }
+            };
           },
           fromObject: (obj) => {
             var self = this;
@@ -1997,7 +2015,7 @@ describe('高階関数', () => {
             };
             return keys(obj).reduce((accumulator, key) => {
               return self.set.call(self,key, obj[key], accumulator);
-            }, self.empty)
+            }, self.empty);
           }
         };
         /* #@range_end(immutable_object_type_improved) */
@@ -2028,7 +2046,7 @@ describe('高階関数', () => {
         // (define (cdr z)
         //   (z (lambda (p q) q)))
         /* #@range_begin(immutable_list) */
-        var seq = {
+        var list = {
           empty: (index) => {
             return true;
           },
@@ -2055,32 +2073,32 @@ describe('高階関数', () => {
             }
           }
         };
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.empty)));
+        var theList = list.cons(1,list.cons(2,list.cons(3,list.empty)));
         expect(
-          seq.head(list)
+          list.head(theList)
         ).to.eql(
           1
-        )
+        );
         expect(
-          seq.head(seq.tail(list))
+          list.head(list.tail(theList))
         ).to.eql(
           2
         )
         expect(
-          seq.at(0,list)
+          list.at(0,theList)
         ).to.eql(
           1
         )
         expect(
-          seq.at(1,list)
+          list.at(1,theList)
         ).to.eql(
           2
         )
         expect(
-          seq.at(2,list)
+          list.at(2,theList)
         ).to.eql(
           3
-        )
+        );
         /* #@range_end(immutable_list) */
         next();
       });
@@ -2636,96 +2654,55 @@ describe('高階関数', () => {
           next();
         });
         it('イベント駆動システムを実装する', (next) => {
-          // var merge = (obj1,obj2) => {
-          //   for (var attrname in obj2) { 
-          //     obj1[attrname] = 
-          //       obj2[attrname]; 
-          //   }
-          //   return obj1;
-          // };
-          // var eventSystem = (init) => {
-          //   var subscriptions = init;
-          //   return (self) => {
-          //     return {
-          //       subscribe: (eventName, callback) => {
-          //         merge(self.subscriptions,{
-          //           eventName: eventName,
-          //           callback: callback
-          //         });
-          //       },
-          //       trigger: (eventName, arg) => {
-          //         eventName.subscriptions[eventName].callback(arg);
-          //       }
-          //     };
-          //   };
-          // };
-          // var initilizedEventSystem = eventSystem({})(eventSystem);
           /* #@range_begin(event_driven_system) */
-          var es = {
-            empty: (eventName) => {
-              return undefined;
-            },
-            lookup: (eventName, eventSystem) => {
-              return eventSystem(eventName);
-            },
-            on: (eventName, callback, eventSystem) => {
-              return (queryEventName) => {
-                if(eventName === queryEventName) {
-                  return callback;
-                } else {
-                  return es.lookup(queryEventName, eventSystem);
-                }
-              };
-            },
-            emit: (eventName, arg, eventSystem) => {
-              return es.lookup(eventName, eventSystem)(arg);
-            }
+          var eventSystem = () => {
+            var handlers = objects.empty();
+            return {
+              on: (eventName, callback) => {
+                handlers = objects.set(eventName, callback, handlers);
+                return null;
+              },
+              emit: (eventName, arg) => {
+                expect(handlers).not.to.be(undefined);
+                return objects.get(eventName, handlers)(arg); 
+              }
+            };
           };
           /* #@range_end(event_driven_system) */
           /* #@range_begin(event_driven_system_test) */
           // イベント駆動システムを初期化する
-          var eventSystem = es.empty; 
+          var eventDrivenServer = eventSystem(); 
           // イベント started を登録する
-          eventSystem = es.on("started", (_) => {
+          eventDrivenServer.on("started", (_) => {
             return "event started";
-          }, eventSystem);
+          });
           // イベント terminated を登録する
-          eventSystem = es.on("terminated", (exitCode) => {  
+          eventDrivenServer.on("terminated", (exitCode) => {  
             return "event terminated with " + exitCode;
-          }, eventSystem);
+          });
           /**** テスト ****/
           // イベント started を生じさせる
           expect(
-            es.emit("started", null, eventSystem)
+            eventDrivenServer.emit("started", null)
           ).to.eql(
             "event started"
           );
           // イベント terminated を生じさせる
           expect(
-            es.emit("terminated",404, eventSystem)
+            eventDrivenServer.emit("terminated",404)
           ).to.eql(
             "event terminated with 404"
           );
           /* #@range_end(event_driven_system_test) */
-          expect(
-            es.lookup("started", eventSystem)()
-          ).to.eql(
-            "event started"
-          );
-          expect(
-            es.lookup("terminated", eventSystem)(503)
-          ).to.eql(
-            "event terminated with 503"
-          );
           next();
         });
       });
       describe('リストの再帰関数', () => {
         it('リストの合計', (next) => {
           /* #@range_begin(list_sum) */
-          var sum = (seq) => {
+          var sum = (alist) => {
             return (accumulator) => {
-              return match(seq,{
+              return match(alist,{
                 empty: (_) => {
                   return accumulator;
                 },
@@ -2743,10 +2720,10 @@ describe('高階関数', () => {
           );
           /* #@range_end(list_sum) */
           /* #@range_begin(list_sum_callback) */
-          var sumWithCallbak = (seq) => {
+          var sumWithCallbak = (alist) => {
             return (accumulator) => {
               return (callback) => {
-                return match(seq,{
+                return match(alist,{
                   empty: (_) => {
                     return accumulator;
                   },
@@ -2772,9 +2749,9 @@ describe('高階関数', () => {
         });
         it('リストの長さ', (next) => {
           /* #@range_begin(list_length) */
-          var length = (seq) => {
+          var length = (alist) => {
             return (accumulator) => {
-              return match(seq,{
+              return match(alist,{
                  empty: (_) => {
                   return accumulator;
                 },
@@ -2792,10 +2769,10 @@ describe('高階関数', () => {
           );
           /* #@range_end(list_length) */
           /* #@range_begin(list_length_callback) */
-          var lengthWithCallbak = (seq) => {
+          var lengthWithCallbak = (alist) => {
             return (accumulator) => {
               return (callback) => {
-                return match(seq,{
+                return match(alist,{
                   empty: (_) => {
                     return accumulator;
                   },
@@ -2821,9 +2798,9 @@ describe('高階関数', () => {
         });
         // it('リストの逆転', (next) => {
         //   /* #@range_begin(list_reverse) */
-        //   var length = (seq) => {
+        //   var length = (alist) => {
         //  return (accumulator) => {
-        //    return match(seq,{
+        //    return match(alist,{
         //      empty: (_) => {
         //        return accumulator;
         //      },
@@ -2840,10 +2817,10 @@ describe('高階関数', () => {
         //  3
         //   );
         //   /* #@range_end(list_reverse) */
-        //   var lengthWithCallbak = (seq) => {
+        //   var lengthWithCallbak = (alist) => {
         //      return (accumulator) => {
         //        return (callback) => {
-        //          return match(seq,{
+        //          return match(alist,{
         //            empty: (_) => {
         //              return accumulator;
         //            },
@@ -2945,11 +2922,11 @@ describe('高階関数', () => {
     describe('畳み込み関数で反復処理を渡す', () => {
       describe('畳み込み関数foldr', () => {
         /* #@range_begin(list_foldr) */
-        var foldr = (seq) => {
+        var foldr = (alist) => {
           return (accumulator) => {
             return (glue) => {
               expect(glue).to.a('function');
-              return match(seq,{
+              return match(alist,{
                 empty: (_) => {
                   return accumulator;
                 },
@@ -2963,8 +2940,8 @@ describe('高階関数', () => {
         /* #@range_end(list_foldr) */
         it("foldrでsumを作る", (next) => {
           /* #@range_begin(foldr_sum) */
-          var sum = (seq) => {
-            return foldr(seq)(0)((item) => {
+          var sum = (alist) => {
+            return foldr(alist)(0)((item) => {
               return (accumulator) => {
                 return accumulator + item;
               };
@@ -2982,8 +2959,8 @@ describe('高階関数', () => {
         });
         it("foldrでproductを作る", (next) => {
           /* #@range_begin(foldr_product) */
-          var product = (seq) => {
-            return foldr(seq)(1)((item) => {
+          var product = (alist) => {
+            return foldr(alist)(1)((item) => {
               return (accumulator) => {
                 return accumulator * item;
               };
@@ -3001,8 +2978,8 @@ describe('高階関数', () => {
         });
         it("foldrでlength関数を作る", (next) => {
           /* #@range_begin(foldr_length) */
-          var length = (seq) => {
-            return foldr(seq)(0)((item) => {
+          var length = (alist) => {
+            return foldr(alist)(0)((item) => {
               return (accumulator) => {
                 return accumulator + 1;
               };
@@ -3020,8 +2997,8 @@ describe('高階関数', () => {
         });
         it("foldrでall関数を作る", (next) => {
           /* #@range_begin(foldr_all) */
-          var all = (seq) => {
-            return foldr(seq)(true)((item) => {
+          var all = (alist) => {
+            return foldr(alist)(true)((item) => {
               return (accumulator) => {
                 return accumulator && truthy(item);
               };
@@ -3038,8 +3015,8 @@ describe('高階関数', () => {
         });
         it("foldrでtoArray関数を作る", (next) => {
           /* #@range_begin(foldr_toarray) */
-          var toArray = (seq) => {
-            return foldr(seq)([])((item) => {
+          var toArray = (alist) => {
+            return foldr(alist)([])((item) => {
               return (accumulator) => {
                 return [item].concat(accumulator);
               };
@@ -3056,8 +3033,8 @@ describe('高階関数', () => {
         });
         it("foldrで reverse関数を作る", (next) => {
           /* #@range_begin(foldr_reverse) */
-          var reverse = (seq) => {
-            return foldr(seq)(list.empty())((item) => {
+          var reverse = (alist) => {
+            return foldr(alist)(list.empty())((item) => {
               return (accumulator) => {
                 return list.append(accumulator)(list.cons(item,list.empty()));
               };
@@ -3075,9 +3052,9 @@ describe('高階関数', () => {
         });
         it("foldrで map関数を作る", (next) => {
           /* #@range_begin(foldr_map) */
-          var map = (seq) => {
+          var map = (alist) => {
             return (transform) => {
-              return foldr(seq)(list.empty())((item) => {
+              return foldr(alist)(list.empty())((item) => {
                 return (accumulator) => {
                   return list.cons(transform(item), accumulator);
                 };
@@ -3215,8 +3192,8 @@ describe('高階関数', () => {
         var evalAmb = (amb, continues, continuesOnFailure) => {
           var self = this;
           return match.call(self, amb, {
-            amb: (seq) => {
-              return match.call(list, seq, {
+            amb: (alist) => {
+              return match.call(list, alist, {
                 empty: (_) => {
                   return continuesOnFailure();
                 },
@@ -3233,7 +3210,7 @@ describe('高階関数', () => {
         var calculate = (exp, continues, continuesOnFailure) => {
           var self = this;
           return match.call(self, exp, {
-            amb: (seq) => {
+            amb: (alist) => {
               return evalAmb(exp, continues, continuesOnFailure);
             },
             num: (x) => {

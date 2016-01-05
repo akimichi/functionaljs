@@ -2721,14 +2721,14 @@ describe('高階関数', () => {
           /* #@range_end(list_sum) */
           /* #@range_begin(list_sum_callback) */
           var sumWithCallbak = (alist) => {
-            return (accumulator) => {
-              return (callback) => {
+            return (ACCUMULATOR) => {
+              return (CALLBACK) => {
                 return match(alist,{
                   empty: (_) => {
-                    return accumulator;
+                    return ACCUMULATOR;
                   },
                   cons: (head, tail) => {
-                    return sumWithCallbak(tail)(callback(accumulator)(head))(callback);
+                    return sumWithCallbak(tail)(CALLBACK(head)(ACCUMULATOR))(CALLBACK);
                   }
                 });
               };
@@ -2769,27 +2769,25 @@ describe('高階関数', () => {
           );
           /* #@range_end(list_length) */
           /* #@range_begin(list_length_callback) */
-          var lengthWithCallbak = (alist) => {
-            return (accumulator) => {
-              return (callback) => {
+          var lengthWithCallback = (alist) => {
+            return (ACCUMULATOR) => {
+              return (CALLBACK) => {
                 return match(alist,{
                   empty: (_) => {
-                    return accumulator;
+                    return ACCUMULATOR;
                   },
                   cons: (head, tail) => {
-                    return lengthWithCallbak(tail)(callback(accumulator))(callback);
+                    return lengthWithCallback(tail)(CALLBACK(ACCUMULATOR))(CALLBACK);
                   }
                 });
               };
             };
           };
-          var add = (n) => {
-            return (m) => {
-              return n + m;
-            };
+          var succ = (n) => {
+            return n + 1;
           };
           expect(
-            lengthWithCallbak(numberList)(0)(add(1))
+            lengthWithCallback(numberList)(0)(succ)
           ).to.eql(
             3
           );
@@ -2924,14 +2922,14 @@ describe('高階関数', () => {
         /* #@range_begin(list_foldr) */
         var foldr = (alist) => {
           return (accumulator) => {
-            return (glue) => {
-              expect(glue).to.a('function');
+            return (callback) => {
+              expect(callback).to.a('function');
               return match(alist,{
                 empty: (_) => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return glue(head)(list.foldr(tail)(accumulator)(glue));
+                  return callback(head)(list.foldr(tail)(accumulator)(callback));
                 }
               });
             };

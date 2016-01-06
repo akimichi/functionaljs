@@ -3175,7 +3175,7 @@ describe('高階関数', () => {
         next();
       }); 
       describe("継続による非決定計算", () => {
-        /* #@range_begin(amb) */
+        /* #@range_begin(amb_expression) */
         var exp = {
           match : (anExp, pattern) => {
             return anExp.call(exp, pattern);
@@ -3185,6 +3185,7 @@ describe('高階関数', () => {
               return pattern.amb(alist);
             };
           },
+        /* #@range_end(amb_expression) */
           num : (n) => {
             return (pattern) => {
               return pattern.num(n);
@@ -3201,6 +3202,7 @@ describe('高階関数', () => {
             };
           }
         };
+        /* #@range_begin(amb_calculate) */
         var calculate = (anExp, continuesOnSuccess, continuesOnFailure) => {
           var calculateAmb = (choices) => {
             return list.match(choices, {
@@ -3239,6 +3241,8 @@ describe('高階関数', () => {
             }
           });
         };
+        /* #@range_end(amb_calculate) */
+        /* #@range_begin(amb_driver) */
         var driver = (expression) =>{
           var suspendedContinuation = null; // 最初は再開するための継続は保存されていない
           var continuesOnSuccess = (anyValue, nextAlternative) => {
@@ -3256,6 +3260,8 @@ describe('高階関数', () => {
             }
           };
         };
+        /* #@range_end(amb_driver) */
+        /* #@range_begin(amb_test) */
         it("amb[1,2] + 1  = amb[2, 3]", (next) => {
           var ambExp = exp.plus(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
                                 exp.num(1));
@@ -3309,6 +3315,7 @@ describe('高階関数', () => {
           );
           next();
         });
+        /* #@range_end(amb_test) */
         // // ambExp = [1,2] + (2 * 3) = [6, 12]
         // var ambExp = add(
         //   amb(
@@ -3331,7 +3338,6 @@ describe('高階関数', () => {
         // ).to.eql(
         //   7
         // );
-        /* #@range_end(amb) */
       }); 
     }); // 継続を渡す
   }); // 関数を渡す

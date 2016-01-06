@@ -3201,24 +3201,6 @@ describe('高階関数', () => {
             };
           }
         };
-        var calculate = (anExp, continuesOnSuccess, continuesOnFailure) => {
-          return exp.match(anExp, { // パターンマッチを実行する
-            amb: (choices) => {
-              return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
-            },
-            num: (n) => {
-              return continuesOnSuccess(n);
-            },
-            add: (x, y) => {
-              return calculate(x, continuesOnSuccess, continuesOnFailure) 
-                + calculate(y, continuesOnSuccess, continuesOnFailure);
-            },
-            mul: (x, y) => {
-              return calculate(x, continuesOnSuccess, continuesOnFailure) 
-                * calculate(y, continuesOnSuccess, continuesOnFailure);
-            }
-          });
-        };
         // ~~~scheme
         // (define (eval-amb exp env succeed fail)
         //   (if (null? (cdr exp)) ; (car exp) is the word AMB
@@ -3232,44 +3214,85 @@ describe('高階関数', () => {
         //           succeed
         //           fail)))))
         // ~~~
-        var calculateAmb = (choices, continuesOnSuccess, continuesOnFailure) => {
-          return list.match(choices, {
-            empty: () => {         // (amb) case
-              return continuesOnFailure();
+        var calculate = (anExp, continuesOnSuccess, continuesOnFailure) => {
+          var calculateAmb = (choices, continuesOnSuccess, continuesOnFailure) => {
+            return list.match(choices, {
+              empty: () => {         // (amb) case すなわち選択肢がなければ、失敗継続を実行する
+                return continuesOnFailure();
+              },
+              cons: (head, tail) => { // (amb ...) case
+                return calculate(head, continuesOnSuccess, (_) => {
+                  return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
+                });
+              }
+            });
+          };
+          return exp.match(anExp, { // パターンマッチを実行する
+            amb: (choices) => {
+              return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
             },
-            cons: (head, tail) => { // (amb ...) case
-              return calculate(head, continuesOnSuccess, (_) => {
-                return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
-              });
+            num: (n) => {
+              return continuesOnSuccess(n, continuesOnFailure);
+            },
+            add: (x, y) => {
+              return calculate(x, (valueX, continuesOnFailureX) => {
+                return valueX + calculate(y, continuesOnSuccess, continuesOnFailureX);
+              }, continuesOnFailure);
+            },
+            mul: (x, y) => {
+              return calculate(x, (valueX, continuesOnFailureX) => {
+                return valueX * calculate(y, continuesOnSuccess, continuesOnFailureX);
+              }, continuesOnFailure);
             }
           });
         };
-        // var exp = add(num(1), mul(num(2), num(3)));
-        // expect(
-        //   calculate(exp, continues.normally, continues.onFailure)
-        // ).to.eql(
-        //   7
-        // );
-        // var exp = add(num(1), mul(num(2), num(3)));
-        // expect(
-        //   calculate(exp, continues.normally, continues.onFailure)
-        // ).to.eql(
-        //   7
-        // );
+        var driver = (expression) =>{
+          var suspendedContinuation = null;
+          var continuesOnSuccess = (anyValue, nextAlternative) => {
+            suspendedContinuation = nextAlternative;
+            return anyValue;
+          };
+          var continuesOnFailure = () => {
+            return null;
+          };
+          return () => {
+            if(suspendedContinuation === null) {
+              return calculate(expression, continuesOnSuccess, continuesOnFailure);
+            } else {
+              return suspendedContinuation();
+            }
+          };
+        };
         // ambExp = amb[1,2] + 1  = amb[2, 3]
         var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
                          exp.num(1));
-        var continuesOnSuccess = (any) => {
-          return any;
-        };
-        var continuesOnFailure = () => {
-          return null;
-        };
+        var calculator = driver(ambExp);
         expect(
-          calculate(ambExp, continuesOnSuccess, continuesOnFailure)
+          calculator()
         ).to.eql(
           2
         );
+        expect(
+          calculator()
+        ).to.eql(
+          3
+        );
+        // ambExp = amb[1,2] + 1  = amb[2, 3]
+        // var calculator = driver(
+        //   exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
+        //           exp.num(1))
+
+        // );
+        // expect(
+        //   calculator()
+        // ).to.eql(
+        //   2
+        // );
+        // expect(
+        //   calculator()
+        // ).to.eql(
+        //   3
+        // );
         // // ambExp = [1,2] + (2 * 3) = [6, 12]
         // var ambExp = add(
         //   amb(
@@ -3277,6 +3300,18 @@ describe('高階関数', () => {
         //   mul(num(2), num(3)));
         // expect(
         //   calculate(ambExp, continues.normally, continues.abnormally)
+        // ).to.eql(
+        //   7
+        // );
+        // var exp = add(num(1), mul(num(2), num(3)));
+        // expect(
+        //   calculate(exp, continues.normally, continues.onFailure)
+        // ).to.eql(
+        //   7
+        // );
+        // var exp = add(num(1), mul(num(2), num(3)));
+        // expect(
+        //   calculate(exp, continues.normally, continues.onFailure)
         // ).to.eql(
         //   7
         // );

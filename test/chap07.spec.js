@@ -90,6 +90,9 @@ it('stringのテスト', (next) => {
 });
 
 var list  = {
+  match : (data, pattern) => {
+    return data.call(list, pattern);
+  },
   empty: (_) => {
     return (pattern) => {
       return pattern.empty();
@@ -3172,6 +3175,51 @@ describe('高階関数', () => {
         next();
       }); 
       it("継続による非決定計算", (next) => {
+        /* #@range_begin(amb) */
+        var exp = {
+          match : (anExp, pattern) => {
+            return anExp.call(exp, pattern);
+          },
+          amb : (alist) => {
+            return (pattern) => {
+              return pattern.amb(alist);
+            };
+          },
+          num : (n) => {
+            return (pattern) => {
+              return pattern.num(n);
+            };
+          },
+          add : (exp1, exp2) => {
+            return (pattern) => {
+              return pattern.add(exp1, exp2);
+            };
+          },
+          mul : (exp1, exp2) => {
+            return (pattern) => {
+              return pattern.mul(exp1, exp2);
+            };
+          }
+        };
+        var calculate = (anExp, continuesOnSuccess, continuesOnFailure) => {
+          return exp.match(anExp, { // パターンマッチを実行する
+            amb: (choices) => {
+              return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
+            },
+            num: (n) => {
+              return continuesOnSuccess(n);
+            },
+            add: (x, y) => {
+              return calculate(x, continuesOnSuccess, continuesOnFailure) 
+                + calculate(y, continuesOnSuccess, continuesOnFailure);
+            },
+            mul: (x, y) => {
+              return calculate(x, continuesOnSuccess, continuesOnFailure) 
+                * calculate(y, continuesOnSuccess, continuesOnFailure);
+            }
+          });
+        };
+        // ~~~scheme
         // (define (eval-amb exp env succeed fail)
         //   (if (null? (cdr exp)) ; (car exp) is the word AMB
         //       (fail) ; no more args, call failure cont.
@@ -3183,98 +3231,42 @@ describe('高階関数', () => {
         //           env
         //           succeed
         //           fail)))))
-        /* #@range_begin(amb) */
-        // var match = (exp, pattern) => {
-        //   return exp.call(pattern, pattern);
-        // };
-        var evalAmb = (amb, continues, continuesOnFailure) => {
-          var self = this;
-          return match.call(self, amb, {
-            amb: (alist) => {
-              return match.call(list, alist, {
-                empty: (_) => {
-                  return continuesOnFailure();
-                },
-                cons: (head, tail) => {
-                  var newContinuesOnFailure = (_) => {
-                    return calculate(amb(tail), continues, continuesOnFailure);
-                  };
-                  return calculate(head, continues, newContinuesOnFailure);
-                }
+        // ~~~
+        var calculateAmb = (choices, continuesOnSuccess, continuesOnFailure) => {
+          return list.match(choices, {
+            empty: () => {         // (amb) case
+              return continuesOnFailure();
+            },
+            cons: (head, tail) => { // (amb ...) case
+              return calculate(head, continuesOnSuccess, (_) => {
+                return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
               });
             }
           });
         };
-        var calculate = (exp, continues, continuesOnFailure) => {
-          var self = this;
-          return match.call(self, exp, {
-            amb: (alist) => {
-              return evalAmb(exp, continues, continuesOnFailure);
-            },
-            num: (x) => {
-              return continues(x);
-            },
-            add: (x, y) => {
-              return calculate.call(self, x, continues, continuesOnFailure) 
-                + calculate.call(self, y, continues, continuesOnFailure);
-            },
-            mul: (x, y) => {
-              return calculate.call(self, x, continues, continuesOnFailure) * calculate.call(self,y, continues, continuesOnFailure);
-            }
-          });
-        };
-            // eq: (exp1, exp2) => {
-            //   if(calculate(exp1, continues, continuesOnFailure) === calculate(exp2, continues, continuesOnFailure)){
-                
-            //   } else {
-            //   }
-              
-            // },
-        var amb = (list) => {
-          return (pattern) => {
-            return pattern.amb(list);
-          };
-        };
-        var num = (n) => {
-          return (pattern) => {
-            return pattern.num(n);
-          };
-        };
-        var add = (x, y) => {
-          return (pattern) => {
-            return pattern.add(x, y);
-          };
-        };
-        var mul = (x, y) => {
-          return (pattern) => {
-            return pattern.mul(x, y);
-          };
-        };
-        var continues = {
-	  	  normally: (result) => {
-	  	    return result;
-	  	  },
-          onFailure: (exception) => {
-            return exception;
-	  	  }
-        };
-        var exp = add(num(1), mul(num(2), num(3)));
-        expect(
-          calculate(exp, continues.normally, continues.onFailure)
-        ).to.eql(
-          7
-        );
-        var exp = add(num(1), mul(num(2), num(3)));
-        expect(
-          calculate(exp, continues.normally, continues.onFailure)
-        ).to.eql(
-          7
-        );
+        // var exp = add(num(1), mul(num(2), num(3)));
+        // expect(
+        //   calculate(exp, continues.normally, continues.onFailure)
+        // ).to.eql(
+        //   7
+        // );
+        // var exp = add(num(1), mul(num(2), num(3)));
+        // expect(
+        //   calculate(exp, continues.normally, continues.onFailure)
+        // ).to.eql(
+        //   7
+        // );
         // ambExp = amb[1,2] + 1  = amb[2, 3]
-        var ambExp = add(amb(list.cons(num(1),list.cons(num(2), list.empty()))), 
-                         num(1));
+        var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
+                         exp.num(1));
+        var continuesOnSuccess = (any) => {
+          return any;
+        };
+        var continuesOnFailure = () => {
+          return null;
+        };
         expect(
-          calculate(ambExp, continues.normally, continues.onFailure)
+          calculate(ambExp, continuesOnSuccess, continuesOnFailure)
         ).to.eql(
           2
         );

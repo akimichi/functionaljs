@@ -3076,6 +3076,45 @@ describe('高階関数', () => {
     }); // 畳み込み関数で反復処理を渡す
     describe('継続を渡す', () => {
       describe("継続の導入例", () => {
+        it("succ関数の継続", (next) => {
+		  /* #@range_begin(succ_cps) */
+          var succ = (n, continues) => {
+            return continues(n + 1);
+          };
+		  /* #@range_end(succ_cps) */
+		  /* #@range_begin(succ_cps_test) */
+          var identity = (any) => {
+            return any;
+          };
+          expect(
+            succ(1, identity) // identity関数を継続として渡す
+          ).to.eql(
+            2
+          );
+		  /* #@range_end(succ_cps_test) */
+          next();
+        });
+        // it("succ関数を中断し、再開する", (next) => {
+		//   /* #@range_begin(succ_suspend_and_resume) */
+        //   var integers = (n) => {
+        //     var suspendedContinuation = null;
+        //     var succ = (n, continues) => {
+        //       suspendedContinuation = continues;
+        //       return continues(n + 1);
+        //     };
+        //     return () => {
+        //     };
+        //   };
+		//   /* #@range_end(succ_suspend_and_resume) */
+        //   var identity = (any) => {
+        //     return any;
+        //   };
+        //   expect(
+        //     succ(1, identity)
+        //   ).to.eql(
+        //     2
+        //   );
+        // });
         it("算術の継続", (next) => {
 		  /* #@range_begin(continuation_in_arithmetic) */
           var succ = (n) => {

@@ -6,6 +6,12 @@ var truthy = (any) => {
   return any !== false && any != null;
 };
 
+
+var identity = (any) => {
+  return any;
+};
+
+
 var double = (number) => {
   return number * 2;
 };
@@ -33,10 +39,6 @@ var flip = (fun) => {
 var match = (data, pattern) => {
   return data.call(pattern, pattern);
   // return data(pattern);
-};
-
-var id = (any) => {
-  return any;
 };
 
 // 'string' module
@@ -338,11 +340,12 @@ var list  = {
     };
     return toArrayAux(alist, []);
   },
-  // fromArray: (array) => {
-  //   return array.reduce((accumulator, item) => {
-  //     return list.append(accumulator)(list.cons(item, list.empty()));
-  //   });
-  // },
+  fromArray: (array) => {
+    expect(array).to.an('array');
+    return array.reduce((accumulator, item) => {
+      return list.append(accumulator)(list.cons(item, list.empty()));
+    }, list.empty());
+  },
   /* #@range_begin(list_fromString) */
   fromString: (str) => {
     expect(str).to.a('string');
@@ -2996,6 +2999,32 @@ describe('高階関数', () => {
           /* #@range_end(foldr_length) */
           next();
         });
+        it("foldrでfind関数を作る", (next) => {
+          /* #@range_begin(foldr_find) */
+          var find = (alist) => {
+            return (predicate) => {
+              return foldr(alist)(null)((item) => {
+                return (accumulator) => {
+                  if(predicate(item) === true) {
+                    return item;
+                  } else {
+                    return accumulator;
+                  };
+                };
+              });
+            };
+          };
+          var numbers = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          expect(
+            find(numbers)((n) => {
+              return n === 2;
+            })
+          ).to.eql(
+            2
+          );
+          /* #@range_end(foldr_find) */
+          next();
+        });
         it("foldrでall関数を作る", (next) => {
           /* #@range_begin(foldr_all) */
           var all = (alist) => {
@@ -3072,6 +3101,23 @@ describe('高階関数', () => {
           /* #@range_end(foldr_map) */
           next();
         });
+        it("Array#reduceで list#fromArray関数を作る", (next) => {
+          /* #@range_begin(list_fromArray) */
+          var fromArray = (array) => {
+            expect(array).to.an('array');
+            return array.reduce((accumulator, item) => {
+              return list.append(accumulator)(list.cons(item, list.empty()));
+            }, list.empty());
+          };
+          var theList = fromArray([0,1,2,3]);
+          expect(
+            list.toArray(theList)
+          ).to.eql(
+            [0,1,2,3]
+          );
+          /* #@range_end(list_fromArray) */
+          next();
+        });
       });
     }); // 畳み込み関数で反復処理を渡す
     describe('継続を渡す', () => {
@@ -3083,9 +3129,6 @@ describe('高階関数', () => {
           };
 		  /* #@range_end(succ_cps) */
 		  /* #@range_begin(succ_cps_test) */
-          var identity = (any) => {
-            return any;
-          };
           expect(
             succ(1, identity) // identity関数を継続として渡す
           ).to.eql(
@@ -3124,7 +3167,7 @@ describe('高階関数', () => {
             return any;
           };
           expect(
-            id(succ(1))
+            identity(succ(1))
           ).to.eql(
             2
           );
@@ -3132,7 +3175,7 @@ describe('高階関数', () => {
             return continues(n + 1);
           };
           expect(
-            succCPS(1, id)
+            succCPS(1, identity)
           ).to.eql(
             2
           );
@@ -3186,32 +3229,75 @@ describe('高階関数', () => {
 		  next();
         });
       });
-      it("継続による反復処理", (next) => {
-        /* #@range_begin(loop_cps) */
-        var loop = (predicate, accumulator) => {
-          return (continues) => {
-            if(predicate(accumulator)){
-              return loop(predicate, continues(accumulator))(continues);
-            } else {
-              return accumulator;
-            }
+      describe("継続で未来を選ぶ", () => {
+        it("find関数", (next) => {
+          /* #@range_begin(list_find) */
+          var find = (alist,accumulator, predicate) => {
+            var escapesFromRecursion = identity; // 反復処理を脱出する継続
+            var continuesOnRecursion = (alist) => { // 反復処理を続ける継続
+              return find(alist, accumulator, predicate);
+            };
+            return list.match(alist, {
+              empty: () => {
+                return escapesFromRecursion(accumulator); // 反復処理を抜ける
+              },
+              cons: (head, tail) => { 
+                console.log(head);
+                if(predicate(head) === true) {
+                  return escapesFromRecursion(head); // 反復処理を抜ける
+                } else {
+                  return continuesOnRecursion(tail); // 次の反復処理を続ける
+                };
+              }
+            });
           };
-        };
-        var lessThan = (n) => {
-          return (x) => {
-            return x < n;
+          /* #@range_end(list_find) */
+          /* #@range_begin(list_find_test) */
+          var theList = list.fromArray([0,1,2,3]);
+          expect(
+            find(theList,null, (item) => {
+              return (item === 4);
+            })
+          ).to.eql(
+            null
+          );
+          expect(
+            find(theList,null, (item) => {
+              return (item === 2);
+            })
+          ).to.eql(
+            2
+          );
+          /* #@range_end(list_find_test) */
+          next();
+        }); 
+        it("継続による反復処理", (next) => {
+          /* #@range_begin(loop_cps) */
+          var loop = (predicate, accumulator) => {
+            return (continues) => {
+              if(predicate(accumulator)){
+                return loop(predicate, continues(accumulator))(continues);
+              } else {
+                return accumulator;
+              }
+            };
           };
-        };
-        var succ = (n) => {
-          return n + 1;
-        };
-        expect(
-          loop(lessThan(3), 0)(succ)
-        ).to.eql(
-          3
-        );
-        /* #@range_end(loop_cps) */
-        next();
+          var lessThan = (n) => {
+            return (x) => {
+              return x < n;
+            };
+          };
+          var succ = (n) => {
+            return n + 1;
+          };
+          expect(
+            loop(lessThan(3), 0)(succ)
+          ).to.eql(
+            3
+          );
+          /* #@range_end(loop_cps) */
+          next();
+        }); 
       }); 
       describe("継続による非決定計算", () => {
         /* #@range_begin(amb_expression) */
@@ -4377,9 +4463,7 @@ describe('高階関数', () => {
     describe('Listモナド', () => {
       var list  = {
         match: (data, pattern) => {
-          console.log(pattern);
-           return data(pattern);
-          // return data.call(list,pattern);
+          return data.call(list,pattern);
         },
         empty: (_) => {
           return (pattern) => {

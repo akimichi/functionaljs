@@ -1,7 +1,17 @@
 # 「関数型プログラミングの基礎知識」サンプルコード
 
+## 準備
+
+### node.js
+
+### scala
+
+sbt
+
 
 ## 利用法
+
+### node.js のテスト
 
 ローカル環境に nvm がインストールされていることが必要です。
 
@@ -24,7 +34,13 @@ $ ./node_modules/.bin/gulp
 $ ./node_modules/.bin/gulp doc
 ~~~
 
+### scalaのテスト
 
+scalaのコードをテストする
+
+~~~
+$ sbt test
+~~~
 
 ## プロジェクトページ
 

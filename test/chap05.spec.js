@@ -546,9 +546,9 @@ describe('プログラムをコントロールする仕組み', () => {
     });
     it("可変データとのマッチング", (next) => {
       /* #@range_begin(switch_for_mutable) */
-      var switch_for_mutable = (array) => {
+      var match_for_mutable = (array) => {
         switch(array){
-        case [1,2,3]:
+        case [1,2,3]: // [1,2,3] とマッチさせたい
           return true;
           break;
         default:
@@ -557,9 +557,9 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       /* テスト */
       expect(
-        switch_for_mutable([1,2,3])
+        match_for_mutable([1,2,3])
       ).to.eql(
-        false
+        false  // case [1,2,3] にはマッチしない
       );
       /* #@range_end(switch_for_mutable) */
       next();
@@ -584,7 +584,7 @@ describe('プログラムをコントロールする仕組み', () => {
             message: "unknown: " + currency
           };
         }
-      }
+      };
       /* #@range_end(currency) */
       next();
     });
@@ -602,16 +602,19 @@ describe('プログラムをコントロールする仕組み', () => {
         }
       };
       /* テスト */
+      // 3 は 2 よりも大きい
       expect(
         compare(3,2)
       ).to.eql(
         1
       );
+      // 1 と 1 は等しい
       expect(
         compare(1,1)
       ).to.eql(
         0
       );
+      // 2 は 3 よりも小さい
       expect(
         compare(2,3)
       ).to.eql(

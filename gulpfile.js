@@ -6,9 +6,10 @@ var foreach = require('gulp-foreach');
 var tap = require('gulp-tap');
 var docco = require("gulp-docco");
 var ghPages = require('gulp-gh-pages');
- 
+var exec = require('child_process').exec;
 
-gulp.task('test', function () {
+
+gulp.task('js-test', function () {
     gulp.src('test/*.js')
         .pipe(mocha({
             reporter: 'spec',
@@ -18,14 +19,18 @@ gulp.task('test', function () {
         }));
 });
 
+gulp.task('scala-test', function (cb) {
+  exec('sbt test', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+});
 // Watch Files For Changes
 gulp.task('watch', function() {
     gulp.watch(['test/*.js']);
 });
 
-// gulp.task('test', function() {
-//   run('mocha --harmony -R spec').exec();
-// });
 
 gulp.task('doc', function() {
   return gulp.src("./test/*.js")
@@ -39,3 +44,4 @@ gulp.task('deploy', function() {
 });
 
 gulp.task('default', ['test','doc', 'deploy']);
+gulp.task('test', ['js-test','scala-test']);

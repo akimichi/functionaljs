@@ -394,13 +394,26 @@ sleep.sleep(1);</p>
           };
           <span class="hljs-keyword">var</span> b = <span class="hljs-number">1</span>;
           <span class="hljs-keyword">var</span> a = b;
-          <span class="hljs-keyword">var</span> aResult = wrapper(now)(a);
-          expect(
-            aResult
-          ).to.not.eql(
-            wrapper(now)(b)
-          );
-          <span class="hljs-comment">/* #@range_end(unequals_replacement)  */</span>
+          <span class="hljs-keyword">var</span> aResult = wrapper(now)(a);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>expect(
+  aResult
+).to.not.eql(
+  wrapper(now)(b)
+);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_end(unequals_replacement)  */</span>
           next();
         });
       });
@@ -472,11 +485,11 @@ sleep.sleep(1);</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>var add = (n,m) =&gt; {
   return n + m;
@@ -799,11 +812,11 @@ expect(
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>it(‘push,popのシグネチャを変更(2)’, (next) =&gt;{
   var bind = (state, continues) =&gt; {

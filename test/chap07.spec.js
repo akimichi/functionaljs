@@ -3316,14 +3316,14 @@ describe('高階関数', () => {
               return pattern.num(n);
             };
           },
-          plus : (exp1, exp2) => {
+          add : (exp1, exp2) => {
             return (pattern) => {
-              return pattern.plus(exp1, exp2);
+              return pattern.add(exp1, exp2);
             };
           },
-          times : (exp1, exp2) => {
+          mul : (exp1, exp2) => {
             return (pattern) => {
-              return pattern.times(exp1, exp2);
+              return pattern.mul(exp1, exp2);
             };
           }
         };
@@ -3350,14 +3350,14 @@ describe('高階関数', () => {
             num: (n) => {
               return continuesOnSuccess(n, continuesOnFailure);
             },
-            plus: (x, y) => {
+            add: (x, y) => {
               return calculate(x, (valueX, continuesOnFailureX) => {
                 return calculate(y, (valueY, continuesOnFailureY) => {
                   return continuesOnSuccess(valueX + valueY, continuesOnFailureY);
                 }, continuesOnFailureX); // y の計算に失敗すれば、xの失敗継続を渡す
               }, continuesOnFailure);
             },
-            times: (x, y) => {
+            mul: (x, y) => {
               return calculate(x, (valueX, continuesOnFailureX) => {
                 return calculate(y, (valueY, continuesOnFailureY) => {
                   return continuesOnSuccess(valueX * valueY, continuesOnFailureY);
@@ -3369,26 +3369,26 @@ describe('高階関数', () => {
         /* #@range_end(amb_calculate) */
         /* #@range_begin(amb_driver) */
         var driver = (expression) =>{
-          var suspendedContinuation = null; // 最初は再開するための継続は保存されていない
+          var suspendedComputation = null; // 最初は再開するための継続は保存されていない
           var continuesOnSuccess = (anyValue, nextAlternative) => {
-            suspendedContinuation = nextAlternative;
+            suspendedComputation = nextAlternative; // 再開の備えて、次の継続を保存しておく
             return anyValue;
           };
           var continuesOnFailure = () => {
             return null;
           };
           return () => {
-            if(suspendedContinuation === null) { // 最初から計算する
+            if(suspendedComputation === null) { // 最初から計算する
               return calculate(expression, continuesOnSuccess, continuesOnFailure);
             } else {
-              return suspendedContinuation(); // 中断された計算を再開する
+              return suspendedComputation(); // 中断された計算を再開する
             }
           };
         };
         /* #@range_end(amb_driver) */
         /* #@range_begin(amb_test) */
         it("amb[1,2] + 1  = amb[2, 3]", (next) => {
-          var ambExp = exp.plus(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
+          var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
                                 exp.num(1));
           var calculator = driver(ambExp);
           expect(
@@ -3404,7 +3404,7 @@ describe('高階関数', () => {
           next();
         });
         it("1 + amb[1,2] = amb[2, 3]", (next) => {
-          var ambExp = exp.plus(exp.num(1),
+          var ambExp = exp.add(exp.num(1),
                                 exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))));
           var calculator = driver(ambExp);
           expect(
@@ -3420,7 +3420,7 @@ describe('高階関数', () => {
           next();
         });
         it("amb[2,3] * amb[4,5]  = amb[2, 3]", (next) => {
-          var ambExp = exp.times(exp.amb(list.cons(exp.num(2),list.cons(exp.num(3), list.empty()))), 
+          var ambExp = exp.mul(exp.amb(list.cons(exp.num(2),list.cons(exp.num(3), list.empty()))), 
                                  exp.amb(list.cons(exp.num(4),list.cons(exp.num(5), list.empty()))));
           var calculator = driver(ambExp);
           expect(

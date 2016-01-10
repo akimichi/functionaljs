@@ -1152,48 +1152,63 @@ describe('プログラムをコントロールする仕組み', () => {
     });
     it('数式の例', (next) => {
       /* #@range_begin(expression_algebraic_datatype) */
-      var exp = {
-        match : (exp, pattern) => {
-          return exp.call(exp, pattern);
-        },
-        num : (n) => {
-          return (pattern) => {
-            return pattern.num(n);
-          };
-        },
-        add : (exp1, exp2) => {
-          return (pattern) => {
-            return pattern.add(exp1, exp2);
-          };
-        },
-        mul : (exp1, exp2) => {
-          return (pattern) => {
-            return pattern.mul(exp1, exp2);
-          };
-        }
+      var num = (n) => {
+        return (pattern) => {
+          return pattern.num(n);
+        };
+      };
+      var add = (exp1, exp2) => {
+        return (pattern) => {
+          return pattern.add(exp1, exp2);
+        };
+      };
+      var mul = (exp1, exp2) => {
+        return (pattern) => {
+          return pattern.mul(exp1, exp2);
+        };
       };
       /* #@range_end(expression_algebraic_datatype) */
+      // var exp = {
+      //   match : (exp, pattern) => {
+      //     return exp.call(exp, pattern);
+      //   },
+      //   num : (n) => {
+      //     return (pattern) => {
+      //       return pattern.num(n);
+      //     };
+      //   },
+      //   add : (exp1, exp2) => {
+      //     return (pattern) => {
+      //       return pattern.add(exp1, exp2);
+      //     };
+      //   },
+      //   mul : (exp1, exp2) => {
+      //     return (pattern) => {
+      //       return pattern.mul(exp1, exp2);
+      //     };
+      //   }
+      // };
       /* #@range_begin(expression_algebraic_datatype_recursion) */
-      var calculate = (anExp) => {
-        return exp.match(anExp, { // パターンマッチを実行する
+      var calculate = (exp) => {
+        return match(exp, { // パターンマッチを実行する
           num: (n) => {
             return n;
           },
-          add: (exp1, exp2) => {
+          add: (expL, expR) => {
             // calculateを再帰呼び出して足し算を実行する
-            return calculate(exp1) + calculate(exp2); 
+            return calculate(expL) + calculate(expR); 
           },
             // calculateを再帰呼び出してかけ算を実行する
-          mul: (exp1, exp2) => {
-            return calculate(exp1) * calculate(exp2); 
+          mul: (expL, expR) => {
+            return calculate(expL) * calculate(expR); 
           }
         });
       };
       /**** テスト ****/
       // 1 + (2 * 3) を計算する
-      var expression = exp.add(exp.num(1),
-                        exp.mul(exp.num(2),
-                                exp.num(3)));
+      var expression = add(num(1),
+                           mul(num(2),
+                               num(3)));
       expect(
         calculate(expression)
       ).to.eql(
@@ -1423,6 +1438,7 @@ describe('プログラムをコントロールする仕組み', () => {
               }
             });
           };
+          /* #@range_end(recursive_sum) */
           /**** テスト ****/
           expect(
             sum(empty(), 0)
@@ -1439,7 +1455,6 @@ describe('プログラムをコントロールする仕組み', () => {
           ).to.eql(
             6
           );
-          /* #@range_end(recursive_sum) */
           next();
         });
         it('蓄積変数を持たないsum関数', (next) => {
@@ -1457,6 +1472,7 @@ describe('プログラムをコントロールする仕組み', () => {
             };
             return sumHelper(list,0); // 補助関数を呼び出す
           };
+          /* #@range_end(recursive_sum_without_accumulator) */
           /**** テスト ****/
           expect(
             sum(empty())
@@ -1468,7 +1484,6 @@ describe('プログラムをコントロールする仕組み', () => {
           ).to.eql(
             6
           );
-          /* #@range_end(recursive_sum_without_accumulator) */
           next();
         });
         it('蓄積変数を持たないlength関数', (next) => {
@@ -1483,13 +1498,13 @@ describe('プログラムをコントロールする仕組み', () => {
               }
             });
           };
+          /* #@range_end(recursive_length_without_accumulator) */
           /************************ テスト ************************/
           expect(
             length(cons(1,cons(2,cons(3,empty())))) // [1,2,3]の長さは 3
           ).to.eql(
             3
           );
-          /* #@range_end(recursive_length_without_accumulator) */
           next();
         });
         });

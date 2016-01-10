@@ -117,17 +117,17 @@ var list  = {
   },
   /* #@range_begin(list_reverse) */
   reverse: (seq) => {
-    var reverseAux = (seq, accumulator) => {
+    var reverseHelper = (seq, accumulator) => {
       return match(seq, {
-        empty: (_) => {
-          return accumulator;  // 空のリストの場合は終了
+        empty: (_) => {  // emptyの場合は、終了条件
+          return accumulator;
         },
-        cons: (head, tail) => {
-          return reverseAux(tail, list.cons(head, accumulator));
+        cons: (head, tail) => { // consの場合は、再帰的に呼び出す
+          return reverseHelper(tail, list.cons(head, accumulator));
         }
       });
     };
-    return reverseAux(seq, list.empty());
+    return reverseHelper(seq, list.empty());
   },
   /* #@range_end(list_reverse) */
   // ## list.filter
@@ -1419,7 +1419,7 @@ describe('プログラムをコントロールする仕組み', () => {
                 return accumulator;
               },
               cons: (head, tail) => {
-                return sum(tail, accumulator + head);
+                return sum(tail, accumulator + head); // sumの再帰呼び出し
               }
             });
           };
@@ -1475,10 +1475,10 @@ describe('プログラムをコントロールする仕組み', () => {
           /* #@range_begin(recursive_length_without_accumulator) */
           var length = (list) => {
             return match(list, {
-              empty: (_) => {    // リストが空のときが終了条件となる
+              empty: (_) => {    // emptyの場合は、終了条件となる
                 return 0;
               },
-              cons: (head, tail) => {
+              cons: (head, tail) => { // consの場合は、再帰的に呼び出す
                 return 1 + length(tail);
               }
             });
@@ -1646,11 +1646,11 @@ describe('プログラムをコントロールする仕組み', () => {
           // append :: (LIST[T], LIST[T]) -> LIST[T]
           var append = (xs, ys) => {
             return match(xs,{
-              empty: (_) => {
+              empty: (_) => { // emptyの場合は、終了条件
                 return ys; // xsが空の場合は、ysを返す
               },
-              cons: (head, tail) => { // xs が空でない場合は、xs と ys を連結させる
-                return list.cons(head,     
+              cons: (head, tail) => { // consの場合は、再帰的に呼び出す 
+                return list.cons(head,  // xs と ys を連結させる   
                                  append(tail,ys));
               }
             });

@@ -33,3 +33,7 @@ _site/
 
 # scala
 target/
+
+# haskell
+.stack-work
+dist/

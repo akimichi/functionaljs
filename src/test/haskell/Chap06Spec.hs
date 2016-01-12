@@ -12,7 +12,7 @@ main = hspec $ do
  
   -- #@range_begin(lazy_evaluation_in_haskell) 
   describe "chap06" $ do
-     it "left(1, infiniteLoop)" $ do
+     it "left(1, infiniteLoop) is successful" $ do
        left 1 2 `shouldBe` 1
-       left 1 infiniteLoop `shouldBe` 1 
+       left 1 infiniteLoop `shouldBe` 1  -- 無限ループに陥いらずに答えを返す
   -- #@range_end(lazy_evaluation_in_haskell) 

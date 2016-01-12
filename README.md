@@ -1,19 +1,28 @@
 # 「関数型プログラミングの基礎知識」サンプルコード
 
-## 準備
+## テスト環境の準備
 
 ### node.js
 
+nvm のインストール
+
+node.js v0.12.0 のインストール
+
 ### scala
 
-sbt
+sbtのインストール
 
 ### haskell
 
 cabal
 
+stack
 
-## 利用法
+~~~
+$ stack build
+~~~
+
+## テストの実行 
 
 ### node.js のテスト
 
@@ -29,7 +38,7 @@ $ npm install
 テストを実行するには
 
 ~~~
-$ ./node_modules/.bin/gulp test
+$ ./node_modules/.bin/gulp js-test
 ~~~
 
 ドキュメントを生成するには
@@ -45,6 +54,9 @@ scalaのコードをテストする
 ~~~
 $ sbt test
 ~~~
+
+もしくは、 gulp を使って
+
 ~~~
 $ gulp scala-test
 ~~~
@@ -56,6 +68,8 @@ haskellのコードをテストする
 ~~~
 $ cabal test
 ~~~
+
+もしくは、 gulp を使って
 
 ~~~
 $ gulp haskell-test

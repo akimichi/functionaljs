@@ -330,9 +330,9 @@ describe('関数の使い方', () => {
           describe('thunkによるStream型', () => {
             /* #@range_begin(stream_with_thunk) */
             var stream = {
-              match: (data, pattern) => {
-                return data.call(stream,pattern);
-              },
+              // match: (data, pattern) => {
+              //   return data.call(stream,pattern);
+              // },
               empty: (_) => {
                 return (pattern) => {
                   return pattern.empty();
@@ -346,14 +346,14 @@ describe('関数の使い方', () => {
               // head:: STREAM[T] -> T 
               /* ストリーム型headの定義は、リスト型headと同じ */
               head: (astream) => {      
-                return stream.match(astream,{
+                return match(astream,{
                   empty: (_) => { return undefined; },
                   cons: (value, tailThunk) => { return value; }
                 });
               },
               // tail:: STREAM[T] -> STREAM[T] 
               tail: (astream) => {
-                return stream.match(astream,{
+                return match(astream,{
                   empty: (_) => { return undefined; },
                   cons: (head, tailThunk) => {
                     return tailThunk();  // ここで初めてサンクを評価する
@@ -424,9 +424,9 @@ describe('関数の使い方', () => {
               /* #@range_end(infinite_ones_test) */
               it("無限の整数列をテストする", (next) => {
                 var list = {
-                  match: (data, pattern) => {
-                    return data.call(list, pattern);
-                  },
+                  // match: (data, pattern) => {
+                  //   return data.call(list, pattern);
+                  // },
                   empty: (_) => {
                     return (pattern) => {
                       return pattern.empty();
@@ -438,7 +438,7 @@ describe('関数の使い方', () => {
                     };
                   },
                   isEmpty: (alist) => {
-                    return list.match(alist, { // match関数で分岐する
+                    return match(alist, { // match関数で分岐する
                       empty: true,
                       cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
                         return false;
@@ -446,7 +446,7 @@ describe('関数の使い方', () => {
                     });
                   },
                   head: (alist) => {
-                    return list.match(alist, {
+                    return match(alist, {
                       empty: undefined, // 空のリストには先頭要素はありません
                       cons: (head, tail) => {
                         return head;
@@ -454,7 +454,7 @@ describe('関数の使い方', () => {
                     });
                   },
                   tail: (alist) => {
-                    return list.match(alist, {
+                    return match(alist, {
                       empty: undefined,  // 空のリストには末尾要素はありません
                       cons: (head, tail) => {
                         return tail;
@@ -464,7 +464,7 @@ describe('関数の使い方', () => {
                   /* #@range_begin(list_toArray) */
                   toArray: (alist) => {
                     var toArrayAux = (alist,accumulator) => {
-                      return list.match(alist, {
+                      return match(alist, {
                         empty: (_) => {
                           return accumulator;  
                         },
@@ -478,9 +478,9 @@ describe('関数の使い方', () => {
                 };
                 /* #@range_end(list_toArray) */
                 var stream = {
-                  match: (data, pattern) => {
-                    return data.call(stream,pattern);
-                  },
+                  // match: (data, pattern) => {
+                  //   return data.call(stream,pattern);
+                  // },
                   empty: (_) => {
                     return (pattern) => {
                       return pattern.empty();
@@ -492,13 +492,13 @@ describe('関数の使い方', () => {
                     };
                   },
                   head: (astream) => {      
-                    return stream.match(astream,{
+                    return match(astream,{
                       empty: (_) => { return undefined; },
                       cons: (value, tailThunk) => { return value; }
                     });
                   },
                   tail: (astream) => {
-                    return stream.match(astream,{
+                    return match(astream,{
                       empty: (_) => { return undefined; },
                       cons: (head, tailThunk) => {
                         return tailThunk();  // ここで初めてサンクを評価する
@@ -508,7 +508,7 @@ describe('関数の使い方', () => {
                   /* #@range_begin(stream_take) */
                   // take:: (STREAM[T], NUM) => LIST[T]
                   take: (astream, n) => {
-                    return stream.match(astream,{
+                    return match(astream,{
                       empty: (_) => { 
                         return list.empty();
                       },
@@ -523,18 +523,18 @@ describe('関数の使い方', () => {
                   },
                   /* #@range_end(stream_take) */
                   /* #@range_begin(stream_filter) */
-                  // filter :: (STREAM[T], FUN(T => BOOL)) => STREAM[T]
+                  // filter :: (STREAM[T], FUN[T => BOOL]) => STREAM[T]
                   filter: (astream,predicate) => {
-                    return stream.match(astream,{
+                    return match(astream,{
                       empty: (_) => {
                         return stream.empty();
                       },
                       cons: (head,tailThunk) => {
-                        if(predicate(head)){
+                        if(predicate(head)){ // 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する
                           return stream.cons(head,(_) => {
                             return stream.filter(tailThunk(),predicate);
                           });
-                        } else {
+                        } else { // 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す
                           return stream.filter(tailThunk(),predicate);
                         }
                       }
@@ -758,17 +758,17 @@ describe('関数の使い方', () => {
           /* #@range_begin(list_toarray) */
           toArray: (list) => {
             var self = this;
-            var toArrayAux = (list,accumulator) => {
+            var toArrayHelper = (list,accumulator) => {
               return self.match(list, {
                 empty: (_) => {
                   return accumulator;  // 空のリストの場合は終了
                 },
                 cons: (head, tail) => {
-                  return toArrayAux(tail, accumulator.concat(head));
+                  return toArrayHelper(tail, accumulator.concat(head));
                 }
               });
             };
-            return toArrayAux(list, []);
+            return toArrayHelper(list, []);
           }
           /* #@range_end(list_toarray) */
         };
@@ -1143,22 +1143,38 @@ describe('関数の使い方', () => {
     // });
   });
   describe('関数の純粋性', () => {
+    it('関数の参照透過性', (next) => {
+      var succ = (n) => {
+        return n + 1;
+      };
+      /* #@range_begin(succ_has_referential_transparency) */
+      expect(
+        succ(1)
+      ).to.eql(
+        succ(1)
+      );
+      /* #@range_end(succ_has_referential_transparency) */
+      next();
+    });
     describe('副作用が参照透過性を損なうこと', () => {
       describe('ファイル操作が参照透過性を損なうこと', () => {
-        /* #@range_begin(fileio_destroys_referential_transparency) */
-        var fs = require('fs'); // fsモジュールを変数fsにバインドする
-        // テストの実行前に実行され、あらかじめ "This is a test." という文字列を file.txtに書きこんでおく。
-        before(() => { 
-          fs.writeFileSync('test/resources/file.txt', "This is a test.");
-        });
         it('ファイルを操作する', (next) => {
+          /* #@range_begin(fileio_destroys_referential_transparency) */
+          var fs = require('fs'); // fsモジュールを変数fsにバインドする
+          /* テストの実行前にあらかじめ "This is a test." という文字列をファイルに書きこんでおく。 */
+          fs.writeFileSync('test/resources/file.txt', "This is a test.");
+
+          /* 第1回目のファイルの読込 */
           var text = fs.readFileSync("test/resources/file.txt", 'utf8');
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
           ).to.eql(
             "This is a test."
           );
+          /* 途中でのファイルへの書込み */
           fs.writeFileSync('test/resources/file.txt', "This is another test.");
+          
+          /* 第2回目のファイルの読込 */
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
           ).to.eql( 
@@ -1215,46 +1231,45 @@ describe('関数の使い方', () => {
         // },500);
         next();
       });
-      it('tapコンビネーター', (next) => {
-        /* #@range_begin(tap_combinator) */
-        var tap = (target) => {
-          //var original = target;
-          return (sideEffect) => {
-            sideEffect(target);
-            return target;
+      describe('tapコンビネーター', () => {
+        it('tapコンビネーターによる console.logのテスト', (next) => {
+          var succ = (n) => {
+            return n + 1;
           };
-        };
-        /* #@range_end(tap_combinator) */
-        /* #@range_begin(tap_combinator_test) */
-        var consoleSideEffect = (any) => {
-          console.log(any);
-        };
-        expect(
-          tap(1)(consoleSideEffect)
-        ).to.eql(
-          1
-        );
-        expect(
-          tap(1)(consoleSideEffect)
-        ).to.eql(
-          1
-        );
-        expect(
-          tap(2)(consoleSideEffect)
-        ).to.eql(
-          2
-        );
-        /* #@range_end(tap_combinator_test) */
-        var updateSideEffect = (n) => {
-          n = n + 1;
-          return n;
-        };
-        expect(
-          tap(3)(updateSideEffect)
-        ).to.eql(
-          3
-        );
-        next();
+          /* #@range_begin(tap_combinator) */
+          var tap = (target) => {
+            return (sideEffect) => {
+              sideEffect(target);
+              return target;
+            };
+          };
+          /* #@range_end(tap_combinator) */
+          /* #@range_begin(tap_combinator_test_in_console) */
+          var consoleSideEffect = (any) => {
+            console.log(any);
+          };
+          expect(
+            tap(succ(1))(consoleSideEffect)
+          ).to.eql(
+            tap(succ(1))(consoleSideEffect)
+          );
+          /* #@range_end(tap_combinator_test_in_console) */
+          var updateSideEffect = (n) => {
+            n = n + 1;
+            return n;
+          };
+          expect(
+            tap(succ(2))(updateSideEffect)
+          ).to.eql(
+            tap(succ(2))(updateSideEffect)
+          );
+          next();
+        });
+        it('tapコンビネーターによるファイル入出力のテスト', (next) => {
+          /* #@range_begin(tap_combinator_test_in_fileio) */
+          /* #@range_end(tap_combinator_test_in_fileio) */
+          next();
+        });
       });
     });
   }); // 関数の純粋性

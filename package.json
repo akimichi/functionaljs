@@ -38,6 +38,7 @@
     "kansuu.js": "^0.1",
     "npm": "^2.7.3",
     "random-js": "^1.0.4",
+    "run-sequence": "^1.1.5",
     "seedrandom": "^2.3.11"
   }
 }

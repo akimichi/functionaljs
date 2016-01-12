@@ -26,6 +26,14 @@ gulp.task('scala-test', function (cb) {
     cb(err);
   });
 });
+
+gulp.task('haskell-test', function (cb) {
+  exec('cabal test', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+});
 // Watch Files For Changes
 gulp.task('watch', function() {
     gulp.watch(['test/*.js']);
@@ -44,4 +52,4 @@ gulp.task('deploy', function() {
 });
 
 gulp.task('default', ['test','doc', 'deploy']);
-gulp.task('test', ['js-test','scala-test']);
+gulp.task('test', ['js-test','scala-test', 'haskell-test']);

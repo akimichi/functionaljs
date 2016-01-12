@@ -30,7 +30,7 @@ gulp.task('scala-test', function (cb) {
 gulp.task('haskell-test', function (cb) {
   exec('cabal test', function (err, stdout, stderr) {
     console.log(stdout);
-    console.log(stderr);
+    // console.log(stderr);
     cb(err);
   });
 });

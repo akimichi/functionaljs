@@ -8,6 +8,10 @@
 
 sbt
 
+### haskell
+
+cabal
+
 
 ## 利用法
 
@@ -25,7 +29,7 @@ $ npm install
 テストを実行するには
 
 ~~~
-$ ./node_modules/.bin/gulp 
+$ ./node_modules/.bin/gulp test
 ~~~
 
 ドキュメントを生成するには
@@ -40,6 +44,21 @@ scalaのコードをテストする
 
 ~~~
 $ sbt test
+~~~
+~~~
+$ gulp scala-test
+~~~
+
+### haskellのテスト
+
+haskellのコードをテストする
+
+~~~
+$ cabal test
+~~~
+
+~~~
+$ gulp haskell-test
 ~~~
 
 ## プロジェクトページ

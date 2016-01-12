@@ -77,7 +77,7 @@ describe('関数の使い方', () => {
           empty: undefined, // 空のリストには先頭要素はありません
           cons: (head, tail) => {
             return head;
-          },
+          }
         });
       },
       tail: (list) => {
@@ -113,11 +113,47 @@ describe('関数の使い方', () => {
         /* #@range_end(identity_function_test) */
         next();
       });
+      it('succ関数の定義', (next) => {
+        /* #@range_begin(succ_function_definition) */
+        var succ = (n) => {
+          return n + 1;
+        };
+        /* #@range_end(succ_function_definition) */
+        /* テスト */
+        /* #@range_begin(succ_function_test) */
+        expect(
+          succ(0)
+        ).to.eql(
+          1
+        );
+        expect(
+          succ(1)
+        ).to.eql(
+          2
+        );
+        /* #@range_end(succ_function_test) */
+        next();
+      });
+      it('複数の引数を持つ関数', (next) => {
+        /* #@range_begin(add_function_definition) */
+        var add = (n, m) => {
+          return n + m;
+        };
+        /* #@range_end(add_function_definition) */
+        /* テスト */
+        expect(
+          add(0,1)
+        ).to.eql(
+          1
+        );
+        next();
+      });
       it('引数を参照しない関数', (next) => {
         /* #@range_begin(constant_one_function) */
         var alwaysOne = (x) => {
           return 1;
         };
+        /* #@range_end(constant_one_function) */
         expect(
           alwaysOne(1)
         ).to.eql(
@@ -128,17 +164,16 @@ describe('関数の使い方', () => {
         ).to.eql(
           1
         );
-        /* #@range_end(constant_one_function) */
         /* #@range_begin(left_function) */
         var left = (x,y) => {
           return x;
         };
+        /* #@range_end(left_function) */
         expect(
           left(1,2)
         ).to.eql(
           1
         );
-        /* #@range_end(left_function) */
         next();
       });
       it('関数の変数へのバインド', (next) => {
@@ -167,7 +202,7 @@ describe('関数の使い方', () => {
               return infiniteLoop(_);
             };
 
-            /* このテストは実行されると無限ループになるのでコメントアウトしています
+            /* このテストは無限ループになるのでコメントアウトしています
                expect(
                left(1, infiniteLoop())
                ).to.be.ok()
@@ -185,7 +220,7 @@ describe('関数の使い方', () => {
               if(n === 1) {
                 return true;
               } else {
-                return infiniteLoop(); // 条件文が真の場合には評価される
+                return infiniteLoop(); // 条件文が真の場合には評価されない
               }
             };
             expect(

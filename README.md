@@ -18,6 +18,14 @@ cabal
 
 stack
 
+c.f. http://docs.haskellstack.org/en/stable/install_and_upgrade.html#ubuntu
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
+sudo apt-get update && sudo apt-get install stack -y
+
+stack build
+stack setup
+stack test
+
 ~~~
 $ stack build
 ~~~

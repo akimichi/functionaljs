@@ -1233,11 +1233,9 @@ describe('関数の使い方', () => {
       });
       describe('tapコンビネーター', () => {
         /* #@range_begin(tap_combinator) */
-        var tap = (target) => {
-          return (sideEffect) => {
-            sideEffect(target);
-            return target;
-          };
+        var tap = (target,sideEffect) => {
+          sideEffect(target);
+          return target;
         };
         /* #@range_end(tap_combinator) */
         it('tapコンビネーターによる console.logのテスト', (next) => {
@@ -1249,20 +1247,20 @@ describe('関数の使い方', () => {
             console.log(any);
           };
           expect(
-            tap(succ(1))(consoleSideEffect)
+            tap(succ(1), consoleSideEffect)
           ).to.eql(
-            tap(succ(1))(consoleSideEffect)
+            tap(succ(1), consoleSideEffect)
           );
-          /* #@range_end(tap_combinator_test_in_console) */
           var updateSideEffect = (n) => {
             n = n + 1;
             return n;
           };
           expect(
-            tap(succ(2))(updateSideEffect)
+            tap(succ(2), updateSideEffect)
           ).to.eql(
-            tap(succ(2))(updateSideEffect)
+            tap(succ(2), updateSideEffect)
           );
+          /* #@range_end(tap_combinator_test_in_console) */
           next();
         });
         it('tapコンビネーターによるオブジェクトの操作', (next) => {
@@ -1273,9 +1271,9 @@ describe('関数の使い方', () => {
           };
           var r2d2 = {name: "R2D2"};
           expect(
-            tap(r2d2)(updateSideEffect).name
+            tap(r2d2, updateSideEffect).name
           ).to.eql(
-            tap(r2d2)(updateSideEffect).name
+            tap(r2d2, updateSideEffect).name
           );
           expect(
            r2d2.name
@@ -1297,9 +1295,9 @@ describe('関数の使い方', () => {
             return content;
           };
           expect(
-            tap(fs.readFileSync("test/resources/file.txt", 'utf8'))(updateSideEffect)
+            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), updateSideEffect)
           ).not.to.eql(
-            tap(fs.readFileSync("test/resources/file.txt", 'utf8'))(updateSideEffect)
+            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), updateSideEffect)
           );
           /* #@range_end(tap_combinator_test_in_fileio) */
           next();

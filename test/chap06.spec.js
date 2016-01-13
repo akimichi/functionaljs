@@ -1232,18 +1232,18 @@ describe('関数の使い方', () => {
         next();
       });
       describe('tapコンビネーター', () => {
+        /* #@range_begin(tap_combinator) */
+        var tap = (target) => {
+          return (sideEffect) => {
+            sideEffect(target);
+            return target;
+          };
+        };
+        /* #@range_end(tap_combinator) */
         it('tapコンビネーターによる console.logのテスト', (next) => {
           var succ = (n) => {
             return n + 1;
           };
-          /* #@range_begin(tap_combinator) */
-          var tap = (target) => {
-            return (sideEffect) => {
-              sideEffect(target);
-              return target;
-            };
-          };
-          /* #@range_end(tap_combinator) */
           /* #@range_begin(tap_combinator_test_in_console) */
           var consoleSideEffect = (any) => {
             console.log(any);
@@ -1265,8 +1265,42 @@ describe('関数の使い方', () => {
           );
           next();
         });
-        it('tapコンビネーターによるファイル入出力のテスト', (next) => {
+        it('tapコンビネーターによるオブジェクトの操作', (next) => {
+          /* #@range_begin(tap_combinator_test_in_object) */
+          var updateSideEffect = (obj) => {
+            obj.name = "C3PO";
+            return obj;
+          };
+          var r2d2 = {name: "R2D2"};
+          expect(
+            tap(r2d2)(updateSideEffect).name
+          ).to.eql(
+            tap(r2d2)(updateSideEffect).name
+          );
+          expect(
+           r2d2.name
+          ).to.eql(
+            "C3PO"
+          );
+          /* #@range_end(tap_combinator_test_in_object) */
+          next();
+        });
+        it('tapコンビネーターによるファイル入出力のテストは失敗する', (next) => {
           /* #@range_begin(tap_combinator_test_in_fileio) */
+          var fs = require('fs'); // fsモジュールを変数fsにバインドする
+          fs.writeFileSync('test/resources/file.txt', "This is a test.");
+
+          var updateSideEffect = (n) => {
+          /* 途中でのファイルへの書込み */
+            var content = fs.readFileSync("test/resources/file.txt", 'utf8');
+            fs.writeFileSync('test/resources/file.txt', "This is another test.");
+            return content;
+          };
+          expect(
+            tap(fs.readFileSync("test/resources/file.txt", 'utf8'))(updateSideEffect)
+          ).not.to.eql(
+            tap(fs.readFileSync("test/resources/file.txt", 'utf8'))(updateSideEffect)
+          );
           /* #@range_end(tap_combinator_test_in_fileio) */
           next();
         });

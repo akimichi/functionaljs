@@ -122,12 +122,12 @@ describe('関数の使い方', () => {
         /* テスト */
         /* #@range_begin(succ_function_test) */
         expect(
-          succ(0)
+          succ(0)  // 0 を引数にsucc関数を適用する
         ).to.eql(
           1
         );
         expect(
-          succ(1)
+          succ(1)  // 1 を引数にsucc関数を適用する
         ).to.eql(
           2
         );
@@ -178,8 +178,8 @@ describe('関数の使い方', () => {
       });
       it('関数の変数へのバインド', (next) => {
         /* #@range_begin(function_bound_to_variable) */
-        var id = (any) => {
-          return any;
+        var succ = (x) => {
+          return x + 1;
         };
         /* #@range_end(function_bound_to_variable) */
         next();

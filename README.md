@@ -2,6 +2,20 @@
 
 ## テスト環境の準備
 
+### dockerを使う
+
+
+~~~
+docker build -t="functionaljs:v1" .
+~~~
+
+
+~~~
+docker run -t="functionaljs:v1" -i -v `pwd`:/workspace . gulp test 
+~~~
+
+build -t="emile/nginx:v1" .
+
 ### node.js
 
 nvm のインストール

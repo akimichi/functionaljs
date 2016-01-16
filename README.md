@@ -1,32 +1,37 @@
 # 「関数型プログラミングの基礎知識」サンプルコード
 
-## テスト環境の準備
+このレポジトリは、リック・テレコム社刊行の「関数型プログラミングの基礎知識」のサンプルコードをおさめたものです。
+
+## 利用法 
+
+~~~
+$ git clone git@github.com:akimichi/functionaljs.git
+~~~
 
 ### dockerを使う
 
 
 ~~~
-docker build -t="functionaljs:v1" .
+docker build -t="ric/functionaljs:v1" .
 ~~~
 
-
 ~~~
-docker run -t="functionaljs:v1" -i -v `pwd`:/workspace . gulp test 
+docker run -it  -v `pwd`:/root/nodejs ric/functionaljs:v1 gulp js-test
 ~~~
 
-build -t="emile/nginx:v1" .
+### ローカル環境に個別にインストールする
 
-### node.js
+#### node.js
 
 nvm のインストール
 
 node.js v0.12.0 のインストール
 
-### scala
+#### scala
 
 sbtのインストール
 
-### haskell
+#### haskell
 
 cabal
 
@@ -44,9 +49,9 @@ stack test
 $ stack build
 ~~~
 
-## テストの実行 
+### テストの実行 
 
-### node.js のテスト
+#### node.js のテスト
 
 ローカル環境に nvm がインストールされていることが必要です。
 
@@ -69,7 +74,7 @@ $ ./node_modules/.bin/gulp js-test
 $ ./node_modules/.bin/gulp doc
 ~~~
 
-### scalaのテスト
+#### scalaのテスト
 
 scalaのコードをテストする
 
@@ -83,7 +88,7 @@ $ sbt test
 $ gulp scala-test
 ~~~
 
-### haskellのテスト
+#### haskellのテスト
 
 haskellのコードをテストする
 

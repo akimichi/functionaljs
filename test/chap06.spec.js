@@ -330,9 +330,6 @@ describe('関数の使い方', () => {
           describe('thunkによるStream型', () => {
             /* #@range_begin(stream_with_thunk) */
             var stream = {
-              // match: (data, pattern) => {
-              //   return data.call(stream,pattern);
-              // },
               empty: (_) => {
                 return (pattern) => {
                   return pattern.empty();
@@ -343,7 +340,7 @@ describe('関数の使い方', () => {
                   return pattern.cons(head,tailThunk);
                 };
               },
-              // head:: STREAM[T] -> T 
+              // head:: STREAM[T] => T 
               /* ストリーム型headの定義は、リスト型headと同じ */
               head: (astream) => {      
                 return match(astream,{
@@ -351,7 +348,7 @@ describe('関数の使い方', () => {
                   cons: (value, tailThunk) => { return value; }
                 });
               },
-              // tail:: STREAM[T] -> STREAM[T] 
+              // tail:: STREAM[T] => STREAM[T] 
               tail: (astream) => {
                 return match(astream,{
                   empty: (_) => { return undefined; },
@@ -1234,7 +1231,7 @@ describe('関数の使い方', () => {
       describe('tapコンビネーター', () => {
         /* #@range_begin(tap_combinator) */
         var tap = (target,sideEffect) => {
-          sideEffect(target);
+          sideEffect(target); // 副作用を実行する
           return target;
         };
         /* #@range_end(tap_combinator) */
@@ -1289,14 +1286,14 @@ describe('関数の使い方', () => {
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
           var updateSideEffect = (n) => {
-          /* 途中でのファイルへの書込み */
             var content = fs.readFileSync("test/resources/file.txt", 'utf8');
+            /* 途中でのファイルへの書込み */
             fs.writeFileSync('test/resources/file.txt', "This is another test.");
             return content;
           };
           expect(
             tap(fs.readFileSync("test/resources/file.txt", 'utf8'), updateSideEffect)
-          ).not.to.eql(
+          ).not.to.eql( // 両者は等しくない
             tap(fs.readFileSync("test/resources/file.txt", 'utf8'), updateSideEffect)
           );
           /* #@range_end(tap_combinator_test_in_fileio) */

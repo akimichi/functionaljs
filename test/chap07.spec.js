@@ -5633,21 +5633,25 @@ describe('高階関数', () => {
         // ## 'IO' monad module
         /* #@range_begin(io_monad_definition) */
         var IO = {
-          // unit:: a -> IO a
+          // unit:: a -> IO[a]
           unit : (any) => {
             return (_) =>  {
               return any;
             };
           },
-          // flatMap:: IO a -> (a -> IO b) -> IO b
+          // flatMap:: IO[a]-> (a -> IO[b] -> IO[b]
           flatMap : (instanceA) => {
-            return (actionAB) => { // actionAB:: a -> IO b
+            return (actionAB) => { // actionAB:: a -> IO[b]
               return IO.unit(IO.run(actionAB(IO.run(instanceA))));
             };
           },
-          // run:: IO A -> A
+          // run:: IO[A]-> A
           run : (instance) => {
             return instance();
+          },
+          // done:: T -> IO[T]
+          done : (any) => {
+            return IO.unit();
           },
           readFile : (path) => {
             return (io) => {
@@ -5669,6 +5673,68 @@ describe('高階関数', () => {
           }
         }; // IO monad
         /* #@range_end(io_monad_definition) */
+        it('IOモナドは合成可能である', (next) => {
+          /* #@range_begin(io_monad_is_composable) */
+          // IO.seq:: IO[a] => IO[b] => IO[b]
+          IO.seq = (instanceA) => {
+            return (instanceB) => {
+              return IO.flatMap(instanceA)((a) => {
+                return instanceB;
+              });
+            };
+          };
+          IO.seqs = (alist) => {
+            return list.foldr(alist)(list.empty())(IO.done());
+          };
+          // IO.putc:: CHAR => IO[]
+          IO.putc = (character) => {
+            return (io) => {
+              process.stdout.write(character);
+              return null;
+            };
+          };
+          // IO.puts:: LIST[CHAR] => IO[]
+          // ~~~haskell
+          // puts list = seqs (map putc list)
+          // ~~~
+          IO.puts = (alist) => {
+            return match(alist, {
+              empty: () => {
+                return IO.done();
+              },
+              cons: (head, tail) => {
+                return IO.seq(IO.putc(head))(IO.puts(tail));
+              }
+            });
+          };
+          // IO.getc :: IO[CHAR]
+          IO.getc =  () => {
+            var continuation = () => {
+              var chunk = process.stdin.read();
+              return chunk;
+            }; 
+            process.stdin.setEncoding('utf8');
+            return process.stdin.on('readable', continuation);
+          };
+          /* #@range_end(io_monad_is_composable) */
+          next();
+        });
+        it('IOモナドで参照透過性を確保する', (next) => {
+          expect(
+            IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
+              return IO.flatMap(IO.println(content))((_) => {
+                return IO.done(_);
+              });
+            })()
+          ).to.eql(
+            IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
+              return IO.flatMap(IO.println(content))((_) => {
+                return IO.done(_);
+              });
+            })()
+          );
+          next();
+        });
       }); // IOモナド
     }); // IOモナド
     // describe("Variantモナド", () => {

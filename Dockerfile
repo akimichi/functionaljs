@@ -28,6 +28,16 @@ RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get update -qq
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
 
+COPY .profile /root
+RUN mkdir /workspace
+COPY .nvmrc gulpfile.js package.json /workspace/
+# COPY test /workspace/test/
+# COPY succeeded /workspace/test/succeeded/
+# COPY failed /workspace/test/failed/
+COPY build.sbt /workspace
+COPY project /workspace/project
+
+
 # Install nvm with node and npm
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -35,16 +45,8 @@ WORKDIR /root
 ENV NODE_VERSION 0.12.0
 # setup the nvm environment
 RUN git clone https://github.com/creationix/nvm.git $HOME/.nvm
-RUN echo '#The Following loads nvm, and install Node.js which version is assigned to $NODE_ENV' >> $HOME/.profile
-RUN echo 'source ~/.nvm/nvm.sh' >> $HOME/.profile
-RUN echo 'echo "Installing node@${NODE_VERSION}, this may take several minutes..."' >> $HOME/.profile
-RUN echo 'nvm install ${NODE_VERSION}' >> $HOME/.profile
-RUN echo 'nvm use v${NODE_VERSION}' >> $HOME/.profile
-RUN echo 'nvm alias default ${NODE_VERSION}' >> $HOME/.profile
-# RUN echo 'alias gulp="node --harmony `which gulp`" >> $HOME/.profile
 
-
-RUN echo 'echo "Install node@${NODE_VERSION} finished."' >> $HOME/.profile
+# RUN echo 'echo "Install node@${NODE_VERSION} finished."' >> $HOME/.profile
 # RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash \
 #     && source $NVM_DIR/nvm.sh \
 #     && nvm install $NODE_VERSION \
@@ -58,11 +60,6 @@ RUN npm install -g node-gyp &&\
     npm install -g mocha &&\
     npm install -g gulp &&\
     npm install -g coffee-script
-COPY .nvmrc gulpfile.js package.json /workspace/
-# COPY test /workspace/test/
-# COPY succeeded /workspace/test/succeeded/
-# COPY failed /workspace/test/failed/
-COPY .profile /root
 
 WORKDIR /workspace
 # RUN nvm use
@@ -108,6 +105,10 @@ RUN \
   apt-get update && \
   apt-get install sbt
 
+RUN cd /workspace && sbt update
+
+
+
 ## haskell
 
 
@@ -119,5 +120,5 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 VOLUME /workspace
 WORKDIR /workspace
 
-ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
-CMD ["bash"]
+# ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
+# CMD ["bash"]

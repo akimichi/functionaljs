@@ -32,7 +32,7 @@ docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 sbt test
 コンテナにログインする
 
 ~~~
-docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 
+docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 bash
 ~~~
 <!-- ~~~ -->
 <!-- docker exec -i -t ric/functionaljs:v1 bash -->

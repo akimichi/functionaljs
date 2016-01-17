@@ -39,7 +39,11 @@ RUN echo '#The Following loads nvm, and install Node.js which version is assigne
 RUN echo 'source ~/.nvm/nvm.sh' >> $HOME/.profile
 RUN echo 'echo "Installing node@${NODE_VERSION}, this may take several minutes..."' >> $HOME/.profile
 RUN echo 'nvm install ${NODE_VERSION}' >> $HOME/.profile
+RUN echo 'nvm use v${NODE_VERSION}' >> $HOME/.profile
 RUN echo 'nvm alias default ${NODE_VERSION}' >> $HOME/.profile
+# RUN echo 'alias gulp="node --harmony `which gulp`" >> $HOME/.profile
+
+
 RUN echo 'echo "Install node@${NODE_VERSION} finished."' >> $HOME/.profile
 # RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash \
 #     && source $NVM_DIR/nvm.sh \
@@ -54,17 +58,15 @@ RUN npm install -g node-gyp &&\
     npm install -g mocha &&\
     npm install -g gulp &&\
     npm install -g coffee-script
-# RUN echo 'alias gulp='node --harmony `which gulp`' >> $HOME/.profile
-RUN mkdir nodejs
-COPY .nvmrc gulpfile.js package.json nodejs/
-COPY test nodejs/test
-COPY succeeded nodejs/succeeded
-COPY failed nodejs/failed
+COPY .nvmrc gulpfile.js package.json /workspace/
+# COPY test /workspace/test/
+# COPY succeeded /workspace/test/succeeded/
+# COPY failed /workspace/test/failed/
+COPY .profile /root
 
-WORKDIR nodejs
+WORKDIR /workspace
 # RUN nvm use
 RUN npm install
-
 
 
 ## sbt
@@ -75,9 +77,11 @@ RUN npm install
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
-# CMD ["bash"]
-
 # CMD /bin/sh
-CMD gulp js-test
+# CMD gulp js-test
 
+VOLUME /workspace
+WORKDIR /workspace
+
+ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
+CMD ["bash"]

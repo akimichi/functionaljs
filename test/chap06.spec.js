@@ -235,7 +235,7 @@ describe('関数の使い方', () => {
             /* #@range_begin(multiply_lazy_evaluation) */
             var multiply = (x,y) => {
               if(x() === 0){
-                return 0;
+                return 0;       // x()が0の場合は、yは評価しない
               } else {
                 return x() * y();
               }
@@ -1175,7 +1175,7 @@ describe('関数の使い方', () => {
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
           ).to.eql( 
-            "This is another test."
+            "This is another test."  // 最初の readFileSync関数の結果と異なっている
           );
           /* #@range_end(fileio_destroys_referential_transparency) */
           next();
@@ -1240,7 +1240,7 @@ describe('関数の使い方', () => {
             return n + 1;
           };
           /* #@range_begin(tap_combinator_test_in_console) */
-          var consoleSideEffect = (any) => {
+          var consoleSideEffect = (any) => { // 画面出力という副作用を実行する関数
             console.log(any);
           };
           expect(
@@ -1248,6 +1248,7 @@ describe('関数の使い方', () => {
           ).to.eql(
             tap(succ(1), consoleSideEffect)
           );
+          /* #@range_end(tap_combinator_test_in_console) */
           var updateSideEffect = (n) => {
             n = n + 1;
             return n;
@@ -1257,7 +1258,6 @@ describe('関数の使い方', () => {
           ).to.eql(
             tap(succ(2), updateSideEffect)
           );
-          /* #@range_end(tap_combinator_test_in_console) */
           next();
         });
         it('tapコンビネーターによるオブジェクトの操作', (next) => {
@@ -1281,20 +1281,20 @@ describe('関数の使い方', () => {
           next();
         });
         it('tapコンビネーターによるファイル入出力のテストは失敗する', (next) => {
-          /* #@range_begin(tap_combinator_test_in_fileio) */
           var fs = require('fs'); // fsモジュールを変数fsにバインドする
+          /* #@range_begin(tap_combinator_test_in_fileio) */
           fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
-          var updateSideEffect = (n) => {
+          /* ファイルへの書込みという副作用を実行する */
+          var fileioSideEffect = (n) => {
             var content = fs.readFileSync("test/resources/file.txt", 'utf8');
-            /* 途中でのファイルへの書込み */
             fs.writeFileSync('test/resources/file.txt', "This is another test.");
             return content;
           };
           expect(
-            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), updateSideEffect)
+            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), fileioSideEffect)
           ).not.to.eql( // 両者は等しくない
-            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), updateSideEffect)
+            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), fileioSideEffect)
           );
           /* #@range_end(tap_combinator_test_in_fileio) */
           next();

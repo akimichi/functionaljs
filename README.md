@@ -15,11 +15,23 @@ $ git clone git@github.com:akimichi/functionaljs.git
 docker build -t="ric/functionaljs:v1" .
 ~~~
 
+テストを実行する
+
 ~~~
-docker run -it  -v `pwd`:/root/nodejs ric/functionaljs:v1 gulp js-test
+docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 gulp --harmony js-test
 ~~~
 
-### ローカル環境に個別にインストールする
+コンテナにログインする
+
+~~~
+docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 
+~~~
+<!-- ~~~ -->
+<!-- docker exec -i -t ric/functionaljs:v1 bash -->
+<!-- ~~~ -->
+
+
+### ローカル環境にテスト環境を個別にインストールする
 
 #### node.js
 

@@ -315,7 +315,7 @@
             <span class="hljs-comment">/* #@range_begin(multiply_lazy_evaluation) */</span>
             <span class="hljs-keyword">var</span> multiply = (x,y) =&gt; {
               <span class="hljs-keyword">if</span>(x() === <span class="hljs-number">0</span>){
-                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;       <span class="hljs-comment">// x()が0の場合は、yは評価しない</span>
               } <span class="hljs-keyword">else</span> {
                 <span class="hljs-keyword">return</span> x() * y();
               }
@@ -1736,13 +1736,13 @@ var timeout = setTimeout(next, 2000);</p>
           next();
         });
         it(<span class="hljs-string">'tapコンビネーターによるファイル入出力のテストは失敗する'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(tap_combinator_test_in_fileio) */</span>
           <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>); <span class="hljs-comment">// fsモジュールを変数fsにバインドする</span>
+          <span class="hljs-comment">/* #@range_begin(tap_combinator_test_in_fileio) */</span>
           fs.writeFileSync(<span class="hljs-string">'test/resources/file.txt'</span>, <span class="hljs-string">"This is a test."</span>);
 
+          <span class="hljs-comment">/* ファイルへの書込みという副作用を実行する */</span>
           <span class="hljs-keyword">var</span> fileioSideEffect = (n) =&gt; {
             <span class="hljs-keyword">var</span> content = fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>, <span class="hljs-string">'utf8'</span>);
-            <span class="hljs-comment">/* 途中でのファイルへの書込み */</span>
             fs.writeFileSync(<span class="hljs-string">'test/resources/file.txt'</span>, <span class="hljs-string">"This is another test."</span>);
             <span class="hljs-keyword">return</span> content;
           };

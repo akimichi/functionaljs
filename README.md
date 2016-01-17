@@ -8,8 +8,13 @@
 $ git clone git@github.com:akimichi/functionaljs.git
 ~~~
 
+テスト環境の構築には、 1) docker を使う 2) 個別にインストールする、 の2つの方法があります。
+dockerを利用したほうが確実です。
+
+
 ### dockerを使う
 
+まず最初にdockerイメージを生成します。
 
 ~~~
 docker build -t="ric/functionaljs:v1" .
@@ -19,6 +24,9 @@ docker build -t="ric/functionaljs:v1" .
 
 ~~~
 docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 gulp --harmony js-test
+~~~
+~~~
+docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 sbt test 
 ~~~
 
 コンテナにログインする

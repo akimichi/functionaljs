@@ -23,17 +23,27 @@ docker build -t="ric/functionaljs:v1" .
 テストを実行する
 
 ~~~
-docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 gulp --harmony js-test
+docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
+docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 gulp --harmony js-test
+# docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 mocha --harmony test 
 ~~~
-~~~
-docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 sbt test 
+
+scala のコードをテストする
+
+~~
+docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash -c "sbt test"
+docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 sbt test
 ~~~
 
 コンテナにログインする
 
 ~~~
 docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 bash
+root@ca7528c7f2e5:/workspace# mocha --harmony test
+root@ca7528c7f2e5:/workspace# sbt test
 ~~~
+
+
 <!-- ~~~ -->
 <!-- docker exec -i -t ric/functionaljs:v1 bash -->
 <!-- ~~~ -->

@@ -3500,7 +3500,7 @@ describe('高階関数', () => {
       };
       var even = multiplyOf(2);
       /* #@range_begin(not_combinator) */
-      // not :: FUNC[ANY -> BOOL] -> ANY -> BOOL
+      // not :: FUNC[ANY => BOOL] => ANY => BOOL
       var not = (predicate) => { // predicate:: NUMBER->BOOL
         return (arg) => { // ANY->BOOL型の関数を返す
           return ! predicate(arg); // !演算子で論理を反転させる

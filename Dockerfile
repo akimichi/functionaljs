@@ -38,33 +38,6 @@ COPY build.sbt /workspace
 COPY project /workspace/project
 
 
-# Install nvm with node and npm
-# Replace shell with bash so we can source files
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-WORKDIR /root
-ENV NODE_VERSION 0.12.0
-# setup the nvm environment
-RUN git clone https://github.com/creationix/nvm.git $HOME/.nvm
-
-# RUN echo 'echo "Install node@${NODE_VERSION} finished."' >> $HOME/.profile
-# RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash \
-#     && source $NVM_DIR/nvm.sh \
-#     && nvm install $NODE_VERSION \
-#     && nvm alias default $NODE_VERSION \
-#     && nvm use default \
-#   	&& npm install -g npm 
-# ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-# ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
-
-RUN npm install -g node-gyp &&\
-    npm install -g mocha &&\
-    npm install -g gulp &&\
-    npm install -g coffee-script
-
-WORKDIR /workspace
-# RUN nvm use
-RUN npm install
-
 
 ## sbt インストール
 ENV SCALA_VERSION 2.11.7
@@ -107,18 +80,66 @@ RUN \
 
 RUN cd /workspace && sbt update
 
+# ENV PATH /root/.cabal/bin:$PATH
+# ENV HASKELL_PLATFORM_VERSION 2014.2.0.0
+
+# RUN apt-get update && \
+#   apt-get install -y zlib1g-dev curl libgmp10 && \
+#   cd /usr/lib/x86_64-linux-gnu && \
+#   ln -s libgmp.so.10 libgmp.so && \
+#   cd / && \
+#   curl -O http://www.haskell.org/platform/download/2014.2.0.0/haskell-platform-${HASKELL_PLATFORM_VERSION}-unknown-linux-x86_64.tar.gz && \
+#   tar xzf haskell-platform-${HASKELL_PLATFORM_VERSION}-unknown-linux-x86_64.tar.gz && \
+#   rm -f haskell-platform-${HASKELL_PLATFORM_VERSION}-unknown-linux-x86_64.tar.gz && \
+#   /usr/local/haskell/ghc-7.8.3-x86_64/bin/activate-hs && \
+#   cabal update && \
+#   sed -i "s%^remote-repo: .*%remote-repo: stackage:http://www.stackage.org/stackage/46bb2d7487546939e22612e7d757f1df5a5163e9%" /root/.cabal/config && \
+#   cabal update
 
 
-## haskell
+# Install nvm with node and npm
+# Replace shell with bash so we can source files
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+WORKDIR /root
+ENV NODE_VERSION 0.12.0
+# setup the nvm environment
+# Install nvm with node and npm
+RUN git clone https://github.com/creationix/nvm.git $HOME/.nvm
+RUN bash \
+    && source $HOME/.nvm/nvm.sh \
+    && nvm install v$NODE_VERSION \
+    && nvm alias default v$NODE_VERSION \
+    && nvm use default
 
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# RUN git clone https://github.com/creationix/nvm.git $HOME/.nvm
+# RUN . ~/.nvm/nvm.sh && nvm install v${NODE_VERSION} && nvm alias default v${NODE_VERSION}
+# RUN /root/.nvm/nvm.sh
+# RUN nvm install v${NODE_VERSION}
 
-# CMD /bin/sh
-# CMD gulp js-test
+# RUN echo 'echo "Install node@${NODE_VERSION} finished."' >> $HOME/.profile
+# RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash \
+#     && source $NVM_DIR/nvm.sh \
+#     && nvm install $NODE_VERSION \
+#     && nvm alias default $NODE_VERSION \
+#     && nvm use default \
+#   	&& npm install -g npm 
+# ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+# ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
+
+RUN npm install -g node-gyp &&\
+    npm install -g mocha &&\
+    npm install -g gulp &&\
+    npm install -g coffee-script
 
 VOLUME /workspace
 WORKDIR /workspace
+# RUN nvm use
+RUN npm install
 
-# ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
-# CMD ["bash"]
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+#ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
+CMD ["bash"]

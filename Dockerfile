@@ -116,6 +116,13 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 ENV PATH="${HOME}/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:${PATH}"
 
+WORKDIR /workspace
+RUN wget https://www.stackage.org/lts/cabal.config
+# RUN cabal update
+# RUN cabal install
+
+COPY stack.yml /workspace
+RUN stack build
 
 # ENV PATH /root/.cabal/bin:$PATH
 # ENV HASKELL_PLATFORM_VERSION 2014.2.0.0
@@ -134,7 +141,6 @@ ENV PATH="${HOME}/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:${PATH}"
 #   cabal update
 
 VOLUME /workspace
-WORKDIR /workspace
 # RUN nvm use
 RUN npm install
 RUN sbt update

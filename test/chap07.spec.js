@@ -1132,7 +1132,7 @@ describe('高階関数', () => {
 
       /* #@range_begin(compose_test) */
       var f = (x) => {
-        return x * x + 1;
+        return x * x + 1; 
       };
       var g = (x) => {
         return x - 2;
@@ -1201,6 +1201,42 @@ describe('高階関数', () => {
         next();
       });
       describe('カリー化による関数の合成', () => {
+        it('カリー化と関数合成', (next) => {
+          var compose = (f) => {
+            return (g) => {
+              return (_) => {
+                return f(g.apply(this, arguments));
+              };
+            };
+          };
+          var curry = (fun) => {
+            return (x,optionalY) => {
+              if(arguments.length > 1){
+                return fun(x, optionalY);
+                // return fun.call(this, x,optionalY);
+              } else {
+                return (y) =>  {
+                  return fun(x, y);
+                  // return fun.call(this, x,y);
+                };
+              }
+            };
+          };
+          /* #@range_begin(compose_and_curry) */
+          var negate = (x) => {
+            return -x;
+          };
+          var multiply = (x,y) => {
+            return x * y;
+          };
+          expect(
+            compose(negate)(curry(multiply)(2))(3)
+          ).to.eql(
+              -6
+          );
+          /* #@range_end(compose_and_curry) */
+          next();
+        });
         it('脱カリー化と関数合成', (next) => {
           /* #@range_begin(compose_and_uncurry) */
           var compose = (f) => {
@@ -1376,13 +1412,15 @@ describe('高階関数', () => {
             }
           });
         };
+        /* #@range_end(list_last_recursive) */
+        /* #@range_begin(list_last_test) */
         var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(
           last(sequence)
         ).to.eql(
           4
         );
-        /* #@range_end(list_last_recursive) */
+        /* #@range_end(list_last_test) */
         next();
       });
       it('合成によるlast', (next) => {
@@ -1390,13 +1428,13 @@ describe('高階関数', () => {
         var last = (alist) => {
           return compose(list.head)(list.reverse)(alist);
         };
+        /* #@range_end(list_last_compose) */
         var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(
           last(sequence)
         ).to.eql(
           4
         );
-        /* #@range_end(list_last_compose) */
         next();
       });
       it('length関数の抽象的な定義', (next) => {

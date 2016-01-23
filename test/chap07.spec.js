@@ -1572,30 +1572,50 @@ describe('高階関数', () => {
       /* #@range_end(variable_binding_in_environment_test) */
       next();
     });
+    it('部分適用と環境', (next) => {
+      /* #@range_begin(partial_application_with_environment) */
+      var multiplyOf = (n) => { // 外側の関数定義
+        return (m) => {         // 内側の関数定義
+          if(m % n === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      };
+      var twoFold = multiplyOf(2);
+      expect(
+       twoFold(4) 
+      ).to.eql(
+        true
+      );
+      /* #@range_end(partial_application_with_environment) */
+      next();
+    });
   });
   describe('クロージャーで状態をカプセル化する', () => {
     describe('単純なクロージャーの例', (next) => {
       it('counter関数の例', (next) => {
         /* #@range_begin(counter_as_closure) */
         var counter = (init) => {
-          var _init = init;
-          return (_) => {  // クロージャーを返す
-            _init = _init + 1;
-            return _init;
+          var countingNumber =  init - 1;
+          return (_) => {  // countingNumberの環境を持つクロージャーを返す
+            countingNumber = countingNumber + 1;
+            return countingNumber ;
           };
         };
         /* #@range_end(counter_as_closure) */
-        var counterFromZero = counter(0);
         /* #@range_begin(counter_as_closure_test) */
+        var counterFromZero = counter(0);
         expect(
           counterFromZero()
         ).to.eql( 
-          1
+          0
         );
         expect(
           counterFromZero()
         ).to.eql( 
-          2
+          1
         );
         /* #@range_end(counter_as_closure_test) */
         /* #@range_begin(another_counter) */
@@ -1603,7 +1623,7 @@ describe('高階関数', () => {
         expect(
           anoterCounterFromZero()
         ).to.eql( 
-          1
+          0
         );
         /* #@range_end(another_counter) */
         next();
@@ -3541,14 +3561,15 @@ describe('高階関数', () => {
       };
       var even = multiplyOf(2);
       /* #@range_begin(not_combinator) */
-      // not :: FUNC[ANY => BOOL] => ANY => BOOL
+      // not :: FUN[ANY => BOOL] => FUN[ANY => BOOL]
       var not = (predicate) => { // predicate:: NUMBER->BOOL
         return (arg) => { // ANY->BOOL型の関数を返す
           return ! predicate(arg); // !演算子で論理を反転させる
         };
       };
+      /* #@range_end(not_combinator) */
+      /* #@range_begin(not_combinator_test) */
       var odd = not(even); // notコンビネータでodd関数を定義する
-
       expect(
         odd(2)
       ).to.eql(
@@ -3559,7 +3580,7 @@ describe('高階関数', () => {
       ).to.eql(
         true
       );
-      /* #@range_end(not_combinator) */
+      /* #@range_end(not_combinator_test) */
       /* #@range_begin(and_or_combinator) */
       /* 「もしくは」を表す論理和  */
       /* or:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */

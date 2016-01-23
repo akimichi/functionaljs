@@ -121,8 +121,15 @@ RUN wget https://www.stackage.org/lts/cabal.config
 # RUN cabal update
 # RUN cabal install
 
-COPY stack.yml /workspace
+# install stackage
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
+# ubuntu 14.04 の場合
+RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main' | tee /etc/apt/sources.list.d/fpco.list
+RUN apt-get update && apt-get install stack -y
+COPY stack.yaml functionaljs.cabal cabal.config /workspace/
+RUN stack setup
 RUN stack build
+
 
 # ENV PATH /root/.cabal/bin:$PATH
 # ENV HASKELL_PLATFORM_VERSION 2014.2.0.0

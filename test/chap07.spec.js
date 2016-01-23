@@ -904,16 +904,16 @@ describe('高階関数', () => {
         };
       };
       expect(
-        exponential(2)(2)
-      ).to.eql(
-        4
-      );
-      expect(
-        exponential(2)(3)
+        exponential(2)(3) // @<m>{2^3}
       ).to.eql(
         8
       );
       /* #@range_end(exponential_curried) */
+      expect(
+        exponential(2)(2)
+      ).to.eql(
+        4
+      );
       /* #@range_begin(flip) */
       var flip = (fun) => {
         return  (f) => {
@@ -926,6 +926,8 @@ describe('高階関数', () => {
       /* #@range_begin(flipped_exponential) */
       var square = flip(exponential)(2); // 2乗を定義する
       var cube = flip(exponential)(3);   // 3乗を定義する
+      /* #@range_end(flipped_exponential) */
+      /* #@range_begin(flipped_exponential_test) */
       expect(
         square(2)
       ).to.eql(
@@ -936,7 +938,7 @@ describe('高階関数', () => {
       ).to.eql(
         8
       );
-      /* #@range_end(flipped_exponential) */
+      /* #@range_end(flipped_exponential_test) */
       next();
     });
     it('カリー化された関数の単純な例', (next) => {
@@ -981,8 +983,8 @@ describe('高階関数', () => {
     });
     it('カリー化による関数の部品化', (next) => {
       /* #@range_begin(multiplyOf_curried) */
-      var multiplyOf = (n) => {
-        return (m) => {
+      var multiplyOf = (n) => { // 外側の関数定義
+        return (m) => {         // 内側の関数定義
           if(m % n === 0) {
             return true;
           } else {
@@ -2328,6 +2330,7 @@ describe('高階関数', () => {
             next();
           });
           it("filterで無限の素数列を作る", (next) => {
+            this.timeout(7000);
             var multiplyOf = (n) => {
               return (m) => {
                 if(m % n === 0) {

@@ -420,6 +420,7 @@ describe('関数の使い方', () => {
               );
               /* #@range_end(infinite_ones_test) */
               it("無限の整数列をテストする", (next) => {
+                this.timeout(3000);
                 var list = {
                   // match: (data, pattern) => {
                   //   return data.call(list, pattern);

@@ -2741,7 +2741,7 @@ describe('高階関数', () => {
             }
           };
           /* #@range_begin(prime_generator) */
-          var primes = stream.filter(stream.integersFrom(1))(isPrime);
+          var primes = stream.filter(stream.integersFrom(1))(isPrime); 
           var primeGenerator = generate(primes);
           expect(
             primeGenerator()

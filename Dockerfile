@@ -5,7 +5,7 @@ ENV REFRESHED_AT 2016-1-15(Fri)
 ## Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-ENV HOME /root
+# ENV HOME /root
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 ## apt-get update
@@ -31,15 +31,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 COPY .profile /root
 RUN mkdir /workspace
 COPY .nvmrc gulpfile.js package.json /workspace/
-# COPY test /workspace/test/
-# COPY succeeded /workspace/test/succeeded/
-# COPY failed /workspace/test/failed/
-COPY build.sbt /workspace
-COPY project /workspace/project
 
 ## sbt インストール
 ENV SCALA_VERSION 2.11.7
 ENV SBT_VERSION 0.13.8
+
+COPY build.sbt /workspace
+COPY project /workspace/project
 
 # INSTALL JAVA 7 add webupd8 repository
 RUN \
@@ -126,26 +124,11 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
 # ubuntu 14.04 の場合
 RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main' | tee /etc/apt/sources.list.d/fpco.list
 RUN apt-get update && apt-get install stack -y
-COPY stack.yaml functionaljs.cabal cabal.config /workspace/
+COPY stack.yaml functionaljs.cabal cabal.config Setup.hs /workspace/
+COPY src /workspace/src
 RUN stack setup
-RUN stack build
+# RUN stack build
 
-
-# ENV PATH /root/.cabal/bin:$PATH
-# ENV HASKELL_PLATFORM_VERSION 2014.2.0.0
-
-# RUN apt-get update && \
-#   apt-get install -y zlib1g-dev curl libgmp10 && \
-#   cd /usr/lib/x86_64-linux-gnu && \
-#   ln -s libgmp.so.10 libgmp.so && \
-#   cd / && \
-#   curl -O http://www.haskell.org/platform/download/2014.2.0.0/haskell-platform-${HASKELL_PLATFORM_VERSION}-unknown-linux-x86_64.tar.gz && \
-#   tar xzf haskell-platform-${HASKELL_PLATFORM_VERSION}-unknown-linux-x86_64.tar.gz && \
-#   rm -f haskell-platform-${HASKELL_PLATFORM_VERSION}-unknown-linux-x86_64.tar.gz && \
-#   /usr/local/haskell/ghc-7.8.3-x86_64/bin/activate-hs && \
-#   cabal update && \
-#   sed -i "s%^remote-repo: .*%remote-repo: stackage:http://www.stackage.org/stackage/46bb2d7487546939e22612e7d757f1df5a5163e9%" /root/.cabal/config && \
-#   cabal update
 
 VOLUME /workspace
 # RUN nvm use

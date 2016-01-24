@@ -23,14 +23,8 @@ ENV EDITOR vim
 RUN update-alternatives --set editor /usr/bin/vim.basic
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git wget curl unzip build-essential python-dev rake
 
-## node.js Environment
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update -qq
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
-
 COPY .profile /root
 RUN mkdir /workspace
-COPY .nvmrc gulpfile.js package.json /workspace/
 
 ## sbt インストール
 ENV SCALA_VERSION 2.11.7
@@ -72,16 +66,18 @@ RUN \
   dpkg -i sbt-$SBT_VERSION.deb && \
   rm sbt-$SBT_VERSION.deb && \
   apt-get update 
-  # apt-get update && \
-  # apt-get install sbt
-
 
 # Install nvm with node and npm
-
-# Replace shell with bash so we can source files
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-WORKDIR /root
 ENV NODE_VERSION 0.12.0
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+## install node.js 
+RUN add-apt-repository ppa:chris-lea/node.js
+RUN apt-get update -qq
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
+COPY .nvmrc gulpfile.js package.json /workspace/
+# Replace shell with bash so we can source files
+
+WORKDIR /root
 # setup the nvm environment
 # Install nvm with node and npm
 RUN git clone https://github.com/creationix/nvm.git $HOME/.nvm
@@ -98,6 +94,8 @@ RUN npm install -g node-gyp &&\
     npm install -g mocha &&\
     npm install -g gulp &&\
     npm install -g coffee-script
+WORKDIR /workspace
+RUN cd /workspace && npm install
 
 # install haskell
 
@@ -121,7 +119,6 @@ RUN wget https://www.stackage.org/lts/cabal.config
 
 # install stackage
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
-# ubuntu 14.04 の場合
 RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main' | tee /etc/apt/sources.list.d/fpco.list
 RUN apt-get update && apt-get install stack -y
 COPY stack.yaml functionaljs.cabal cabal.config Setup.hs /workspace/
@@ -132,7 +129,6 @@ RUN stack setup
 
 VOLUME /workspace
 # RUN nvm use
-RUN npm install
 RUN sbt update
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

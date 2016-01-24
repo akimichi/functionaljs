@@ -30,7 +30,7 @@ docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash --login -i
 
 scala のコードをテストする
 
-~~
+~~~
 docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash -c "sbt test"
 # docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 sbt test
 ~~~

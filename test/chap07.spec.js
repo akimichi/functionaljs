@@ -1599,7 +1599,6 @@ describe('高階関数', () => {
       next();
     });
     it('部分適用と環境', (next) => {
-      /* #@range_begin(partial_application_with_environment) */
       var multiplyOf = (n) => { // 外側の関数定義
         return (m) => {         // 内側の関数定義
           if(m % n === 0) {
@@ -1609,6 +1608,7 @@ describe('高階関数', () => {
           }
         };
       };
+      /* #@range_begin(partial_application_with_environment) */
       var twoFold = multiplyOf(2);
       expect(
        twoFold(4) 
@@ -1939,7 +1939,6 @@ describe('高階関数', () => {
         next();
       });
       it('参照透過でないクロジャーの例', (next) => {
-        /* #@range_begin(counter_is_not_transparent) */
         var counter = (init) => {
           var _init = init;
           return (_) => {
@@ -1947,6 +1946,7 @@ describe('高階関数', () => {
             return _init;
           };
         };
+        /* #@range_begin(counter_is_not_transparent) */
         var counterFromZero = counter(0);
         expect(
           counterFromZero()

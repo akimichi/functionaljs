@@ -2001,7 +2001,7 @@ describe('高階関数', () => {
             return _init;
           };
         };
-        /* #@range_begin(closure_as_counter) */
+        /* #@range_begin(church_numeral_test) */
         expect(
           one(counter(0))()
         ).to.eql(
@@ -2017,7 +2017,7 @@ describe('高階関数', () => {
         ).to.eql(
           3
         );
-        /* #@range_end(closure_as_counter) */
+        /* #@range_end(church_numeral_test) */
         next();
       });
     });
@@ -2966,31 +2966,33 @@ describe('高階関数', () => {
           );
           /* #@range_end(list_sum) */
           /* #@range_begin(list_sum_callback) */
-          var sumWithCallbak = (alist) => {
+          var sumWithCallback = (alist) => {
             return (ACCUMULATOR) => {
-              return (CALLBACK) => {
+              return (CALLBACK) => {   // コールバック関数を受けとる
                 return match(alist,{
                   empty: (_) => {
                     return ACCUMULATOR;
                   },
                   cons: (head, tail) => {
-                    return sumWithCallbak(tail)(CALLBACK(head)(ACCUMULATOR))(CALLBACK);
+                    return sumWithCallback(tail)(CALLBACK(head)(ACCUMULATOR))(CALLBACK);
                   }
                 });
               };
             };
           };
-          var add = (n) => {
+          /* #@range_end(list_sum_callback) */
+          /* #@range_begin(list_sum_callback_test) */
+          var add = (n) => {  // sumWithCallback関数に渡すコールバック関数
             return (m) => {
               return n + m;
             };
           };
           expect(
-            sumWithCallbak(numberList)(0)(add)
+            sumWithCallback(numberList)(0)(add)
           ).to.eql(
             6
           );
-          /* #@range_end(list_sum_callback) */
+          /* #@range_end(list_sum_callback_test) */
           next();
         });
         it('リストの長さ', (next) => {
@@ -3029,7 +3031,9 @@ describe('高階関数', () => {
               };
             };
           };
-          var succ = (n) => {
+          /* #@range_end(list_length_callback) */
+          /* #@range_begin(list_length_callback_test) */
+          var succ = (n) => { // lengthWithCallback関数に渡すコールバック関数
             return n + 1;
           };
           expect(
@@ -3037,7 +3041,7 @@ describe('高階関数', () => {
           ).to.eql(
             3
           );
-          /* #@range_end(list_length_callback) */
+          /* #@range_end(list_length_callback_test) */
           next();
         });
         // it('リストの逆転', (next) => {
@@ -3169,7 +3173,6 @@ describe('高階関数', () => {
         var foldr = (alist) => {
           return (accumulator) => {
             return (callback) => {
-              expect(callback).to.a('function');
               return match(alist,{
                 empty: (_) => {
                   return accumulator;
@@ -3204,11 +3207,13 @@ describe('高階関数', () => {
         it("foldrでproductを作る", (next) => {
           /* #@range_begin(foldr_product) */
           var product = (alist) => {
-            return foldr(alist)(1)((item) => {
+            var accumulator = 1;
+            var callback = (item) => {
               return (accumulator) => {
                 return accumulator * item;
               };
-            });
+            };
+            return foldr(alist)(1)(callback);
           };
           // list = [1,2,3,4]
           var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
@@ -3218,6 +3223,27 @@ describe('高階関数', () => {
             24 // 1 * 2 * 3 * 4 = 24
           );
           /* #@range_end(foldr_product) */
+          next();
+        });
+        it("foldrで reverse関数を作る", (next) => {
+          /* #@range_begin(foldr_reverse) */
+          var reverse = (alist) => {
+            var accumulator = list.empty();
+            var callback = (item) => {
+              return (accumulator) => {
+                return list.append(accumulator)(list.cons(item,list.empty()));
+              };
+            }; 
+            return foldr(alist)(accumulator)(callback);
+          };
+          /* #@range_end(foldr_reverse) */
+          // list = [1,2,3,4]
+          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          expect(
+            list.toArray(reverse(seq))
+          ).to.eql(
+            [ 4, 3, 2, 1]
+          );
           next();
         });
         it("foldrでlength関数を作る", (next) => {
@@ -3301,25 +3327,6 @@ describe('高階関数', () => {
           /* #@range_end(foldr_toarray) */
           next();
         });
-        it("foldrで reverse関数を作る", (next) => {
-          /* #@range_begin(foldr_reverse) */
-          var reverse = (alist) => {
-            return foldr(alist)(list.empty())((item) => {
-              return (accumulator) => {
-                return list.append(accumulator)(list.cons(item,list.empty()));
-              };
-            });
-          };
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-          expect(
-            list.toArray(reverse(seq))
-          ).to.eql(
-            [ 4, 3, 2, 1]
-          );
-          /* #@range_end(foldr_reverse) */
-          next();
-        });
         it("foldrで map関数を作る", (next) => {
           /* #@range_begin(foldr_map) */
           var map = (alist) => {
@@ -3399,39 +3406,21 @@ describe('高階関数', () => {
         //   );
         // });
         it("算術の継続", (next) => {
-		  /* #@range_begin(continuation_in_arithmetic) */
-          var succ = (n) => {
-            return n + 1;
-          };
-          var continuation = (any) => { // 値をそのまま返すだけの継続
+          var identity = (any) => { // 値をそのまま返すだけの継続
             return any;
           };
-          expect(
-            identity(succ(1))
-          ).to.eql(
-            2
-          );
-          var succCPS = (n, continues) => {
+		  /* #@range_begin(continuation_in_arithmetic) */
+          var succ = (n, continues) => { // 継続渡しのsucc関数
             return continues(n + 1);
           };
-          expect(
-            succCPS(1, identity)
-          ).to.eql(
-            2
-          );
-          var multiply = (n,m) => {
-            return n * m;
+          var add = (n,m, continues) => { // 継続渡しのadd関数
+            return continues(n + m);
           };
+          // add(2, succ(3))
           expect(
-            multiply(succ(1), 3)
-          ).to.eql(
-            6
-          );
-          var multiplyCPS = (n,m, continues) => {
-            return continues(n * m);
-          };
-          expect(
-            multiplyCPS(succCPS(1, continuation), 3,continuation) // 継続を渡す
+            succ(3, (succResult) => {
+              return add(2, succResult, identity);
+            })
           ).to.eql(
             6
           );

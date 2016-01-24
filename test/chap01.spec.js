@@ -252,75 +252,64 @@ describe('「計算」とは', () => {
         );
         next();
       });
-      it('チャーチ数', (next) => {
-        /* #@range_begin(church_numeral) */
-        var zero = (f) => {
-          return (x) => {
-            return x;
-          };
-        };
-        var one = (f) => {
-          return (x) => {
-            return f(x);
-          };
-        };
-        var two = (f) => {
-          return (x) => {
-            return f(f(x));
-          };
-        };
-        var three = (f) => {
-          return (x) => {
-            return f(f(f(x)));
-          };
-        };
-        var succ = (n) => {
-          return (f) => {
-            return (x) => {
-              return f(n(f)(x));
-            };
-          };
-        };
-        var add = (m) => {
-          return (n) => {
-            return (f) => {
-              return (x) => {
-                return m(f)(n(f)(x));
-              };
-            };
-          };
-        };
-        /*#@range_end(church_numeral) */
+      // it('チャーチ数', (next) => {
+      //   /* #@range_begin(church_numeral) */
+      //   var zero = (f) => {
+      //     return (x) => {
+      //       return x;
+      //     };
+      //   };
+      //   var one = (f) => {
+      //     return (x) => {
+      //       return f(x);
+      //     };
+      //   };
+      //   var two = (f) => {
+      //     return (x) => {
+      //       return f(f(x));
+      //     };
+      //   };
+      //   var three = (f) => {
+      //     return (x) => {
+      //       return f(f(f(x)));
+      //     };
+      //   };
+      //   var succ = (n) => {
+      //     return (f) => {
+      //       return (x) => {
+      //         return f(n(f)(x));
+      //       };
+      //     };
+      //   };
+      //   var add = (m) => {
+      //     return (n) => {
+      //       return (f) => {
+      //         return (x) => {
+      //           return m(f)(n(f)(x));
+      //         };
+      //       };
+      //     };
+      //   };
+      //   /*#@range_end(church_numeral) */
 
-        /* #@range_begin(closure_as_counter) */
-        var counter = (init) => {
-          var _init = init;
-          return (dummy) => {
-            _init = _init + 1;
-            return _init;
-          };
-        };
-        expect(one(counter(0))()).to.eql(1);
-        expect(two(counter(0))()).to.eql(2);
-        expect(three(counter(0))()).to.eql(3);
-        expect(succ(one)(counter(0))()).to.eql(2);
-        expect(succ(two)(counter(0))()).to.eql(3);
-        expect(add(zero)(one)(counter(0))()).to.eql(1);
-        expect(add(one)(one)(counter(0))()).to.eql(2);
-        expect(add(one)(two)(counter(0))()).to.eql(3);
-        expect(add(two)(three)(counter(0))()).to.eql(5);
-        /* #@range_end(closure_as_counter) */
-        next();
-      });
-      // it('変数の置換規則', (next) => {
-      //   /* #@range_begin(variable_reduction) */
-      //   var foo = 3; // 変数fooを3に束縛する
-      //   expect(
-      //     foo        // 束縛にもとづいて変数fooを評価する
-      //   ).to.eql(
-      //     3
-      //   );
-      //   /* #@range_end(variable_reduction) */
+      //   /* #@range_begin(closure_as_counter) */
+      //   var counter = (init) => {
+      //     var _init = init;
+      //     return (dummy) => {
+      //       _init = _init + 1;
+      //       return _init;
+      //     };
+      //   };
+      //   expect(one(counter(0))()).to.eql(1);
+      //   expect(two(counter(0))()).to.eql(2);
+      //   expect(three(counter(0))()).to.eql(3);
+      //   expect(succ(one)(counter(0))()).to.eql(2);
+      //   expect(succ(two)(counter(0))()).to.eql(3);
+      //   expect(add(zero)(one)(counter(0))()).to.eql(1);
+      //   expect(add(one)(one)(counter(0))()).to.eql(2);
+      //   expect(add(one)(two)(counter(0))()).to.eql(3);
+      //   expect(add(two)(three)(counter(0))()).to.eql(5);
+      //   /* #@range_end(closure_as_counter) */
       //   next();
       // });
       it('変数の置換規則', (next) => {

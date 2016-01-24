@@ -367,6 +367,47 @@ var list  = {
       }
     };
   },
+  take: (alist) => {
+    return (n) => {
+      expect(n).to.a('number');
+      expect(n).to.be.greaterThan(-1);
+      if (n === 0) {
+        return list.empty();
+      } else {
+        return list.cons(list.head)(list.take(list.tail)(n-1));
+      }
+    };
+  },
+  // ## list#drop
+  // drop :: List => List
+  drop: function(list){
+    var self = this;
+    self.list.censor(list);
+    return function(n){
+      expect(n).to.be.a('number');
+      expect(n).to.be.greaterThan(-1);
+      if (n === 0)
+        return list;
+      else {
+        if(self.list.isEmpty.bind(self)(list))
+          return self.list.empty;
+        else {
+          var tail = list.tail;
+          return self.list.drop.bind(self)(tail)(n-1);
+        }
+      }
+      // if (n === 0)
+      //   return list;
+      // else {
+      //   if(self.list.isEmpty(list))
+      //  return [];
+      //   else {
+      //  var tail = list.tail();
+      //  return self.list.drop.bind(self)(tail)(n-1);
+      //   }
+      // }
+    };
+  },
   /* #@range_begin(list_generate) */
   generate: (alist) => {
     var theList = alist;
@@ -537,21 +578,6 @@ var stream = {
       }
     });
   },
-  // concat: (xs) => {
-  //   return (ysThunk) => {
-  //     return match(xs,{
-  //       empty: (_) => {
-  //         return ysThunk();
-  //       }
-  //       ,
-  //       cons: (head,tailThunk) => {
-  //         return stream.cons(head,(_) => {
-  //           return stream.concat(tailThunk())(ysThunk);
-  //         });
-  //       }
-  //     });
-  //   };
-  // },
   // ## stream#flatten
   // flatten :: STREAM[STREAM[T]] => STREAM[T]
   flatten: (astream) => {
@@ -606,7 +632,7 @@ var stream = {
   },
   filter: (astream) => {
     return (predicate) => {
-      return match(astream,{
+      return stream.match(astream,{
         empty: (_) => {
           return stream.empty();
         },
@@ -1647,37 +1673,110 @@ describe('高階関数', () => {
         );
         next();
       });
-      it('loopUntil関数における、外側のスコープからのクロージャーによる自由変数の捕捉', (next) => {
+      it('関数の外側にあるスコープによる自由変数の捕捉', (next) => {
+        var sleep = require('sleep-async')();
         /* #@range_begin(captures_free_variable_outside_function) */
-        var loopUntil = (predicateThunk) => {
-          return (bodyThunk) => {
-            if(predicateThunk() === true){
-              bodyThunk();
-              return loopUntil(predicateThunk)(bodyThunk);
-            } else {
-              return undefined;
-            }
-          };
+        var startUpTime = Date.now();
+        
+        var application = {
+          timeLapse: () => {
+            var now = Date.now();
+            return now - startUpTime; // 外側のスコープにある startUpTime変数を捕捉している
+          }
         };
-        var i = 3;
-        var result = 0;
-        var largerThanZero = (_) => {
-          return i > 0;
-        };
-        loopUntil(largerThanZero)((_) => {
-          result = result + 1;
-          i = i - 1;
-        });
-        expect(
-          result
-        ).to.eql(
-          3
-        );
         /* #@range_end(captures_free_variable_outside_function) */
+        sleep.sleep(5000, () => {
+          expect(
+            application.timeLapse()
+          ).to.be.greaterThan(
+            1
+          );
+        });
+        // var loopUntil = (predicateThunk) => {
+        //   return (bodyThunk) => {
+        //     if(predicateThunk() === true){
+        //       bodyThunk();
+        //       return loopUntil(predicateThunk)(bodyThunk);
+        //     } else {
+        //       return undefined;
+        //     }
+        //   };
+        // };
+        // var i = 3;
+        // var result = 0;
+        // var largerThanZero = (_) => {
+        //   return i > 0;
+        // };
+        // loopUntil(largerThanZero)((_) => {
+        //   result = result + 1;
+        //   i = i - 1;
+        // });
+        // expect(
+        //   result
+        // ).to.eql(
+        //   3
+        // );
         next();
       });
     });
     describe('関数とデータの類似性', (next) => {
+      it('チャーチ数', (next) => {
+        /* #@range_begin(church_numeral) */
+        var zero = (f) => {
+          return (x) => {
+            return x;
+          };
+        };
+        var one = (f) => {
+          return (x) => {
+            return f(x);
+          };
+        };
+        var two = (f) => {
+          return (x) => {
+            return f(f(x));
+          };
+        };
+        var three = (f) => {
+          return (x) => {
+            return f(f(f(x)));
+          };
+        };
+        var succ = (n) => {
+          return (f) => {
+            return (x) => {
+              return f(n(f)(x));
+            };
+          };
+        };
+        var add = (m) => {
+          return (n) => {
+            return (f) => {
+              return (x) => {
+                return m(f)(n(f)(x));
+              };
+            };
+          };
+        };
+        /*#@range_end(church_numeral) */
+        var counter = (init) => {
+          var _init = init;
+          return (dummy) => {
+            _init = _init + 1;
+            return _init;
+          };
+        };
+        expect(one(counter(0))()).to.eql(1);
+        expect(two(counter(0))()).to.eql(2);
+        expect(three(counter(0))()).to.eql(3);
+        expect(succ(one)(counter(0))()).to.eql(2);
+        expect(succ(two)(counter(0))()).to.eql(3);
+        expect(add(zero)(one)(counter(0))()).to.eql(1);
+        expect(add(one)(one)(counter(0))()).to.eql(2);
+        expect(add(one)(two)(counter(0))()).to.eql(3);
+        expect(add(two)(three)(counter(0))()).to.eql(5);
+        next();
+      });
       it('関数とリストの類似性', (next) => {
         var match = (data, pattern) => {
           return data(pattern);
@@ -2017,7 +2116,7 @@ describe('高階関数', () => {
       });
       it('カリー化された不変なオブジェクト型', (next) => {
         /* #@range_begin(immutable_object_type_curried) */
-        var object = {
+        var object = {  // objectモジュール
           empty: (key) => {
             return undefined;
           },
@@ -2040,13 +2139,13 @@ describe('高階関数', () => {
         };
         /* #@range_end(immutable_object_type_curried) */
         /* #@range_begin(immutable_object_type_curried_test) */
-        expect(
-          compose(object.get("HAL9000"),
-                  compose(object.set("C3PO", "Star Wars"),
-                          object.set("HAL9000","2001: a space odessay")))(object.empty)
-        ).to.eql(
-          "2001: a space odessay"
-        );
+        var robots = compose(object.set("C3PO", "Star Wars"),
+                             object.set("HAL9000","2001: a space odessay"))(object.empty);
+         expect(
+           object.get("HAL9000")(robots)
+         ).to.eql(
+           "2001: a space odessay"
+         );
         /* #@range_end(immutable_object_type_curried_test) */
         next();
       });
@@ -2344,24 +2443,24 @@ describe('高階関数', () => {
           /* #@range_end(infinite_stream) */
           /* #@range_begin(infinite_integer) */
           // ones = [1,2,3,4,...]
-          var intgersFrom = (n) => {
+          var integersFrom = (n) => {
             return cons(n, (_) => {
-              return intgersFrom(n + 1);
+              return integersFrom(n + 1);
             });
           };
           it("無限の整数列をテストする", (next) => {
             expect(
-              head(intgersFrom(1))
+              head(integersFrom(1))
             ).to.eql(
               1
             );
             expect(
-              head(tail(intgersFrom(1)))
+              head(tail(integersFrom(1)))
             ).to.eql(
               2
             );
             expect(
-              toArray(take(intgersFrom(1))(10))
+              toArray(take(integersFrom(1))(10))
             ).to.eql(
               [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
             );
@@ -2373,7 +2472,7 @@ describe('高階関数', () => {
               return 0 === (n % 2);
             };
             /* #@range_begin(infinite_even_integer) */
-            var evenIntegers = stream.filter(intgersFrom(1))(even);
+            var evenIntegers = stream.filter(integersFrom(1))(even);
             expect(
               head(evenIntegers)
             ).to.eql(
@@ -2427,7 +2526,7 @@ describe('高階関数', () => {
 	          }
 	        };
             
-            var primes = stream.filter(intgersFrom(1))(isPrime);
+            var primes = stream.filter(integersFrom(1))(isPrime);
             expect(
               toArray(stream.take(primes)(10))
             ).to.eql(
@@ -2502,6 +2601,27 @@ describe('高階関数', () => {
       });
     });
     describe('クロージャーでジェネレーターを作る', () => {
+      it('ECMAScript6 generator', (next) => {
+        /* #@range_begin(es6_generator) */
+        function* genCounter(){
+          yield 1;
+          yield 2;
+          return 3;
+        };
+        var counter = genCounter();
+        expect(
+          counter.next().value
+        ).to.eql(
+          1
+        );
+        expect(
+          counter.next().value
+        ).to.eql(
+          2
+        );
+        /* #@range_end(es6_generator) */
+        next();
+      });
       it('リスト・ジェレネータ', (next) => {
         /* #@range_begin(list_generator_test) */
         var generator = list.generate(list.cons(1, list.cons(2, list.empty())));
@@ -2561,7 +2681,7 @@ describe('高階関数', () => {
               return integersFrom(from + 1);
             });
           };
-        /* #@range_begin(integer_generator) */
+          /* #@range_begin(integer_generator) */
           var integers = integersFrom(0);
           var intGenerator = generate(integers);
           expect(
@@ -2580,6 +2700,65 @@ describe('高階関数', () => {
             2
           );
           /* #@range_end(integer_generator) */
+          next();
+        });
+        it('素数のジェネレータ',(next) => {
+          this.timeout(7000);
+          var multiplyOf = (n) => {
+            return (m) => {
+              if(m % n === 0) {
+                return true;
+              } else {
+                return false;
+              }
+            };
+          };
+          var leastDivisor = (n) => {
+            expect(n).to.a('number');
+            var leastDivisorHelper = (k, n) => {
+              expect(k).to.a('number');
+              expect(n).to.a('number');
+              if(multiplyOf(k)(n)) {
+                return k;
+              } else {
+                if(n < (k * k)) {
+                  return n;
+                } else {
+                  return leastDivisorHelper(k+1, n);
+                }
+              };
+            };
+            return leastDivisorHelper(2,n);
+          };
+          var isPrime = (n) => {
+            if(n < 1) {
+              return new Error("argument not positive");
+            }
+            if(n === 1) {
+              return false;
+            } else {
+              return leastDivisor(n)  === n ;
+            }
+          };
+          /* #@range_begin(prime_generator) */
+          var primes = stream.filter(stream.integersFrom(1))(isPrime);
+          var primeGenerator = generate(primes);
+          expect(
+            primeGenerator()
+          ).to.eql(
+            2
+          );
+          expect(
+            primeGenerator()
+          ).to.eql(
+            3
+          );
+          expect(
+            primeGenerator()
+          ).to.eql(
+            5
+          );
+          /* #@range_end(prime_generator) */
           next();
         });
       });

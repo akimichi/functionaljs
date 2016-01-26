@@ -8,7 +8,6 @@ CMD ["/sbin/my_init"]
 # ENV HOME /root
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 
-## apt-get update
 RUN sed -i~ -e 's;http://archive.ubuntu.com/ubuntu;http://ftp.jaist.ac.jp/pub/Linux/ubuntu;' /etc/apt/sources.list
 RUN apt-get -yqq update
 
@@ -23,21 +22,18 @@ ENV EDITOR vim
 RUN update-alternatives --set editor /usr/bin/vim.basic
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git wget curl unzip build-essential python-dev rake
 
-## node.js Environment
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update -qq
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
-
 COPY .profile /root
-RUN mkdir /workspace
-COPY .nvmrc gulpfile.js package.json /workspace/
+RUN mkdir -p /workspace/nodejs
+RUN mkdir -p /workspace/scala
+RUN mkdir -p /workspace/haskell
 
 ## sbt インストール
 ENV SCALA_VERSION 2.11.7
 ENV SBT_VERSION 0.13.8
 
-COPY build.sbt /workspace
-COPY project /workspace/project
+COPY build.sbt /workspace/scala
+COPY project /workspace/scala/project
+COPY src /workspace/scala/src
 
 # INSTALL JAVA 7 add webupd8 repository
 RUN \
@@ -59,7 +55,6 @@ RUN \
     apt-get clean  && \
     rm -rf /var/lib/apt/lists/*
 
-
 # scala
 RUN \
   cd /root && \
@@ -67,21 +62,27 @@ RUN \
   tar -xf scala-$SCALA_VERSION.tgz && \
   rm scala-$SCALA_VERSION.tgz 
 #  sbt
+WORKDIR /workspace/scala
 RUN \
   curl  -L -o sbt-$SBT_VERSION.deb https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb && \
   dpkg -i sbt-$SBT_VERSION.deb && \
   rm sbt-$SBT_VERSION.deb && \
   apt-get update 
-  # apt-get update && \
-  # apt-get install sbt
-
+RUN sbt update
 
 # Install nvm with node and npm
-
+ENV NODE_VERSION 0.12.0
+COPY test /workspace/nodejs/test
+## install node.js 
+WORKDIR /workspace/nodejs
+RUN add-apt-repository ppa:chris-lea/node.js
+RUN apt-get update -qq
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
+COPY .nvmrc gulpfile.js package.json /workspace/nodejs/
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
 WORKDIR /root
-ENV NODE_VERSION 0.12.0
 # setup the nvm environment
 # Install nvm with node and npm
 RUN git clone https://github.com/creationix/nvm.git $HOME/.nvm
@@ -98,6 +99,8 @@ RUN npm install -g node-gyp &&\
     npm install -g mocha &&\
     npm install -g gulp &&\
     npm install -g coffee-script
+WORKDIR /workspace
+RUN cd /workspace/nodejs && npm install
 
 # install haskell
 
@@ -114,26 +117,24 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 ENV PATH="${HOME}/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:${PATH}"
 
-WORKDIR /workspace
+WORKDIR /workspace/haskell
+RUN mkdir -p src/main/haskell
 RUN wget https://www.stackage.org/lts/cabal.config
 # RUN cabal update
 # RUN cabal install
 
 # install stackage
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
-# ubuntu 14.04 の場合
 RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main' | tee /etc/apt/sources.list.d/fpco.list
 RUN apt-get update && apt-get install stack -y
-COPY stack.yaml functionaljs.cabal cabal.config Setup.hs /workspace/
-COPY src /workspace/src
+COPY stack.yaml functionaljs.cabal Setup.hs /workspace/haskell/
+COPY src /workspace/haskell/src/
 RUN stack setup
 # RUN stack build
 
 
 VOLUME /workspace
 # RUN nvm use
-RUN npm install
-RUN sbt update
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

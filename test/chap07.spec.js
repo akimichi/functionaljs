@@ -4601,74 +4601,75 @@ describe('高階関数', () => {
           };
         };
         /* #@range_end(algebraic_type_maybe) */
-        /* #@range_begin(maybe_monad) */
-        var unit = (value) => {
-          return just(value);
-        };
-        var flatMap = (maybe) => {
-          return (transform) => {
-            return match(maybe,{
-              just: (value) => {
-                return transform(value);
-              },
-              nothing: (_) => {
-                return nothing(_);
-              }
-            });
-          };
-        };
-        /* #@range_end(maybe_monad) */
-        /* #@range_begin(maybe_monad_helper) */
-        var isEqual = (maybeA) => {
-          return (maybeB) => {
-            return match(maybeA,{
-              just: (valueA) => {
-                return match(maybeB,{
-                  just: (valueB) => {
-                    return (valueA === valueB);
-                  },
-                  nothing: (_) => {
-                    return false;
-                  }
-                });
-              },
-              nothing: (_) => {
-                return match(maybeB,{
-                  just: (_) => {
-                    return false;
-                  },
-                  nothing: (_) => {
-                    return true;
-                  }
-                });
-              }
-            });
-          };
-        };
-        var map = (maybe) => {
-          return (transform) => {
-            expect(transform).to.a('function');
-            return match(maybe,{
-              just: (value) => {
-                return unit(transform(value));
-              },
-              nothing: (_) => {
-                return nothing(_);
-              }
-            });
-          };
+        var maybe = {
+          /* #@range_begin(maybe_monad) */
+          unit: (value) => {
+            return just(value);
+          },
+          flatMap: (maybe) => {
+            return (transform) => {
+              return match(maybe,{
+                just: (value) => {
+                  return transform(value);
+                },
+                nothing: (_) => {
+                  return nothing(_);
+                }
+              });
+            };
+          },
+          /* #@range_end(maybe_monad) */
+          /* #@range_begin(maybe_monad_helper) */
+          isEqual: (maybeA) => {
+            return (maybeB) => {
+              return match(maybeA,{
+                just: (valueA) => {
+                  return match(maybeB,{
+                    just: (valueB) => {
+                      return (valueA === valueB);
+                    },
+                    nothing: (_) => {
+                      return false;
+                    }
+                  });
+                },
+                nothing: (_) => {
+                  return match(maybeB,{
+                    just: (_) => {
+                      return false;
+                    },
+                    nothing: (_) => {
+                      return true;
+                    }
+                  });
+                }
+              });
+            };
+          },
+          map: (maybeInstance) => {
+            return (transform) => {
+              return match(maybeInstance,{
+                just: (value) => {
+                  return maybe.unit(transform(value));
+                },
+                nothing: (_) => {
+                  return nothing(_);
+                }
+              });
+            };
+          }
         };
         /* #@range_end(maybe_monad_helper) */
         it("map id == id", (next) => {
           /* #@range_begin(maybe_monad_test) */
           var justOne = just(1);
           expect(
-            isEqual(map(justOne)(id))(id(justOne))
+            maybe.isEqual(maybe.map(justOne)(id))(id(justOne))
           ).to.be(
             true
           );
           expect(
-            isEqual(map(nothing())(id))(id(nothing()))
+            maybe.isEqual(maybe.map(nothing())(id))(id(nothing()))
           ).to.be(
             true
           );
@@ -4678,9 +4679,9 @@ describe('高階関数', () => {
         it("add(maybe, maybe)", (next) => {
           /* #@range_begin(maybe_monad_add_test) */
           var add = (maybeA,maybeB) => {
-            return flatMap(maybeA)((a) => {
-              return flatMap(maybeB)((b) => {
-                return unit(a + b);
+            return maybe.flatMap(maybeA)((a) => {
+              return maybe.flatMap(maybeB)((b) => {
+                return maybe.unit(a + b);
               });
             });
           };
@@ -4688,12 +4689,12 @@ describe('高階関数', () => {
           var justTwo = just(2);
           var justThree = just(3);
           expect(
-            isEqual(add(justOne,justTwo))(justThree)
+            maybe.isEqual(add(justOne,justTwo))(justThree)
           ).to.eql(
             true
           );
           expect(
-            isEqual(add(justOne,nothing()))(nothing())
+            maybe.isEqual(add(justOne,nothing()))(nothing())
           ).to.eql(
             true
           );

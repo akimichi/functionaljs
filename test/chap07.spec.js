@@ -4443,10 +4443,9 @@ describe('高階関数', () => {
         unit: (value) => {
           return value;
         },
-        flatMap: (instance) => {
+        flatMap: (instanceM) => {
           return (transform) => {
-            expect(transform).to.a('function');
-            return transform(instance);
+            return transform(instanceM);
           };
         }
       };
@@ -4466,6 +4465,7 @@ describe('高階関数', () => {
           return n + 1;
         };
         /* #@range_begin(identity_monad_flatMap_test) */
+        /* モナドで 1 の次の数を求める */
         expect(
           identity.flatMap(identity.unit(1))((one) => {    
             return identity.unit(succ(one));
@@ -4473,62 +4473,78 @@ describe('高階関数', () => {
         ).to.eql(
           2
         );
+        /* 関数適用で 1 の次の数を求める */
         expect(
           succ(1)
         ).to.eql(
           2
         );
+        /* #@range_end(identity_monad_flatMap_test) */
+        /* #@range_begin(flatMap_and_composition) */
+        var f = (n) => {
+          return n + 1;
+        };
+        var g = (m) => {
+          return m * 2;
+        };
         expect(
           identity.flatMap(identity.unit(1))((one) => {    
-            return identity.flatMap(identity.unit(2))((two) => { 
-              return identity.unit(one + two); 
+            return identity.flatMap(identity.unit(f(one)))((two) => { 
+              return identity.unit(g(two)); 
             });
           })
         ).to.eql(
-          3
+          compose(g,f)(1)
         );
-        /* #@range_end(identity_monad_flatMap_test) */
+        /* #@range_end(flatMap_and_composition) */
         next();
       });
       describe("恒等モナドのモナド則", () => {
         /* #@range_begin(identity_monad_laws) */
-        it("flatMap(m)(unit) == m", (next) => {
-          var instance = identity.unit(1);
+        it("flatMap(instanceM)(unit) === instanceM", (next) => {
+          /* #@range_begin(identity_monad_laws_right_unit_law) */
+          /* flatMap(instanceM)(unit) === instanceM の一例 */
+          var instanceM = identity.unit(1);
           expect(
-            identity.flatMap(instance)(identity.unit)
+            identity.flatMap(instanceM)(identity.unit)
           ).to.eql(
-            instance
+            instanceM
           );
+          /* #@range_end(identity_monad_laws_right_unit_law) */
           next();
         });
-        it("flatMap(unit(v))(f) == f(v)", (next) => {
-          var value = 1;
-          var instance = identity.unit(value);
+        it("flatMap(unit(value))(f) == f(value)", (next) => {
+          /* #@range_begin(identity_monad_laws_left_unit_law) */
+          /* flatMap(unit(value))(f) === f(value) */
           var f = (n) => {
             return n + 1;
           };
           expect(
-            identity.flatMap(instance)(f)
+            identity.flatMap(identity.unit(1))(f)
           ).to.eql(
-            f(value)
+            f(1)
           );
+          /* #@range_end(identity_monad_laws_left_unit_law) */
           next();
         });
-        it("flatMap(flatMap(m)(g))(h) == flatMap(m)(¥x => flatMap(g(x))(h))", (next) => {
-          var instance = identity.unit(1);
-          var g = (n) => {
+        it("flatMap(flatMap(instanceM)(f))(g) == flatMap(instanceM)((x) => flatMap(f(x))(g))", (next) => {
+          /* #@range_begin(identity_monad_laws_associative_law) */
+          /* flatMap(flatMap(instanceM)(f))(g) === flatMap(instanceM)((x) => { return flatMap(f(x))(g); } } */
+          var instanceM = identity.unit(1);
+          var f = (n) => {
             return identity.unit(n * n);
           };
-          var h = (n) => {
+          var g = (n) => {
             return identity.unit(- n);
           };
           expect(
-            identity.flatMap(identity.flatMap(instance)(g))(h)
+            identity.flatMap(identity.flatMap(instanceM)(f))(g)
           ).to.eql(
-            identity.flatMap(instance)((x) => {
-              return identity.flatMap(g(x))(h);
+            identity.flatMap(instanceM)((x) => {
+              return identity.flatMap(f(x))(g);
             })
           );
+          /* #@range_end(identity_monad_laws_associative_law) */
           /* #@range_end(identity_monad_laws) */
           next();
         });
@@ -4588,15 +4604,9 @@ describe('高階関数', () => {
         /* #@range_begin(maybe_monad) */
         var unit = (value) => {
           return just(value);
-          // if(value){
-          //   return just(value);
-          // } else {
-          //   return nothing(null);
-          // }
         };
         var flatMap = (maybe) => {
           return (transform) => {
-            expect(transform).to.a('function');
             return match(maybe,{
               just: (value) => {
                 return transform(value);

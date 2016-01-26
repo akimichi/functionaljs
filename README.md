@@ -22,46 +22,33 @@ docker build -t="ric/functionaljs:v1" .
 
 テストを実行する
 
-nodejs
+node.jsのコードをテストする。
 
 ~~~
 docker run -it --rm --workdir="/workspace/nodejs" ric/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
-# docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
-# docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 gulp --harmony js-test
-# docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 mocha --harmony test 
 ~~~
 
 scala のコードをテストする
 
 ~~~
 docker run -it --rm --workdir="/workspace/scala" ric/functionaljs:v1 /bin/bash -c "sbt test"
-docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash -c "sbt test"
-# docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 sbt test
 ~~~
 
 haskell のコードをテストする
 
-~~
+~~~
 docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bash -c "stack test"
-#docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash -c "stack build && stack test"
-# docker run -it --rm -v `pwd`:/workspace ric/functionaljs:v1 /bin/bash -c "stack test"
 ~~~
 
 コンテナにログインする
 
 ~~~
 docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
-docker run -it  -v `pwd`:/workspace ric/functionaljs:v1 bash --login -i
 root@ca7528c7f2e5:/workspace# cd nodejs && gulp test 
 root@ca7528c7f2e5:/workspace# mocha --harmony test
 root@ca7528c7f2e5:/workspace# cd scala && sbt test
 root@ca7528c7f2e5:/workspace# cd haskell && stack test 
 ~~~
-
-
-<!-- ~~~ -->
-<!-- docker exec -i -t ric/functionaljs:v1 bash -->
-<!-- ~~~ -->
 
 
 ### ローカル環境にテスト環境を個別にインストールする

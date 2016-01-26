@@ -23,11 +23,14 @@ RUN update-alternatives --set editor /usr/bin/vim.basic
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git wget curl unzip build-essential python-dev rake
 
 COPY .profile /root
-RUN mkdir -p /workspace/nodejs
-RUN mkdir -p /workspace/scala
-RUN mkdir -p /workspace/haskell
+RUN mkdir -p /workspace/nodejs && \
+    mkdir -p /workspace/scala && \
+    mkdir -p /workspace/haskell
 
+
+#########################
 ## sbt インストール
+#########################
 ENV SCALA_VERSION 2.11.7
 ENV SBT_VERSION 0.13.8
 
@@ -70,7 +73,9 @@ RUN \
   apt-get update 
 RUN sbt update
 
+###############################
 # Install nvm with node and npm
+###############################
 ENV NODE_VERSION 0.12.0
 COPY test /workspace/nodejs/test
 ## install node.js 
@@ -102,7 +107,9 @@ RUN npm install -g node-gyp &&\
 WORKDIR /workspace
 RUN cd /workspace/nodejs && npm install
 
+#################
 # install haskell
+#################
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
@@ -118,10 +125,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 ENV PATH="${HOME}/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:${PATH}"
 
 WORKDIR /workspace/haskell
-RUN mkdir -p src/main/haskell
+# RUN mkdir -p src/main/haskell
 RUN wget https://www.stackage.org/lts/cabal.config
-# RUN cabal update
-# RUN cabal install
 
 # install stackage
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
@@ -129,16 +134,12 @@ RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main' | tee /etc/apt/
 RUN apt-get update && apt-get install stack -y
 COPY src /workspace/haskell/src/
 COPY functionaljs.cabal Setup.hs LICENSE /workspace/haskell/
-# COPY stack.yaml functionaljs.cabal Setup.hs LICENSE /workspace/haskell/
 RUN stack init
 RUN stack setup
 # RUN stack build
 
-
-VOLUME /workspace
-# RUN nvm use
-
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-#ENTRYPOINT ["/bin/bash", "--login", "-i", "-c"]
+VOLUME /workspace
+
 CMD ["bash"]

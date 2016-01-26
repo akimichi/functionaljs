@@ -3529,11 +3529,11 @@ describe('高階関数', () => {
         }); 
       }); 
       describe("継続による非決定計算", () => {
-        /* #@range_begin(amb_expression) */
         var exp = {
           match : (anExp, pattern) => {
             return anExp.call(exp, pattern);
           },
+        /* #@range_begin(amb_expression) */
           amb : (alist) => {
             return (pattern) => {
               return pattern.amb(alist);
@@ -3560,57 +3560,59 @@ describe('高階関数', () => {
         var calculate = (anExp, continuesOnSuccess, continuesOnFailure) => {
           var calculateAmb = (choices) => {
             return list.match(choices, {
-              empty: () => {         // amb() の場合、すなわち選択肢がなければ、失敗継続を実行する
+              // amb(list.empty()) の場合、すなわち選択肢がなければ、失敗継続を実行する
+              empty: () => {         
                 return continuesOnFailure();
               },
-              cons: (head, tail) => { // amb(...)の場合、最初の要素を計算して、殘りは失敗継続に渡す 
+              // amb(list.cons(head, tail))の場合、最初の要素を計算して、殘りは失敗継続に渡す
+              cons: (head, tail) => { 
                 return calculate(head, 
                                  continuesOnSuccess, 
-                                 (_) => { // 失敗継続を作る
+                                 (_) => { // 失敗継続を作り、そのなかで次の選択肢について計算する
                                    return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
                                  });
               }
             });
           };
-          return exp.match(anExp, { // パターンマッチを実行する
-            amb: (choices) => {
-              return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
-            },
+          return exp.match(anExp, { // 式に対してパターンマッチを実行する
             num: (n) => {
               return continuesOnSuccess(n, continuesOnFailure);
             },
             add: (x, y) => {
-              return calculate(x, (valueX, continuesOnFailureX) => {
-                return calculate(y, (valueY, continuesOnFailureY) => {
-                  return continuesOnSuccess(valueX + valueY, continuesOnFailureY);
-                }, continuesOnFailureX); // y の計算に失敗すれば、xの失敗継続を渡す
+              return calculate(x, (resultX, alternativeForX) => { // 引数xを評価する
+                return calculate(y, (resultY, alternativeForY) => { // 引数yを評価する
+                  return continuesOnSuccess(resultX + resultY, alternativeForY); // 足し算を計算する
+                }, alternativeForX); // y の計算に失敗すれば、xの失敗継続を渡す
               }, continuesOnFailure);
             },
             mul: (x, y) => {
-              return calculate(x, (valueX, continuesOnFailureX) => {
-                return calculate(y, (valueY, continuesOnFailureY) => {
-                  return continuesOnSuccess(valueX * valueY, continuesOnFailureY);
-                }, continuesOnFailureX); // y の計算に失敗すれば、xの失敗継続を渡す
+              return calculate(x, (resultX, alternativeForX) => { // 引数xを評価する
+                return calculate(y, (resultY, alternativeForY) => { // 引数yを評価する
+                  return continuesOnSuccess(resultX * resultY, alternativeForY); // かけ算を計算する
+                }, alternativeForX); // y の計算に失敗すれば、xの失敗継続を渡す
               }, continuesOnFailure);
+            },
+            amb: (choices) => {
+              return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
             }
           });
         };
         /* #@range_end(amb_calculate) */
         /* #@range_begin(amb_driver) */
         var driver = (expression) =>{
-          var suspendedComputation = null; // 最初は再開するための継続は保存されていない
+          var suspendedComputation = null; // 中断された計算を継続として保存する 
           var continuesOnSuccess = (anyValue, nextAlternative) => {
-            suspendedComputation = nextAlternative; // 再開の備えて、次の継続を保存しておく
+            suspendedComputation = nextAlternative; // 再開に備えて、次の継続を保存しておく
             return anyValue;
           };
           var continuesOnFailure = () => {
             return null;
           };
           return () => {
-            if(suspendedComputation === null) { // 最初から計算する
+            if(suspendedComputation === null) { // 中断された継続がなければ、最初から計算する
               return calculate(expression, continuesOnSuccess, continuesOnFailure);
-            } else {
-              return suspendedComputation(); // 中断された計算を再開する
+            } else {                            // 中断された継続があれば、その継続を実行する
+              return suspendedComputation();
             }
           };
         };

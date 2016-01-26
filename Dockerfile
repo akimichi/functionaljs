@@ -127,8 +127,10 @@ RUN wget https://www.stackage.org/lts/cabal.config
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
 RUN echo 'deb http://download.fpcomplete.com/ubuntu trusty main' | tee /etc/apt/sources.list.d/fpco.list
 RUN apt-get update && apt-get install stack -y
-COPY stack.yaml functionaljs.cabal Setup.hs /workspace/haskell/
 COPY src /workspace/haskell/src/
+COPY functionaljs.cabal Setup.hs LICENSE /workspace/haskell/
+# COPY stack.yaml functionaljs.cabal Setup.hs LICENSE /workspace/haskell/
+RUN stack init
 RUN stack setup
 # RUN stack build
 

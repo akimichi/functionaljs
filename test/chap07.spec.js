@@ -5941,15 +5941,15 @@ describe('高階関数', () => {
       describe('外界を伴なうIOモナド', () => {
         var io = {
           /* #@range_begin(io_monad_definition_with_world) */
-          // unit:: T -> IO[T]
+          // unit:: T => IO[T]
           unit: (any) => {
-            return (world) =>  {  // 現在の外界
+            return (world) =>  {  // worldは現在の外界
               return pair.cons(any, world);
             };
           },
-          // flatMap:: IO[T]-> FUN[T -> IO[U]] -> IO[U]
+          // flatMap:: IO[T] => FUN[T => IO[U]] => IO[U]
           flatMap: (instanceA) => {
-            return (actionAB) => { // actionAB:: a -> IO b
+            return (actionAB) => { // actionAB:: FUN[T => IO[U]]
               return (world) => {
                 var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
                 return pair.match(newPair,{
@@ -5962,15 +5962,15 @@ describe('高階関数', () => {
           },
           /* #@range_end(io_monad_definition_with_world) */
           /* #@range_begin(io_monad_definition_with_world_helper_function) */
-          // done:: T -> IO T
+          // done:: T => IO[T]
           done: (any) => {
             return io.unit();
           },
-          // run:: io[A] -> A
+          // run:: IO[A] => A
           run: (instance) => {
             return (world) => {
               var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
-              return pair.left(newPair);
+              return pair.left(newPair);     // 結果だけを返す
             };
           }
           /* #@range_end(io_monad_definition_with_world_helper_function) */

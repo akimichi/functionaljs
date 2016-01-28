@@ -1,6 +1,5 @@
 "use strict";
 
-
 /* #@range_begin(pair_datatype) */
 var pair = {
   // pair の代数的データ構造

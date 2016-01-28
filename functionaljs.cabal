@@ -27,10 +27,12 @@ test-suite tests
    ghc-options: -Wall
    default-extensions:  OverloadedStrings
    type: exitcode-stdio-1.0
-   main-is: Chap06Spec.hs
+   main-is: Spec.hs
+   -- main-is: Chap06Spec.hs
    -- main-is: HSpecTests.hs
-   -- Other-Modules:       Chap06Spec 
+   -- Other-Modules:       HSpecTests
    hs-source-dirs:      src/test/haskell
    build-depends:       base,
-                        hspec                >= 1.8
+                        hspec                >= 1.8,
+                        QuickCheck
    default-language:    Haskell2010

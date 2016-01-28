@@ -4606,13 +4606,13 @@ describe('高階関数', () => {
           unit: (value) => {
             return just(value);
           },
-          flatMap: (maybe) => {
+          flatMap: (maybeInstance) => {
             return (transform) => {
-              return match(maybe,{
-                just: (value) => {
+              return match(maybeInstance,{
+                just: (value) => { // 正常な値の場合は、transform関数を計算する
                   return transform(value);
                 },
-                nothing: (_) => {
+                nothing: (_) => { // エラーの場合は、何もしない
                   return nothing(_);
                 }
               });
@@ -4701,6 +4701,43 @@ describe('高階関数', () => {
           /* #@range_end(maybe_monad_add_test) */
           next();
         });
+        // it("list(maybe)", (next) => {
+        //   /* #@range_begin(maybe_monad_list_test) */
+        //   var add = (maybeA,maybeB) => {
+        //     return maybe.flatMap(maybeA)((a) => {
+        //       return maybe.flatMap(maybeB)((b) => {
+        //         return maybe.unit(a + b);
+        //       });
+        //     });
+        //   };
+        //   var sum = (alist) => {
+        //     var sumHelper = (alist, accumulator) => {
+        //       return match(list,{
+        //         empty: () => {
+        //           return accumulator;
+        //         },
+        //         cons: (head, tail) => {
+        //           return maybe.flatMap(accumulator)((accumulatorValue) => {
+        //             return maybe.flatMap(head)((headValue) => {
+        //               return sumHelper(tail, maybe.unit(accumulatorValue + headValue));
+        //             });
+        //           });
+        //         }
+        //       });
+        //     };
+        //     return sumHelper(alist, li
+        //   };
+        //   var justOne = just(1);
+        //   var justTwo = just(2);
+        //   var justThree = just(3);
+        //   expect(
+        //     maybe.isEqual(add(justOne,justTwo))(justThree)
+        //   ).to.eql(
+        //     true
+        //   );
+        //   /* #@range_end(maybe_monad_list_test) */
+        //   next();
+        // });
       });
     });
     describe('Listモナド', () => {
@@ -5871,6 +5908,74 @@ describe('高階関数', () => {
       //     }
       //   }; 
       // }); // IO monad with world 
+
+      // match : (data, pattern) => {
+      //   return data.call(pair, pattern);
+      // },
+      /* #@range_begin(pair_datatype) */
+      var pair = {
+        // pair のデータ構造
+        cons: (left, right) => {
+          return (pattern) => {
+            return pattern.cons(left, right);
+          };
+        },
+        // ペアの右側を取得する
+        right: (tuple) => {
+          return match(tuple, {
+            cons: (left, right) => {
+              return right;
+            }
+          });
+        },
+        // ペアの左側を取得する
+        left: (tuple) => {
+          return match(tuple, {
+            cons: (left, right) => {
+              return left;
+            }
+          });
+        }
+      };
+      /* #@range_end(pair_datatype) */
+      describe('外界を伴なうIOモナド', () => {
+        var io = {
+          /* #@range_begin(io_monad_definition_with_world) */
+          // unit:: T -> IO[T]
+          unit: (any) => {
+            return (world) =>  {  // 現在の外界
+              return pair.cons(any, world);
+            };
+          },
+          // flatMap:: IO[T]-> FUN[T -> IO[U]] -> IO[U]
+          flatMap: (instanceA) => {
+            return (actionAB) => { // actionAB:: a -> IO b
+              return (world) => {
+                var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
+                return pair.match(newPair,{
+                  cons: (value, newWorld) => {
+                    return actionAB(value)(newWorld); // 新しい外界のなかで、actionAB(value)で作られたIOアクションを実行する
+                  }
+                });
+              };
+            };
+          },
+          /* #@range_end(io_monad_definition_with_world) */
+          /* #@range_begin(io_monad_definition_with_world_helper_function) */
+          // done:: T -> IO T
+          done: (any) => {
+            return io.unit();
+          },
+          // run:: io[A] -> A
+          run: (instance) => {
+            return (world) => {
+              var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
+              return pair.left(newPair);
+            };
+          }
+          /* #@range_end(io_monad_definition_with_world_helper_function) */
+        }; // IO monad
+      });
       describe('IOモナド', () => {
         var fs = require('fs');
         // ## 'IO' monad module

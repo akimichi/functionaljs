@@ -30,64 +30,100 @@ var pair = {
 };
 /* #@range_end(pair_datatype) */
 
-
-
-/* #@range_begin(io_monad_definition_with_world) */
-// unit:: a -> IO a
-var unit = (any) => {
-  return (world) =>  {  // 現在の外界
-    return pair.cons(any, world);
-  };
-};
-
-// flatMap:: IO a -> (a -> IO b) -> IO b
-var flatMap = (instanceA) => {
-  return (actionAB) => { // actionAB:: a -> IO b
-    return (world) => {
-      var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
-      return pair.match(newPair,{
-        cons: (value, newWorld) => {
-          return actionAB(value)(newWorld); // 新しい外界のなかで、actionAB(value)で作られたIOアクションを実行する
-        }
-      });
+module.exports = {
+// var io = {
+  /* #@range_begin(io_monad_definition_with_world) */
+  // unit:: a -> IO a
+  unit: (any) => {
+    return (_) =>  {
+      return any;
     };
-  };
+  },
+  /* #@range_begin(io_monad_definition_with_world_helper_function) */
+  // done:: T -> IO T
+  done: (any) => {
+    return this.unit();
+  },
+  // flatMap:: IO a -> (a -> IO b) -> IO b
+  flatMap: (instanceA) => {
+    return (actionAB) => { // actionAB:: a -> IO b
+      return this.unit(this.run(actionAB(this.run(instanceA))));
+    };
+  },
+  // run:: IO A -> A
+  run: (instance) => {
+    return instance();
+  },
+  /* #@range_end(io_monad_definition_with_world_helper_function) */
+  /* #@range_begin(io_actions) */
+  readFile: (path) => {
+    return (io) => {
+      var fs = require('fs');
+      var content = fs.readFileSync(path, 'utf8');
+      return content;
+    };
+  },
+  println: (message) => {
+    return (io) => {
+      console.log(message);
+      return null;
+    };
+  }
+  /* #@range_end(io_actions) */
 };
 /* #@range_end(io_monad_definition_with_world) */
 
-/* #@range_begin(io_monad_definition_with_world_helper_function) */
-// done:: T -> IO T
-var done = (any) => {
-  return unit();
-};
 
-// run:: io[A] -> A
-var run = (instance) => {
-  return (world) => {
-    var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
-    return pair.left(newPair);
-  };
-};
-/* #@range_end(io_monad_definition_with_world_helper_function) */
+// // unit:: a -> IO a
+// var unit = (any) => {
+//   return (world) =>  {  // 現在の外界
+//     return pair.cons(any, world);
+//   };
+// };
 
-/* #@range_begin(io_actions) */
-// println:: STRING => IO[null]
-var println = (message) => {
-  return (world) => {
-    console.log(message);
-    return unit(null)(world);
-  };
-};
+// // flatMap:: IO a -> (a -> IO b) -> IO b
+// var flatMap = (instanceA) => {
+//   return (actionAB) => { // actionAB:: a -> IO b
+//     return (world) => {
+//       var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
+//       return pair.match(newPair,{
+//         cons: (value, newWorld) => {
+//           return actionAB(value)(newWorld); // 新しい外界のなかで、actionAB(value)で作られたIOアクションを実行する
+//         }
+//       });
+//     };
+//   };
+// };
 
-// return:: STRING => IO[STRING]
-var readFile = (path) => {
-  return (world) => {
-    var fs = require('fs');
-    var content = fs.readFileSync(path, 'utf8');
-    return unit(content)(world);
-  };
-};
-/* #@range_end(io_actions) */
+// // done:: T -> IO T
+// var done = (any) => {
+//   return unit();
+// };
+
+// // run:: io[A] -> A
+// var run = (instance) => {
+//   return (world) => {
+//     var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
+//     return pair.left(newPair);
+//   };
+// };
+
+// // println:: STRING => IO[null]
+// var println = (message) => {
+//   return (world) => {
+//     console.log(message);
+//     return unit(null)(world);
+//   };
+// };
+
+// // return:: STRING => IO[STRING]
+// var readFile = (path) => {
+//   return (world) => {
+//     var fs = require('fs');
+//     var content = fs.readFileSync(path, 'utf8');
+//     return unit(content)(world);
+//   };
+// };
 
 
 // var writeFile = (content) => {
@@ -106,13 +142,13 @@ var readFile = (path) => {
 //   return line;
 // };
 
-var initialWorld = true;
+// var initialWorld = true;
 
-run(println("test"))(initialWorld);
-run(readFile("./io_with_world.js"))(initialWorld);
+// io.run(io.println("test"))(initialWorld);
+// io.run(io.readFile("./io_with_world.js"))(initialWorld);
 
-flatMap(readFile("./io_with_world.js"))((content) => {
-  return flatMap(println(content))((_) => {
-    return done(_);
-  });
-})(initialWorld);
+// io.flatMap(io.readFile("./io_with_world.js"))((content) => {
+//   return io.flatMap(io.println(content))((_) => {
+//     return io.done(_);
+//   });
+// })(initialWorld);

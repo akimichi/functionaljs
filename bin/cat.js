@@ -1,6 +1,6 @@
 "use strict";
 
-var io = {
+var IO = {
   // unit:: a -> IO a
   unit: (any) => {
     return (_) =>  {
@@ -9,12 +9,12 @@ var io = {
   },
   // done:: T -> IO T
   done: (any) => {
-    return io.unit();
+    return IO.unit();
   },
   // flatMap:: IO a -> (a -> IO b) -> IO b
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: a -> IO b
-      return io.unit(io.run(actionAB(io.run(instanceA))));
+      return IO.unit(IO.run(actionAB(IO.run(instanceA))));
     };
   },
   // run:: IO A -> A
@@ -36,13 +36,15 @@ var io = {
   }
 };
 
+// var io_monad = require("./io_with_world");
+
 var initialWorld = null;
 var path = process.argv[2];
  
 /* #@range_begin(io_monad_combined) */
-io.flatMap(io.readFile(path))((content) => {
-  return io.flatMap(io.println(content))((_) => {
-    return io.done(_);
+IO.flatMap(IO.readFile(path))((content) => {
+  return IO.flatMap(IO.println(content))((_) => {
+    return IO.done(_);
   });
 })(initialWorld);
 /* #@range_end(io_monad_combined) */

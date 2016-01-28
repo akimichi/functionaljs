@@ -125,7 +125,7 @@ $ gulp scala-test
 haskellのコードをテストする
 
 ~~~
-$ cabal test
+$ stack test
 ~~~
 
 もしくは、 gulp を使って

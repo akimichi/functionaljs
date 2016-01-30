@@ -36,12 +36,12 @@ var IO = {
   }
 };
 
-// var io_monad = require("./io_with_world");
 
-var initialWorld = null;
-var path = process.argv[2];
  
 /* #@range_begin(io_monad_combined) */
+var initialWorld = null;
+var path = process.argv[2];
+
 IO.flatMap(IO.readFile(path))((content) => {
   return IO.flatMap(IO.println(content))((_) => {
     return IO.done(_);

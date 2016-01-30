@@ -114,6 +114,20 @@ scalaのコードをテストする
 $ sbt test
 ~~~
 
+以下のようなエラーでコンパイルが失敗する場合があります。
+
+~~~
+[error] error while loading CharSequence, class file '/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar(java/lang/CharSequence.class)' is broken
+~~~
+
+そのときは、旧いバージョンのjavaを使ってください。
+例えば ubuntu では、以下のようにして使用するjavaのバージョンを切りかえます。
+
+~~~
+sudo update-alternatives --config java
+~~~
+
+
 もしくは、 gulp を使って
 
 ~~~

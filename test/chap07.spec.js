@@ -929,8 +929,9 @@ describe('高階関数', () => {
           }
         };
       };
+      /****** テスト ******/
       expect(
-        exponential(2)(3) // @<m>{2^3}
+        exponential(2)(3) // 2の3乗を求める 
       ).to.eql(
         8
       );
@@ -942,9 +943,9 @@ describe('高階関数', () => {
       );
       /* #@range_begin(flip) */
       var flip = (fun) => {
-        return  (f) => {
-          return (g) => {
-            return fun(g)(f);
+        return  (x) => {
+          return (y) => {
+            return fun(y)(x);
           };
         };
       };
@@ -1089,15 +1090,14 @@ describe('高階関数', () => {
     describe('通常の関数とカリー化関数の相互変換', () => {
       it('通常の関数をカリー化する', (next) => {
         /* #@range_begin(curry_function_definition) */
+        /* カリー化する関数 */
         var curry = (fun) => {
           return (x,optionalY) => {
-            if(arguments.length > 1){
+            if(arguments.length > 1){ // 引数が2個以上の場合
               return fun(x, optionalY);
-              //return fun.call(this, x,optionalY);
-            } else {
+            } else {                  // 引数が1個の場合
               return (y) =>  {
                 return fun(x, y);
-                // return fun.call(this, x,y);
               };
             }
           };
@@ -1106,7 +1106,7 @@ describe('高階関数', () => {
           return x + y;
         };
         expect(
-          curry(add)(1)(2)
+          curry(add)(1)(2)  // add関数がカリー化されている
         ).to.eql(
           3
         );
@@ -1203,9 +1203,9 @@ describe('高階関数', () => {
         /* #@range_end(pipe_test) */
         next();
       });
-      it('カリー化の合成で乗算と否定の合成は成功する', (next) => {
-        /* #@range_begin(compose_negate_multiply_successful) */
-        var negate = (x) => {
+      it('カリー化の合成で加算と反数の合成は成功する', (next) => {
+        /* #@range_begin(compose_opposite_add_successful) */
+        var opposite = (x) => {
           return - x;
         };
         var add = (x) => {
@@ -1213,17 +1213,12 @@ describe('高階関数', () => {
             return x + y;
           };
         };
-        var subtract = (x) => {
-          return (y) => {
-            return x - y;
-          };
-        };
         expect(
-          compose(negate)(add(2))(3)
+          compose(opposite)(add(2))(3)
         ).to.eql(
             -5
         );
-        /* #@range_end(compose_negate_multiply_successful) */
+        /* #@range_end(compose_opposite_add_successful) */
         next();
       });
       describe('カリー化による関数の合成', () => {
@@ -1249,16 +1244,16 @@ describe('高階関数', () => {
             };
           };
           /* #@range_begin(compose_and_curry) */
-          var negate = (x) => {
+          var opposite = (x) => {
             return -x;
           };
-          var multiply = (x,y) => {
-            return x * y;
+          var add = (x,y) => {
+            return x + y;
           };
           expect(
-            compose(negate)(curry(multiply)(2))(3)
+            compose(opposite)(curry(add)(2))(3)
           ).to.eql(
-              -6
+              -5
           );
           /* #@range_end(compose_and_curry) */
           next();
@@ -1280,7 +1275,7 @@ describe('高階関数', () => {
               return result;
             };
           };
-          var negate = (x) => {
+          var opposite = (x) => {
             return -x;
           };
           var multiply = (x) => {
@@ -1289,7 +1284,7 @@ describe('高階関数', () => {
             };
           };
           expect(
-            compose(negate)(uncurry(multiply))(2,3)
+            compose(opposite)(uncurry(multiply))(2,3)
           ).to.eql(
               -6
           );
@@ -1297,16 +1292,16 @@ describe('高階関数', () => {
           next();
         });
         it('マイナスのマイナスはプラス', (next) => {
-          /* #@range_begin(composition_example_negation_twice) */
-          var negate = (n) => {
+          /* #@range_begin(composition_example_opposite_twice) */
+          var opposite = (n) => {
             return - n;
           };
           expect(
-            compose(negate)(negate)(2)
+            compose(opposite)(opposite)(2)
           ).to.eql(
             2
           );
-          /* #@range_end(composition_example_negation_twice) */
+          /* #@range_end(composition_example_opposite_twice) */
           next();
         });
       });
@@ -1729,24 +1724,17 @@ describe('高階関数', () => {
         };
         var one = (f) => {
           return (x) => {
-            return f(x);
+            return f(x); // 関数を1回適用する
           };
         };
         var two = (f) => {
           return (x) => {
-            return f(f(x));
+            return f(f(x)); // 関数を2回適用する
           };
         };
         var three = (f) => {
           return (x) => {
-            return f(f(f(x)));
-          };
-        };
-        var succ = (n) => {
-          return (f) => {
-            return (x) => {
-              return f(n(f)(x));
-            };
+            return f(f(f(x)));  // 関数を3回適用する
           };
         };
         var add = (m) => {
@@ -1759,6 +1747,13 @@ describe('高階関数', () => {
           };
         };
         /*#@range_end(church_numeral) */
+        var succ = (n) => {
+          return (f) => {
+            return (x) => {
+              return f(n(f)(x));
+            };
+          };
+        };
         var counter = (init) => {
           var _init = init;
           return (dummy) => {
@@ -2069,7 +2064,7 @@ describe('高階関数', () => {
         // };
         /* #@range_begin(immutable_object_type) */
         var object = {
-          empty: (key) => {
+          empty: (_) => {
             return undefined;
           },
           get: (key, obj) => {
@@ -3226,6 +3221,7 @@ describe('高階関数', () => {
           next();
         });
         it("foldrで reverse関数を作る", (next) => {
+          // reverse = foldl (flip cons) list.empty()
           /* #@range_begin(foldr_reverse) */
           var reverse = (alist) => {
             var accumulator = list.empty();
@@ -3236,6 +3232,15 @@ describe('高階関数', () => {
             }; 
             return foldr(alist)(accumulator)(callback);
           };
+          // var reverse = (alist) => {
+          //   var accumulator = list.empty();
+          //   var callback = (item) => {
+          //     return (accumulator) => {
+          //       return list.append(accumulator)(list.cons(item,list.empty()));
+          //     };
+          //   }; 
+          //   return foldr(alist)(accumulator)(callback);
+          // };
           /* #@range_end(foldr_reverse) */
           // list = [1,2,3,4]
           var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));

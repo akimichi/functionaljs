@@ -20,7 +20,7 @@ gulp.task('js-test', function () {
 });
 
 gulp.task('scala-test', function (cb) {
-  exec('sudo sbt test', function (err, stdout, stderr) {
+  exec('sbt test', function (err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
     cb(err);

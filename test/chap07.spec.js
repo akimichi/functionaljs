@@ -327,7 +327,6 @@ var list  = {
   },
   /* #@range_end(list_filter) */
   toArray: (alist) => {
-    var self = this;
     var toArrayAux = (alist,accumulator) => {
       return match(alist, {
         empty: (_) => {
@@ -875,7 +874,7 @@ var pair = {
   }
 };
 
-var objects = {
+var object = {
   empty: (_) => {
     return undefined;
   },
@@ -888,7 +887,7 @@ var objects = {
       if(key === key2) {
         return value;
       } else {
-        return objects.get(key2,obj);
+        return object.get(key2,obj);
       }
     };
   }
@@ -2832,11 +2831,11 @@ describe('高階関数', () => {
         var succ = (n) => {
           return n + 1;
         };
-        var directCallSucc = (n) => {
-          return succ(n);
+        var directCall = (arg) => {
+          return succ(arg);  // succ関数を直接呼び出す
         };
         expect(
-          directCallSucc(2)
+          directCall(2)
         ).to.eql(
           3
         );
@@ -2848,18 +2847,56 @@ describe('高階関数', () => {
           return n + 1;
         };
         /* #@range_begin(call_callback) */
-        var setupCallback = (callback) => {
-          return (arg) => {
+        var setupCallBack = (callback) => {
+          return (arg) => {  // コールバック関数を実行する無名関数を返す
             return callback(arg);
           };
         };
-        var requestCallbackSucc = setupCallback(succ);
+        var doCallBack = setupCallBack(succ);  // コールバック関数を設定する
         expect(
-          requestCallbackSucc(2)
+          doCallBack(2)
         ).to.eql(
           3
         );
         /* #@range_end(call_callback) */
+        next();
+      });
+      it('リストのmap', (next) => {
+        /* #@range_begin(list_map) */
+        // map :: LIST[T] => FUN[T => T] => LIST[T]
+        var map = (alist,callback) => {
+          return match(alist,{
+            empty: (_) => {
+              return list.empty();
+            },
+            cons: (head, tail) => {
+              return list.cons(callback(head), 
+                               map(tail,callback));
+            }
+          });
+        };
+        /* #@range_end(list_map) */
+        /* #@range_begin(list_map_test) */
+        var numbers = list.cons(1,
+                                list.cons(2,
+                                          list.empty()));
+        var doubledList = map(numbers,(n) => { // 要素を2倍する関数を渡す
+          return n * 2;
+        });
+        expect(
+          list.toArray(doubledList)
+        ).to.eql(
+          [2,4]
+        );
+        var squareList = map(numbers,(n) => { // 要素を2乗する関数を渡す
+          return n * n;
+        });
+        expect(
+          list.toArray(squareList)
+        ).to.eql(
+          [1,4]
+        );
+        /* #@range_end(list_map_test) */
         next();
       });
       describe('イベント駆動', () => {
@@ -2897,28 +2934,31 @@ describe('高階関数', () => {
         it('イベント駆動システムを実装する', (next) => {
           /* #@range_begin(event_driven_system) */
           var eventSystem = () => {
-            var handlers = objects.empty();
+            var handlers = object.empty();
             return {
               on: (eventName, callback) => {
-                handlers = objects.set(eventName, callback, handlers);
+                handlers = object.set(eventName, callback, handlers);
                 return null;
               },
               emit: (eventName, arg) => {
                 expect(handlers).not.to.be(undefined);
-                return objects.get(eventName, handlers)(arg); 
+                return object.get(eventName, handlers)(arg); 
               }
             };
+          };
+          var eventLoop = (eventSystem) => {
+            
           };
           /* #@range_end(event_driven_system) */
           /* #@range_begin(event_driven_system_test) */
           // イベント駆動システムを初期化する
           var eventDrivenServer = eventSystem(); 
           // イベント started を登録する
-          eventDrivenServer.on("started", (_) => {
+          eventDrivenServer.on("started", (_) => { // startedイベントで実行されるコールバック関数を渡す
             return "event started";
           });
           // イベント terminated を登録する
-          eventDrivenServer.on("terminated", (exitCode) => {  
+          eventDrivenServer.on("terminated", (exitCode) => { // terminatedイベントで実行されるコールバック関数 
             return "event terminated with " + exitCode;
           });
           /**** テスト ****/
@@ -2961,15 +3001,15 @@ describe('高階関数', () => {
           );
           /* #@range_end(list_sum) */
           /* #@range_begin(list_sum_callback) */
-          var sumWithCallback = (alist) => {
-            return (ACCUMULATOR) => {
+          var sumWithCallBack = (alist) => {
+            return (accumulator) => {
               return (CALLBACK) => {   // コールバック関数を受けとる
                 return match(alist,{
                   empty: (_) => {
-                    return ACCUMULATOR;
+                    return accumulator;
                   },
                   cons: (head, tail) => {
-                    return sumWithCallback(tail)(CALLBACK(head)(ACCUMULATOR))(CALLBACK);
+                    return sumWithCallBack(tail)(CALLBACK(head)(accumulator))(CALLBACK);
                   }
                 });
               };
@@ -2977,50 +3017,51 @@ describe('高階関数', () => {
           };
           /* #@range_end(list_sum_callback) */
           /* #@range_begin(list_sum_callback_test) */
-          var add = (n) => {  // sumWithCallback関数に渡すコールバック関数
+          var add = (n) => {  // sumWithCallBack関数に渡すコールバック関数
             return (m) => {
               return n + m;
             };
           };
+          var numbers = list.cons(1, list.cons(2,list.cons(3,list.empty())));
           expect(
-            sumWithCallback(numberList)(0)(add)
+            sumWithCallBack(numbers)(0)(add)
           ).to.eql(
-            6
+            6  // 1 + 2 + 3 = 6
           );
           /* #@range_end(list_sum_callback_test) */
           next();
         });
         it('リストの長さ', (next) => {
-          /* #@range_begin(list_length) */
-          var length = (alist) => {
-            return (accumulator) => {
-              return match(alist,{
-                 empty: (_) => {
-                  return accumulator;
-                },
-                cons: (head, tail) => {
-                  return length(tail)(accumulator + 1);
-                }
-              });
-            };
-          };
-          var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
-          expect(
-            length(numberList)(0)
-          ).to.eql(
-            3
-          );
+          // /* #@range_begin(list_length) */
+          // var length = (alist) => {
+          //   return (accumulator) => {
+          //     return match(alist,{
+          //        empty: (_) => {
+          //         return accumulator;
+          //       },
+          //       cons: (head, tail) => {
+          //         return length(tail)(accumulator + 1);
+          //       }
+          //     });
+          //   };
+          // };
+          // var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
+          // expect(
+          //   length(numberList)(0)
+          // ).to.eql(
+          //   3
+          // );
           /* #@range_end(list_length) */
           /* #@range_begin(list_length_callback) */
-          var lengthWithCallback = (alist) => {
-            return (ACCUMULATOR) => {
+          var lengthWithCallBack = (alist) => {
+            return (accumulator) => {
               return (CALLBACK) => {
                 return match(alist,{
                   empty: (_) => {
-                    return ACCUMULATOR;
+                    return accumulator;
                   },
                   cons: (head, tail) => {
-                    return lengthWithCallback(tail)(CALLBACK(ACCUMULATOR))(CALLBACK);
+                    return lengthWithCallBack(tail)(CALLBACK(accumulator))(CALLBACK);
                   }
                 });
               };
@@ -3028,11 +3069,12 @@ describe('高階関数', () => {
           };
           /* #@range_end(list_length_callback) */
           /* #@range_begin(list_length_callback_test) */
-          var succ = (n) => { // lengthWithCallback関数に渡すコールバック関数
+          var succ = (n) => { // lengthWithCallBack関数に渡すコールバック関数
             return n + 1;
           };
+          var numbers = list.cons(1, list.cons(2,list.cons(3,list.empty())));
           expect(
-            lengthWithCallback(numberList)(0)(succ)
+            lengthWithCallBack(numbers)(0)(succ)
           ).to.eql(
             3
           );
@@ -3173,7 +3215,7 @@ describe('高階関数', () => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return callback(head)(list.foldr(tail)(accumulator)(callback));
+                  return callback(head)(foldr(tail)(accumulator)(callback));
                 }
               });
             };
@@ -3189,6 +3231,7 @@ describe('高階関数', () => {
               };
             });
           };
+          /* #@range_end(foldr_sum) */
           // list = [1,2,3,4]
           var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
           expect(
@@ -3196,7 +3239,25 @@ describe('高階関数', () => {
           ).to.eql(
             10  // 1 + 2 + 3 + 4 = 10
           );
-          /* #@range_end(foldr_sum) */
+          next();
+        });
+        it("foldrでlength関数を作る", (next) => {
+          /* #@range_begin(foldr_length) */
+          var length = (alist) => {
+            return foldr(alist)(0)((item) => {
+              return (accumulator) => {
+                return accumulator + 1;
+              };
+            });
+          };
+          /* #@range_end(foldr_length) */
+          // list = [1,2,3,4]
+          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          expect(
+            length(seq)
+          ).to.eql(
+            4
+          );
           next();
         });
         it("foldrでproductを作る", (next) => {
@@ -3210,6 +3271,7 @@ describe('高階関数', () => {
             };
             return foldr(alist)(1)(callback);
           };
+          /********* テスト **********/
           // list = [1,2,3,4]
           var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
           expect(
@@ -3222,16 +3284,12 @@ describe('高階関数', () => {
         });
         it("foldrで reverse関数を作る", (next) => {
           // reverse = foldl (flip cons) list.empty()
-          /* #@range_begin(foldr_reverse) */
-          var reverse = (alist) => {
-            var accumulator = list.empty();
-            var callback = (item) => {
-              return (accumulator) => {
-                return list.append(accumulator)(list.cons(item,list.empty()));
-              };
-            }; 
-            return foldr(alist)(accumulator)(callback);
-          };
+            // var accumulator = list.empty();
+            // var callback = (item) => {
+            //   return (accumulator) => {
+            //     return list.append(accumulator)(list.cons(item,list.empty()));
+            //   };
+            // }; 
           // var reverse = (alist) => {
           //   var accumulator = list.empty();
           //   var callback = (item) => {
@@ -3241,6 +3299,14 @@ describe('高階関数', () => {
           //   }; 
           //   return foldr(alist)(accumulator)(callback);
           // };
+          /* #@range_begin(foldr_reverse) */
+          var reverse = (alist) => {
+            return foldr(alist)(list.empty(0))((item) => {
+              return (accumulator) => {
+                return list.append(accumulator)(list.cons(item,list.empty()));
+              };
+            });
+          };
           /* #@range_end(foldr_reverse) */
           // list = [1,2,3,4]
           var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
@@ -3249,25 +3315,6 @@ describe('高階関数', () => {
           ).to.eql(
             [ 4, 3, 2, 1]
           );
-          next();
-        });
-        it("foldrでlength関数を作る", (next) => {
-          /* #@range_begin(foldr_length) */
-          var length = (alist) => {
-            return foldr(alist)(0)((item) => {
-              return (accumulator) => {
-                return accumulator + 1;
-              };
-            });
-          };
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-          expect(
-            length(seq)
-          ).to.eql(
-            4
-          );
-          /* #@range_end(foldr_length) */
           next();
         });
         it("foldrでfind関数を作る", (next) => {
@@ -3285,11 +3332,13 @@ describe('高階関数', () => {
               });
             };
           };
+          /******** テスト *********/
           var numbers = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          var even = (n) => {
+            return (n % 2) === 0;
+          };
           expect(
-            find(numbers)((n) => {
-              return n === 2;
-            })
+            find(numbers)(even)
           ).to.eql(
             2
           );

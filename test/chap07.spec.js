@@ -109,7 +109,7 @@ var list  = {
     var self = this;
     return match(alist, {
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tail) => {
         return head;
@@ -120,7 +120,7 @@ var list  = {
     var self = this;
     return match(alist, {
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tail) => {
         return tail;
@@ -184,7 +184,7 @@ var list  = {
     var self = this;
     return match(alist, {
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tail) => {
         return match(tail, {
@@ -413,7 +413,7 @@ var list  = {
     return (_) => {
       return match(theList,{
         empty: (_) => {
-          return undefined; 
+          return null; 
         },
         cons: (head,tail) => {
           theList = tail;
@@ -521,7 +521,7 @@ var stream = {
   head: (lazyList) => {
     return match(lazyList,{
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (value, tailThunk) => {
         return value;
@@ -532,7 +532,7 @@ var stream = {
   tail: (lazyList) => {
     return match(lazyList,{
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tailThunk) => {
         return tailThunk();
@@ -673,7 +673,7 @@ var stream = {
     return (_) => {
       return match(theStream,{
         empty: (_) => {
-          return undefined; 
+          return null; 
         },
         cons: (head,tailThunk) => {
           theStream = tailThunk();
@@ -710,7 +710,7 @@ var stream = {
     return (callback) => {
       return match(astream,{
         empty: (_) => {
-          return undefined; 
+          return null; 
         },
         cons: (head,tailThunk) => {
           callback(head);
@@ -876,7 +876,7 @@ var pair = {
 
 var object = {
   empty: (_) => {
-    return undefined;
+    return null;
   },
   get: (key, obj) => {
     expect(obj).to.a('function');
@@ -1418,7 +1418,7 @@ describe('高階関数', () => {
         var last = (alist) => {
           return match(alist, {
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (head, tail) => {
               return match(tail, {
@@ -1527,7 +1527,7 @@ describe('高階関数', () => {
         },
         head: (list) => {
           return match(list, {
-            empty: undefined, // 空のリストには先頭要素はありません
+            empty: null, // 空のリストには先頭要素はありません
             cons: (head, tail) => {
               return head;
             }
@@ -1535,7 +1535,7 @@ describe('高階関数', () => {
         },
         tail: (list) => {
           return match(list, {
-            empty: undefined,  // 空のリストには末尾要素はありません
+            empty: null,  // 空のリストには末尾要素はありません
             cons: (head, tail) => {
               return tail;
             }
@@ -1793,7 +1793,7 @@ describe('高階関数', () => {
         };
         var head = (list) => {
           return match(list, {
-            empty: undefined, // 空のリストには先頭要素はありません
+            empty: null, // 空のリストには先頭要素はありません
             cons: (head, tail) => {
               return head;
             },
@@ -1801,7 +1801,7 @@ describe('高階関数', () => {
         };
         var tail = (list) => {
           return match(list, {
-            empty: undefined,  // 空のリストには末尾要素はありません
+            empty: null,  // 空のリストには末尾要素はありません
             cons: (head, tail) => {
               return tail;
             },
@@ -1833,7 +1833,7 @@ describe('高階関数', () => {
         /* #@range_begin(environment_in_closure) */
         // ## 空の環境
         var emptyEnv = (variable) => {
-          return undefined;
+          return null;
         };
         /* 変数名に対応する値を環境から取りだす */
         var lookupEnv = (identifier, env) => {
@@ -1855,7 +1855,7 @@ describe('高階関数', () => {
           expect(
             lookupEnv("a", emptyEnv)
           ).to.be(
-            undefined
+            null
           );
           var newEnv = extendEnv('a',1, emptyEnv);
           expect(
@@ -2064,7 +2064,7 @@ describe('高階関数', () => {
         /* #@range_begin(immutable_object_type) */
         var object = {
           empty: (_) => {
-            return undefined;
+            return null;
           },
           get: (key, obj) => {
             return obj(key);
@@ -2094,7 +2094,7 @@ describe('高階関数', () => {
                       object.set("HAL9000","2001: a space odessay",
                                           object.empty))
         ).to.eql(
-          undefined
+          null
         );
         expect(
           object.get("HAL9000", 
@@ -2112,7 +2112,7 @@ describe('高階関数', () => {
         /* #@range_begin(immutable_object_type_curried) */
         var object = {  // objectモジュール
           empty: (key) => {
-            return undefined;
+            return null;
           },
           get: (key) => {
             return (obj) => {
@@ -2147,7 +2147,7 @@ describe('高階関数', () => {
         /* #@range_begin(immutable_object_type_improved) */
         var objects = {
           empty: (_) => {
-            return undefined;
+            return null;
           },
           get: (key, obj) => {
             return obj(key);
@@ -2182,7 +2182,7 @@ describe('高階関数', () => {
         expect(
           objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
         ).to.eql(
-          undefined
+          null
         );
         expect(
           objects.get("HAL9000", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
@@ -2317,7 +2317,7 @@ describe('高階関数', () => {
         var head = (lazyList) => {
           return match(lazyList,{
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (value, tailThunk) => {
               return value;
@@ -2328,7 +2328,7 @@ describe('高階関数', () => {
         var tail = (lazyList) => {
           return match(lazyList,{
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (head, tailThunk) => {
               return tailThunk();
@@ -2659,7 +2659,7 @@ describe('高階関数', () => {
           return () => {
             return stream.match(_stream, {
               empty: () => {
-                return undefined;
+                return null;
               },
               cons: (head, tailThunk) => {
                 _stream = tailThunk();
@@ -2941,7 +2941,7 @@ describe('高階関数', () => {
                 return null;
               },
               emit: (eventName, arg) => {
-                expect(handlers).not.to.be(undefined);
+                expect(handlers).not.to.be(null);
                 return object.get(eventName, handlers)(arg); 
               }
             };
@@ -4196,7 +4196,7 @@ describe('高階関数', () => {
       describe('オブジェクト型検証コンビネータ', () => {
         var hasOwnProperty = Object.prototype.hasOwnProperty;
         var isEmpty = (obj) => {
-          // null and undefined are "empty"
+          // null and null are "empty"
           if (obj == null) return true;
           // Assume if it has a length property with a non-zero value
           // that that property is correct.
@@ -4870,7 +4870,7 @@ describe('高階関数', () => {
         head: (alist) => {
           return list.match(alist, {
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (head, tail) => {
               return head;
@@ -4880,7 +4880,7 @@ describe('高階関数', () => {
         tail: (alist) => {
           return list.match(alist, {
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (head, tail) => {
               return tail;
@@ -5433,7 +5433,7 @@ describe('高階関数', () => {
           if(value){
             return self.maybe.just(value);
           } else {
-            return self.maybe.nothing(undefined);
+            return self.maybe.nothing(null);
           }
         },
         get: (maybe) => {
@@ -5442,7 +5442,7 @@ describe('高階関数', () => {
               return value;
             },
             nothing: (_) => {
-              return undefined;
+              return null;
             }
           });
         },

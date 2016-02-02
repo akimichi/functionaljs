@@ -25,7 +25,7 @@ var list  = {
   head: (seq) => {
     return match(seq, {
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tail) => {
         return head;
@@ -35,7 +35,7 @@ var list  = {
   tail: (seq) => {
     return match(seq, {
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tail) => {
         return tail;
@@ -66,7 +66,7 @@ var list  = {
   last: (seq) => {
     return match(seq, {
       empty: (_) => {
-        return undefined;
+        return null;
       },
       cons: (head, tail) => {
         return match(tail, {
@@ -1046,7 +1046,7 @@ describe('プログラムをコントロールする仕組み', () => {
       var head = (alist) => {
         return match(alist, {
           empty: (_) => {
-            return undefined; // 空のリストには先頭要素はありません
+            return null; // 空のリストには先頭要素はありません
           },
           cons: (head, tail) => {
             return head;
@@ -1057,7 +1057,7 @@ describe('プログラムをコントロールする仕組み', () => {
       var tail = (alist) => {
         return match(alist, {
           empty: (_) => {
-            return undefined;  // 空のリストには末尾要素はありません
+            return null;  // 空のリストには末尾要素はありません
           },
           cons: (head, tail) => {
             return tail;
@@ -1381,7 +1381,7 @@ describe('プログラムをコントロールする仕組み', () => {
         var head = (list) => {
           return match(list, {
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (head, tail) => {
               return head;
@@ -1391,7 +1391,7 @@ describe('プログラムをコントロールする仕組み', () => {
         var tail = (list) => {
           return match(list, {
             empty: (_) => {
-              return undefined;
+              return null;
             },
             cons: (head, tail) => {
               return tail;

@@ -576,7 +576,7 @@ describe('データの種類と特徴', () => {
         // }
         /* #@range_begin(function_as_object) */
         var empty = (key) => {
-          return undefined;
+          return null;
         };
         var get = (key, obj) => {
           return obj(key);
@@ -912,7 +912,7 @@ describe('データの種類と特徴', () => {
         /* #@range_begin(environment_implemented) */
         // 空の環境
         var emptyEnv = (variable) => {
-          return undefined;
+          return null;
         };
         // 変数名に対応する値を環境から取りだす
         var lookupEnv = (variable, env) => {

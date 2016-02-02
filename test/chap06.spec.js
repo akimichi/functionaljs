@@ -74,7 +74,7 @@ describe('関数の使い方', () => {
       },
       head: (list) => {
         return match(list, {
-          empty: undefined, // 空のリストには先頭要素はありません
+          empty: null, // 空のリストには先頭要素はありません
           cons: (head, tail) => {
             return head;
           }
@@ -82,7 +82,7 @@ describe('関数の使い方', () => {
       },
       tail: (list) => {
         return match(list, {
-          empty: undefined,  // 空のリストには末尾要素はありません
+          empty: null,  // 空のリストには末尾要素はありません
           cons: (head, tail) => {
             return tail;
           }
@@ -344,14 +344,14 @@ describe('関数の使い方', () => {
               /* ストリーム型headの定義は、リスト型headと同じ */
               head: (astream) => {      
                 return match(astream,{
-                  empty: (_) => { return undefined; },
+                  empty: (_) => { return null; },
                   cons: (value, tailThunk) => { return value; }
                 });
               },
               // tail:: STREAM[T] => STREAM[T] 
               tail: (astream) => {
                 return match(astream,{
-                  empty: (_) => { return undefined; },
+                  empty: (_) => { return null; },
                   cons: (head, tailThunk) => {
                     return tailThunk();  // ここで初めてサンクを評価する
                   }
@@ -445,7 +445,7 @@ describe('関数の使い方', () => {
                   },
                   head: (alist) => {
                     return match(alist, {
-                      empty: undefined, // 空のリストには先頭要素はありません
+                      empty: null, // 空のリストには先頭要素はありません
                       cons: (head, tail) => {
                         return head;
                       }
@@ -453,7 +453,7 @@ describe('関数の使い方', () => {
                   },
                   tail: (alist) => {
                     return match(alist, {
-                      empty: undefined,  // 空のリストには末尾要素はありません
+                      empty: null,  // 空のリストには末尾要素はありません
                       cons: (head, tail) => {
                         return tail;
                       }
@@ -491,13 +491,13 @@ describe('関数の使い方', () => {
                   },
                   head: (astream) => {      
                     return match(astream,{
-                      empty: (_) => { return undefined; },
+                      empty: (_) => { return null; },
                       cons: (value, tailThunk) => { return value; }
                     });
                   },
                   tail: (astream) => {
                     return match(astream,{
-                      empty: (_) => { return undefined; },
+                      empty: (_) => { return null; },
                       cons: (head, tailThunk) => {
                         return tailThunk();  // ここで初めてサンクを評価する
                       }
@@ -613,7 +613,7 @@ describe('関数の使い方', () => {
             var self = this;
             return self.match(list, {
               empty: (_) => {
-                return undefined;
+                return null;
               },
               cons: (head, tail) => {
                 return head;
@@ -624,7 +624,7 @@ describe('関数の使い方', () => {
             var self = this;
             return self.match(list, {
               empty: (_) => {
-                return undefined;
+                return null;
               },
               cons: (head, tail) => {
                 return tail;
@@ -657,7 +657,7 @@ describe('関数の使い方', () => {
             var self = this;
             return self.match(xs, {
               empty: (_) => {
-                return undefined;
+                return null;
               },
               cons: (head, tail) => {
                 return self.match(tail, {
@@ -1001,7 +1001,7 @@ describe('関数の使い方', () => {
           var last = (list) => {
             return seq.match(list, {
               empty: (_) => {
-                return undefined;
+                return null;
               },
               cons: (head, tail) => {
                 return seq.match(tail, {

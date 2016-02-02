@@ -4551,7 +4551,7 @@ describe('高階関数', () => {
   describe('モナドを作る', () => {
     describe('恒等モナド', () => {
       /* #@range_begin(identity_monad) */
-      var identity = {
+      var ID = {
         unit: (value) => {
           return value;
         },
@@ -4565,7 +4565,7 @@ describe('高階関数', () => {
       it("恒等モナドのunit関数", (next) => {
       /* #@range_begin(identity_monad_unit_test) */
         expect(
-          identity.unit(1)
+          ID.unit(1)
         ).to.eql(
           1
         );
@@ -4579,8 +4579,8 @@ describe('高階関数', () => {
         /* #@range_begin(identity_monad_flatMap_test) */
         /* モナドで 1 の次の数を求める */
         expect(
-          identity.flatMap(identity.unit(1))((one) => {    
-            return identity.unit(succ(one));
+          ID.flatMap(ID.unit(1))((one) => {    
+            return ID.unit(succ(one));
           })
         ).to.eql(
           2
@@ -4593,20 +4593,20 @@ describe('高階関数', () => {
         );
         /* #@range_end(identity_monad_flatMap_test) */
         /* #@range_begin(flatMap_and_composition) */
-        var f = (n) => {
+        var succ = (n) => {
           return n + 1;
         };
-        var g = (m) => {
+        var double = (m) => {
           return m * 2;
         };
         expect(
-          identity.flatMap(identity.unit(1))((one) => {    
-            return identity.flatMap(identity.unit(f(one)))((two) => { 
-              return identity.unit(g(two)); 
+          ID.flatMap(ID.unit(1))((one) => {    
+            return ID.flatMap(ID.unit(succ(one)))((two) => { 
+              return ID.unit(double(two)); 
             });
           })
         ).to.eql(
-          compose(g,f)(1)
+          compose(double,succ)(1)
         );
         /* #@range_end(flatMap_and_composition) */
         next();
@@ -4616,9 +4616,9 @@ describe('高階関数', () => {
         it("flatMap(instanceM)(unit) === instanceM", (next) => {
           /* #@range_begin(identity_monad_laws_right_unit_law) */
           /* flatMap(instanceM)(unit) === instanceM の一例 */
-          var instanceM = identity.unit(1);
+          var instanceM = ID.unit(1);
           expect(
-            identity.flatMap(instanceM)(identity.unit)
+            ID.flatMap(instanceM)(ID.unit)
           ).to.eql(
             instanceM
           );
@@ -4632,7 +4632,7 @@ describe('高階関数', () => {
             return n + 1;
           };
           expect(
-            identity.flatMap(identity.unit(1))(f)
+            ID.flatMap(ID.unit(1))(f)
           ).to.eql(
             f(1)
           );
@@ -4641,19 +4641,20 @@ describe('高階関数', () => {
         });
         it("flatMap(flatMap(instanceM)(f))(g) == flatMap(instanceM)((x) => flatMap(f(x))(g))", (next) => {
           /* #@range_begin(identity_monad_laws_associative_law) */
-          /* flatMap(flatMap(instanceM)(f))(g) === flatMap(instanceM)((x) => { return flatMap(f(x))(g); } } */
-          var instanceM = identity.unit(1);
+          /* flatMap(flatMap(instanceM)(f))(g) === 
+             flatMap(instanceM)((x) => { return flatMap(f(x))(g); } } */
+          var instanceM = ID.unit(1);
           var f = (n) => {
-            return identity.unit(n * n);
+            return ID.unit(n * n);
           };
           var g = (n) => {
-            return identity.unit(- n);
+            return ID.unit(- n);
           };
           expect(
-            identity.flatMap(identity.flatMap(instanceM)(f))(g)
+            ID.flatMap(ID.flatMap(instanceM)(f))(g)
           ).to.eql(
-            identity.flatMap(instanceM)((x) => {
-              return identity.flatMap(f(x))(g);
+            ID.flatMap(instanceM)((x) => {
+              return ID.flatMap(f(x))(g);
             })
           );
           /* #@range_end(identity_monad_laws_associative_law) */
@@ -4663,31 +4664,31 @@ describe('高階関数', () => {
       });
       it("identity#flatMap", (next) => {
         /* #@range_begin(identity_monad_test) */
-        var instance = identity.unit(1);
+        var instance = ID.unit(1);
         expect(
-          identity.flatMap(instance)((n) => {
-            return identity.unit(n * 2);
+          ID.flatMap(instance)((n) => {
+            return ID.unit(n * 2);
           })
         ).to.eql(
-          identity.unit(2)
+          ID.unit(2)
         );
         expect(
-          identity.flatMap(instance)((n) => {
-            return identity.flatMap(identity.unit(n * 2))((m) => {
-              return identity.unit(m * 3);
+          ID.flatMap(instance)((n) => {
+            return ID.flatMap(ID.unit(n * 2))((m) => {
+              return ID.unit(m * 3);
             });
           })
         ).to.eql(
-          identity.unit(6)
+          ID.unit(6)
         );
         expect(
-          identity.flatMap(instance)((n) => {
-            return identity.flatMap(identity.unit(n))((m) => {
-              return identity.unit(m * n);
+          ID.flatMap(instance)((n) => {
+            return ID.flatMap(ID.unit(n))((m) => {
+              return ID.unit(m * n);
             });
           })
         ).to.eql(
-          identity.unit(1)
+          ID.unit(1)
         );
         /* #@range_end(identity_monad_test) */
         next();
@@ -4713,7 +4714,7 @@ describe('高階関数', () => {
           };
         };
         /* #@range_end(algebraic_type_maybe) */
-        var maybe = {
+        var MAYBE = {
           /* #@range_begin(maybe_monad) */
           unit: (value) => {
             return just(value);
@@ -4776,12 +4777,12 @@ describe('高階関数', () => {
           /* #@range_begin(maybe_monad_test) */
           var justOne = just(1);
           expect(
-            maybe.isEqual(maybe.map(justOne)(id))(id(justOne))
+            MAYBE.isEqual(MAYBE.map(justOne)(id))(id(justOne))
           ).to.be(
             true
           );
           expect(
-            maybe.isEqual(maybe.map(nothing())(id))(id(nothing()))
+            MAYBE.isEqual(MAYBE.map(nothing())(id))(id(nothing()))
           ).to.be(
             true
           );
@@ -4791,9 +4792,9 @@ describe('高階関数', () => {
         it("add(maybe, maybe)", (next) => {
           /* #@range_begin(maybe_monad_add_test) */
           var add = (maybeA,maybeB) => {
-            return maybe.flatMap(maybeA)((a) => {
-              return maybe.flatMap(maybeB)((b) => {
-                return maybe.unit(a + b);
+            return MAYBE.flatMap(maybeA)((a) => {
+              return MAYBE.flatMap(maybeB)((b) => {
+                return MAYBE.unit(a + b);
               });
             });
           };
@@ -4801,12 +4802,12 @@ describe('高階関数', () => {
           var justTwo = just(2);
           var justThree = just(3);
           expect(
-            maybe.isEqual(add(justOne,justTwo))(justThree)
+            MAYBE.isEqual(add(justOne,justTwo))(justThree)
           ).to.eql(
             true
           );
           expect(
-            maybe.isEqual(add(justOne,nothing()))(nothing())
+            MAYBE.isEqual(add(justOne,nothing()))(nothing())
           ).to.eql(
             true
           );

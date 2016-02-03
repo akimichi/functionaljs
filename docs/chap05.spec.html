@@ -57,7 +57,7 @@
   head: (seq) =&gt; {
     <span class="hljs-keyword">return</span> match(seq, {
       empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
       },
       cons: (head, tail) =&gt; {
         <span class="hljs-keyword">return</span> head;
@@ -67,7 +67,7 @@
   tail: (seq) =&gt; {
     <span class="hljs-keyword">return</span> match(seq, {
       empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
       },
       cons: (head, tail) =&gt; {
         <span class="hljs-keyword">return</span> tail;
@@ -111,7 +111,7 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
   last: (seq) =&gt; {
     <span class="hljs-keyword">return</span> match(seq, {
       empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
       },
       cons: (head, tail) =&gt; {
         <span class="hljs-keyword">return</span> match(tail, {
@@ -1640,7 +1640,7 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> head = (alist) =&gt; {
         <span class="hljs-keyword">return</span> match(alist, {
           empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>; <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
           },
           cons: (head, tail) =&gt; {
             <span class="hljs-keyword">return</span> head;
@@ -1664,7 +1664,7 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
         <span class="hljs-keyword">return</span> match(alist, {
           empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
           },
           cons: (head, tail) =&gt; {
             <span class="hljs-keyword">return</span> tail;
@@ -2119,7 +2119,7 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         <span class="hljs-keyword">var</span> head = (list) =&gt; {
           <span class="hljs-keyword">return</span> match(list, {
             empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
             },
             cons: (head, tail) =&gt; {
               <span class="hljs-keyword">return</span> head;
@@ -2129,7 +2129,7 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         <span class="hljs-keyword">var</span> tail = (list) =&gt; {
           <span class="hljs-keyword">return</span> match(list, {
             empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
             },
             cons: (head, tail) =&gt; {
               <span class="hljs-keyword">return</span> tail;

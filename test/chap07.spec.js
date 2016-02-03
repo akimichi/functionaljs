@@ -4601,8 +4601,8 @@ describe('高階関数', () => {
         };
         expect(
           ID.flatMap(ID.unit(1))((one) => {    
-            return ID.flatMap(ID.unit(succ(one)))((two) => { 
-              return ID.unit(double(two)); 
+            return ID.flatMap(ID.unit(succ(one)))((two) => { // succ関数を適用する
+              return ID.unit(double(two));  // double関数を適用する
             });
           })
         ).to.eql(
@@ -4719,9 +4719,9 @@ describe('高階関数', () => {
           unit: (value) => {
             return just(value);
           },
-          flatMap: (maybeInstance) => {
+          flatMap: (instanceM) => {
             return (transform) => {
-              return match(maybeInstance,{
+              return match(instanceM,{
                 just: (value) => { // 正常な値の場合は、transform関数を計算する
                   return transform(value);
                 },

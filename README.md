@@ -4,8 +4,11 @@
 
 ## 利用法 
 
+まず最初に本レポジトリをクローンして、そのディレクトリに入ります。
+
 ~~~
 $ git clone git@github.com:akimichi/functionaljs.git
+$ cd functionaljs
 ~~~
 
 テスト環境の構築には、 1) docker を使う 2) 個別にインストールする、 の2つの方法があります。
@@ -14,13 +17,14 @@ dockerを利用したほうが確実です。
 
 ### dockerを使う
 
-まず最初にdockerイメージを生成します。
+まず最初に下記のコマンドでdockerイメージを生成します。
+末尾のピリオド(.) も忘れずに入力してください。
 
 ~~~
 docker build -t="ric/functionaljs:v1" .
 ~~~
 
-テストを実行する
+テストを実行するには、作成されたイメージをもとに dockerコンテナを起動します。
 
 node.jsのコードをテストする。
 

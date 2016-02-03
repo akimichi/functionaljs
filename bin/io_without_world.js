@@ -30,31 +30,25 @@ var pair = {
 };
 /* #@range_end(pair_datatype) */
 
-var IO = {
+module.exports = {
+// var io = {
   /* #@range_begin(io_monad_definition_with_world) */
   // unit:: a -> IO a
   unit: (any) => {
-    return (world) =>  {
+    return (_) =>  {
       return any;
-    };
-  },
-  // flatMap:: IO a -> (a -> IO b) -> IO b
-  flatMap: (instanceA) => {
-    return (actionAB) => { // actionAB:: a -> IO b
-      return (world) => {
-        var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
-        return pair.match(newPair,{
-          cons: (value, newWorld) => {
-            return actionAB(value)(newWorld); // 新しい外界のなかで、actionAB(value)で作られたIOアクションを実行する
-          }
-        });
-      };
     };
   },
   /* #@range_begin(io_monad_definition_with_world_helper_function) */
   // done:: T -> IO T
   done: (any) => {
     return this.unit();
+  },
+  // flatMap:: IO a -> (a -> IO b) -> IO b
+  flatMap: (instanceA) => {
+    return (actionAB) => { // actionAB:: a -> IO b
+      return this.unit(this.run(actionAB(this.run(instanceA))));
+    };
   },
   // run:: IO A -> A
   run: (instance) => {

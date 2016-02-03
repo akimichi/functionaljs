@@ -296,66 +296,6 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
           <span class="hljs-number">7</span>
         );
         next();
-      });
-      it(<span class="hljs-string">'チャーチ数'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(church_numeral) */</span>
-        <span class="hljs-keyword">var</span> zero = (f) =&gt; {
-          <span class="hljs-keyword">return</span> (x) =&gt; {
-            <span class="hljs-keyword">return</span> x;
-          };
-        };
-        <span class="hljs-keyword">var</span> one = (f) =&gt; {
-          <span class="hljs-keyword">return</span> (x) =&gt; {
-            <span class="hljs-keyword">return</span> f(x);
-          };
-        };
-        <span class="hljs-keyword">var</span> two = (f) =&gt; {
-          <span class="hljs-keyword">return</span> (x) =&gt; {
-            <span class="hljs-keyword">return</span> f(f(x));
-          };
-        };
-        <span class="hljs-keyword">var</span> three = (f) =&gt; {
-          <span class="hljs-keyword">return</span> (x) =&gt; {
-            <span class="hljs-keyword">return</span> f(f(f(x)));
-          };
-        };
-        <span class="hljs-keyword">var</span> succ = (n) =&gt; {
-          <span class="hljs-keyword">return</span> (f) =&gt; {
-            <span class="hljs-keyword">return</span> (x) =&gt; {
-              <span class="hljs-keyword">return</span> f(n(f)(x));
-            };
-          };
-        };
-        <span class="hljs-keyword">var</span> add = (m) =&gt; {
-          <span class="hljs-keyword">return</span> (n) =&gt; {
-            <span class="hljs-keyword">return</span> (f) =&gt; {
-              <span class="hljs-keyword">return</span> (x) =&gt; {
-                <span class="hljs-keyword">return</span> m(f)(n(f)(x));
-              };
-            };
-          };
-        };
-        <span class="hljs-comment">/*#@range_end(church_numeral) */</span>
-
-        <span class="hljs-comment">/* #@range_begin(closure_as_counter) */</span>
-        <span class="hljs-keyword">var</span> counter = (init) =&gt; {
-          <span class="hljs-keyword">var</span> _init = init;
-          <span class="hljs-keyword">return</span> (dummy) =&gt; {
-            _init = _init + <span class="hljs-number">1</span>;
-            <span class="hljs-keyword">return</span> _init;
-          };
-        };
-        expect(one(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">1</span>);
-        expect(two(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">2</span>);
-        expect(three(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">3</span>);
-        expect(succ(one)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">2</span>);
-        expect(succ(two)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">3</span>);
-        expect(add(zero)(one)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">1</span>);
-        expect(add(one)(one)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">2</span>);
-        expect(add(one)(two)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">3</span>);
-        expect(add(two)(three)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">5</span>);
-        <span class="hljs-comment">/* #@range_end(closure_as_counter) */</span>
-        next();
       });</pre></div></div>
             
         </li>
@@ -367,15 +307,75 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>it(‘変数の置換規則’, (next) =&gt; {
-  /<em> #@range_begin(variable_reduction) </em>/
-  var foo = 3; // 変数fooを3に束縛する
-  expect(
-    foo        // 束縛にもとづいて変数fooを評価する
-  ).to.eql(
-    3
-  );
-  /<em> #@range_end(variable_reduction) </em>/
+              <p>it(‘チャーチ数’, (next) =&gt; {
+  /<em> #@range_begin(church_numeral) </em>/
+  var zero = (f) =&gt; {
+    return (x) =&gt; {
+      return x;
+    };
+  };
+  var one = (f) =&gt; {
+    return (x) =&gt; {
+      return f(x);
+    };
+  };
+  var two = (f) =&gt; {
+    return (x) =&gt; {
+      return f(f(x));
+    };
+  };
+  var three = (f) =&gt; {
+    return (x) =&gt; {
+      return f(f(f(x)));
+    };
+  };
+  var succ = (n) =&gt; {
+    return (f) =&gt; {
+      return (x) =&gt; {
+        return f(n(f)(x));
+      };
+    };
+  };
+  var add = (m) =&gt; {
+    return (n) =&gt; {
+      return (f) =&gt; {
+        return (x) =&gt; {
+          return m(f)(n(f)(x));
+        };
+      };
+    };
+  };
+  /<em>#@range_end(church_numeral) </em>/</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>  /<em> #@range_begin(closure_as_counter) </em>/
+  var counter = (init) =&gt; {
+    var _init = init;
+    return (dummy) =&gt; {
+      _init = _init + 1;
+      return _init;
+    };
+  };
+  expect(one(counter(0))()).to.eql(1);
+  expect(two(counter(0))()).to.eql(2);
+  expect(three(counter(0))()).to.eql(3);
+  expect(succ(one)(counter(0))()).to.eql(2);
+  expect(succ(two)(counter(0))()).to.eql(3);
+  expect(add(zero)(one)(counter(0))()).to.eql(1);
+  expect(add(one)(one)(counter(0))()).to.eql(2);
+  expect(add(one)(two)(counter(0))()).to.eql(3);
+  expect(add(two)(three)(counter(0))()).to.eql(5);
+  /<em> #@range_end(closure_as_counter) </em>/
   next();
 });</p>
 
@@ -436,11 +436,11 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-4">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>return times(y, succ, null, x);</p>
 

@@ -6,33 +6,6 @@
 */
 
 var pair = require('./pair');
-// var pair = {
-//   // pair の代数的データ構造
-//   cons: (left, right) => {
-//     return (pattern) => {
-//       return pattern.cons(left, right);
-//     };
-//   },
-//   match : (data, pattern) => {
-//     return data(pattern);
-//   },
-//   // ペアの右側を取得する
-//   right: (tuple) => {
-//     return pair.match(tuple, {
-//       cons: (left, right) => {
-//         return right;
-//       }
-//     });
-//   },
-//   // ペアの左側を取得する
-//   left: (tuple) => {
-//     return pair.match(tuple, {
-//       cons: (left, right) => {
-//         return left;
-//       }
-//     });
-//   }
-// };
 
 var IO = {
   /* #@range_begin(io_monad_definition_with_world) */

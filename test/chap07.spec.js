@@ -6094,42 +6094,48 @@ describe('高階関数', () => {
         // ## 'IO' monad module
         /* #@range_begin(io_monad_definition) */
         var IO = {
-          // unit:: a -> IO[a]
+          // unit:: T => IO[T]
           unit : (any) => {
-            return (_) =>  {
+            return (_) =>  { // 外界は明示する必要はありません
               return any;
             };
           },
-          // flatMap:: IO[a]-> (a -> IO[b] -> IO[b]
+          // flatMap:: IO[T] => FUN[T => IO[U]] => IO[U]
           flatMap : (instanceA) => {
             return (actionAB) => { // actionAB:: a -> IO[b]
               return IO.unit(IO.run(actionAB(IO.run(instanceA))));
             };
           },
-          // run:: IO[A]-> A
-          run : (instance) => {
-            return instance();
-          },
-          // done:: T -> IO[T]
+          // done:: T => IO[T]
           done : (any) => {
             return IO.unit();
           },
+          // run:: IO[A] => A
+          run : (instance) => {
+            return instance();
+          },
+          // readFile:: STRING => IO[STRING]
           readFile : (path) => {
-            return (io) => {
+            return (_) => {
+              var fs = require('fs');
               var content = fs.readFileSync(path, 'utf8');
-              return content;
+              return IO.unit(content)(_);
             };
           },
-          writeFile : (content) => {
-            return (io) => {
-              console.log(content);
-              return null;
-            };
-          },
+          // println:: STRING => IO[null]
           println : (message) => {
-            return (io) => {
+            return (_) => {
               console.log(message);
-              return null;
+              return IO.unit(null)(_);
+            };
+          },
+          writeFile : (path) => {
+            return (content) => {
+              return (_) => {
+                var fs = require('fs');
+                fs.writeFileSync(path,content);
+                return IO.unit(null)(_);
+              };
             };
           }
         }; // IO monad

@@ -1586,13 +1586,13 @@ describe(<span class="hljs-string">'高階関数'</span>, () =&gt; {
         <span class="hljs-keyword">var</span> opposite = (x) =&gt; {
           <span class="hljs-keyword">return</span> - x;
         };
-        <span class="hljs-keyword">var</span> add = (x) =&gt; {
+        <span class="hljs-keyword">var</span> addCurried = (x) =&gt; { <span class="hljs-comment">// カリー化されたadd関数</span>
           <span class="hljs-keyword">return</span> (y) =&gt; {
             <span class="hljs-keyword">return</span> x + y;
           };
         };
         expect(
-          compose(opposite)(add(<span class="hljs-number">2</span>))(<span class="hljs-number">3</span>)
+          compose(opposite)(addCurried(<span class="hljs-number">2</span>))(<span class="hljs-number">3</span>)
         ).to.eql(
             -<span class="hljs-number">5</span>
         );
@@ -1865,11 +1865,11 @@ it(“compose several functions”, function(next) {
         };
         <span class="hljs-comment">/* #@range_end(list_last_recursive) */</span>
         <span class="hljs-comment">/* #@range_begin(list_last_test) */</span>
-        <span class="hljs-keyword">var</span> sequence = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.cons(<span class="hljs-number">4</span>,list.empty()))));
+        <span class="hljs-keyword">var</span> numbers = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty())));
         expect(
-          last(sequence)
+          last(numbers)
         ).to.eql(
-          <span class="hljs-number">4</span>
+          <span class="hljs-number">3</span>
         );
         <span class="hljs-comment">/* #@range_end(list_last_test) */</span>
         next();
@@ -1923,11 +1923,11 @@ it(“compose several functions”, function(next) {
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> length = (alist) =&gt; {
           <span class="hljs-keyword">return</span> compose(sum)(flip(list.map)(alwaysOne))(alist);
         };
-        <span class="hljs-keyword">var</span> sequence = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.cons(<span class="hljs-number">4</span>,list.empty()))));
+        <span class="hljs-keyword">var</span> sequence = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty())));
         expect(
           length(sequence)
         ).to.eql(
-          <span class="hljs-number">4</span>
+          <span class="hljs-number">3</span>
         );
         <span class="hljs-comment">/* #@range_end(abstract_length) */</span>
         next();
@@ -1949,13 +1949,14 @@ it(“compose several functions”, function(next) {
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> init = (alist) =&gt; {
-		  <span class="hljs-keyword">return</span> compose(list.reverse)(compose(list.tail)(list.reverse))(alist);
+          <span class="hljs-keyword">return</span> compose(list.reverse)(compose(list.tail)(list.reverse))(alist);
         };
-        <span class="hljs-keyword">var</span> sequence = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.cons(<span class="hljs-number">4</span>,list.empty()))));
+        <span class="hljs-comment">/****** テスト *******/</span>
+        <span class="hljs-keyword">var</span> sequence = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty())));
         expect(
           list.toArray(init(sequence))
         ).to.eql(
-          [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]
+          [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
         );
         <span class="hljs-comment">/* #@range_end(abstract_init) */</span>
         next();
@@ -2776,23 +2777,23 @@ expect(
       it(<span class="hljs-string">'カリー化された不変なオブジェクト型'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(immutable_object_type_curried) */</span>
         <span class="hljs-keyword">var</span> object = {  <span class="hljs-comment">// objectモジュール</span>
-          empty: (key) =&gt; {
+          empty: (_) =&gt; {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+          },
+          set: (key, value) =&gt; {
+            <span class="hljs-keyword">return</span> (obj) =&gt; {
+              <span class="hljs-keyword">return</span> (queryKey) =&gt; {
+                <span class="hljs-keyword">if</span>(key === queryKey) {
+                  <span class="hljs-keyword">return</span> value;
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> object.get(queryKey)(obj);
+                }
+              };
+            };
           },
           get: (key) =&gt; {
             <span class="hljs-keyword">return</span> (obj) =&gt; {
               <span class="hljs-keyword">return</span> obj(key);
-            };
-          },
-          set: (key, value) =&gt; {
-            <span class="hljs-keyword">return</span> (obj) =&gt; {
-              <span class="hljs-keyword">return</span> (key2) =&gt; {
-                <span class="hljs-keyword">if</span>(key === key2) {
-                  <span class="hljs-keyword">return</span> value;
-                } <span class="hljs-keyword">else</span> {
-                  <span class="hljs-keyword">return</span> object.get(key2)(obj);
-                }
-              };
             };
           }
         };
@@ -3274,33 +3275,33 @@ expect(
               };
             };
             <span class="hljs-comment">/* #@range_begin(infinite_primes) */</span>
-	        <span class="hljs-keyword">var</span> leastDivisor = (n) =&gt; {
-	          expect(n).to.a(<span class="hljs-string">'number'</span>);
-	          <span class="hljs-keyword">var</span> leastDivisorHelper = (k, n) =&gt; {
-	            expect(k).to.a(<span class="hljs-string">'number'</span>);
-	            expect(n).to.a(<span class="hljs-string">'number'</span>);
-	            <span class="hljs-keyword">if</span>(multiplyOf(k)(n)) {
-	              <span class="hljs-keyword">return</span> k;
-	            } <span class="hljs-keyword">else</span> {
-	              <span class="hljs-keyword">if</span>(n &lt; (k * k)) {
-	                <span class="hljs-keyword">return</span> n;
-	              } <span class="hljs-keyword">else</span> {
-	                <span class="hljs-keyword">return</span> leastDivisorHelper(k+<span class="hljs-number">1</span>, n);
-	              }
-	            };
-	          };
-	          <span class="hljs-keyword">return</span> leastDivisorHelper(<span class="hljs-number">2</span>,n);
-	        };
-	        <span class="hljs-keyword">var</span> isPrime = (n) =&gt; {
-	          <span class="hljs-keyword">if</span>(n &lt; <span class="hljs-number">1</span>) {
-	            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"argument not positive"</span>);
-	          }
-	          <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-	            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	          } <span class="hljs-keyword">else</span> {
-	            <span class="hljs-keyword">return</span> leastDivisor(n)  === n ;
-	          }
-	        };
+            <span class="hljs-keyword">var</span> leastDivisor = (n) =&gt; {
+              expect(n).to.a(<span class="hljs-string">'number'</span>);
+              <span class="hljs-keyword">var</span> leastDivisorHelper = (k, n) =&gt; {
+                expect(k).to.a(<span class="hljs-string">'number'</span>);
+                expect(n).to.a(<span class="hljs-string">'number'</span>);
+                <span class="hljs-keyword">if</span>(multiplyOf(k)(n)) {
+                  <span class="hljs-keyword">return</span> k;
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">if</span>(n &lt; (k * k)) {
+                    <span class="hljs-keyword">return</span> n;
+                  } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">return</span> leastDivisorHelper(k+<span class="hljs-number">1</span>, n);
+                  }
+                };
+              };
+              <span class="hljs-keyword">return</span> leastDivisorHelper(<span class="hljs-number">2</span>,n);
+            };
+            <span class="hljs-keyword">var</span> isPrime = (n) =&gt; {
+              <span class="hljs-keyword">if</span>(n &lt; <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"argument not positive"</span>);
+              }
+              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> leastDivisor(n)  === n ;
+              }
+            };
             
             <span class="hljs-keyword">var</span> primes = stream.filter(integersFrom(<span class="hljs-number">1</span>))(isPrime);
             expect(
@@ -4437,18 +4438,18 @@ var reverse = (alist) =&gt; {
     describe(<span class="hljs-string">'継続を渡す'</span>, () =&gt; {
       describe(<span class="hljs-string">"継続の導入例"</span>, () =&gt; {
         it(<span class="hljs-string">"succ関数の継続"</span>, (next) =&gt; {
-		  <span class="hljs-comment">/* #@range_begin(succ_cps) */</span>
+          <span class="hljs-comment">/* #@range_begin(succ_cps) */</span>
           <span class="hljs-keyword">var</span> succ = (n, continues) =&gt; { <span class="hljs-comment">// continues関数は、succ(n)のあとに続く継続</span>
             <span class="hljs-keyword">return</span> continues(n + <span class="hljs-number">1</span>);
           };
-		  <span class="hljs-comment">/* #@range_end(succ_cps) */</span>
-		  <span class="hljs-comment">/* #@range_begin(succ_cps_test) */</span>
+          <span class="hljs-comment">/* #@range_end(succ_cps) */</span>
+          <span class="hljs-comment">/* #@range_begin(succ_cps_test) */</span>
           expect(
             succ(<span class="hljs-number">1</span>, identity) <span class="hljs-comment">// identity関数を継続として渡すことで、succ(1)の結果がそのまま返る</span>
           ).to.eql(
             <span class="hljs-number">2</span>
           );
-		  <span class="hljs-comment">/* #@range_end(succ_cps_test) */</span>
+          <span class="hljs-comment">/* #@range_end(succ_cps_test) */</span>
           next();
         });</pre></div></div>
             
@@ -4489,7 +4490,7 @@ var reverse = (alist) =&gt; {
           <span class="hljs-keyword">var</span> identity = (any) =&gt; { <span class="hljs-comment">// 値をそのまま返すだけの継続</span>
             <span class="hljs-keyword">return</span> any;
           };
-		  <span class="hljs-comment">/* #@range_begin(continuation_in_arithmetic) */</span>
+          <span class="hljs-comment">/* #@range_begin(continuation_in_arithmetic) */</span>
           <span class="hljs-keyword">var</span> succ = (n, continues) =&gt; { <span class="hljs-comment">// 継続渡しのsucc関数</span>
             <span class="hljs-keyword">return</span> continues(n + <span class="hljs-number">1</span>);
           };
@@ -4518,10 +4519,10 @@ var reverse = (alist) =&gt; {
             <span class="hljs-number">6</span>
           );
           <span class="hljs-comment">/* #@range_end(continuation_in_arithmetic) */</span>
-		  next();
+          next();
         });
         it(<span class="hljs-string">"継続としての蓄積変数"</span>, (next) =&gt; {
-		  <span class="hljs-comment">/* #@range_begin(accumulator_as_continuation) */</span>
+          <span class="hljs-comment">/* #@range_begin(accumulator_as_continuation) */</span>
           <span class="hljs-keyword">var</span> succCPS = (n, accumulator) =&gt; {
             <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span> + accumulator;
           };
@@ -4544,11 +4545,11 @@ var reverse = (alist) =&gt; {
             <span class="hljs-number">8</span>
           );
           <span class="hljs-comment">/* #@range_end(accumulator_as_continuation) */</span>
-		  next();
+          next();
         });
         it(<span class="hljs-string">"クライアントサーバー通信の継続"</span>, (next) =&gt; {
-		  
-		  next();
+          
+          next();
         });
       });
       describe(<span class="hljs-string">"継続で未来を選ぶ"</span>, () =&gt; {
@@ -4969,18 +4970,19 @@ expect(
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
-              <p>not :: FUN[ANY =&gt; BOOL] =&gt; FUN[ANY =&gt; BOOL]</p>
+              <p>not :: FUN[NUMBER =&gt; BOOL] =&gt; FUN[NUMBER =&gt; BOOL]</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicate:: NUMBER-&gt;BOOL</span>
-        <span class="hljs-keyword">return</span> (arg) =&gt; { <span class="hljs-comment">// ANY-&gt;BOOL型の関数を返す</span>
+        <span class="hljs-keyword">return</span> (arg) =&gt; { <span class="hljs-comment">// NUMBER =&gt; BOOL型の関数を返す</span>
           <span class="hljs-keyword">return</span> ! predicate(arg); <span class="hljs-comment">// !演算子で論理を反転させる</span>
         };
       };
       <span class="hljs-comment">/* #@range_end(not_combinator) */</span>
       <span class="hljs-comment">/* #@range_begin(not_combinator_test) */</span>
       <span class="hljs-keyword">var</span> odd = not(even); <span class="hljs-comment">// notコンビネータでodd関数を定義する</span>
+      <span class="hljs-comment">/******** テスト ********/</span>
       expect(
         odd(<span class="hljs-number">2</span>)
       ).to.eql(
@@ -5606,12 +5608,12 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
           };
         };
         <span class="hljs-keyword">var</span> continues = {
-	  	  normally: (result) =&gt; {
-	  	    <span class="hljs-keyword">return</span> result;
-	  	  },
+          normally: (result) =&gt; {
+            <span class="hljs-keyword">return</span> result;
+          },
           abnormally: (exception) =&gt; {
             <span class="hljs-keyword">return</span> exception;
-	  	  }
+          }
         };
         it(<span class="hljs-string">'succeed'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> object = {
@@ -5874,36 +5876,36 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
         next();
       });
     });
-    it(<span class="hljs-string">'Y combinator'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-	  <span class="hljs-comment">/* #@range_begin(Y_combinator) */</span>
-	  <span class="hljs-keyword">var</span> Y = (F) =&gt; {
-	    <span class="hljs-keyword">return</span> (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) </span>{
-		  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) </span>{
-		    <span class="hljs-keyword">return</span> F(g(g))(x);
-		  };
-	    })(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">g</span>) </span>{
-		  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) </span>{
-		    <span class="hljs-keyword">return</span> F(g(g))(x);
-		  };
-	    });
-	  };
-	  <span class="hljs-comment">/* #@range_end(Y_combinator)  */</span>
-	  <span class="hljs-comment">/* #@range_begin(Y_combinator_test) */</span>
-	  <span class="hljs-keyword">var</span> factorial = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fact</span>) </span>{
-	    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) </span>{
-		  <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) {
-		    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-		  } <span class="hljs-keyword">else</span> {
-		    <span class="hljs-keyword">return</span> n * fact(n - <span class="hljs-number">1</span>);
-		  }
-	    };
-	  };
- 	  <span class="hljs-keyword">var</span> fact = Y(factorial);
-	  expect(
-	    fact(<span class="hljs-number">3</span>)
-	  ).to.eql(
-	    <span class="hljs-number">6</span>
-	  );</pre></div></div>
+    it(<span class="hljs-string">'Y combinator'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(Y_combinator) */</span>
+      <span class="hljs-keyword">var</span> Y = (F) =&gt; {
+        <span class="hljs-keyword">return</span> ((g) =&gt; {
+          <span class="hljs-keyword">return</span> (x) =&gt;  {
+            <span class="hljs-keyword">return</span> F(g(g))(x);
+          };
+        })((g) =&gt;  {
+          <span class="hljs-keyword">return</span> (x) =&gt; {
+            <span class="hljs-keyword">return</span> F(g(g))(x);
+          };
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(Y_combinator)  */</span>
+      <span class="hljs-comment">/* #@range_begin(Y_combinator_test) */</span>
+      <span class="hljs-keyword">var</span> factorial = Y((fact) =&gt; {
+        <span class="hljs-keyword">return</span> (n) =&gt; {
+          <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> n * fact(n - <span class="hljs-number">1</span>);
+          }
+        };
+      });
+      expect(
+        factorial(<span class="hljs-number">3</span>) <span class="hljs-comment">// 3 * 2 * 1 = 6</span>
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      <span class="hljs-comment">/* #@range_end(Y_combinator_test) */</span></pre></div></div>
             
         </li>
         
@@ -5914,12 +5916,26 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
-              <p>Y x = x(Y x)</p>
+              <p>var factorial = (fact) =&gt; {
+  return (n) =&gt; {
+    if (n == 0) {
+      return 1;
+    } else {
+      return n * fact(n - 1);
+    }
+  };
+};
+var fact = Y(factorial);
+expect(
+  fact(3)
+).to.eql(
+  6
+);
+Y x = x(Y x)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	  <span class="hljs-comment">/* #@range_end(Y_combinator_test) */</span>
-	  next();
+            <div class="content"><div class='highlight'><pre>      next();
     });
     
   }); <span class="hljs-comment">// コンビネータ</span>
@@ -6399,7 +6415,7 @@ map (x:xs) f = f x : map xs f</p>
                                  list.map(tail)(transform));
               }
             });
-		  };
+          };
         },</pre></div></div>
             
         </li>
@@ -8122,12 +8138,12 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
-              <p>unit:: a -&gt; IO[a]</p>
+              <p>unit:: T =&gt; IO[T]</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>          unit : (any) =&gt; {
-            <span class="hljs-keyword">return</span> (_) =&gt;  {
+            <span class="hljs-keyword">return</span> (_) =&gt;  { <span class="hljs-comment">// 外界は明示する必要はありません</span>
               <span class="hljs-keyword">return</span> any;
             };
           },</pre></div></div>
@@ -8141,7 +8157,7 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
-              <p>flatMap:: IO[a]-&gt; (a -&gt; IO[b] -&gt; IO[b]</p>
+              <p>flatMap:: IO[T] =&gt; FUN[T =&gt; IO[U]] =&gt; IO[U]</p>
 
             </div>
             
@@ -8160,12 +8176,12 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
-              <p>run:: IO[A]-&gt; A</p>
+              <p>done:: T =&gt; IO[T]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          run : (instance) =&gt; {
-            <span class="hljs-keyword">return</span> instance();
+            <div class="content"><div class='highlight'><pre>          done : (any) =&gt; {
+            <span class="hljs-keyword">return</span> IO.unit();
           },</pre></div></div>
             
         </li>
@@ -8177,29 +8193,61 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
-              <p>done:: T -&gt; IO[T]</p>
+              <p>run:: IO[A] =&gt; A</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          done : (any) =&gt; {
-            <span class="hljs-keyword">return</span> IO.unit();
-          },
-          readFile : (path) =&gt; {
-            <span class="hljs-keyword">return</span> (io) =&gt; {
+            <div class="content"><div class='highlight'><pre>          run : (instance) =&gt; {
+            <span class="hljs-keyword">return</span> instance();
+          },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-160">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-160">&#182;</a>
+              </div>
+              <p>readFile:: STRING =&gt; IO[STRING]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          readFile : (path) =&gt; {
+            <span class="hljs-keyword">return</span> (_) =&gt; {
+              <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
               <span class="hljs-keyword">var</span> content = fs.readFileSync(path, <span class="hljs-string">'utf8'</span>);
-              <span class="hljs-keyword">return</span> content;
+              <span class="hljs-keyword">return</span> IO.unit(content)(_);
             };
-          },
-          writeFile : (content) =&gt; {
-            <span class="hljs-keyword">return</span> (io) =&gt; {
-              <span class="hljs-built_in">console</span>.log(content);
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-            };
-          },
-          println : (message) =&gt; {
-            <span class="hljs-keyword">return</span> (io) =&gt; {
+          },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-161">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-161">&#182;</a>
+              </div>
+              <p>println:: STRING =&gt; IO[null]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          println : (message) =&gt; {
+            <span class="hljs-keyword">return</span> (_) =&gt; {
               <span class="hljs-built_in">console</span>.log(message);
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+              <span class="hljs-keyword">return</span> IO.unit(<span class="hljs-literal">null</span>)(_);
+            };
+          },
+          writeFile : (path) =&gt; {
+            <span class="hljs-keyword">return</span> (content) =&gt; {
+              <span class="hljs-keyword">return</span> (_) =&gt; {
+                <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+                fs.writeFileSync(path,content);
+                <span class="hljs-keyword">return</span> IO.unit(<span class="hljs-literal">null</span>)(_);
+              };
             };
           }
         }; <span class="hljs-comment">// IO monad</span>
@@ -8210,11 +8258,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-160">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <p>IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b]</p>
 
@@ -8234,11 +8282,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-161">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <p>IO.putc:: CHAR =&gt; IO[]</p>
 
@@ -8254,11 +8302,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-162">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <p>IO.puts:: LIST[CHAR] =&gt; IO[]</p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -8280,11 +8328,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-163">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <p>IO.getc :: IO[CHAR]</p>
 
@@ -8323,11 +8371,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-164">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <p>describe(“Variantモナド”, () =&gt; {
   var variant = {

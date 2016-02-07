@@ -54,7 +54,10 @@ docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bas
 docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
 ~~~
 
-node.jsのREPLを試す。
+これでコンテナ内の /workspace ディレクトリにログインしました。
+
+node.jsのREPLを試すには、以下のように nodejsのディレクトリに移動して nodeコマンド を呼びだします。
+コンソールを抜けるときは Ctrl-C を2回続けて押します。
 
 ~~~
 cd nodejs/
@@ -66,7 +69,8 @@ node
 (^C again to quit)
 ~~~
 
-scala のREPLを試す。
+scala のREPLを試すには、 scalaのディレクトリに移動して、 sbt console を起動します。
+コンソールを抜けるには、:q を入力します。
 
 ~~~
 cd scala
@@ -86,7 +90,8 @@ res0: Int = 3
 scala> :q
 ~~~
 
-haskellのREPLを試す。
+haskellのREPLを試すには、 haskell のディレクトリに移動して、 ghci を起動します。
+コンソールを抜けるには、:q を入力します。
 
 ~~~
 cd haskell
@@ -99,13 +104,13 @@ Prelude> :q
 Leaving GHCi.
 ~~~
 
-~~~
-docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
-root@ca7528c7f2e5:/workspace# cd nodejs && gulp test 
-root@ca7528c7f2e5:/workspace# mocha --harmony test
-root@ca7528c7f2e5:/workspace# cd scala && sbt test
-root@ca7528c7f2e5:/workspace# cd haskell && stack test 
-~~~
+<!-- ~~~ -->
+<!-- docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i -->
+<!-- root@ca7528c7f2e5:/workspace# cd nodejs && gulp test  -->
+<!-- root@ca7528c7f2e5:/workspace# mocha --harmony test -->
+<!-- root@ca7528c7f2e5:/workspace# cd scala && sbt test -->
+<!-- root@ca7528c7f2e5:/workspace# cd haskell && stack test  -->
+<!-- ~~~ -->
 
 
 ### ローカル環境にテスト環境を個別にインストールする

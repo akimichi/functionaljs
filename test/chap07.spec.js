@@ -1207,13 +1207,13 @@ describe('高階関数', () => {
         var opposite = (x) => {
           return - x;
         };
-        var add = (x) => {
+        var addCurried = (x) => { // カリー化されたadd関数
           return (y) => {
             return x + y;
           };
         };
         expect(
-          compose(opposite)(add(2))(3)
+          compose(opposite)(addCurried(2))(3)
         ).to.eql(
             -5
         );
@@ -1434,11 +1434,11 @@ describe('高階関数', () => {
         };
         /* #@range_end(list_last_recursive) */
         /* #@range_begin(list_last_test) */
-        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        var numbers = list.cons(1,list.cons(2,list.cons(3,list.empty())));
         expect(
-          last(sequence)
+          last(numbers)
         ).to.eql(
-          4
+          3
         );
         /* #@range_end(list_last_test) */
         next();
@@ -1479,11 +1479,11 @@ describe('高階関数', () => {
         var length = (alist) => {
           return compose(sum)(flip(list.map)(alwaysOne))(alist);
         };
-        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.empty())));
         expect(
           length(sequence)
         ).to.eql(
-          4
+          3
         );
         /* #@range_end(abstract_length) */
         next();
@@ -1492,13 +1492,14 @@ describe('高階関数', () => {
         /* #@range_begin(abstract_init) */
         // init = reverse . tail . reverse 
         var init = (alist) => {
-		  return compose(list.reverse)(compose(list.tail)(list.reverse))(alist);
+          return compose(list.reverse)(compose(list.tail)(list.reverse))(alist);
         };
-        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        /****** テスト *******/
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.empty())));
         expect(
           list.toArray(init(sequence))
         ).to.eql(
-          [1,2,3]
+          [1,2]
         );
         /* #@range_end(abstract_init) */
         next();
@@ -2111,23 +2112,23 @@ describe('高階関数', () => {
       it('カリー化された不変なオブジェクト型', (next) => {
         /* #@range_begin(immutable_object_type_curried) */
         var object = {  // objectモジュール
-          empty: (key) => {
+          empty: (_) => {
             return null;
+          },
+          set: (key, value) => {
+            return (obj) => {
+              return (queryKey) => {
+                if(key === queryKey) {
+                  return value;
+                } else {
+                  return object.get(queryKey)(obj);
+                }
+              };
+            };
           },
           get: (key) => {
             return (obj) => {
               return obj(key);
-            };
-          },
-          set: (key, value) => {
-            return (obj) => {
-              return (key2) => {
-                if(key === key2) {
-                  return value;
-                } else {
-                  return object.get(key2)(obj);
-                }
-              };
             };
           }
         };
@@ -2492,33 +2493,33 @@ describe('高階関数', () => {
               };
             };
             /* #@range_begin(infinite_primes) */
-	        var leastDivisor = (n) => {
-	          expect(n).to.a('number');
-	          var leastDivisorHelper = (k, n) => {
-	            expect(k).to.a('number');
-	            expect(n).to.a('number');
-	            if(multiplyOf(k)(n)) {
-	              return k;
-	            } else {
-	              if(n < (k * k)) {
-	                return n;
-	              } else {
-	                return leastDivisorHelper(k+1, n);
-	              }
-	            };
-	          };
-	          return leastDivisorHelper(2,n);
-	        };
-	        var isPrime = (n) => {
-	          if(n < 1) {
-	            return new Error("argument not positive");
-	          }
-	          if(n === 1) {
-	            return false;
-	          } else {
-	            return leastDivisor(n)  === n ;
-	          }
-	        };
+            var leastDivisor = (n) => {
+              expect(n).to.a('number');
+              var leastDivisorHelper = (k, n) => {
+                expect(k).to.a('number');
+                expect(n).to.a('number');
+                if(multiplyOf(k)(n)) {
+                  return k;
+                } else {
+                  if(n < (k * k)) {
+                    return n;
+                  } else {
+                    return leastDivisorHelper(k+1, n);
+                  }
+                };
+              };
+              return leastDivisorHelper(2,n);
+            };
+            var isPrime = (n) => {
+              if(n < 1) {
+                return new Error("argument not positive");
+              }
+              if(n === 1) {
+                return false;
+              } else {
+                return leastDivisor(n)  === n ;
+              }
+            };
             
             var primes = stream.filter(integersFrom(1))(isPrime);
             expect(
@@ -3424,22 +3425,22 @@ describe('高階関数', () => {
     describe('継続を渡す', () => {
       describe("継続の導入例", () => {
         it("succ関数の継続", (next) => {
-		  /* #@range_begin(succ_cps) */
+          /* #@range_begin(succ_cps) */
           var succ = (n, continues) => { // continues関数は、succ(n)のあとに続く継続
             return continues(n + 1);
           };
-		  /* #@range_end(succ_cps) */
-		  /* #@range_begin(succ_cps_test) */
+          /* #@range_end(succ_cps) */
+          /* #@range_begin(succ_cps_test) */
           expect(
             succ(1, identity) // identity関数を継続として渡すことで、succ(1)の結果がそのまま返る
           ).to.eql(
             2
           );
-		  /* #@range_end(succ_cps_test) */
+          /* #@range_end(succ_cps_test) */
           next();
         });
         // it("succ関数を中断し、再開する", (next) => {
-		//   /* #@range_begin(succ_suspend_and_resume) */
+        //   /* #@range_begin(succ_suspend_and_resume) */
         //   var integers = (n) => {
         //     var suspendedContinuation = null;
         //     var succ = (n, continues) => {
@@ -3449,7 +3450,7 @@ describe('高階関数', () => {
         //     return () => {
         //     };
         //   };
-		//   /* #@range_end(succ_suspend_and_resume) */
+        //   /* #@range_end(succ_suspend_and_resume) */
         //   var identity = (any) => {
         //     return any;
         //   };
@@ -3463,7 +3464,7 @@ describe('高階関数', () => {
           var identity = (any) => { // 値をそのまま返すだけの継続
             return any;
           };
-		  /* #@range_begin(continuation_in_arithmetic) */
+          /* #@range_begin(continuation_in_arithmetic) */
           var succ = (n, continues) => { // 継続渡しのsucc関数
             return continues(n + 1);
           };
@@ -3479,10 +3480,10 @@ describe('高階関数', () => {
             6
           );
           /* #@range_end(continuation_in_arithmetic) */
-		  next();
+          next();
         });
         it("継続としての蓄積変数", (next) => {
-		  /* #@range_begin(accumulator_as_continuation) */
+          /* #@range_begin(accumulator_as_continuation) */
           var succCPS = (n, accumulator) => {
             return n + 1 + accumulator;
           };
@@ -3505,11 +3506,11 @@ describe('高階関数', () => {
             8
           );
           /* #@range_end(accumulator_as_continuation) */
-		  next();
+          next();
         });
         it("クライアントサーバー通信の継続", (next) => {
-		  
-		  next();
+          
+          next();
         });
       });
       describe("継続で未来を選ぶ", () => {
@@ -4245,12 +4246,12 @@ describe('高階関数', () => {
           };
         };
         var continues = {
-	  	  normally: (result) => {
-	  	    return result;
-	  	  },
+          normally: (result) => {
+            return result;
+          },
           abnormally: (exception) => {
             return exception;
-	  	  }
+          }
         };
         it('succeed', (next) => {
           var object = {
@@ -4514,52 +4515,52 @@ describe('高階関数', () => {
       });
     });
     it('Y combinator', (next) => {
-	  /* #@range_begin(Y_combinator) */
-	  var Y = (F) => {
-	    return ((g) => {
-		  return (x) =>  {
-		    return F(g(g))(x);
-		  };
-	    })((g) =>  {
-		  return (x) => {
-		    return F(g(g))(x);
-		  };
-	    });
-	  };
-	  /* #@range_end(Y_combinator)  */
-	  /* #@range_begin(Y_combinator_test) */
+      /* #@range_begin(Y_combinator) */
+      var Y = (F) => {
+        return ((g) => {
+          return (x) =>  {
+            return F(g(g))(x);
+          };
+        })((g) =>  {
+          return (x) => {
+            return F(g(g))(x);
+          };
+        });
+      };
+      /* #@range_end(Y_combinator)  */
+      /* #@range_begin(Y_combinator_test) */
       var factorial = Y((fact) => {
-	    return (n) => {
-	      if (n == 0) {
-	        return 1;
-	      } else {
-	        return n * fact(n - 1);
-	      }
-	    };
-	  });
-	  expect(
-	    factorial(3)
-	  ).to.eql(
-	    6
-	  );
-	  /* #@range_end(Y_combinator_test) */
-	  // var factorial = (fact) => {
-	  //   return (n) => {
-	  //     if (n == 0) {
-	  //       return 1;
-	  //     } else {
-	  //       return n * fact(n - 1);
-	  //     }
-	  //   };
-	  // };
- 	  // var fact = Y(factorial);
-	  // expect(
-	  //   fact(3)
-	  // ).to.eql(
-	  //   6
-	  // );
-	  // Y x = x(Y x)
-	  next();
+        return (n) => {
+          if (n == 0) {
+            return 1;
+          } else {
+            return n * fact(n - 1);
+          }
+        };
+      });
+      expect(
+        factorial(3) // 3 * 2 * 1 = 6
+      ).to.eql(
+        6
+      );
+      /* #@range_end(Y_combinator_test) */
+      // var factorial = (fact) => {
+      //   return (n) => {
+      //     if (n == 0) {
+      //       return 1;
+      //     } else {
+      //       return n * fact(n - 1);
+      //     }
+      //   };
+      // };
+      // var fact = Y(factorial);
+      // expect(
+      //   fact(3)
+      // ).to.eql(
+      //   6
+      // );
+      // Y x = x(Y x)
+      next();
     });
     
   }); // コンビネータ
@@ -4961,7 +4962,7 @@ describe('高階関数', () => {
                                  list.map(tail)(transform));
               }
             });
-		  };
+          };
         },
         // ~~~haskell
         // flatten :: [[a]] -> [a]

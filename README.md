@@ -24,7 +24,7 @@ dockerを利用したほうが確実です。
 docker build -t="ric/functionaljs:v1" .
 ~~~
 
-### 単体テストを実行する
+#### 単体テストを実行する
 
 テストを実行するには、作成されたイメージをもとに dockerコンテナを起動します。
 
@@ -46,7 +46,7 @@ haskell のコードをテストする
 docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bash -c "stack test"
 ~~~
 
-### REPLを実行する 
+#### REPLを実行する 
 
 コンテナにログインする
 
@@ -115,17 +115,17 @@ Leaving GHCi.
 
 ### ローカル環境にテスト環境を個別にインストールする
 
-#### node.js
+#### node.js のインストール
 
 nvm のインストール
 
 node.js v0.12.0 のインストール
 
-#### scala
+#### scala のインストール
 
 sbtのインストール
 
-#### haskell
+#### haskell のインストール
 
 cabal
 

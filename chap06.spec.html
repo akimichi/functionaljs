@@ -154,7 +154,7 @@
       },
       head: (list) =&gt; {
         <span class="hljs-keyword">return</span> match(list, {
-          empty: <span class="hljs-literal">undefined</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
+          empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
           cons: (head, tail) =&gt; {
             <span class="hljs-keyword">return</span> head;
           }
@@ -162,7 +162,7 @@
       },
       tail: (list) =&gt; {
         <span class="hljs-keyword">return</span> match(list, {
-          empty: <span class="hljs-literal">undefined</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
+          empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
           cons: (head, tail) =&gt; {
             <span class="hljs-keyword">return</span> tail;
           }
@@ -463,7 +463,7 @@ expect(
             <div class="content"><div class='highlight'><pre>              <span class="hljs-comment">/* ストリーム型headの定義は、リスト型headと同じ */</span>
               head: (astream) =&gt; {      
                 <span class="hljs-keyword">return</span> match(astream,{
-                  empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>; },
+                  empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                   cons: (value, tailThunk) =&gt; { <span class="hljs-keyword">return</span> value; }
                 });
               },</pre></div></div>
@@ -483,7 +483,7 @@ expect(
             
             <div class="content"><div class='highlight'><pre>              tail: (astream) =&gt; {
                 <span class="hljs-keyword">return</span> match(astream,{
-                  empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>; },
+                  empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                   cons: (head, tailThunk) =&gt; {
                     <span class="hljs-keyword">return</span> tailThunk();  <span class="hljs-comment">// ここで初めてサンクを評価する</span>
                   }
@@ -589,6 +589,7 @@ expect(
               );
               <span class="hljs-comment">/* #@range_end(infinite_ones_test) */</span>
               it(<span class="hljs-string">"無限の整数列をテストする"</span>, (next) =&gt; {
+                <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">3000</span>);
                 <span class="hljs-keyword">var</span> list = {</pre></div></div>
             
         </li>
@@ -626,7 +627,7 @@ expect(
                   },
                   head: (alist) =&gt; {
                     <span class="hljs-keyword">return</span> match(alist, {
-                      empty: <span class="hljs-literal">undefined</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
+                      empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
                       cons: (head, tail) =&gt; {
                         <span class="hljs-keyword">return</span> head;
                       }
@@ -634,7 +635,7 @@ expect(
                   },
                   tail: (alist) =&gt; {
                     <span class="hljs-keyword">return</span> match(alist, {
-                      empty: <span class="hljs-literal">undefined</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
+                      empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
                       cons: (head, tail) =&gt; {
                         <span class="hljs-keyword">return</span> tail;
                       }
@@ -685,13 +686,13 @@ expect(
                   },
                   head: (astream) =&gt; {      
                     <span class="hljs-keyword">return</span> match(astream,{
-                      empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>; },
+                      empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                       cons: (value, tailThunk) =&gt; { <span class="hljs-keyword">return</span> value; }
                     });
                   },
                   tail: (astream) =&gt; {
                     <span class="hljs-keyword">return</span> match(astream,{
-                      empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>; },
+                      empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                       cons: (head, tailThunk) =&gt; {
                         <span class="hljs-keyword">return</span> tailThunk();  <span class="hljs-comment">// ここで初めてサンクを評価する</span>
                       }
@@ -833,7 +834,7 @@ expect(
             <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
             <span class="hljs-keyword">return</span> self.match(list, {
               empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
               },
               cons: (head, tail) =&gt; {
                 <span class="hljs-keyword">return</span> head;
@@ -844,7 +845,7 @@ expect(
             <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
             <span class="hljs-keyword">return</span> self.match(list, {
               empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
               },
               cons: (head, tail) =&gt; {
                 <span class="hljs-keyword">return</span> tail;
@@ -890,7 +891,7 @@ expect(
             <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
             <span class="hljs-keyword">return</span> self.match(xs, {
               empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
               },
               cons: (head, tail) =&gt; {
                 <span class="hljs-keyword">return</span> self.match(tail, {
@@ -1416,7 +1417,7 @@ it(“compose several functions”, function(next) {
           <span class="hljs-keyword">var</span> last = (list) =&gt; {
             <span class="hljs-keyword">return</span> seq.match(list, {
               empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
               },
               cons: (head, tail) =&gt; {
                 <span class="hljs-keyword">return</span> seq.match(tail, {

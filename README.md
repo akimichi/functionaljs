@@ -24,6 +24,8 @@ dockerを利用したほうが確実です。
 docker build -t="ric/functionaljs:v1" .
 ~~~
 
+### 単体テストを実行する
+
 テストを実行するには、作成されたイメージをもとに dockerコンテナを起動します。
 
 node.jsのコードをテストする。
@@ -44,7 +46,58 @@ haskell のコードをテストする
 docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bash -c "stack test"
 ~~~
 
+### REPLを実行する 
+
 コンテナにログインする
+
+~~~
+docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
+~~~
+
+node.jsのREPLを試す。
+
+~~~
+cd nodejs/
+node
+
+> 1 + 2
+3
+> 
+(^C again to quit)
+~~~
+
+scala のREPLを試す。
+
+~~~
+cd scala
+sbt console
+
+[info] Loading project definition from /workspace/scala/project
+[info] Set current project to Functional Book Test Project (in build file:/workspace/scala/)
+[info] Starting scala interpreter...
+[info] 
+Welcome to Scala version 2.9.1.final (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_80).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> 1 + 2
+res0: Int = 3
+
+scala> :q
+~~~
+
+haskellのREPLを試す。
+
+~~~
+cd haskell
+ghci
+
+GHCi, version 7.10.2: http://www.haskell.org/ghc/  :? for help
+Prelude> 1 + 2
+3
+Prelude> :q
+Leaving GHCi.
+~~~
 
 ~~~
 docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i

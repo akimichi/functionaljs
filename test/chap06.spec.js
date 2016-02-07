@@ -187,6 +187,45 @@ describe('関数の使い方', () => {
     });
     describe('関数の適用', () => {
       describe('関数適用と置換ルール', () => {
+        // it('チャーチ数', (next) => {
+        //   /* #@range_begin(church_numeral) */
+        //   var zero = (f,x) => {
+        //     return x;
+        //   };
+        //   var one = (f,x) => {
+        //     return f(x); // 関数を1回適用する
+        //   };
+        //   var two = (f,x) => {
+        //     return f(f(x)); // 関数を2回適用する
+        //   };
+        //   var three = (f,x) => {
+        //     return f(f(f(x)));  // 関数を3回適用する
+        //   };
+        //   var add = (m,n, f, x) => {
+        //     return m(f)(n(f)(x));
+        //   };
+        //   /*#@range_end(church_numeral) */
+        //   var succ = (n, f, x) => {
+        //         return f(n(f)(x));
+        //   };
+        //   var counter = (init) => {
+        //     var _init = init;
+        //     return (dummy) => {
+        //       _init = _init + 1;
+        //       return _init;
+        //     };
+        //   };
+        //   expect(one(counter(0))()).to.eql(1);
+        //   expect(two(counter(0))()).to.eql(2);
+        //   expect(three(counter(0))()).to.eql(3);
+        //   expect(succ(one)(counter(0))()).to.eql(2);
+        //   expect(succ(two)(counter(0))()).to.eql(3);
+        //   expect(add(zero)(one)(counter(0))()).to.eql(1);
+        //   expect(add(one)(one)(counter(0))()).to.eql(2);
+        //   expect(add(one)(two)(counter(0))()).to.eql(3);
+        //   expect(add(two)(three)(counter(0))()).to.eql(5);
+        //   next();
+        // });
         describe('関数の評価戦略', () => {
           it('JavaScriptの正格評価', (next) => {
             /* #@range_begin(strict_evaluation_in_javascript) */

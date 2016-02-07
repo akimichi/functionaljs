@@ -3843,15 +3843,16 @@ describe('高階関数', () => {
       };
       var even = multiplyOf(2);
       /* #@range_begin(not_combinator) */
-      // not :: FUN[ANY => BOOL] => FUN[ANY => BOOL]
+      // not :: FUN[NUMBER => BOOL] => FUN[NUMBER => BOOL]
       var not = (predicate) => { // predicate:: NUMBER->BOOL
-        return (arg) => { // ANY->BOOL型の関数を返す
+        return (arg) => { // NUMBER => BOOL型の関数を返す
           return ! predicate(arg); // !演算子で論理を反転させる
         };
       };
       /* #@range_end(not_combinator) */
       /* #@range_begin(not_combinator_test) */
       var odd = not(even); // notコンビネータでodd関数を定義する
+      /******** テスト ********/
       expect(
         odd(2)
       ).to.eql(
@@ -4512,38 +4513,52 @@ describe('高階関数', () => {
         next();
       });
     });
-    it('Y combinator', function(next) {
+    it('Y combinator', (next) => {
 	  /* #@range_begin(Y_combinator) */
 	  var Y = (F) => {
-	    return (function(g) {
-		  return function(x) {
+	    return ((g) => {
+		  return (x) =>  {
 		    return F(g(g))(x);
 		  };
-	    })(function(g) {
-		  return function(x) {
+	    })((g) =>  {
+		  return (x) => {
 		    return F(g(g))(x);
 		  };
 	    });
 	  };
 	  /* #@range_end(Y_combinator)  */
 	  /* #@range_begin(Y_combinator_test) */
-	  var factorial = function(fact) {
-	    return function(n) {
-		  if (n == 0) {
-		    return 1;
-		  } else {
-		    return n * fact(n - 1);
-		  }
+      var factorial = Y((fact) => {
+	    return (n) => {
+	      if (n == 0) {
+	        return 1;
+	      } else {
+	        return n * fact(n - 1);
+	      }
 	    };
-	  };
- 	  var fact = Y(factorial);
+	  });
 	  expect(
-	    fact(3)
+	    factorial(3)
 	  ).to.eql(
 	    6
 	  );
-	  // Y x = x(Y x)
 	  /* #@range_end(Y_combinator_test) */
+	  // var factorial = (fact) => {
+	  //   return (n) => {
+	  //     if (n == 0) {
+	  //       return 1;
+	  //     } else {
+	  //       return n * fact(n - 1);
+	  //     }
+	  //   };
+	  // };
+ 	  // var fact = Y(factorial);
+	  // expect(
+	  //   fact(3)
+	  // ).to.eql(
+	  //   6
+	  // );
+	  // Y x = x(Y x)
 	  next();
     });
     

@@ -2938,25 +2938,23 @@ describe('高階関数', () => {
         it('イベント駆動システムを実装する', (next) => {
           /* #@range_begin(event_driven_system) */
           var eventSystem = () => {
-            var handlers = object.empty();
+            var handlers = object.empty(); // イベントハンドラを格納する変数
             return {
               on: (eventName, callback) => {
                 handlers = object.set(eventName, callback, handlers);
                 return null;
               },
               emit: (eventName, arg) => {
-                expect(handlers).not.to.be(null);
-                return object.get(eventName, handlers)(arg); 
+                return object.get(eventName, handlers)(arg);  // 該当するイベントハンドラを起動する
               }
             };
           };
+          /* #@range_end(event_driven_system) */
           var eventLoop = (eventSystem) => {
             
           };
-          /* #@range_end(event_driven_system) */
           /* #@range_begin(event_driven_system_test) */
-          // イベント駆動システムを初期化する
-          var eventDrivenServer = eventSystem(); 
+          var eventDrivenServer = eventSystem(); // イベント駆動システムを初期化する
           // イベント started を登録する
           eventDrivenServer.on("started", (_) => { // startedイベントで実行されるコールバック関数を渡す
             return "event started";
@@ -3559,16 +3557,18 @@ describe('高階関数', () => {
         }); 
         it("継続渡しfind関数", (next) => {
           /* #@range_begin(list_find_cps) */
-          var find = (alist,accumulator, predicate, continuesOnRecursion, escapesFromRecursion) => {
+          var find = (alist,accumulator, predicate, continuesOnFailure, continuesOnSuccess) => {
             return list.match(alist, {
               empty: () => {
-                return escapesFromRecursion(accumulator); // 反復処理を抜ける
+                return continuesOnSuccess(accumulator); // 成功継続で反復処理を抜ける
               },
               cons: (head, tail) => { 
-                if(predicate(head) === true) {
-                  return escapesFromRecursion(head); // escapesFromRecursionで反復処理を脱出する
-                } else {
-                  return continuesOnRecursion(tail, accumulator, predicate, continuesOnRecursion, escapesFromRecursion); // continuesOnRecursionで次の反復処理を続ける
+                if(predicate(head) === true) { // 目的の要素を見つけた場合、
+                  return continuesOnSuccess(head); // 成功継続で反復処理を脱出する
+                } else { // 目的の要素を見つけられなった場合、失敗継続で次の反復処理を続ける
+                  return continuesOnFailure(tail, accumulator, predicate,
+                                            continuesOnFailure,
+                                            continuesOnSuccess);
                 };
               }
             });

@@ -2656,15 +2656,16 @@ describe('高階関数', () => {
       describe('streamからジェネレータを作る', () => {
         /* #@range_begin(generator_from_stream) */
         var generate = (astream) => {
-          var _stream = astream;
+          var _stream = astream; // いったんローカル変数にストリームを格納する
+          /* ジェネレータ関数が返る */
           return () => {
             return stream.match(_stream, {
               empty: () => {
                 return null;
               },
               cons: (head, tailThunk) => {
-                _stream = tailThunk();
-                return head;
+                _stream = tailThunk();  // ローカル変数を更新する
+                return head;  // ストリームの先頭要素を返す
               }
             });
           };
@@ -2736,8 +2737,10 @@ describe('高階関数', () => {
             }
           };
           /* #@range_begin(prime_generator) */
-          var primes = stream.filter(stream.integersFrom(1))(isPrime); 
+          var integers = stream.integersFrom(1);
+          var primes = stream.filter(integers)(isPrime); // 素数のストリーム
           var primeGenerator = generate(primes);
+          /******* テスト ********/
           expect(
             primeGenerator()
           ).to.eql(
@@ -2832,11 +2835,11 @@ describe('高階関数', () => {
         var succ = (n) => {
           return n + 1;
         };
-        var directCall = (arg) => {
+        var doCall = (arg) => {
           return succ(arg);  // succ関数を直接呼び出す
         };
         expect(
-          directCall(2)
+          doCall(2)
         ).to.eql(
           3
         );
@@ -2855,7 +2858,7 @@ describe('高階関数', () => {
         };
         var doCallBack = setupCallBack(succ);  // コールバック関数を設定する
         expect(
-          doCallBack(2)
+          doCallBack(2) // 設定されたコールバック関数を実行する
         ).to.eql(
           3
         );
@@ -2871,8 +2874,8 @@ describe('高階関数', () => {
               return list.empty();
             },
             cons: (head, tail) => {
-              return list.cons(callback(head), 
-                               map(tail,callback));
+              return list.cons(callback(head),  // コールバック関数を実行する
+                               map(tail,callback)); // map関数の再帰呼び出し
             }
           });
         };
@@ -3264,21 +3267,19 @@ describe('高階関数', () => {
         it("foldrでproductを作る", (next) => {
           /* #@range_begin(foldr_product) */
           var product = (alist) => {
-            var accumulator = 1;
-            var callback = (item) => {
+            return foldr(alist)(1)((item) => {
               return (accumulator) => {
                 return accumulator * item;
               };
-            };
-            return foldr(alist)(1)(callback);
+            });
           };
           /********* テスト **********/
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          // list = [1,2,3]
+          var seq = list.cons(1,list.cons(2,list.cons(3,list.empty())));
           expect(
             product(seq)
           ).to.eql(
-            24 // 1 * 2 * 3 * 4 = 24
+            6 // 1 * 2 * 3 = 6
           );
           /* #@range_end(foldr_product) */
           next();
@@ -3319,9 +3320,12 @@ describe('高階関数', () => {
           next();
         });
         it("foldrでfind関数を作る", (next) => {
+          var even = (n) => {
+            return (n % 2) === 0;
+          };
           /* #@range_begin(foldr_find) */
           var find = (alist) => {
-            return (predicate) => {
+            return (predicate) => { // 要素を判定する述語関数
               return foldr(alist)(null)((item) => {
                 return (accumulator) => {
                   if(predicate(item) === true) {
@@ -3334,12 +3338,9 @@ describe('高階関数', () => {
             };
           };
           /******** テスト *********/
-          var numbers = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-          var even = (n) => {
-            return (n % 2) === 0;
-          };
+          var numbers = list.cons(1,list.cons(2,list.cons(3,list.empty())));
           expect(
-            find(numbers)(even)
+            find(numbers)(even) // 最初に登場する偶数の要素を探す
           ).to.eql(
             2
           );
@@ -3385,20 +3386,21 @@ describe('高階関数', () => {
         it("foldrで map関数を作る", (next) => {
           /* #@range_begin(foldr_map) */
           var map = (alist) => {
-            return (transform) => {
+            return (callback) => { // 個々の要素を変換するコールバック関数
               return foldr(alist)(list.empty())((item) => {
                 return (accumulator) => {
-                  return list.cons(transform(item), accumulator);
+                  return list.cons(callback(item), accumulator);
                 };
               });
             };
           };
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          /****** テスト ******/
+          // list = [1,2,3]
+          var seq = list.cons(1,list.cons(2,list.cons(3,list.empty())));
           expect(
             list.toArray(map(seq)(double))
           ).to.eql(
-            [ 2, 4, 6, 8]
+            [ 2, 4, 6] // 2 * [1,2,3] = [2,4,6]
           );
           /* #@range_end(foldr_map) */
           next();
@@ -3406,11 +3408,11 @@ describe('高階関数', () => {
         it("Array#reduceで list#fromArray関数を作る", (next) => {
           /* #@range_begin(list_fromArray) */
           var fromArray = (array) => {
-            expect(array).to.an('array');
             return array.reduce((accumulator, item) => {
               return list.append(accumulator)(list.cons(item, list.empty()));
             }, list.empty());
           };
+          /******* テスト *******/
           var theList = fromArray([0,1,2,3]);
           expect(
             list.toArray(theList)

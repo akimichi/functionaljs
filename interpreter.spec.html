@@ -32,9 +32,7 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
 
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-
-<span class="hljs-keyword">var</span> env = {</pre></div></div>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
             
         </li>
         
@@ -44,6 +42,34 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="-">継続渡し評価器のサンプルコード</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h2 id="-">環境モジュール</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> env = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>空の環境</p>
 
@@ -57,11 +83,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>lookupEnv:: (STRING, ENV) =&gt; M[VALUE]</p>
 
@@ -75,11 +101,11 @@
         </li>
         
         
-        <li id="section-4">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>extendEnv:: (STRING, VALUE, ENV) =&gt; ENV </p>
 
@@ -103,11 +129,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-5">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <h2 id="-">式の代数的データ構造</h2>
 
@@ -151,11 +177,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="-">式の評価関数</h2>
 <p>evaluateCPS: (EXP, ENV, FUNC[VALUE -&gt; VALUE]) -&gt; VALUE</p>
@@ -205,8 +231,22 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         <span class="hljs-keyword">return</span> continues(rator(rand));
       }
     });
-  };
-  describe(<span class="hljs-string">'継続渡し評価器をテストする'</span>, () =&gt; {
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h2 id="-">単体テスト</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'継続渡し評価器をテストする'</span>, () =&gt; {
     <span class="hljs-keyword">var</span> returns = (result) =&gt; {
       <span class="hljs-keyword">return</span> result;
     };
@@ -227,11 +267,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-7">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>自由変数の場合は、 abortが返る</p>
 
@@ -255,11 +295,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-8">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>(λx.1)(2)</p>
 
@@ -285,11 +325,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-9">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>(λx.x)(1) = 1 */</p>
 
@@ -333,11 +373,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-10">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>(λx.λy.x)(1)(0) = 1</p>
 
@@ -357,11 +397,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-11">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>(λx.λy.x)(1)(z) = 1</p>
 
@@ -381,11 +421,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-12">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>(λx.λy.x)(z)(0) = error</p>
 
@@ -408,11 +448,11 @@ describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</p
         </li>
         
         
-        <li id="section-13">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>(λx.raise)(2)</p>
 

@@ -18,3 +18,4 @@ layout: default
 ## 付録
 
 * [継続渡し評価器](interpreter.spec.html)
+* [パーサーコンビネータ](parser.spec.html)

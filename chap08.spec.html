@@ -1156,7 +1156,7 @@ expect(
             </div>
             
             <div class="content"><div class='highlight'><pre>    }); <span class="hljs-comment">// </span>
-    describe(<span class="hljs-string">'継続渡し評価器'</span>, () =&gt; {</pre></div></div>
+    describe(<span class="hljs-string">'例外捕捉評価器'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -1166,337 +1166,6 @@ expect(
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <h2 id="-">式の代数的データ構造</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> exp = {
-        match : (data, pattern) =&gt; {
-          <span class="hljs-keyword">return</span> data.call(exp, pattern);
-        },
-        raise: (exp) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.raise(exp);
-          };
-        },
-        number: (value) =&gt; {
-          expect(value).to.a(<span class="hljs-string">'number'</span>);
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.number(value);
-          };
-        },
-        variable: (name) =&gt; {
-          expect(name).to.a(<span class="hljs-string">'string'</span>);
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.variable(name);
-          };
-        },
-        lambda: (variable, body) =&gt; {
-          expect(variable).to.a(<span class="hljs-string">'function'</span>);
-          expect(body).to.a(<span class="hljs-string">'function'</span>);
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.lambda(variable, body);
-          };
-        },
-        app: (variable, arg) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.app(variable, arg);
-          };
-        }
-      }; <span class="hljs-comment">// exp</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <h2 id="-">式の評価関数</h2>
-<p>evaluateCPS: (EXP, ENV, FUNC[VALUE -&gt; VALUE]) -&gt; VALUE</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> evaluateCPS = (anExp, env, continues) =&gt; {
-        <span class="hljs-keyword">return</span> exp.match(anExp,{
-          <span class="hljs-comment">/* 例外の評価 */</span>
-          raise: (message) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(message);
-          },
-          <span class="hljs-comment">/* 数値の評価 */</span>
-          number: (answer) =&gt; {
-            <span class="hljs-keyword">return</span> continues(answer);
-          },
-          <span class="hljs-comment">/* 変数の評価 */</span>
-          variable: (name) =&gt; {
-            <span class="hljs-keyword">var</span> found = lookupEnv(name, env);
-            <span class="hljs-keyword">if</span>(found === <span class="hljs-literal">undefined</span>){
-              <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(name + <span class="hljs-string">" not found"</span>);
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> continues(found);
-            }
-          },
-          <span class="hljs-comment">/* λ式の評価 */</span>
-          lambda: (anExp, bodyExp) =&gt; {
-            <span class="hljs-comment">/* クロージャーを返す */</span>
-            <span class="hljs-keyword">return</span> (actualArg) =&gt; {
-              <span class="hljs-keyword">return</span> exp.match(anExp,{
-                variable: (name) =&gt; {
-                  <span class="hljs-keyword">return</span> continues(evaluateCPS(bodyExp, extendEnv(name, actualArg ,env), continues));
-                },
-                number: (value) =&gt; {
-                  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"lambdaの引数が数値になっています"</span>);
-                },
-                lambda: ($$,$$$) =&gt; {
-                  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"lambdaの引数がlambbaになっています"</span>);
-                }
-              });
-            };
-          },
-          <span class="hljs-comment">/* 関数適用の評価 */</span>
-          app: (anExp, arg) =&gt; {
-            <span class="hljs-keyword">var</span> rator = evaluateCPS(anExp, env, continues);
-            <span class="hljs-keyword">var</span> rand = evaluateCPS(arg, env, continues);
-            <span class="hljs-keyword">return</span> continues(rator(rand));
-          }
-        });
-      };
-      describe(<span class="hljs-string">'継続渡し評価器をテストする'</span>, () =&gt; {
-        <span class="hljs-keyword">var</span> returns = (result) =&gt; {
-          <span class="hljs-keyword">return</span> result;
-        };
-        it(<span class="hljs-string">'数値を評価する'</span>, (next) =&gt; {
-          expect(
-            evaluateCPS(exp.number(<span class="hljs-number">2</span>), emptyEnv, returns)
-          ).to.eql(<span class="hljs-number">2</span>);
-          next();
-        });
-        it(<span class="hljs-string">'変数を評価する'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> env = extendEnv(<span class="hljs-string">"x"</span>,<span class="hljs-number">1</span>, emptyEnv, returns);
-          expect(
-            evaluateCPS(exp.variable(<span class="hljs-string">"x"</span>), env, returns)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>自由変数の場合は、 abortが返る</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          expect(
-            evaluateCPS(exp.variable(<span class="hljs-string">"y"</span>), env, returns)
-          ).to.eql(
-            <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"y not found"</span>)
-          );
-          next();
-        });
-        it(<span class="hljs-string">'constant関数'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> constant = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),exp.number(<span class="hljs-number">1</span>));
-          expect(
-            evaluateCPS(constant, emptyEnv, returns)
-          ).to.a(
-            <span class="hljs-string">'function'</span>
-          );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>(λx.1)(2)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> applied = exp.app(constant, exp.number(<span class="hljs-number">2</span>));
-          expect(
-            evaluateCPS(applied, emptyEnv, returns)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">'identity関数をテストする'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* λx.x */</span>
-          <span class="hljs-keyword">var</span> identity = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),exp.variable(<span class="hljs-string">"x"</span>));
-          expect(
-            evaluateCPS(identity, emptyEnv, returns)
-          ).to.a(
-            <span class="hljs-string">'function'</span>
-          );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>(λx.x)(1) = 1 */</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> appliedExpression = exp.app(identity, exp.number(<span class="hljs-number">1</span>));
-          expect(
-            evaluateCPS(appliedExpression, emptyEnv, returns)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">'ブール型を評価する'</span>, (next) =&gt; {
-          <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">1000</span>);
-          <span class="hljs-comment">/* λx.λy.x */</span>
-          <span class="hljs-keyword">var</span> trueFun = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),exp.variable(<span class="hljs-string">"x"</span>)));
-          <span class="hljs-comment">/* λx.λy.y */</span>
-          <span class="hljs-keyword">var</span> falseFun = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),exp.variable(<span class="hljs-string">"y"</span>)));
-          <span class="hljs-keyword">var</span> not = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
-                               exp.app(
-                                 exp.app(
-                                   exp.variable(<span class="hljs-string">"x"</span>),falseFun),
-                                 trueFun));
-          <span class="hljs-keyword">var</span> and = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
-                               exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),
-                                          exp.app(
-                                            exp.app(exp.variable(<span class="hljs-string">"x"</span>),exp.variable(<span class="hljs-string">"y"</span>)),
-                                            falseFun)));
-          <span class="hljs-keyword">var</span> or = exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
-                              exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),
-                                         exp.app(
-                                           exp.app(exp.variable(<span class="hljs-string">"x"</span>),trueFun),
-                                           exp.variable(<span class="hljs-string">"y"</span>))));
-          <span class="hljs-keyword">var</span> cond = exp.lambda(exp.variable(<span class="hljs-string">"pred"</span>),
-                                exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
-                                           exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),
-                                                      exp.app(
-                                                        exp.app(exp.variable(<span class="hljs-string">"pred"</span>),exp.variable(<span class="hljs-string">"x"</span>)),exp.variable(<span class="hljs-string">"y"</span>)))));</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              <p>(λx.λy.x)(1)(0) = 1</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          expect(
-            evaluateCPS(
-              exp.app(
-                exp.app(trueFun,exp.number(<span class="hljs-number">1</span>)),
-                exp.number(<span class="hljs-number">0</span>)),
-              emptyEnv,
-              returns)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>(λx.λy.x)(1)(z) = 1</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          expect(
-            evaluateCPS(
-              exp.app(
-                exp.app(trueFun,exp.number(<span class="hljs-number">1</span>)),
-                exp.variable(<span class="hljs-string">"z"</span>)),
-              emptyEnv,
-              returns)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
-              <p>(λx.λy.x)(z)(0) = error</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          expect(
-            evaluateCPS(
-              exp.app(
-                exp.app(trueFun,exp.variable(<span class="hljs-string">"z"</span>)),
-                exp.number(<span class="hljs-number">0</span>)),
-              emptyEnv,
-              returns)
-          ).to.eql(
-            <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"z not found"</span>)
-          );
-          next();
-        });
-        it(<span class="hljs-string">'raiseを使う'</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
-              <p>(λx.raise)(2)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> applied = exp.app(exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),exp.raise(<span class="hljs-string">"exception"</span>)),
-                                        exp.number(<span class="hljs-number">2</span>));
-          expect(
-            evaluateCPS(applied, emptyEnv, returns)
-          ).to.eql(
-            <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"exception"</span>)
-          );
-          next();
-        });
-      });
-    });
-    describe(<span class="hljs-string">'例外捕捉評価器'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-35">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h2 id="-">式の代数的データ構造</h2>
 
@@ -1552,11 +1221,11 @@ expect(
         </li>
         
         
-        <li id="section-36">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h2 id="-">式の評価関数</h2>
 
@@ -1567,11 +1236,11 @@ expect(
         </li>
         
         
-        <li id="section-37">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>evaluateCPS: (EXP, ENV, FUNC[VALUE -&gt; VALUE]) -&gt; VALUE</p>
 
@@ -1582,11 +1251,11 @@ expect(
         </li>
         
         
-        <li id="section-38">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>c.f. Programming Language Concepts, p.208</p>
 
@@ -1620,11 +1289,11 @@ expect(
         </li>
         
         
-        <li id="section-39">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>return new Error(name + “ not found”);</p>
 
@@ -1684,11 +1353,11 @@ expect(
         </li>
         
         
-        <li id="section-40">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>自由変数の場合は、 例外が返る</p>
 
@@ -1712,11 +1381,11 @@ expect(
         </li>
         
         
-        <li id="section-41">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>(λx.1)(2)</p>
 
@@ -1742,11 +1411,11 @@ expect(
         </li>
         
         
-        <li id="section-42">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>(λx.x)(1) = 1 */</p>
 
@@ -1790,11 +1459,11 @@ expect(
         </li>
         
         
-        <li id="section-43">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>(λx.λy.x)(1)(0) = 1</p>
 
@@ -1815,11 +1484,11 @@ expect(
         </li>
         
         
-        <li id="section-44">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>(λx.λy.x)(1)(z) = 1</p>
 
@@ -1840,11 +1509,11 @@ expect(
         </li>
         
         
-        <li id="section-45">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>(λx.λy.x)(z)(0) = error</p>
 
@@ -1879,11 +1548,11 @@ expect(
         </li>
         
         
-        <li id="section-46">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>(λx.tryWith(raise, exception , 1))(0) = 1</p>
 

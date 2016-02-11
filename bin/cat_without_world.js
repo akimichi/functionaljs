@@ -12,7 +12,7 @@ var IO = {
   // unit:: T => IO[T]
   unit: (any) => {
     return (_) =>  { // 外界を指定しない
-      return any; 
+      return any;  // 値だけを返す
     };
   },
   // flatMap:: IO[T] => (T => IO[S]) => IO[S]

@@ -6130,7 +6130,7 @@ describe('高階関数', () => {
           // run:: IO[A] => A
           run: (instance) => {
             return (world) => {
-              var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
+              var newPair = instance(world); // IOモナドのインスタンス(アクション)を現在の外界に適用する
               return pair.left(newPair);     // 結果だけを返す
             };
           }
@@ -6232,6 +6232,7 @@ describe('高階関数', () => {
             return process.stdin.on('readable', continuation);
           };
           /* #@range_end(io_monad_is_composable) */
+          
           next();
         });
         it('IOモナドで参照透過性を確保する', (next) => {
@@ -6248,6 +6249,20 @@ describe('高階関数', () => {
               });
             })()
           );
+          // var path = "./test/resources/file.txt";
+          // expect(
+          //   IO.flatMap(IO.writeFile(path)("test output"))((content) => {
+          //     return IO.flatMap(IO.readFile(path))((content) => {
+          //       return IO.done(_);
+          //     });
+          //   })()
+          // ).to.eql(
+          //   IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
+          //     return IO.flatMap(IO.println(content))((_) => {
+          //       return IO.done(_);
+          //     });
+          //   })()
+          // );
           next();
         });
       }); // IOモナド

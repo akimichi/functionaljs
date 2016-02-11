@@ -43,16 +43,13 @@ var IO = {
   run: (instance) => {
     return (world) => {
       return pair.left(instance(world)); // IOアクションを現在の外界に適用し、結果のみを返す
-      // var newPair = instance(world); // ioモナドのインスタンス(アクション)を現在の外界に適用する
-      // return pair.left(newPair);
     };
-    // return instance();
   },
   /* #@range_end(io_monad_definition_with_world_helper_function) */
   /* #@range_begin(io_actions) */
   // readFile:: STRING => IO[STRING]
   readFile: (path) => {
-    return (world) => {
+    return (world) => { // IOモナドを返す
       var fs = require('fs');
       var content = fs.readFileSync(path, 'utf8');
       return IO.unit(content)(world);
@@ -60,7 +57,7 @@ var IO = {
   },
   // println:: STRING => IO[null]
   println: (message) => {
-    return (world) => {
+    return (world) => { // IOモナドを返す
       console.log(message);
       return IO.unit(null)(world);
     };
@@ -74,7 +71,7 @@ var IO = {
 var initialWorld = null;
 var path = process.argv[2];
 
-IO.flatMap(IO.readFile(path))((content) => {
+IO.flatMap(IO.readFile(path))((content) => { // contentにはファイルの内容が入っている
   return IO.flatMap(IO.println(content))((_) => {
     return IO.done(_);
   });

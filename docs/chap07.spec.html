@@ -3438,15 +3438,16 @@ expect(
       describe(<span class="hljs-string">'streamからジェネレータを作る'</span>, () =&gt; {
         <span class="hljs-comment">/* #@range_begin(generator_from_stream) */</span>
         <span class="hljs-keyword">var</span> generate = (astream) =&gt; {
-          <span class="hljs-keyword">var</span> _stream = astream;
+          <span class="hljs-keyword">var</span> _stream = astream; <span class="hljs-comment">// いったんローカル変数にストリームを格納する</span>
+          <span class="hljs-comment">/* ジェネレータ関数が返る */</span>
           <span class="hljs-keyword">return</span> () =&gt; {
             <span class="hljs-keyword">return</span> stream.match(_stream, {
               empty: () =&gt; {
                 <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
               },
               cons: (head, tailThunk) =&gt; {
-                _stream = tailThunk();
-                <span class="hljs-keyword">return</span> head;
+                _stream = tailThunk();  <span class="hljs-comment">// ローカル変数を更新する</span>
+                <span class="hljs-keyword">return</span> head;  <span class="hljs-comment">// ストリームの先頭要素を返す</span>
               }
             });
           };
@@ -3518,8 +3519,10 @@ expect(
             }
           };
           <span class="hljs-comment">/* #@range_begin(prime_generator) */</span>
-          <span class="hljs-keyword">var</span> primes = stream.filter(stream.integersFrom(<span class="hljs-number">1</span>))(isPrime); 
+          <span class="hljs-keyword">var</span> integers = stream.integersFrom(<span class="hljs-number">1</span>);
+          <span class="hljs-keyword">var</span> primes = stream.filter(integers)(isPrime); <span class="hljs-comment">// 素数のストリーム</span>
           <span class="hljs-keyword">var</span> primeGenerator = generate(primes);
+          <span class="hljs-comment">/******* テスト ********/</span>
           expect(
             primeGenerator()
           ).to.eql(
@@ -3638,11 +3641,11 @@ expect(
         <span class="hljs-keyword">var</span> succ = (n) =&gt; {
           <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
         };
-        <span class="hljs-keyword">var</span> directCall = (arg) =&gt; {
+        <span class="hljs-keyword">var</span> doCall = (arg) =&gt; {
           <span class="hljs-keyword">return</span> succ(arg);  <span class="hljs-comment">// succ関数を直接呼び出す</span>
         };
         expect(
-          directCall(<span class="hljs-number">2</span>)
+          doCall(<span class="hljs-number">2</span>)
         ).to.eql(
           <span class="hljs-number">3</span>
         );
@@ -3661,7 +3664,7 @@ expect(
         };
         <span class="hljs-keyword">var</span> doCallBack = setupCallBack(succ);  <span class="hljs-comment">// コールバック関数を設定する</span>
         expect(
-          doCallBack(<span class="hljs-number">2</span>)
+          doCallBack(<span class="hljs-number">2</span>) <span class="hljs-comment">// 設定されたコールバック関数を実行する</span>
         ).to.eql(
           <span class="hljs-number">3</span>
         );
@@ -3690,8 +3693,8 @@ expect(
               <span class="hljs-keyword">return</span> list.empty();
             },
             cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> list.cons(callback(head), 
-                               map(tail,callback));
+              <span class="hljs-keyword">return</span> list.cons(callback(head),  <span class="hljs-comment">// コールバック関数を実行する</span>
+                               map(tail,callback)); <span class="hljs-comment">// map関数の再帰呼び出し</span>
             }
           });
         };
@@ -3767,23 +3770,23 @@ expect(
         it(<span class="hljs-string">'イベント駆動システムを実装する'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(event_driven_system) */</span>
           <span class="hljs-keyword">var</span> eventSystem = () =&gt; {
-            <span class="hljs-keyword">var</span> handlers = object.empty();
+            <span class="hljs-keyword">var</span> handlers = object.empty(); <span class="hljs-comment">// イベントハンドラを格納する変数</span>
             <span class="hljs-keyword">return</span> {
               on: (eventName, callback) =&gt; {
                 handlers = object.set(eventName, callback, handlers);
                 <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
               },
               emit: (eventName, arg) =&gt; {
-                expect(handlers).not.to.be(<span class="hljs-literal">null</span>);
-                <span class="hljs-keyword">return</span> object.get(eventName, handlers)(arg); 
+                <span class="hljs-keyword">return</span> object.get(eventName, handlers)(arg);  <span class="hljs-comment">// 該当するイベントハンドラを起動する</span>
               }
             };
           };
+          <span class="hljs-comment">/* #@range_end(event_driven_system) */</span>
           <span class="hljs-keyword">var</span> eventLoop = (eventSystem) =&gt; {
             
           };
-          <span class="hljs-comment">/* #@range_end(event_driven_system) */</span>
-          <span class="hljs-comment">/* #@range_begin(event_driven_system_test) */</span></pre></div></div>
+          <span class="hljs-comment">/* #@range_begin(event_driven_system_test) */</span>
+          <span class="hljs-keyword">var</span> eventDrivenServer = eventSystem(); <span class="hljs-comment">// イベント駆動システムを初期化する</span></pre></div></div>
             
         </li>
         
@@ -3793,21 +3796,6 @@ expect(
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-64">&#182;</a>
-              </div>
-              <p>イベント駆動システムを初期化する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> eventDrivenServer = eventSystem();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-65">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>イベント started を登録する</p>
 
@@ -3820,11 +3808,11 @@ expect(
         </li>
         
         
-        <li id="section-66">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>イベント terminated を登録する</p>
 
@@ -3838,11 +3826,11 @@ expect(
         </li>
         
         
-        <li id="section-67">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>イベント started を生じさせる</p>
 
@@ -3857,11 +3845,11 @@ expect(
         </li>
         
         
-        <li id="section-68">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>イベント terminated を生じさせる</p>
 
@@ -3934,11 +3922,11 @@ expect(
         </li>
         
         
-        <li id="section-69">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>/<em> #@range_begin(list_length) </em>/
 var length = (alist) =&gt; {
@@ -3996,11 +3984,11 @@ expect(
         </li>
         
         
-        <li id="section-70">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>it(‘リストの逆転’, (next) =&gt; {
   /<em> #@range_begin(list_reverse) </em>/
@@ -4108,11 +4096,11 @@ expect(
         </li>
         
         
-        <li id="section-71">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p>var request = {
   login: (user, password) =&gt; {
@@ -4172,11 +4160,11 @@ var subscribe = (init) =&gt; {
         </li>
         
         
-        <li id="section-72">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -4204,11 +4192,11 @@ var subscribe = (init) =&gt; {
         </li>
         
         
-        <li id="section-73">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -4225,34 +4213,32 @@ var subscribe = (init) =&gt; {
         it(<span class="hljs-string">"foldrでproductを作る"</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(foldr_product) */</span>
           <span class="hljs-keyword">var</span> product = (alist) =&gt; {
-            <span class="hljs-keyword">var</span> accumulator = <span class="hljs-number">1</span>;
-            <span class="hljs-keyword">var</span> callback = (item) =&gt; {
+            <span class="hljs-keyword">return</span> foldr(alist)(<span class="hljs-number">1</span>)((item) =&gt; {
               <span class="hljs-keyword">return</span> (accumulator) =&gt; {
                 <span class="hljs-keyword">return</span> accumulator * item;
               };
-            };
-            <span class="hljs-keyword">return</span> foldr(alist)(<span class="hljs-number">1</span>)(callback);
+            });
           };
           <span class="hljs-comment">/********* テスト **********/</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-74">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
-              <p>list = [1,2,3,4]</p>
+              <p>list = [1,2,3]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> seq = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.cons(<span class="hljs-number">4</span>,list.empty()))));
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> seq = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty())));
           expect(
             product(seq)
           ).to.eql(
-            <span class="hljs-number">24</span> <span class="hljs-comment">// 1 * 2 * 3 * 4 = 24</span>
+            <span class="hljs-number">6</span> <span class="hljs-comment">// 1 * 2 * 3 = 6</span>
           );
           <span class="hljs-comment">/* #@range_end(foldr_product) */</span>
           next();
@@ -4262,11 +4248,11 @@ var subscribe = (init) =&gt; {
         </li>
         
         
-        <li id="section-75">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p>reverse = foldl (flip cons) list.empty()
 var accumulator = list.empty();
@@ -4300,11 +4286,11 @@ var reverse = (alist) =&gt; {
         </li>
         
         
-        <li id="section-76">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -4319,9 +4305,12 @@ var reverse = (alist) =&gt; {
           next();
         });
         it(<span class="hljs-string">"foldrでfind関数を作る"</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> even = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
+          };
           <span class="hljs-comment">/* #@range_begin(foldr_find) */</span>
           <span class="hljs-keyword">var</span> find = (alist) =&gt; {
-            <span class="hljs-keyword">return</span> (predicate) =&gt; {
+            <span class="hljs-keyword">return</span> (predicate) =&gt; { <span class="hljs-comment">// 要素を判定する述語関数</span>
               <span class="hljs-keyword">return</span> foldr(alist)(<span class="hljs-literal">null</span>)((item) =&gt; {
                 <span class="hljs-keyword">return</span> (accumulator) =&gt; {
                   <span class="hljs-keyword">if</span>(predicate(item) === <span class="hljs-literal">true</span>) {
@@ -4334,12 +4323,9 @@ var reverse = (alist) =&gt; {
             };
           };
           <span class="hljs-comment">/******** テスト *********/</span>
-          <span class="hljs-keyword">var</span> numbers = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.cons(<span class="hljs-number">4</span>,list.empty()))));
-          <span class="hljs-keyword">var</span> even = (n) =&gt; {
-            <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
-          };
+          <span class="hljs-keyword">var</span> numbers = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty())));
           expect(
-            find(numbers)(even)
+            find(numbers)(even) <span class="hljs-comment">// 最初に登場する偶数の要素を探す</span>
           ).to.eql(
             <span class="hljs-number">2</span>
           );
@@ -4385,33 +4371,34 @@ var reverse = (alist) =&gt; {
         it(<span class="hljs-string">"foldrで map関数を作る"</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(foldr_map) */</span>
           <span class="hljs-keyword">var</span> map = (alist) =&gt; {
-            <span class="hljs-keyword">return</span> (transform) =&gt; {
+            <span class="hljs-keyword">return</span> (callback) =&gt; { <span class="hljs-comment">// 個々の要素を変換するコールバック関数</span>
               <span class="hljs-keyword">return</span> foldr(alist)(list.empty())((item) =&gt; {
                 <span class="hljs-keyword">return</span> (accumulator) =&gt; {
-                  <span class="hljs-keyword">return</span> list.cons(transform(item), accumulator);
+                  <span class="hljs-keyword">return</span> list.cons(callback(item), accumulator);
                 };
               });
             };
-          };</pre></div></div>
+          };
+          <span class="hljs-comment">/****** テスト ******/</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-77">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
-              <p>list = [1,2,3,4]</p>
+              <p>list = [1,2,3]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> seq = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.cons(<span class="hljs-number">4</span>,list.empty()))));
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> seq = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty())));
           expect(
             list.toArray(map(seq)(double))
           ).to.eql(
-            [ <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span>]
+            [ <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>] <span class="hljs-comment">// 2 * [1,2,3] = [2,4,6]</span>
           );
           <span class="hljs-comment">/* #@range_end(foldr_map) */</span>
           next();
@@ -4419,11 +4406,11 @@ var reverse = (alist) =&gt; {
         it(<span class="hljs-string">"Array#reduceで list#fromArray関数を作る"</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(list_fromArray) */</span>
           <span class="hljs-keyword">var</span> fromArray = (array) =&gt; {
-            expect(array).to.an(<span class="hljs-string">'array'</span>);
             <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
               <span class="hljs-keyword">return</span> list.append(accumulator)(list.cons(item, list.empty()));
             }, list.empty());
           };
+          <span class="hljs-comment">/******* テスト *******/</span>
           <span class="hljs-keyword">var</span> theList = fromArray([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]);
           expect(
             list.toArray(theList)
@@ -4456,11 +4443,11 @@ var reverse = (alist) =&gt; {
         </li>
         
         
-        <li id="section-78">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>it(“succ関数を中断し、再開する”, (next) =&gt; {
   /<em> #@range_begin(succ_suspend_and_resume) </em>/
@@ -4501,11 +4488,11 @@ var reverse = (alist) =&gt; {
         </li>
         
         
-        <li id="section-79">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p>継続渡しの succ関数と add関数を使って add(2, succ(3)) を計算する</p>
 
@@ -4596,16 +4583,18 @@ var reverse = (alist) =&gt; {
         }); 
         it(<span class="hljs-string">"継続渡しfind関数"</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(list_find_cps) */</span>
-          <span class="hljs-keyword">var</span> find = (alist,accumulator, predicate, continuesOnRecursion, escapesFromRecursion) =&gt; {
+          <span class="hljs-keyword">var</span> find = (alist,accumulator, predicate, continuesOnFailure, continuesOnSuccess) =&gt; {
             <span class="hljs-keyword">return</span> list.match(alist, {
               empty: () =&gt; {
-                <span class="hljs-keyword">return</span> escapesFromRecursion(accumulator); <span class="hljs-comment">// 反復処理を抜ける</span>
+                <span class="hljs-keyword">return</span> continuesOnSuccess(accumulator); <span class="hljs-comment">// 成功継続で反復処理を抜ける</span>
               },
               cons: (head, tail) =&gt; { 
-                <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) {
-                  <span class="hljs-keyword">return</span> escapesFromRecursion(head); <span class="hljs-comment">// escapesFromRecursionで反復処理を脱出する</span>
-                } <span class="hljs-keyword">else</span> {
-                  <span class="hljs-keyword">return</span> continuesOnRecursion(tail, accumulator, predicate, continuesOnRecursion, escapesFromRecursion); <span class="hljs-comment">// continuesOnRecursionで次の反復処理を続ける</span>
+                <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) { <span class="hljs-comment">// 目的の要素を見つけた場合、</span>
+                  <span class="hljs-keyword">return</span> continuesOnSuccess(head); <span class="hljs-comment">// 成功継続で反復処理を脱出する</span>
+                } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// 目的の要素を見つけられなった場合、失敗継続で次の反復処理を続ける</span>
+                  <span class="hljs-keyword">return</span> continuesOnFailure(tail, accumulator, predicate,
+                                            continuesOnFailure,
+                                            continuesOnSuccess);
                 };
               }
             });
@@ -4616,11 +4605,11 @@ var reverse = (alist) =&gt; {
         </li>
         
         
-        <li id="section-80">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p>失敗継続では、反復処理を続ける</p>
 
@@ -4633,11 +4622,11 @@ var reverse = (alist) =&gt; {
         </li>
         
         
-        <li id="section-81">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>成功継続では、反復処理を脱出する</p>
 
@@ -4695,13 +4684,13 @@ var reverse = (alist) =&gt; {
           match : (anExp, pattern) =&gt; {
             <span class="hljs-keyword">return</span> anExp.call(exp, pattern);
           },
-        <span class="hljs-comment">/* #@range_begin(amb_expression) */</span>
+          <span class="hljs-comment">/* #@range_begin(amb_expression) */</span>
           amb : (alist) =&gt; {
             <span class="hljs-keyword">return</span> (pattern) =&gt; {
               <span class="hljs-keyword">return</span> pattern.amb(alist);
             };
           },
-        <span class="hljs-comment">/* #@range_end(amb_expression) */</span>
+          <span class="hljs-comment">/* #@range_end(amb_expression) */</span>
           num : (n) =&gt; {
             <span class="hljs-keyword">return</span> (pattern) =&gt; {
               <span class="hljs-keyword">return</span> pattern.num(n);
@@ -4711,13 +4700,26 @@ var reverse = (alist) =&gt; {
             <span class="hljs-keyword">return</span> (pattern) =&gt; {
               <span class="hljs-keyword">return</span> pattern.add(exp1, exp2);
             };
-          },
-          mul : (exp1, exp2) =&gt; {
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              <span class="hljs-keyword">return</span> pattern.mul(exp1, exp2);
-            };
-          }
-        };</pre></div></div>
+          }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              <p>mul : (exp1, exp2) =&gt; {
+  return (pattern) =&gt; {
+    return pattern.mul(exp1, exp2);
+  };
+}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        };</pre></div></div>
             
         </li>
         
@@ -4728,47 +4730,19 @@ var reverse = (alist) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
-              <p>var calculateAmb = (choices) =&gt; {
-  return list.match(choices, {
-    // amb(list.empty()) の場合、すなわち選択肢がなければ、失敗継続を実行する
-    empty: () =&gt; {<br>      return continuesOnFailure();
-    },
-    // amb(list.cons(head, tail))の場合、最初の要素を計算して、殘りは失敗継続に渡す
-    cons: (head, tail) =&gt; { 
-      return calculate(head, 
-                       continuesOnSuccess, 
-                       (_) =&gt; { // 失敗継続を作り、そのなかで次の選択肢について計算する
-                         return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
-                       });
-    }
-  });
-};</p>
+              <p>mul: (x, y) =&gt; {
+  return calculate(x, (resultX, alternativeForX) =&gt; { // 引数xを評価する
+    return calculate(y, (resultY, alternativeForY) =&gt; { // 引数yを評価する
+      return continuesOnSuccess(resultX * resultY, alternativeForY); // かけ算を計算する
+    }, alternativeForX); // y の計算に失敗すれば、xの失敗継続を渡す
+  }, continuesOnFailure);
+},</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(amb_calculate) */</span>
         <span class="hljs-keyword">var</span> calculate = (anExp, continuesOnSuccess, continuesOnFailure) =&gt; {
-          <span class="hljs-keyword">return</span> exp.match(anExp, { <span class="hljs-comment">// 式に対してパターンマッチを実行する</span>
-            num: (n) =&gt; {
-              <span class="hljs-keyword">return</span> continuesOnSuccess(n, continuesOnFailure);
-            },
-            add: (x, y) =&gt; {
-              <span class="hljs-keyword">return</span> calculate(x, (resultX, alternativeForX) =&gt; { <span class="hljs-comment">// 引数xを評価する</span>
-                <span class="hljs-keyword">return</span> calculate(y, (resultY, alternativeForY) =&gt; { <span class="hljs-comment">// 引数yを評価する</span>
-                  <span class="hljs-keyword">return</span> continuesOnSuccess(resultX + resultY, alternativeForY); <span class="hljs-comment">// 足し算を計算する</span>
-                }, alternativeForX); <span class="hljs-comment">// y の計算に失敗すれば、xの失敗継続を渡す</span>
-              }, continuesOnFailure);
-            },
-            mul: (x, y) =&gt; {
-              <span class="hljs-keyword">return</span> calculate(x, (resultX, alternativeForX) =&gt; { <span class="hljs-comment">// 引数xを評価する</span>
-                <span class="hljs-keyword">return</span> calculate(y, (resultY, alternativeForY) =&gt; { <span class="hljs-comment">// 引数yを評価する</span>
-                  <span class="hljs-keyword">return</span> continuesOnSuccess(resultX * resultY, alternativeForY); <span class="hljs-comment">// かけ算を計算する</span>
-                }, alternativeForX); <span class="hljs-comment">// y の計算に失敗すれば、xの失敗継続を渡す</span>
-              }, continuesOnFailure);
-            },
-            amb: (choices) =&gt; {
-              <span class="hljs-keyword">var</span> calculateAmb = (choices) =&gt; {
-                <span class="hljs-keyword">return</span> list.match(choices, {</pre></div></div>
+          <span class="hljs-keyword">return</span> exp.match(anExp, { <span class="hljs-comment">// 式に対してパターンマッチを実行する</span></pre></div></div>
             
         </li>
         
@@ -4778,6 +4752,61 @@ var reverse = (alist) =&gt; {
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-83">&#182;</a>
+              </div>
+              <p>数値を評価する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            num: (n) =&gt; {
+              <span class="hljs-keyword">return</span> continuesOnSuccess(n, continuesOnFailure);
+            },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-84">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-84">&#182;</a>
+              </div>
+              <p>足し算を評価する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            add: (x, y) =&gt; {
+              <span class="hljs-keyword">return</span> calculate(x, (resultX, continuesOnFailureX) =&gt; { <span class="hljs-comment">// 引数xを評価する</span>
+                <span class="hljs-keyword">return</span> calculate(y, (resultY, continuesOnFailureY) =&gt; { <span class="hljs-comment">// 引数yを評価する</span>
+                  <span class="hljs-keyword">return</span> continuesOnSuccess(resultX + resultY, continuesOnFailureY); <span class="hljs-comment">// 足し算を計算する</span>
+                }, continuesOnFailureX); <span class="hljs-comment">// y の計算に失敗すれば、xの失敗継続を渡す</span>
+              }, continuesOnFailure);
+            },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-85">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-85">&#182;</a>
+              </div>
+              <p>amb式を評価する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            amb: (choices) =&gt; {
+              <span class="hljs-keyword">var</span> calculateAmb = (choices) =&gt; {
+                <span class="hljs-keyword">return</span> list.match(choices, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-86">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>amb(list.empty()) の場合、すなわち選択肢がなければ、失敗継続を実行する</p>
 
@@ -4790,11 +4819,11 @@ var reverse = (alist) =&gt; {
         </li>
         
         
-        <li id="section-84">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p>amb(list.cons(head, tail))の場合、最初の要素を計算して、殘りは失敗継続に渡す</p>
 
@@ -4816,12 +4845,40 @@ var reverse = (alist) =&gt; {
         <span class="hljs-comment">/* #@range_end(amb_calculate) */</span>
         <span class="hljs-comment">/* #@range_begin(amb_driver) */</span>
         <span class="hljs-keyword">var</span> driver = (expression) =&gt;{
-          <span class="hljs-keyword">var</span> suspendedComputation = <span class="hljs-literal">null</span>; <span class="hljs-comment">// 中断された計算を継続として保存する </span>
-          <span class="hljs-keyword">var</span> continuesOnSuccess = (anyValue, nextAlternative) =&gt; {
-            suspendedComputation = nextAlternative; <span class="hljs-comment">// 再開に備えて、次の継続を保存しておく</span>
+          <span class="hljs-keyword">var</span> suspendedComputation = <span class="hljs-literal">null</span>; <span class="hljs-comment">// 中断された計算を継続として保存する </span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-88">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-88">&#182;</a>
+              </div>
+              <p>成功継続</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> continuesOnSuccess = (anyValue, continuesOnFailure) =&gt; {
+            suspendedComputation = continuesOnFailure; <span class="hljs-comment">// 再開に備えて、次の継続を保存しておく</span>
             <span class="hljs-keyword">return</span> anyValue;
-          };
-          <span class="hljs-keyword">var</span> continuesOnFailure = () =&gt; {
+          };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-89">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-89">&#182;</a>
+              </div>
+              <p>失敗継続</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> continuesOnFailure = () =&gt; {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
           };
           <span class="hljs-keyword">return</span> () =&gt; {
@@ -4833,72 +4890,121 @@ var reverse = (alist) =&gt; {
           };
         };
         <span class="hljs-comment">/* #@range_end(amb_driver) */</span>
-        <span class="hljs-comment">/* #@range_begin(amb_test) */</span>
-        it(<span class="hljs-string">"amb[1,2] + 1  = amb[2, 3]"</span>, (next) =&gt; {
+        it(<span class="hljs-string">"amb[1,2] + 3  = amb[4, 5]"</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> ambExp = exp.add(exp.amb(list.cons(exp.num(<span class="hljs-number">1</span>),list.cons(exp.num(<span class="hljs-number">2</span>), list.empty()))), 
-                                exp.num(<span class="hljs-number">1</span>));
+                                exp.num(<span class="hljs-number">3</span>));
           <span class="hljs-keyword">var</span> calculator = driver(ambExp);
           expect(
             calculator()
           ).to.eql(
-            <span class="hljs-number">2</span>
+            <span class="hljs-number">4</span> <span class="hljs-comment">// 1 + 3 = 4</span>
           );
           expect(
             calculator()
           ).to.eql(
-            <span class="hljs-number">3</span>
+            <span class="hljs-number">5</span> <span class="hljs-comment">// 2 + 3 = 5 </span>
+          );
+          expect(
+            calculator()
+          ).to.eql(
+            <span class="hljs-literal">null</span>
           );
           next();
         });
-        it(<span class="hljs-string">"1 + amb[1,2] = amb[2, 3]"</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> ambExp = exp.add(exp.num(<span class="hljs-number">1</span>),
-                                exp.amb(list.cons(exp.num(<span class="hljs-number">1</span>),list.cons(exp.num(<span class="hljs-number">2</span>), list.empty()))));
-          <span class="hljs-keyword">var</span> calculator = driver(ambExp);
-          expect(
-            calculator()
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          expect(
-            calculator()
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">"amb[2,3] * amb[4,5]  = amb[2, 3]"</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> ambExp = exp.mul(exp.amb(list.cons(exp.num(<span class="hljs-number">2</span>),list.cons(exp.num(<span class="hljs-number">3</span>), list.empty()))), 
-                                 exp.amb(list.cons(exp.num(<span class="hljs-number">4</span>),list.cons(exp.num(<span class="hljs-number">5</span>), list.empty()))));
-          <span class="hljs-keyword">var</span> calculator = driver(ambExp);
-          expect(
-            calculator()
-          ).to.eql(
-            <span class="hljs-number">8</span>
-          );
-          expect(
-            calculator()
-          ).to.eql(
-            <span class="hljs-number">10</span>
-          );
-          expect(
-            calculator()
-          ).to.eql(
-            <span class="hljs-number">12</span>
-          );
-          next();
-        });
-        <span class="hljs-comment">/* #@range_end(amb_test) */</span></pre></div></div>
+        it(<span class="hljs-string">"amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]"</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
         
-        <li id="section-85">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
-              <p>// ambExp = [1,2] + (2 * 3) = [6, 12]
+              <p>var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))),
+                     exp.amb(list.cons(exp.num(3),list.cons(exp.num(4), list.empty()))));</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(amb_test) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-91">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-91">&#182;</a>
+              </div>
+              <p>amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> ambExp = exp.add(exp.amb(list.fromArray([exp.num(<span class="hljs-number">1</span>),exp.num(<span class="hljs-number">2</span>)])),
+                               exp.amb(list.fromArray([exp.num(<span class="hljs-number">3</span>),exp.num(<span class="hljs-number">4</span>)])));
+          <span class="hljs-keyword">var</span> calculator = driver(ambExp);
+          expect(
+            calculator()
+          ).to.eql(
+            <span class="hljs-number">4</span> <span class="hljs-comment">// 1 + 3 = 4</span>
+          );
+          expect(
+            calculator()
+          ).to.eql(
+            <span class="hljs-number">5</span> <span class="hljs-comment">// 2 + 3 = 5</span>
+          );
+          expect(
+            calculator()
+          ).to.eql(
+            <span class="hljs-number">5</span> <span class="hljs-comment">// 1 + 4 = 5</span>
+          );
+          expect(
+            calculator()
+          ).to.eql(
+            <span class="hljs-number">6</span> <span class="hljs-comment">// 2 + 4 = 6</span>
+          );
+          expect(
+            calculator()
+          ).to.eql(
+            <span class="hljs-literal">null</span> <span class="hljs-comment">// これ以上の候補はないので、計算は終了</span>
+          );
+          <span class="hljs-comment">/* #@range_end(amb_test) */</span>
+          next();
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-92">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              <p>it(“amb[2,3] <em> amb[4,5]  = amb[2, 3]”, (next) =&gt; {
+  var ambExp = exp.mul(exp.amb(list.cons(exp.num(2),list.cons(exp.num(3), list.empty()))), 
+                         exp.amb(list.cons(exp.num(4),list.cons(exp.num(5), list.empty()))));
+  var calculator = driver(ambExp);
+  expect(
+    calculator()
+  ).to.eql(
+    8
+  );
+  expect(
+    calculator()
+  ).to.eql(
+    10
+  );
+  expect(
+    calculator()
+  ).to.eql(
+    12
+  );
+  next();
+});
+// ambExp = [1,2] + (2 </em> 3) = [6, 12]
 var ambExp = add(
   amb(
     list.cons(num(1),list.cons(num(2), list.empty()))), 
@@ -4964,11 +5070,11 @@ expect(
         </li>
         
         
-        <li id="section-86">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <p>not :: FUN[NUMBER =&gt; BOOL] =&gt; FUN[NUMBER =&gt; BOOL]</p>
 
@@ -5051,11 +5157,11 @@ expect(
         </li>
         
         
-        <li id="section-87">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <p>is:: FUNC[ANY -&gt; BOOL] -&gt; ANY -&gt; BOOL</p>
 
@@ -5077,11 +5183,11 @@ expect(
         </li>
         
         
-        <li id="section-88">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p>eq:: ANY -&gt; ANY -&gt; BOOL</p>
 
@@ -5109,11 +5215,11 @@ expect(
         </li>
         
         
-        <li id="section-89">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p>multiplyOf:: NUM -&gt; NUM -&gt; BOOL</p>
 
@@ -5130,11 +5236,11 @@ expect(
         </li>
         
         
-        <li id="section-90">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>even:: NUM -&gt; BOOL</p>
 
@@ -5145,11 +5251,11 @@ expect(
         </li>
         
         
-        <li id="section-91">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <p>odd:: NUM -&gt; BOOL</p>
 
@@ -5174,11 +5280,11 @@ expect(
         </li>
         
         
-        <li id="section-92">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <p>positive:: NUM -&gt; BOOL</p>
 
@@ -5319,11 +5425,11 @@ expect(
         </li>
         
         
-        <li id="section-93">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <p>var cond = (predicate) =&gt; {
   return (thenClause) =&gt; {
@@ -5346,11 +5452,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-94">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <p>is:: FUNC[ANY -&gt; BOOL] -&gt; ANY -&gt; BOOL</p>
 
@@ -5372,11 +5478,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-95">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>eq:: ANY -&gt; ANY -&gt; BOOL</p>
 
@@ -5409,11 +5515,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-96">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <p>文字列をリスト型に変換する</p>
 
@@ -5424,11 +5530,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-97">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <p>文字列の長さが6より長いかどうかを判定する</p>
 
@@ -5443,11 +5549,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-98">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>文字列の長さが3より長く6より短いかどうかを判定する</p>
 
@@ -5486,11 +5592,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-99">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <p>null and null are “empty”</p>
 
@@ -5501,11 +5607,11 @@ var abs = (n) =&gt; {
         </li>
         
         
-        <li id="section-100">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <p>Assume if it has a length property with a non-zero value
 that that property is correct.</p>
@@ -5518,11 +5624,11 @@ that that property is correct.</p>
         </li>
         
         
-        <li id="section-101">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p>Otherwise, does it have any properties of its own?
 Note that this doesn’t handle
@@ -5553,11 +5659,11 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
         </li>
         
         
-        <li id="section-102">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <p>validate: PARSER -&gt; JSON -&gt; PARSERESULT</p>
 
@@ -5573,11 +5679,11 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
         </li>
         
         
-        <li id="section-103">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <p>succeed:: ANY =&gt; LIST =&gt; RESULT</p>
 
@@ -5592,11 +5698,11 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
         </li>
         
         
-        <li id="section-104">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>fail:: (ANY) =&gt; LIST =&gt; PARSERESULT</p>
 
@@ -5910,11 +6016,11 @@ toString and valueOf enumeration bugs in IE &lt; 9</p>
         </li>
         
         
-        <li id="section-105">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <p>var factorial = (fact) =&gt; {
   return (n) =&gt; {
@@ -6209,11 +6315,11 @@ Y x = x(Y x)</p>
         </li>
         
         
-        <li id="section-106">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>it(“list(maybe)”, (next) =&gt; {
   /<em> #@range_begin(maybe_monad_list_test) </em>/
@@ -6307,11 +6413,11 @@ Y x = x(Y x)</p>
         </li>
         
         
-        <li id="section-107">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <h3 id="list-unit">list#unit</h3>
 
@@ -6324,11 +6430,11 @@ Y x = x(Y x)</p>
         </li>
         
         
-        <li id="section-108">
+        <li id="section-115">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-108">&#182;</a>
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <p>append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]
 append [] ys = ys
@@ -6352,11 +6458,11 @@ append (x:xs) ys = x : (xs ++ ys)</p>
         </li>
         
         
-        <li id="section-109">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-109">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <p>concat:: LIST[LIST[T]] -&gt; LIST[T]
 concat [] = []
@@ -6369,11 +6475,11 @@ concat (xs:xss) = xs ++ concat xss</p>
         </li>
         
         
-        <li id="section-110">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-110">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>return list.foldr(list_of_list)(list.empty())(list.append);</p>
 
@@ -6392,11 +6498,11 @@ concat (xs:xss) = xs ++ concat xss</p>
         </li>
         
         
-        <li id="section-111">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <p>map:: LIST[T] -&gt; FUN[T-&gt;U] -&gt; LIST[U]
 map [] _ = []
@@ -6421,11 +6527,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">flatten</span> :: [[a]] -&gt; [a]
 <span class="hljs-title">flatten</span> =  foldr (++) []
@@ -6438,11 +6544,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-113">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>return list.foldr(list.join)(list.empty());</p>
 
@@ -6461,11 +6567,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-114">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">xs</span> &gt;&gt;= f = concat (map f xs)
 </code></pre>
@@ -6482,11 +6588,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-115">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>flatMap xs f = concat (map f xs)
 flatMap: (instanceM) =&gt; {
@@ -6525,11 +6631,11 @@ flatMap: (instanceM) =&gt; {
         </li>
         
         
-        <li id="section-116">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <p>foldr:: LIST[T] -&gt; T -&gt; FUN[T -&gt; U -&gt; U] -&gt; T
 foldr []     z _ = z
@@ -6557,11 +6663,11 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T]
 map: (alist) =&gt; {
@@ -6657,11 +6763,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-118">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>list = [[1,2],[3,4]]</p>
 
@@ -6676,11 +6782,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-119">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p>concated_list = [1,2,3,4]</p>
 
@@ -6714,11 +6820,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-120">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -6741,11 +6847,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-121">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -6764,11 +6870,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-122">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -6789,11 +6895,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-123">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p>list = [1]</p>
 
@@ -6816,11 +6922,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-124">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p>list = [1,2,3]</p>
 
@@ -6831,11 +6937,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-125">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <p>var theList = list.append(list.unit(1))(list.append(list.unit(2))(list.unit(3)));</p>
 
@@ -6893,11 +6999,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-126">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>var maybe = {
   match: (data, pattern) =&gt; {
@@ -6988,11 +7094,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-127">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>it(“[nothing()]”, (next) =&gt; {
   // var theList = list.unit(maybe.nothing());
@@ -7194,11 +7300,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-128">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <p>head:: STREAM -&gt; MAYBE[STREAM]</p>
 
@@ -7218,11 +7324,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-129">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>tail:: STREAM -&gt; MAYBE[STREAM]</p>
 
@@ -7252,11 +7358,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-130">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <h3 id="stream-toarray">stream#toArray</h3>
 
@@ -7280,11 +7386,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-131">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <h3 id="stream-unit">stream#unit</h3>
 <p>unit:: ANY -&gt; STREAM</p>
@@ -7304,11 +7410,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-132">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <h3 id="stream-map">stream#map</h3>
 
@@ -7331,11 +7437,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-133">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <h2 id="stream-append">stream#append</h2>
 
@@ -7359,11 +7465,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-134">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <h2 id="stream-concat">stream#concat</h2>
 <p>concat:: STREAM[STREAM[T]] -&gt; STREAM[T]</p>
@@ -7384,11 +7490,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-135">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <h2 id="stream-flatten">stream#flatten</h2>
 <p>flatten :: STREAM[STREAM[T]] =&gt; STREAM[T]</p>
@@ -7411,11 +7517,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-136">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <h3 id="stream-flatmap">stream#flatMap</h3>
 <pre><code class="lang-haskell"><span class="hljs-title">flatMap</span> xs f = flatten (map f xs)
@@ -7480,11 +7586,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-137">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <p>lazyList = [1,2]</p>
 
@@ -7561,11 +7667,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-138">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p>innerStream = [1,2]</p>
 
@@ -7580,11 +7686,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-139">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <p>outerStream = [[1,2]]</p>
 
@@ -7618,11 +7724,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-140">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <p>lazyList = [1,2]</p>
 
@@ -7768,11 +7874,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-141">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
               <p>nestedStream = [[1,2],[3,4]]</p>
 
@@ -7809,11 +7915,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-142">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <p>unit:: A -&gt; IO A</p>
 
@@ -7828,11 +7934,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-143">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p>flatMap:: IO a -&gt; (a -&gt; IO b) -&gt; IO b</p>
 
@@ -7847,11 +7953,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-144">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               <p>run:: IO A -&gt; A</p>
 
@@ -7864,11 +7970,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-145">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               
             </div>
@@ -7880,11 +7986,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-146">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <p>describe(‘IOモナド(world)’, () =&gt; {
   var fs = require(‘fs’);
@@ -7943,11 +8049,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-147">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <p>match : (data, pattern) =&gt; {
   return data.call(pair, pattern);
@@ -7961,11 +8067,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-148">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-148">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>pair のデータ構造</p>
 
@@ -7980,11 +8086,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-149">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <p>ペアの右側を取得する</p>
 
@@ -8001,11 +8107,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-150">
+        <li id="section-157">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
+                <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
               <p>ペアの左側を取得する</p>
 
@@ -8027,11 +8133,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-151">
+        <li id="section-158">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
               <p>unit:: T =&gt; IO[T]</p>
 
@@ -8046,11 +8152,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-152">
+        <li id="section-159">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
               <p>flatMap:: IO[T] =&gt; FUN[T =&gt; IO[U]] =&gt; IO[U]</p>
 
@@ -8074,11 +8180,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-153">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <p>done:: T =&gt; IO[T]</p>
 
@@ -8091,11 +8197,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-154">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-154">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <p>run:: IO[A] =&gt; A</p>
 
@@ -8116,11 +8222,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-155">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-155">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <h2 id="-io-monad-module">‘IO’ monad module</h2>
 
@@ -8132,11 +8238,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-156">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-156">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <p>unit:: T =&gt; IO[T]</p>
 
@@ -8151,11 +8257,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-157">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-157">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <p>flatMap:: IO[T] =&gt; FUN[T =&gt; IO[U]] =&gt; IO[U]</p>
 
@@ -8170,11 +8276,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-158">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-158">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <p>done:: T =&gt; IO[T]</p>
 
@@ -8187,11 +8293,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-159">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-159">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <p>run:: IO[A] =&gt; A</p>
 
@@ -8204,11 +8310,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-160">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <p>readFile:: STRING =&gt; IO[STRING]</p>
 
@@ -8225,11 +8331,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-161">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <p>println:: STRING =&gt; IO[null]</p>
 
@@ -8258,11 +8364,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-162">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <p>IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b]</p>
 
@@ -8282,11 +8388,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-163">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <p>IO.putc:: CHAR =&gt; IO[]</p>
 
@@ -8302,11 +8408,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-164">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-171">&#182;</a>
               </div>
               <p>IO.puts:: LIST[CHAR] =&gt; IO[]</p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -8328,11 +8434,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-165">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-165">&#182;</a>
+                <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
               <p>IO.getc :: IO[CHAR]</p>
 
@@ -8371,11 +8477,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-166">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-166">&#182;</a>
+                <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               <p>describe(“Variantモナド”, () =&gt; {
   var variant = {

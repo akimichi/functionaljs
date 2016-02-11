@@ -3667,15 +3667,14 @@ describe('高階関数', () => {
           return exp.match(anExp, { // 式に対してパターンマッチを実行する
             // 数値を評価する
             num: (n) => {
-              // return continuesOnSuccess(n, null);
               return continuesOnSuccess(n, continuesOnFailure);
             },
             // 足し算を評価する
             add: (x, y) => {
-              return calculate(x, (resultX, alternativeForX) => { // 引数xを評価する
-                return calculate(y, (resultY, alternativeForY) => { // 引数yを評価する
-                  return continuesOnSuccess(resultX + resultY, alternativeForY); // 足し算を計算する
-                }, alternativeForX); // y の計算に失敗すれば、xの失敗継続を渡す
+              return calculate(x, (resultX, continuesOnFailureX) => { // 引数xを評価する
+                return calculate(y, (resultY, continuesOnFailureY) => { // 引数yを評価する
+                  return continuesOnSuccess(resultX + resultY, continuesOnFailureY); // 足し算を計算する
+                }, continuesOnFailureX); // y の計算に失敗すれば、xの失敗継続を渡す
               }, continuesOnFailure);
             },
             // amb式を評価する
@@ -3705,8 +3704,8 @@ describe('高階関数', () => {
         var driver = (expression) =>{
           var suspendedComputation = null; // 中断された計算を継続として保存する 
           // 成功継続
-          var continuesOnSuccess = (anyValue, alternatives) => {
-            suspendedComputation = alternatives; // 再開に備えて、次の継続を保存しておく
+          var continuesOnSuccess = (anyValue, continuesOnFailure) => {
+            suspendedComputation = continuesOnFailure; // 再開に備えて、失敗継続を保存しておく
             return anyValue;
           };
           // 失敗継続
@@ -3722,7 +3721,6 @@ describe('高階関数', () => {
           };
         };
         /* #@range_end(amb_driver) */
-        /* #@range_begin(amb_test) */
         it("amb[1,2] + 3  = amb[4, 5]", (next) => {
           var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
                                 exp.num(3));
@@ -3745,37 +3743,41 @@ describe('高階関数', () => {
           next();
         });
         it("amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]", (next) => {
-          var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))),
-                               exp.amb(list.cons(exp.num(3),list.cons(exp.num(4), list.empty()))));
+          // var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))),
+          //                      exp.amb(list.cons(exp.num(3),list.cons(exp.num(4), list.empty()))));
+          /* #@range_begin(amb_test) */
+          // amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]
+          var ambExp = exp.add(exp.amb(list.fromArray([exp.num(1),exp.num(2)])),
+                               exp.amb(list.fromArray([exp.num(3),exp.num(4)])));
           var calculator = driver(ambExp);
           expect(
             calculator()
           ).to.eql(
-            4
+            4 // 1 + 3 = 4
           );
           expect(
             calculator()
           ).to.eql(
-            5
+            5 // 2 + 3 = 5
           );
           expect(
             calculator()
           ).to.eql(
-            5
+            5 // 1 + 4 = 5
           );
           expect(
             calculator()
           ).to.eql(
-            6
+            6 // 2 + 4 = 6
           );
           expect(
             calculator()
           ).to.eql(
-            null
+            null // これ以上の候補はないので、計算は終了
           );
+          /* #@range_end(amb_test) */
           next();
         });
-        /* #@range_end(amb_test) */
         // it("amb[2,3] * amb[4,5]  = amb[2, 3]", (next) => {
         //   var ambExp = exp.mul(exp.amb(list.cons(exp.num(2),list.cons(exp.num(3), list.empty()))), 
         //                          exp.amb(list.cons(exp.num(4),list.cons(exp.num(5), list.empty()))));

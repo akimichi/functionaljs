@@ -4861,7 +4861,7 @@ var reverse = (alist) =&gt; {
             </div>
             
             <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> continuesOnSuccess = (anyValue, continuesOnFailure) =&gt; {
-            suspendedComputation = continuesOnFailure; <span class="hljs-comment">// 再開に備えて、次の継続を保存しておく</span>
+            suspendedComputation = continuesOnFailure; <span class="hljs-comment">// 再開に備えて、失敗継続を保存しておく</span>
             <span class="hljs-keyword">return</span> anyValue;
           };</pre></div></div>
             
@@ -6048,13 +6048,41 @@ Y x = x(Y x)</p>
   describe(<span class="hljs-string">'モナドを作る'</span>, () =&gt; {
     describe(<span class="hljs-string">'恒等モナド'</span>, () =&gt; {
       <span class="hljs-comment">/* #@range_begin(identity_monad) */</span>
-      <span class="hljs-keyword">var</span> ID = {
-        unit: (value) =&gt; {
+      <span class="hljs-keyword">var</span> ID = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-113">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-113">&#182;</a>
+              </div>
+              <p>unit:: T =&gt; ID[T]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        unit: (value) =&gt; {  <span class="hljs-comment">// 単なる identity関数と同じ</span>
           <span class="hljs-keyword">return</span> value;
-        },
-        flatMap: (instanceM) =&gt; {
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-114">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-114">&#182;</a>
+              </div>
+              <p>flatMap:: ID[T] =&gt; FUN[T =&gt; ID[T]] =&gt; ID[T]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        flatMap: (instanceM) =&gt; {
           <span class="hljs-keyword">return</span> (transform) =&gt; {
-            <span class="hljs-keyword">return</span> transform(instanceM);
+            <span class="hljs-keyword">return</span> transform(instanceM); <span class="hljs-comment">// 単なる関数適用と同じ</span>
           };
         }
       };
@@ -6074,19 +6102,12 @@ Y x = x(Y x)</p>
           <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
         };
         <span class="hljs-comment">/* #@range_begin(identity_monad_flatMap_test) */</span>
-        <span class="hljs-comment">/* モナドで 1 の次の数を求める */</span>
         expect(
           ID.flatMap(ID.unit(<span class="hljs-number">1</span>))((one) =&gt; {    
             <span class="hljs-keyword">return</span> ID.unit(succ(one));
           })
         ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        <span class="hljs-comment">/* 関数適用で 1 の次の数を求める */</span>
-        expect(
           succ(<span class="hljs-number">1</span>)
-        ).to.eql(
-          <span class="hljs-number">2</span>
         );
         <span class="hljs-comment">/* #@range_end(identity_monad_flatMap_test) */</span>
         <span class="hljs-comment">/* #@range_begin(flatMap_and_composition) */</span>
@@ -6212,11 +6233,39 @@ Y x = x(Y x)</p>
         };
         <span class="hljs-comment">/* #@range_end(algebraic_type_maybe) */</span>
         <span class="hljs-keyword">var</span> MAYBE = {
-          <span class="hljs-comment">/* #@range_begin(maybe_monad) */</span>
-          unit: (value) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(maybe_monad) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-115">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-115">&#182;</a>
+              </div>
+              <p>unit:: T =&gt; MAYBE[T]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          unit: (value) =&gt; {
             <span class="hljs-keyword">return</span> just(value);
-          },
-          flatMap: (instanceM) =&gt; {
+          },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-116">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-116">&#182;</a>
+              </div>
+              <p>flatMap:: MAYBE[T] =&gt; FUN[T =&gt; MAYBE[U]] =&gt; MAYBE[U]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          flatMap: (instanceM) =&gt; {
             <span class="hljs-keyword">return</span> (transform) =&gt; {
               <span class="hljs-keyword">return</span> match(instanceM,{
                 just: (value) =&gt; { <span class="hljs-comment">// 正常な値の場合は、transform関数を計算する</span>
@@ -6230,31 +6279,41 @@ Y x = x(Y x)</p>
           },
           <span class="hljs-comment">/* #@range_end(maybe_monad) */</span>
           <span class="hljs-comment">/* #@range_begin(maybe_monad_helper) */</span>
-          isEqual: (maybeA) =&gt; {
-            <span class="hljs-keyword">return</span> (maybeB) =&gt; {
-              <span class="hljs-keyword">return</span> match(maybeA,{
-                just: (valueA) =&gt; {
-                  <span class="hljs-keyword">return</span> match(maybeB,{
-                    just: (valueB) =&gt; {
-                      <span class="hljs-keyword">return</span> (valueA === valueB);
-                    },
-                    nothing: (_) =&gt; {
-                      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-                    }
-                  });
+          getOrElse: (instanceM) =&gt; {
+            <span class="hljs-keyword">return</span> (alternate) =&gt; {
+              <span class="hljs-keyword">return</span> match(instanceM,{
+                just: (value) =&gt; {
+                  <span class="hljs-keyword">return</span> value;
                 },
                 nothing: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> match(maybeB,{
-                    just: (_) =&gt; {
-                      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-                    },
-                    nothing: (_) =&gt; {
-                      <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-                    }
-                  });
+                  <span class="hljs-keyword">return</span> alternate;
                 }
               });
             };
+          },
+          isEqual: (maybeA,maybeB) =&gt; {
+            <span class="hljs-keyword">return</span> match(maybeA,{
+              just: (valueA) =&gt; {
+                <span class="hljs-keyword">return</span> match(maybeB,{
+                  just: (valueB) =&gt; {
+                    <span class="hljs-keyword">return</span> (valueA === valueB);
+                  },
+                  nothing: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                  }
+                });
+              },
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> match(maybeB,{
+                  just: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                  },
+                  nothing: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                  }
+                });
+              }
+            });
           },
           map: (maybeInstance) =&gt; {
             <span class="hljs-keyword">return</span> (transform) =&gt; {
@@ -6274,12 +6333,14 @@ Y x = x(Y x)</p>
           <span class="hljs-comment">/* #@range_begin(maybe_monad_test) */</span>
           <span class="hljs-keyword">var</span> justOne = just(<span class="hljs-number">1</span>);
           expect(
-            MAYBE.isEqual(MAYBE.map(justOne)(id))(id(justOne))
+            MAYBE.isEqual(MAYBE.map(justOne)(id),
+                          id(justOne))
           ).to.be(
             <span class="hljs-literal">true</span>
           );
           expect(
-            MAYBE.isEqual(MAYBE.map(nothing())(id))(id(nothing()))
+            MAYBE.isEqual(MAYBE.map(nothing())(id),
+                          id(nothing()))
           ).to.be(
             <span class="hljs-literal">true</span>
           );
@@ -6299,14 +6360,22 @@ Y x = x(Y x)</p>
           <span class="hljs-keyword">var</span> justTwo = just(<span class="hljs-number">2</span>);
           <span class="hljs-keyword">var</span> justThree = just(<span class="hljs-number">3</span>);
           expect(
-            MAYBE.isEqual(add(justOne,justTwo))(justThree)
+            MAYBE.isEqual(add(justOne,justTwo),
+                          justThree)
           ).to.eql(
             <span class="hljs-literal">true</span>
           );
           expect(
-            MAYBE.isEqual(add(justOne,nothing()))(nothing())
+            MAYBE.isEqual(add(justOne,nothing()),
+                          nothing())
           ).to.eql(
             <span class="hljs-literal">true</span>
+          );
+          expect(
+            MAYBE.isEqual(add(justOne,nothing()),
+                          justThree)
+          ).to.eql(
+            <span class="hljs-literal">false</span>
           );
           <span class="hljs-comment">/* #@range_end(maybe_monad_add_test) */</span>
           next();
@@ -6315,11 +6384,11 @@ Y x = x(Y x)</p>
         </li>
         
         
-        <li id="section-113">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>it(“list(maybe)”, (next) =&gt; {
   /<em> #@range_begin(maybe_monad_list_test) </em>/
@@ -6413,11 +6482,11 @@ Y x = x(Y x)</p>
         </li>
         
         
-        <li id="section-114">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <h3 id="list-unit">list#unit</h3>
 
@@ -6430,11 +6499,11 @@ Y x = x(Y x)</p>
         </li>
         
         
-        <li id="section-115">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <p>append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]
 append [] ys = ys
@@ -6458,11 +6527,11 @@ append (x:xs) ys = x : (xs ++ ys)</p>
         </li>
         
         
-        <li id="section-116">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>concat:: LIST[LIST[T]] -&gt; LIST[T]
 concat [] = []
@@ -6475,11 +6544,11 @@ concat (xs:xss) = xs ++ concat xss</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <p>return list.foldr(list_of_list)(list.empty())(list.append);</p>
 
@@ -6498,11 +6567,11 @@ concat (xs:xss) = xs ++ concat xss</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>map:: LIST[T] -&gt; FUN[T-&gt;U] -&gt; LIST[U]
 map [] _ = []
@@ -6527,11 +6596,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-119">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">flatten</span> :: [[a]] -&gt; [a]
 <span class="hljs-title">flatten</span> =  foldr (++) []
@@ -6544,11 +6613,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>return list.foldr(list.join)(list.empty());</p>
 
@@ -6567,11 +6636,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">xs</span> &gt;&gt;= f = concat (map f xs)
 </code></pre>
@@ -6588,11 +6657,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p>flatMap xs f = concat (map f xs)
 flatMap: (instanceM) =&gt; {
@@ -6631,11 +6700,11 @@ flatMap: (instanceM) =&gt; {
         </li>
         
         
-        <li id="section-123">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <p>foldr:: LIST[T] -&gt; T -&gt; FUN[T -&gt; U -&gt; U] -&gt; T
 foldr []     z _ = z
@@ -6663,11 +6732,11 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T]
 map: (alist) =&gt; {
@@ -6763,11 +6832,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-125">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>list = [[1,2],[3,4]]</p>
 
@@ -6782,11 +6851,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-126">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p>concated_list = [1,2,3,4]</p>
 
@@ -6820,11 +6889,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-127">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -6847,11 +6916,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-128">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -6870,11 +6939,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-129">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -6895,11 +6964,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-130">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>list = [1]</p>
 
@@ -6922,11 +6991,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-131">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <p>list = [1,2,3]</p>
 
@@ -6937,11 +7006,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-132">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>var theList = list.append(list.unit(1))(list.append(list.unit(2))(list.unit(3)));</p>
 
@@ -6999,11 +7068,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-133">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <p>var maybe = {
   match: (data, pattern) =&gt; {
@@ -7094,11 +7163,11 @@ map: (alist) =&gt; {
         </li>
         
         
-        <li id="section-134">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <p>it(“[nothing()]”, (next) =&gt; {
   // var theList = list.unit(maybe.nothing());
@@ -7300,11 +7369,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-135">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>head:: STREAM -&gt; MAYBE[STREAM]</p>
 
@@ -7324,11 +7393,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-136">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p>tail:: STREAM -&gt; MAYBE[STREAM]</p>
 
@@ -7358,11 +7427,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-137">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <h3 id="stream-toarray">stream#toArray</h3>
 
@@ -7386,11 +7455,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-138">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <h3 id="stream-unit">stream#unit</h3>
 <p>unit:: ANY -&gt; STREAM</p>
@@ -7410,11 +7479,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-139">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <h3 id="stream-map">stream#map</h3>
 
@@ -7437,11 +7506,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-140">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <h2 id="stream-append">stream#append</h2>
 
@@ -7465,11 +7534,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-141">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <h2 id="stream-concat">stream#concat</h2>
 <p>concat:: STREAM[STREAM[T]] -&gt; STREAM[T]</p>
@@ -7490,11 +7559,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-142">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <h2 id="stream-flatten">stream#flatten</h2>
 <p>flatten :: STREAM[STREAM[T]] =&gt; STREAM[T]</p>
@@ -7517,11 +7586,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-143">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <h3 id="stream-flatmap">stream#flatMap</h3>
 <pre><code class="lang-haskell"><span class="hljs-title">flatMap</span> xs f = flatten (map f xs)
@@ -7586,11 +7655,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-144">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
               <p>lazyList = [1,2]</p>
 
@@ -7667,11 +7736,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-145">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <p>innerStream = [1,2]</p>
 
@@ -7686,11 +7755,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-146">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <p>outerStream = [[1,2]]</p>
 
@@ -7724,11 +7793,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-147">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               <p>lazyList = [1,2]</p>
 
@@ -7874,11 +7943,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-148">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-148">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               <p>nestedStream = [[1,2],[3,4]]</p>
 
@@ -7915,11 +7984,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-149">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <p>unit:: A -&gt; IO A</p>
 
@@ -7934,11 +8003,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-150">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <p>flatMap:: IO a -&gt; (a -&gt; IO b) -&gt; IO b</p>
 
@@ -7953,11 +8022,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-151">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>run:: IO A -&gt; A</p>
 
@@ -7970,11 +8039,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-152">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               
             </div>
@@ -7986,11 +8055,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-153">
+        <li id="section-157">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
               <p>describe(‘IOモナド(world)’, () =&gt; {
   var fs = require(‘fs’);
@@ -8049,11 +8118,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-154">
+        <li id="section-158">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-154">&#182;</a>
+                <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
               <p>match : (data, pattern) =&gt; {
   return data.call(pair, pattern);
@@ -8067,11 +8136,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-155">
+        <li id="section-159">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-155">&#182;</a>
+                <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
               <p>pair のデータ構造</p>
 
@@ -8086,11 +8155,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-156">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-156">&#182;</a>
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <p>ペアの右側を取得する</p>
 
@@ -8107,11 +8176,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-157">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-157">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <p>ペアの左側を取得する</p>
 
@@ -8133,11 +8202,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-158">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-158">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <p>unit:: T =&gt; IO[T]</p>
 
@@ -8152,11 +8221,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-159">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-159">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <p>flatMap:: IO[T] =&gt; FUN[T =&gt; IO[U]] =&gt; IO[U]</p>
 
@@ -8180,11 +8249,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-160">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <p>done:: T =&gt; IO[T]</p>
 
@@ -8197,11 +8266,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-161">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <p>run:: IO[A] =&gt; A</p>
 
@@ -8222,11 +8291,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-162">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <h2 id="-io-monad-module">‘IO’ monad module</h2>
 
@@ -8238,11 +8307,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-163">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <p>unit:: T =&gt; IO[T]</p>
 
@@ -8257,11 +8326,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-164">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <p>flatMap:: IO[T] =&gt; FUN[T =&gt; IO[U]] =&gt; IO[U]</p>
 
@@ -8276,11 +8345,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-165">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-165">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <p>done:: T =&gt; IO[T]</p>
 
@@ -8293,11 +8362,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-166">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-166">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <p>run:: IO[A] =&gt; A</p>
 
@@ -8310,11 +8379,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-167">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-167">&#182;</a>
+                <a class="pilcrow" href="#section-171">&#182;</a>
               </div>
               <p>readFile:: STRING =&gt; IO[STRING]</p>
 
@@ -8331,11 +8400,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-168">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-168">&#182;</a>
+                <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
               <p>println:: STRING =&gt; IO[null]</p>
 
@@ -8364,11 +8433,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-169">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-169">&#182;</a>
+                <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               <p>IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b]</p>
 
@@ -8388,11 +8457,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-170">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-170">&#182;</a>
+                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <p>IO.putc:: CHAR =&gt; IO[]</p>
 
@@ -8408,11 +8477,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-171">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-171">&#182;</a>
+                <a class="pilcrow" href="#section-175">&#182;</a>
               </div>
               <p>IO.puts:: LIST[CHAR] =&gt; IO[]</p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -8434,11 +8503,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-172">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-172">&#182;</a>
+                <a class="pilcrow" href="#section-176">&#182;</a>
               </div>
               <p>IO.getc :: IO[CHAR]</p>
 
@@ -8477,11 +8546,11 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
-        <li id="section-173">
+        <li id="section-177">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-173">&#182;</a>
+                <a class="pilcrow" href="#section-177">&#182;</a>
               </div>
               <p>describe(“Variantモナド”, () =&gt; {
   var variant = {

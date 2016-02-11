@@ -4582,12 +4582,14 @@ describe('高階関数', () => {
     describe('恒等モナド', () => {
       /* #@range_begin(identity_monad) */
       var ID = {
-        unit: (value) => {
+        // unit:: T => ID[T]
+        unit: (value) => {  // 単なる identity関数と同じ
           return value;
         },
+        // flatMap:: ID[T] => FUN[T => ID[T]] => ID[T]
         flatMap: (instanceM) => {
           return (transform) => {
-            return transform(instanceM);
+            return transform(instanceM); // 単なる関数適用と同じ
           };
         }
       };
@@ -4607,19 +4609,12 @@ describe('高階関数', () => {
           return n + 1;
         };
         /* #@range_begin(identity_monad_flatMap_test) */
-        /* モナドで 1 の次の数を求める */
         expect(
           ID.flatMap(ID.unit(1))((one) => {    
             return ID.unit(succ(one));
           })
         ).to.eql(
-          2
-        );
-        /* 関数適用で 1 の次の数を求める */
-        expect(
           succ(1)
-        ).to.eql(
-          2
         );
         /* #@range_end(identity_monad_flatMap_test) */
         /* #@range_begin(flatMap_and_composition) */
@@ -4746,9 +4741,11 @@ describe('高階関数', () => {
         /* #@range_end(algebraic_type_maybe) */
         var MAYBE = {
           /* #@range_begin(maybe_monad) */
+          // unit:: T => MAYBE[T]
           unit: (value) => {
             return just(value);
           },
+          // flatMap:: MAYBE[T] => FUN[T => MAYBE[U]] => MAYBE[U]
           flatMap: (instanceM) => {
             return (transform) => {
               return match(instanceM,{
@@ -4763,31 +4760,41 @@ describe('高階関数', () => {
           },
           /* #@range_end(maybe_monad) */
           /* #@range_begin(maybe_monad_helper) */
-          isEqual: (maybeA) => {
-            return (maybeB) => {
-              return match(maybeA,{
-                just: (valueA) => {
-                  return match(maybeB,{
-                    just: (valueB) => {
-                      return (valueA === valueB);
-                    },
-                    nothing: (_) => {
-                      return false;
-                    }
-                  });
+          getOrElse: (instanceM) => {
+            return (alternate) => {
+              return match(instanceM,{
+                just: (value) => {
+                  return value;
                 },
                 nothing: (_) => {
-                  return match(maybeB,{
-                    just: (_) => {
-                      return false;
-                    },
-                    nothing: (_) => {
-                      return true;
-                    }
-                  });
+                  return alternate;
                 }
               });
             };
+          },
+          isEqual: (maybeA,maybeB) => {
+            return match(maybeA,{
+              just: (valueA) => {
+                return match(maybeB,{
+                  just: (valueB) => {
+                    return (valueA === valueB);
+                  },
+                  nothing: (_) => {
+                    return false;
+                  }
+                });
+              },
+              nothing: (_) => {
+                return match(maybeB,{
+                  just: (_) => {
+                    return false;
+                  },
+                  nothing: (_) => {
+                    return true;
+                  }
+                });
+              }
+            });
           },
           map: (maybeInstance) => {
             return (transform) => {
@@ -4807,12 +4814,14 @@ describe('高階関数', () => {
           /* #@range_begin(maybe_monad_test) */
           var justOne = just(1);
           expect(
-            MAYBE.isEqual(MAYBE.map(justOne)(id))(id(justOne))
+            MAYBE.isEqual(MAYBE.map(justOne)(id),
+                          id(justOne))
           ).to.be(
             true
           );
           expect(
-            MAYBE.isEqual(MAYBE.map(nothing())(id))(id(nothing()))
+            MAYBE.isEqual(MAYBE.map(nothing())(id),
+                          id(nothing()))
           ).to.be(
             true
           );
@@ -4821,6 +4830,7 @@ describe('高階関数', () => {
         });
         it("add(maybe, maybe)", (next) => {
           /* #@range_begin(maybe_monad_add_test) */
+          // 足し算を定義する
           var add = (maybeA,maybeB) => {
             return MAYBE.flatMap(maybeA)((a) => {
               return MAYBE.flatMap(maybeB)((b) => {
@@ -4832,16 +4842,24 @@ describe('高階関数', () => {
           var justTwo = just(2);
           var justThree = just(3);
           expect(
-            MAYBE.isEqual(add(justOne,justTwo))(justThree)
+            MAYBE.isEqual(add(justOne,justTwo),
+                          justThree)
           ).to.eql(
             true
           );
           expect(
-            MAYBE.isEqual(add(justOne,nothing()))(nothing())
+            MAYBE.isEqual(add(justOne,nothing()),
+                          nothing())
           ).to.eql(
             true
           );
           /* #@range_end(maybe_monad_add_test) */
+          expect(
+            MAYBE.isEqual(add(justOne,nothing()),
+                          justThree)
+          ).to.eql(
+            false
+          );
           next();
         });
         // it("list(maybe)", (next) => {

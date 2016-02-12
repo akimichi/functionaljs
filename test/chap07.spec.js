@@ -6099,8 +6099,8 @@ describe('高階関数', () => {
         }
       };
       /* #@range_end(pair_datatype) */
-      describe('外界を伴なうIOモナド', () => {
-        var io = {
+      describe('外界を引数に持つIOモナド', () => {
+        var IO = {
           /* #@range_begin(io_monad_definition_with_world) */
           // unit:: T => IO[T]
           unit: (any) => {
@@ -6125,7 +6125,7 @@ describe('高階関数', () => {
           /* #@range_begin(io_monad_definition_with_world_helper_function) */
           // done:: T => IO[T]
           done: (any) => {
-            return io.unit();
+            return IO.unit();
           },
           // run:: IO[A] => A
           run: (instance) => {
@@ -6136,6 +6136,20 @@ describe('高階関数', () => {
           }
           /* #@range_end(io_monad_definition_with_world_helper_function) */
         }; // IO monad
+        var println = (message) => {
+          return (world) => { // IOモナドを返す
+            console.log(message);
+            return IO.unit(null)(world);
+          };
+        };
+        /* #@range_begin(run_println) */
+        var initialWorld = null;
+        expect(
+          IO.run(println("this is a test"))(initialWorld)
+        ).to.eql(
+          null
+        );
+        /* #@range_end(run_println) */
       });
       describe('IOモナド', () => {
         var fs = require('fs');

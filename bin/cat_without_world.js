@@ -15,7 +15,7 @@ var IO = {
       return any;  // 値だけを返す
     };
   },
-  // flatMap:: IO[T] => (T => IO[S]) => IO[S]
+  // flatMap:: IO[T] => FUN[T => IO[S]] => IO[S]
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: a -> IO b
       return actionAB(IO.run(instanceA)); // instanceAのIOアクションを実行し、続いて actionABを実行する
@@ -34,10 +34,10 @@ var IO = {
     var fs = require('fs');
     return IO.unit(fs.readFileSync(path, 'utf8'));
   },
-  // println:: STRING => IO[null]
+  // println:: STRING => IO[]
   println: (message) => {
     console.log(message);
-    return IO.unit(null);
+    return IO.unit();
   }
 };
 /* #@range_end(io_monad_definition) */
@@ -50,5 +50,5 @@ IO.flatMap(IO.readFile(path))((content) => {
   return IO.flatMap(IO.println(content))((_) => {
     return IO.done(_);
   });
-})();
+})(); // 外界を明示的に渡さず、単に関数を実行するだけ
 /* #@range_end(io_monad_combined) */

@@ -106,15 +106,16 @@ module.exports = {
   },
   // foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T
   foldr: (alist) => {
+    var self = this;
     return (accumulator) => {
       return (glue) => {
         expect(glue).to.a('function');
-        return this.match(alist,{
+        return self.match(alist,{
           empty: (_) => {
             return accumulator;
           },
           cons: (head, tail) => {
-            return glue(head)(this.foldr(tail)(accumulator)(glue));
+            return glue(head)(self.foldr(tail)(accumulator)(glue));
           }
         });
       };

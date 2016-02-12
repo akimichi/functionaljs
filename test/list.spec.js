@@ -418,50 +418,49 @@ describe("listのテスト", function() {
   //   );
   //   next();
   // });
-  // describe("folding higher-functions", () => {
-  //   var foldr = __.list.foldr.bind(__);
-  //   var foldl = __.list.foldl.bind(__);
-  //   var reduce = __.list.reduce.bind(__);
-  //   it("'list#foldr'", function(next) {
-  //     var list = __.list.mkList.bind(__)([0,1,2,3]);
-  //     expect(
-  //       foldr(list)(0)(function(item){
-  //         return function(accumulator){
-  //           return item + accumulator;
-  //         };
-  //       })
-  //     ).to.eql(
-  //       6
-  //     );
-  //     next();
-  //   });
-  //   it("'list#foldl'", function(next) {
-  //     var list = __.list.mkList.bind(__)([0,1,2,3]);
-  //     expect(
-  //       foldl(list)(0)(function(item){
-  //         return function(accumulator){
-  //           return item + accumulator;
-  //         };
-  //       })
-  //     ).to.eql(
-  //       6
-  //     );
-  //     next();
-  //   });
-  //   it("'list#reduce'", function(next) {
-  //     var list = __.list.mkList.bind(__)([0,1,2,3]);
-  //     expect(
-  //       reduce(list)(0)(function(item){
-  //         return function(accumulator){
-  //           return item + accumulator;
-  //         };
-  //       })
-  //     ).to.eql(
-  //       6
-  //     );
-  //     next();
-  //   });
-  // });
+  describe("folding higher-functions", () => {
+    var foldr = list.foldr.bind(list);
+    // var foldl = list.foldl.bind(list);
+    // var reduce = list.reduce.bind(list);
+    it("'list#foldr'", (next) => {
+      expect(
+        foldr(fixtures.ints)(0)((item) => {
+          return (accumulator) => {
+            return item + accumulator;
+          };
+        })
+      ).to.eql(
+        6
+      );
+      next();
+    });
+    // it("'list#foldl'", function(next) {
+    //   var list = __.list.mkList.bind(__)([0,1,2,3]);
+    //   expect(
+    //     foldl(list)(0)(function(item){
+    //       return function(accumulator){
+    //         return item + accumulator;
+    //       };
+    //     })
+    //   ).to.eql(
+    //     6
+    //   );
+    //   next();
+    // });
+    // it("'list#reduce'", function(next) {
+    //   var list = __.list.mkList.bind(__)([0,1,2,3]);
+    //   expect(
+    //     reduce(list)(0)(function(item){
+    //       return function(accumulator){
+    //         return item + accumulator;
+    //       };
+    //     })
+    //   ).to.eql(
+    //     6
+    //   );
+    //   next();
+    // });
+  });
   // it("'list#pairs'", function(next) {
   //   // > pairs [1, 2, 3, 4]
   //   // [(1, 2), (2, 3), (3, 4)]

@@ -327,10 +327,12 @@ var IO = {
   // seq:: IO[T] => IO[U] => IO[V]
   seq: (instanceA) => {
     return (instanceB) => {
-      return IO.flatMap(instanceA)((a) => {
-        IO.run(instanceA);
-        return IO.unit(IO.run(instanceB));
-      });
+      IO.run(instanceA);
+      return IO.unit(IO.run(instanceB));
+      // return IO.flatMap(instanceA)((a) => {
+      //   IO.run(instanceA);
+      //   return IO.unit(IO.run(instanceB));
+      // });
       // return IO.flatMap(instanceA)((a) => {
       //   return instanceB;
       // });
@@ -362,9 +364,10 @@ var IO = {
   //   });
   // },
   puts: (alist) => {
+    // return list.foldr(list.map(alist)(IO.putc))(IO.done())(IO.putc('\n'));
     return list.match(alist, {
       empty: () => {
-        return IO.done();
+        return IO.putc("\n");
       },
       cons: (head, tail) => {
         return IO.seq(IO.putc(head))(IO.puts(tail));

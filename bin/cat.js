@@ -15,9 +15,9 @@ var IO = {
       return pair.cons(any, world);
     };
   },
-  // flatMap:: IO[T] => (T => IO[S]) => IO[S]
+  // flatMap:: IO[A] => (A => IO[B]) => IO[B]
   flatMap: (instanceA) => {
-    return (actionAB) => { // actionAB:: a -> IO b
+    return (actionAB) => { // actionAB:: A -> IO[B]
       return (world) => {
         var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
         return pair.match(newPair,{
@@ -29,33 +29,31 @@ var IO = {
     };
   },
   /* #@range_end(io_monad_definition_with_world) */
-  // flatMap: (instanceA) => {
-  //   return (actionAB) => { // actionAB:: a -> IO b
-  //     return IO.unit(IO.run(actionAB(IO.run(instanceA))));
-  //   };
-  // },
   /* #@range_begin(io_monad_definition_with_world_helper_function) */
+  // done関数
   // done:: T => IO[T]
   done: (any) => {
     return IO.unit();
   },
   // run:: IO[A] => A
-  run: (instance) => {
+  run: (instanceM) => {
     return (world) => {
-      return pair.left(instance(world)); // IOアクションを現在の外界に適用し、結果のみを返す
+      return pair.left(instanceM(world)); // IOアクションを現在の外界に適用し、結果のみを返す
     };
   },
   /* #@range_end(io_monad_definition_with_world_helper_function) */
   /* #@range_begin(io_actions) */
-  // readFile:: STRING => IO[STRING]
+  // readFile関数は、pathで指定されたファイルを読み込むIOアクション
+  /* readFile:: STRING => IO[STRING] */
   readFile: (path) => {
-    return (world) => { // IOモナドを返す
+    return (world) => { // 外界を引数とする 
       var fs = require('fs');
       var content = fs.readFileSync(path, 'utf8');
-      return IO.unit(content)(world);
+      return IO.unit(content)(world); // 外界を渡してIOアクションを実行する
     };
   },
-  // println:: STRING => IO[null]
+  // println関数は、messageで指定された文字列をコンソール画面に出力するIOアクション
+  /* println:: STRING => IO[] */
   println: (message) => {
     return (world) => { // IOモナドを返す
       console.log(message);

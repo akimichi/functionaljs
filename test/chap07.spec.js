@@ -6143,7 +6143,7 @@ describe('高階関数', () => {
           };
         };
         /* #@range_begin(run_println) */
-        var initialWorld = null;
+        var initialWorld = null; // 初期の外界に null をバインドする
         expect(
           IO.run(println("this is a test"))(initialWorld)
         ).to.eql(
@@ -6151,7 +6151,7 @@ describe('高階関数', () => {
         );
         /* #@range_end(run_println) */
       });
-      describe('IOモナド', () => {
+      describe('外界を引数に持たないIOモナド', () => {
         var fs = require('fs');
         // ## 'IO' monad module
         /* #@range_begin(io_monad_definition) */
@@ -6181,14 +6181,14 @@ describe('高階関数', () => {
             return (_) => {
               var fs = require('fs');
               var content = fs.readFileSync(path, 'utf8');
-              return IO.unit(content)(_);
+              return IO.unit(content)();
             };
           },
           // println:: STRING => IO[null]
           println : (message) => {
             return (_) => {
               console.log(message);
-              return IO.unit(null)(_);
+              return IO.unit(null)();
             };
           },
           writeFile : (path) => {
@@ -6196,12 +6196,22 @@ describe('高階関数', () => {
               return (_) => {
                 var fs = require('fs');
                 fs.writeFileSync(path,content);
-                return IO.unit(null)(_);
+                return IO.unit(null)();
               };
             };
           }
         }; // IO monad
         /* #@range_end(io_monad_definition) */
+        it('IO.println', (next) => {
+          /* #@range_begin(run_println_without_world) */
+          expect(
+            IO.run(IO.println("this is another test")) // 外界を指定する必要はありません
+          ).to.eql(
+            null
+          );
+          /* #@range_end(run_println_without_world) */
+          next();
+        });
         it('IOモナドは合成可能である', (next) => {
           /* #@range_begin(io_monad_is_composable) */
           // IO.seq:: IO[a] => IO[b] => IO[b]

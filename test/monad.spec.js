@@ -1,5 +1,6 @@
 "use strict";
 
+var fs = require('fs');
 var expect = require('expect.js');
 
 var maybe = {
@@ -248,94 +249,100 @@ describe("Readerモナドをテストする",() => {
   };
 });
 
-describe("IOモナド",() => {
-  var fs = require('fs');
-  // ## 'IO' monad module
-  var IO = {
-    // unit:: T => IO[T]
-    unit : (any) => {
-      return (_) =>  { // 外界は明示する必要はありません
-        return any;
-      };
-    },
-    // flatMap:: IO[T] => FUN[T => IO[U]] => IO[U]
-    flatMap : (instanceA) => {
-      return (actionAB) => { // actionAB:: a -> IO[b]
-        return IO.unit(IO.run(actionAB(IO.run(instanceA))));
-      };
-    },
-    // done:: T => IO[T]
-    done : (any) => {
-      return IO.unit();
-    },
-    // run:: IO[A] => A
-    run : (instance) => {
-      return instance();
-    },
-    // readFile:: STRING => IO[STRING]
-    readFile : (path) => {
+// ## 'IO' monad module
+var IO = {
+  // unit:: T => IO[T]
+  unit : (any) => {
+    return (_) =>  { // 外界は明示する必要はありません
+      return any;
+    };
+  },
+  /* flatMap:: IO[T] => FUN[T => IO[U]] => IO[U] */
+  flatMap : (instanceA) => {
+    return (actionAB) => { // actionAB:: a -> IO[b]
+      return IO.unit(IO.run(actionAB(IO.run(instanceA))));
+    };
+  },
+  // ### IO.done関数
+  // 
+  // IOアクションを何も実行しない
+  /* done:: T => IO[T] */
+  done : (any) => {
+    return IO.unit();
+  },
+  // ### IO.run関数
+  //
+  // IOアクションを実行する
+  /* run:: IO[A] => A */
+  run : (instanceM) => {
+    return instanceM();
+  },
+  // readFile:: STRING => IO[STRING]
+  readFile : (path) => {
+    return (_) => {
+      var content = fs.readFileSync(path, 'utf8');
+      return IO.unit(content)(_);
+    };
+  },
+  // println:: STRING => IO[null]
+  println : (message) => {
+    return (_) => {
+      console.log(message);
+      return IO.unit(null)(_);
+    };
+  },
+  writeFile : (path) => {
+    return (content) => {
       return (_) => {
-        var content = fs.readFileSync(path, 'utf8');
-        return IO.unit(content)(_);
-      };
-    },
-    // println:: STRING => IO[null]
-    println : (message) => {
-      return (_) => {
-        console.log(message);
+        fs.writeFileSync(path,content);
         return IO.unit(null)(_);
       };
-    },
-    writeFile : (path) => {
-      return (content) => {
-        return (_) => {
-          fs.writeFileSync(path,content);
-          return IO.unit(null)(_);
-        };
-      };
-    },
-    // IO.seq:: IO[a] => IO[b] => IO[b]
-    seq: (instanceA) => {
-      return (instanceB) => {
-        return IO.flatMap(instanceA)((a) => {
-          return instanceB;
-        });
-      };
-    },
-    seqs: (alist) => {
-      return list.foldr(alist)(list.empty())(IO.done());
-    },
-    // IO.putc:: CHAR => IO[]
-    putc: (character) => {
-      return (io) => {
-        process.stdout.write(character);
-        return null;
-      };
-    },
-    // IO.puts:: LIST[CHAR] => IO[]
-    // ~~~haskell
-    // puts list = seqs (map putc list)
-    // ~~~
-    puts: (alist) => {
-      return list.match(alist, {
-        empty: () => {
-          return IO.done();
-        },
-        cons: (head, tail) => {
-          return IO.seq(IO.putc(head))(IO.puts(tail));
-        }
+    };
+  },
+  // IO.seq:: IO[a] => IO[b] => IO[b]
+  seq: (instanceA) => {
+    return (instanceB) => {
+      return IO.flatMap(instanceA)((a) => {
+        return instanceB;
       });
-    },
-    // IO.getc :: IO[CHAR]
-    getc: () => {
-      var continuation = () => {
-        var chunk = process.stdin.read();
-        return chunk;
-      }; 
-      process.stdin.setEncoding('utf8');
-      return process.stdin.on('readable', continuation);
-    }
-  };
+    };
+  },
+  seqs: (alist) => {
+    return list.foldr(alist)(list.empty())(IO.done());
+  },
+  // IO.putc:: CHAR => IO[]
+  putc: (character) => {
+    return (io) => {
+      process.stdout.write(character);
+      return null;
+    };
+  },
+  // IO.puts:: LIST[CHAR] => IO[]
+  // ~~~haskell
+  // puts list = seqs (map putc list)
+  // ~~~
+  puts: (alist) => {
+    return list.match(alist, {
+      empty: () => {
+        return IO.done();
+      },
+      cons: (head, tail) => {
+        return IO.seq(IO.putc(head))(IO.puts(tail));
+      }
+    });
+  },
+  // IO.getc :: IO[CHAR]
+  getc: () => {
+    var continuation = () => {
+      var chunk = process.stdin.read();
+      return chunk;
+    }; 
+    process.stdin.setEncoding('utf8');
+    return process.stdin.on('readable', continuation);
+  }
+};
+
+describe("IOモナドをテストする",() => {
 });
 
 describe("maybeモナドをテストする",() => {

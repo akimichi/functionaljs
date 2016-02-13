@@ -462,7 +462,14 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
     };
   },
   <span class="hljs-comment">/* IO.done関数
-     IOアクションを何も実行しない
+   *   IOアクションを何も実行しない
+   */</span>
+  <span class="hljs-comment">/* done:: T =&gt; IO[T] */</span>
+  done : (any) =&gt; {
+    <span class="hljs-keyword">return</span> IO.unit();
+  },
+  <span class="hljs-comment">/* IO.run関数
+     IOアクションを実行する
   */</span></pre></div></div>
             
         </li>
@@ -473,26 +480,6 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>done:: T =&gt; IO[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  done : (any) =&gt; {
-    <span class="hljs-keyword">return</span> IO.unit();
-  },
-  <span class="hljs-comment">/* IO.run関数
-     IOアクションを実行する
-  */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>run:: IO[A] =&gt; A</p>
 
@@ -505,11 +492,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>readFile:: STRING =&gt; IO[STRING]</p>
 
@@ -525,11 +512,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>println:: STRING =&gt; IO[null]</p>
 
@@ -553,11 +540,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b]</p>
 
@@ -577,11 +564,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>IO.putc:: CHAR =&gt; IO[]</p>
 
@@ -597,11 +584,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>IO.puts:: LIST[CHAR] =&gt; IO[]</p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -623,11 +610,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-22">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>IO.getc :: IO[CHAR]</p>
 
@@ -775,11 +762,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-23">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>list = [[1,2],[3,4]]</p>
 
@@ -794,11 +781,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-24">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>concated_list = [1,2,3,4]</p>
 
@@ -832,11 +819,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-25">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -860,11 +847,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-26">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -883,11 +870,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-27">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>list = [[1],[2]] </p>
 
@@ -913,11 +900,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-28">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>list = [1,2,3,4]</p>
 
@@ -938,11 +925,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-29">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>list = [1]</p>
 
@@ -986,11 +973,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-30">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>list = [1]</p>
 
@@ -1019,11 +1006,11 @@ describe(<span class="hljs-string">"listモナドを活用する"</span>,() =&gt
         </li>
         
         
-        <li id="section-31">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>list = [1,2,3]</p>
 
@@ -1113,11 +1100,11 @@ describe(<span class="hljs-string">"maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-32">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>it(“[nothing()]”, (next) =&gt; {
   // var theList = list.unit(maybe.nothing());

@@ -473,11 +473,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
               </div>
               <h3 id="io-done-">IO.done関数</h3>
 <p>IOアクションを何も実行しない</p>
-<p>done:: T =&gt; IO[T]</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  done : (any) =&gt; {
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* done:: T =&gt; IO[T] */</span>
+  done : (any) =&gt; {
     <span class="hljs-keyword">return</span> IO.unit();
   },
   <span class="hljs-comment">/* IO.run関数

@@ -12,23 +12,13 @@ var tarai = (x,y,z) => {
     return y;
   }
 };
-var sleep = (sec) => {
-  var until = new Date().getTime() + (sec * 1000);
-  while (new Date().getTime() <= until) {
-    ;
-  }
-};
+
 net.createServer((socket) => {
   // 'data' イベントハンドラー
   socket.on('data', (incommingData) => {
-    var maybeInt = parseInt(incommingData,10);
-    console.log(maybeInt);
-    if(isNaN(maybeInt)){ // リクエストが数値でなければ 0 を返します
-      socket.write('0\r\n');
-    } else { // リクエストが数値ならば、 tarai(maybeInt * 2, maybeInt, 0) を返します
-      // sleep(100);
-      socket.write(tarai(maybeInt * 2, maybeInt, 0) + '\r\n');
-    };
+    var number = parseInt(incommingData,10); // クライアントからデータを数値に変換します
+    console.log(number);
+    socket.write(tarai(number * 2, number, 0) + '\r\n'); // tarai関数を計算して、クライアントに返します
   });
   // 'close'イベントハンドラー
   socket.on('close', (error) => {
@@ -36,3 +26,16 @@ net.createServer((socket) => {
   });
 }).listen(3000, localhost);
 /* #@range_end(tarai_server) */
+
+var sleep = (sec) => {
+  var until = new Date().getTime() + (sec * 1000);
+  while (new Date().getTime() <= until) {
+    ;
+  }
+};
+
+    // if(isNaN(maybeInt)){ // データが数値でなければ 0 を返します
+    //   socket.write('0\r\n');
+    // } else { // データが数値ならば、 tarai(maybeInt * 2, maybeInt, 0) を返します
+    //   socket.write(tarai(maybeInt * 2, maybeInt, 0) + '\r\n');
+    // };

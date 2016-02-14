@@ -1,25 +1,23 @@
 "use strict";
 
+process.stdin.setEncoding('utf8');
+
+/* #@range_begin(input_js) */
 var net = require('net');
 var socket = net.connect({
   host: '127.0.0.1',
   port: 3000
 });
 
-
-process.stdin.setEncoding('utf8');
-
-/* #@range_begin(input_js) */
 socket.on('connect', () => {
   process.stdin.on('readable', () => {
     var chunk = process.stdin.read();
     if (chunk !== null) {
       var maybeInt = parseInt(chunk,10); // 読み込んだ文字列を数値に変換する
-      if(isNaN(maybeInt)){ // 数値でない場合、大文字に変換する
-        // process.stdout.write(chunk);
-        process.stdout.write(chunk.toUpperCase());
-      } else { // taraiサーバーにリクエストする
-        socket.write(maybeInt + '\r\n');
+      if(isNaN(maybeInt)){ 
+        process.stdout.write(chunk.toUpperCase()); // 数値でない場合、大文字に変換する
+      } else { 
+        socket.write(maybeInt + '\r\n'); // 数値の場合、taraiサーバーに計算をリクエストする
       };
     }
   });

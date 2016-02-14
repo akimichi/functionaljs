@@ -233,17 +233,17 @@ var list  = {
   },
 };
 
-/* #@range_begin(io_monad_definition) */
 var IO = {
+/* #@range_begin(io_monad_definition) */
   // unit:: T => IO[T]
   unit: (any) => {
     return (_) =>  { // 外界を指定しない
       return any;  // 値だけを返す
     };
   },
-  // flatMap:: IO[T] => FUN[T => IO[S]] => IO[S]
+  // flatMap:: IO[A] => FUN[A => IO[B]] => IO[B]
   flatMap: (instanceA) => {
-    return (actionAB) => { // actionAB:: a -> IO b
+    return (actionAB) => { // actionAB:: A -> IO[B]
       return actionAB(IO.run(instanceA)); // instanceAのIOアクションを実行し、続いて actionABを実行する
     };
   },
@@ -265,6 +265,7 @@ var IO = {
     console.log(message);
     return IO.unit();
   },
+/* #@range_end(io_monad_definition) */
   /* #@range_begin(IO_seq) */
   // IO.seq関数は、2つのIOアクションを続けて実行する
   // IO.seq:: IO[T] => IO[U] => IO[V]
@@ -301,7 +302,6 @@ var IO = {
   }
   /* #@range_end(IO_putStrLn) */
 };
-/* #@range_end(io_monad_definition) */
 
 /* 
 // #@range_begin(io_monad_combined)

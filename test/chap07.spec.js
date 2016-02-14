@@ -3584,14 +3584,14 @@ describe('高階関数', () => {
           var numbers = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
           expect(
             find(numbers,null, (item) => {
-              return (item === 10);
+              return (item === 10); // 10の要素を探します
             }, failureContinuation, successContinuation)
           ).to.eql(
-            null
+            null // 10の要素はないので、nullになります
           );
           expect(
             find(numbers,null, (item) => {
-              return (item === 2);
+              return (item === 2); // 2の要素を探します
             }, failureContinuation, successContinuation)
           ).to.eql(
             2
@@ -4758,8 +4758,7 @@ describe('高階関数', () => {
               });
             };
           },
-          /* #@range_end(maybe_monad) */
-          /* #@range_begin(maybe_monad_helper) */
+          // ヘルパー関数 
           getOrElse: (instanceM) => {
             return (alternate) => {
               return match(instanceM,{
@@ -4772,6 +4771,8 @@ describe('高階関数', () => {
               });
             };
           },
+          /* #@range_end(maybe_monad) */
+          /* #@range_begin(maybe_monad_helper) */
           isEqual: (maybeA,maybeB) => {
             return match(maybeA,{
               just: (valueA) => {
@@ -4840,26 +4841,35 @@ describe('高階関数', () => {
           };
           var justOne = just(1);
           var justTwo = just(2);
-          var justThree = just(3);
           expect(
-            MAYBE.isEqual(add(justOne,justTwo),
-                          justThree)
+            MAYBE.getOrElse(add(justOne,justOne))(null)
           ).to.eql(
-            true
+            MAYBE.getOrElse(justTwo)(null)
           );
           expect(
-            MAYBE.isEqual(add(justOne,nothing()),
-                          nothing())
+            MAYBE.getOrElse(add(justOne,nothing()))(null)
           ).to.eql(
-            true
+            null
           );
           /* #@range_end(maybe_monad_add_test) */
-          expect(
-            MAYBE.isEqual(add(justOne,nothing()),
-                          justThree)
-          ).to.eql(
-            false
-          );
+          // expect(
+          //   MAYBE.isEqual(add(justOne,justTwo),
+          //                 justThree)
+          // ).to.eql(
+          //   true
+          // );
+          // expect(
+          //   MAYBE.isEqual(add(justOne,nothing()),
+          //                 nothing())
+          // ).to.eql(
+          //   true
+          // );
+          // expect(
+          //   MAYBE.isEqual(add(justOne,nothing()),
+          //                 justThree)
+          // ).to.eql(
+          //   false
+          // );
           next();
         });
         // it("list(maybe)", (next) => {

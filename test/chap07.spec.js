@@ -950,19 +950,19 @@ describe('高階関数', () => {
       };
       /* #@range_end(flip) */
       /* #@range_begin(flipped_exponential) */
-      var square = flip(exponential)(2); // 2乗を定義する
-      var cube = flip(exponential)(3);   // 3乗を定義する
+      var square = flip(exponential)(2); // flipで引数を逆転させて、2乗を定義する
+      var cube = flip(exponential)(3);   // flipで引数を逆転させて、3乗を定義する
       /* #@range_end(flipped_exponential) */
       /* #@range_begin(flipped_exponential_test) */
       expect(
         square(2)
       ).to.eql(
-        4
+        4 // 2 * 2 = 4
       );
       expect(
         cube(2)
       ).to.eql(
-        8
+        8 // 2 * 2 * 2 = 8
       );
       /* #@range_end(flipped_exponential_test) */
       next();
@@ -1292,11 +1292,11 @@ describe('高階関数', () => {
         });
         it('マイナスのマイナスはプラス', (next) => {
           /* #@range_begin(composition_example_opposite_twice) */
-          var opposite = (n) => {
+          var opposite = (n) => { // 反数の定義
             return - n;
           };
           expect(
-            compose(opposite)(opposite)(2)
+            compose(opposite)(opposite)(2) // 反数同士の合成は成功します
           ).to.eql(
             2
           );
@@ -1475,13 +1475,13 @@ describe('高階関数', () => {
           return sumHelper(alist,0);
         };
         /* #@range_begin(abstract_length) */
-        // length = sum . map(\x -> 1)
         var length = (alist) => {
           return compose(sum)(flip(list.map)(alwaysOne))(alist);
         };
-        var sequence = list.cons(1,list.cons(2,list.cons(3,list.empty())));
+        /****** テスト *******/
+        var alist = list.cons(1,list.cons(2,list.cons(3,list.empty())));
         expect(
-          length(sequence)
+          length(alist)
         ).to.eql(
           3
         );
@@ -2031,7 +2031,7 @@ describe('高階関数', () => {
         expect(
           object.a
         ).to.eql(
-          2
+          2 // 1だった値が2に変更されています
         );
         /* #@range_end(object_is_not_immutable) */
         next();
@@ -3326,7 +3326,7 @@ describe('高階関数', () => {
             return (predicate) => { // 要素を判定する述語関数
               return foldr(alist)(null)((item) => {
                 return (accumulator) => {
-                  if(predicate(item) === true) {
+                  if(predicate(item) === true) { // 要素が見つかった場合
                     return item;
                   } else {
                     return accumulator;
@@ -3858,9 +3858,9 @@ describe('高階関数', () => {
       };
       var even = multiplyOf(2);
       /* #@range_begin(not_combinator) */
-      // not :: FUN[NUMBER => BOOL] => FUN[NUMBER => BOOL]
-      var not = (predicate) => { // predicate:: NUMBER->BOOL
-        return (arg) => { // NUMBER => BOOL型の関数を返す
+      // not :: FUN[NUM => BOOL] => FUN[NUM => BOOL]
+      var not = (predicate) => { // predicate:: FUN[NUM => BOOL]
+        return (arg) => { // FUN[NUM => BOOL]型を返す
           return ! predicate(arg); // !演算子で論理を反転させる
         };
       };

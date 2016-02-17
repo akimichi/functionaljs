@@ -516,23 +516,24 @@ describe('関数型言語を作る', () => {
           /* #@range_begin(logger_monad) */
           var LOG = {
             unit: (value) => {
-              return pair.cons(list.empty(),value);
+              return pair.cons(value, list.empty());
             },
             flatMap: (instance) => {
               return (transform) => {
                 expect(transform).to.a('function');
                 return pair.match(instance,{
-                  cons: (message, value) => {
+                  cons: (value, message) => {
                     var newInstance = transform(value);
                     return pair.cons(
-                      list.append(message)(pair.left(newInstance)),
-                      pair.right(newInstance));
+                      pair.left(newInstance),
+                      list.append(message)(pair.right(newInstance)));
                   }
                 });
               };
             },
+            // 引数 value をログに格納する
             output: (value) => {
-              return pair.cons(list.unit(String(value)), null);
+              return pair.cons(null, list.unit(String(value)));
             }
           };
           /* #@range_end(logger_monad) */
@@ -558,7 +559,6 @@ describe('関数型言語を作る', () => {
               },
               /* λ式の評価 */
               lambda: (variable, bodyExp) => {
-                /* クロージャーを返す */
                 return LOG.unit(exp.closure((arg) => { /* クロージャーを返す */
                   return exp.match(variable,{ 
                     variable: (name) => {
@@ -605,7 +605,7 @@ describe('関数型言語を作る', () => {
           it('LOG評価器で数値を評価する', (next) => {
             /* #@range_begin(log_interpreter_number) */
             pair.match(evaluate(exp.log(exp.number(2)), emptyEnv),{
-              cons: (log, value) => {
+              cons: (value, log) => {
                 expect( // 結果の値をテストする
                   value
                 ).to.be(
@@ -636,7 +636,7 @@ describe('関数型言語を作る', () => {
           it('LOG評価器で演算を評価する', (next) => {
             /* #@range_begin(log_interpreter_evaluation_strategy) */
             pair.match(evaluate(exp.log(exp.plus(exp.number(1),exp.number(2))), emptyEnv),{
-              cons: (log, value) => {
+              cons: (value, log) => {
                 expect(
                   value
                 ).to.be(
@@ -650,7 +650,7 @@ describe('関数型言語を作る', () => {
               }
             });
             pair.match(evaluate(exp.log(exp.plus(exp.log(exp.number(1)),exp.log(exp.number(2)))), emptyEnv),{
-              cons: (log, value) => {
+              cons: (value, log) => {
                 expect(
                   value
                 ).to.be(
@@ -669,12 +669,12 @@ describe('関数型言語を作る', () => {
           it('LOG評価器で変数を評価する', (next) => {
             var newEnv = env.extend("x",1, emptyEnv);
             expect(
-              pair.right(evaluate(exp.variable("x"), newEnv))
+              pair.left(evaluate(exp.variable("x"), newEnv))
             ).to.be(
               1
             );
             expect(
-              pair.right(evaluate(exp.variable("y"), newEnv))
+              pair.left(evaluate(exp.variable("y"), newEnv))
             ).to.be(
               undefined
             );
@@ -686,7 +686,7 @@ describe('関数型言語を作る', () => {
                                                         exp.plus(exp.variable("x"),exp.variable("x"))),
                                              exp.number(2));
             expect(
-              pair.right(evaluate(expression, emptyEnv))
+              pair.left(evaluate(expression, emptyEnv))
             ).to.be(
               4
             );
@@ -704,7 +704,7 @@ describe('関数型言語を作る', () => {
                               exp.number(2)),
               exp.number(3));
             expect(
-              pair.right(evaluate(expression, emptyEnv))
+              pair.left(evaluate(expression, emptyEnv))
             ).to.be(
               6
             );

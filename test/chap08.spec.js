@@ -138,18 +138,19 @@ var list  = {
 describe('関数型言語を作る', () => {
   describe('環境を作る', () => {
     /* #@range_begin(environment) */
+    // 「環境」モジュール
     var env = {
       // 空の環境
       empty: (variable) => {
         return undefined;
       },
       /* 変数名に対応する値を環境から取りだす */
-      // lookupEnv:: (STRING, ENV) => M[VALUE]
+      // lookup:: (STRING, ENV) => M[VALUE]
       lookup : (identifier, environment) => {
         return environment(identifier);
       },
       /* 環境を拡張する */
-      // extendEnv:: (STRING, VALUE, ENV) => ENV 
+      // extend:: (STRING, VALUE, ENV) => ENV 
       extend: (identifier, value, environment) => {
         expect(identifier).to.a('string');
         return (queryIdentifier) => {
@@ -165,12 +166,42 @@ describe('関数型言語を作る', () => {
     /* #@range_end(environment) */
     describe('環境をテストする', () => {
       it('extendEnvで環境を作り、 lookupEnv で環境を探る', (next) => {
-        var newEnv = env.extend('a',1, env.empty);
-        expect(
-          env.lookup("a", newEnv)
-        ).to.be(
+        /* #@range_begin(environment_test) */
+        expect(((_) => {
+          var newEnv = env.extend('a',1, env.empty);
+          return env.lookup("a", newEnv);
+        })()).to.be(
           1
         );
+        expect(((_) => {
+          // 空の辞書を作成する
+          var initEnv = env.empty;
+          // var a = 1 を実行して、辞書を拡張する
+          var firstEnv = env.extend("a", 1, initEnv);
+          // var b = 3 を実行して、辞書を拡張する
+          var secondEnv = env.extend("b",3, firstEnv);
+          // 辞書から b の値を参照する
+          return env.lookup("b",secondEnv);
+        })()).to.eql(
+          3
+        );
+        expect(((_) => {
+          // 空の辞書を作成する
+          var initEnv = env.empty;
+          // var x = 1 を実行して、辞書を拡張する
+          var xEnv = env.extend("x", 1, initEnv);
+          // var z = 2 を実行して、辞書を拡張する
+          var zEnv = env.extend("z", 2, xEnv);
+          // 内部のスコープで var x = 3 を実行して、辞書を拡張する
+          var xEnvInner = env.extend("x",3, zEnv);
+          // 内部のスコープで var y = 4 を実行して、辞書を拡張する
+          var innerMostEnv = env.extend("y",4, xEnvInner);
+          // 一番内側のスコープを利用して x + y + z を計算する
+          return env.lookup("x",innerMostEnv) + env.lookup("y",innerMostEnv) + env.lookup("z",innerMostEnv) ;
+        })()).to.eql(
+          3 + 4 + 2
+        );
+        /* #@range_end(environment_test) */
         next();
       });
     });
@@ -197,8 +228,8 @@ describe('関数型言語を作る', () => {
       // };
       /* #@range_end(value_algaraic_datatype) */
       // ## 式の代数的データ構造
-      /* #@range_begin(expression_algaraic_datatype) */
       var exp = {
+      /* #@range_begin(expression_algaraic_datatype) */
         match : (data, pattern) => {
           return data.call(exp, pattern);
         },
@@ -226,6 +257,8 @@ describe('関数型言語を作る', () => {
             return pattern.app(variable, arg);
           };
         },
+      /* #@range_end(expression_algaraic_datatype) */
+      /* #@range_begin(expression_arithmetic) */
         plus : (exp1,exp2) => {
           return (pattern) => {
             return pattern.plus(exp1, exp2);
@@ -241,6 +274,7 @@ describe('関数型言語を作る', () => {
             return pattern.div(exp1, exp2);
           };
         }
+      /* #@range_end(expression_arithmetic) */
       };
       describe('式をテストする', () => {
         it("\\x.\\y.x", (next) => {
@@ -255,7 +289,6 @@ describe('関数型言語を作る', () => {
           next();
         });
       });
-      /* #@range_end(expression_algaraic_datatype) */
       describe('モナド的評価器を作る', () => {
         var emptyEnv = env.empty;
         describe('恒等モナド的評価器を作る', () => {
@@ -310,6 +343,7 @@ describe('関数型言語を作る', () => {
                   });
                 });
               },
+              /* 足し算の評価 */
               plus: (expL, expR) => {
                 return ID.flatMap(evaluate(expL, environment))((valueR) => {
                   return ID.flatMap(evaluate(expR, environment))((valueL) => {
@@ -317,6 +351,7 @@ describe('関数型言語を作る', () => {
                   });
                 });
               },
+              /* かけ算の評価 */
               mul: (expL, expR) => {
                 return ID.flatMap(evaluate(expL, environment))((valueR) => {
                   return ID.flatMap(evaluate(expR, environment))((valueL) => {
@@ -324,6 +359,7 @@ describe('関数型言語を作る', () => {
                   });
                 });
               },
+              /* 割り算の評価 */
               div: (expL, expR) => {
                 return ID.flatMap(evaluate(expL, environment))((valueR) => {
                   return ID.flatMap(evaluate(expR, environment))((valueL) => {
@@ -335,11 +371,13 @@ describe('関数型言語を作る', () => {
           };
           /* #@range_end(identity_monad_evaluator) */
           it('ID評価器で数値を評価する', (next) => {
+            /* #@range_begin(number_evaluation_test) */
             expect(
               evaluate(exp.num(2), emptyEnv)
             ).to.be(
               ID.unit(2)
             );
+            /* #@range_end(number_evaluation_test) */
             next();
           });
           it('ID評価器で演算を評価する', (next) => {
@@ -356,6 +394,7 @@ describe('関数型言語を作る', () => {
             next();
           });
           it('ID評価器で変数を評価する', (next) => {
+            /* #@range_begin(variable_evaluation_test) */
             var newEnv = env.extend("x",1, emptyEnv);
             expect(
               evaluate(exp.variable("x"), newEnv)
@@ -367,6 +406,7 @@ describe('関数型言語を作る', () => {
             ).to.be(
               ID.unit(undefined)
             );
+            /* #@range_end(variable_evaluation_test) */
             next();
           });
           it('ID評価器で関数を評価する', (next) => {
@@ -381,6 +421,7 @@ describe('関数型言語を作る', () => {
             next();
           });
           it('ID評価器で関数適用を評価する', (next) => {
+            /* #@range_begin(application_evaluation_test) */
             // \x.plus(x,x)(2)
             var expression = exp.app(exp.lambda(exp.variable("x"),
                                                         exp.plus(exp.variable("x"),exp.variable("x"))),
@@ -390,9 +431,11 @@ describe('関数型言語を作る', () => {
             ).to.be(
               4
             );
+            /* #@range_end(application_evaluation_test) */
             next();
           });
           it('ID評価器で高階関数を評価する', (next) => {
+            /* #@range_begin(curried_function_evaluation_test) */
             // (\x.
             //    \y.
             //       x*y)(2)(3)
@@ -407,6 +450,7 @@ describe('関数型言語を作る', () => {
             ).to.be(
               6
             );
+            /* #@range_end(curried_function_evaluation_test) */
             next();
           });
         });

@@ -78,12 +78,13 @@ RUN sbt update
 ###############################
 ENV NODE_VERSION 0.12.0
 COPY test /workspace/nodejs/test
+COPY lib /workspace/nodejs/lib
+COPY .nvmrc gulpfile.js package.json /workspace/nodejs/
 ## install node.js 
 WORKDIR /workspace/nodejs
 RUN add-apt-repository ppa:chris-lea/node.js
 RUN apt-get update -qq
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
-COPY .nvmrc gulpfile.js package.json /workspace/nodejs/
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 

@@ -229,9 +229,9 @@ describe('関数型言語を作る', () => {
       /* #@range_end(value_algaraic_datatype) */
       // ## 式の代数的データ構造
       var exp = {
-      /* #@range_begin(expression_algaraic_datatype) */
+      /* #@range_begin(expression_algebraic_datatype) */
         match : (data, pattern) => {
-          return data.call(exp, pattern);
+          return data(pattern);
         },
         num: (value) => {
           expect(value).to.a('number');
@@ -240,14 +240,11 @@ describe('関数型言語を作る', () => {
           };
         },
         variable : (name) => {
-          expect(name).to.a('string');
           return (pattern) => {
             return pattern.variable(name);
           };
         },
         lambda : (variable, body) => {
-          expect(variable).to.a('function');
-          expect(body).to.a('function');
           return (pattern) => {
             return pattern.lambda(variable, body);
           };
@@ -257,7 +254,7 @@ describe('関数型言語を作る', () => {
             return pattern.app(variable, arg);
           };
         },
-      /* #@range_end(expression_algaraic_datatype) */
+      /* #@range_end(expression_algebraic_datatype) */
       /* #@range_begin(expression_arithmetic) */
         plus : (exp1,exp2) => {
           return (pattern) => {

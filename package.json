@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "expect.js": "^0.3.1",
-    "gulp": "^3.8.11",
-    "mocha": "^1.12.1"
+    "gulp": "3.9.1",
+    "mocha": "1.21.5"
   },
   "engines": {
     "node": "0.12.x"

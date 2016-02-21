@@ -4558,22 +4558,7 @@ describe('高階関数', () => {
         6
       );
       /* #@range_end(Y_combinator_test) */
-      // var factorial = (fact) => {
-      //   return (n) => {
-      //     if (n == 0) {
-      //       return 1;
-      //     } else {
-      //       return n * fact(n - 1);
-      //     }
-      //   };
-      // };
-      // var fact = Y(factorial);
-      // expect(
-      //   fact(3)
-      // ).to.eql(
-      //   6
-      // );
-      // Y x = x(Y x)
+      
       next();
     });
     

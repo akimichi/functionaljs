@@ -140,21 +140,17 @@ describe('関数型言語を作る', () => {
     /* #@range_begin(environment) */
     // 「環境」モジュール
     var env = {
-      // 空の環境
-      empty: (variable) => {
+      // empty:: STRING => VALUE 
+      empty: (variable) => {                        // 空の環境を作る
         return undefined;
       },
-      /* 変数名に対応する値を環境から取りだす */
-      // lookup:: (STRING, ENV) => M[VALUE]
-      lookup : (identifier, environment) => {
+      // lookup:: (STRING, ENV) => VALUE
+      lookup : (identifier, environment) => {       // 変数名に対応する値を環境から取りだす
         return environment(identifier);
       },
-      /* 環境を拡張する */
       // extend:: (STRING, VALUE, ENV) => ENV 
-      extend: (identifier, value, environment) => {
-        expect(identifier).to.a('string');
+      extend: (identifier, value, environment) => { // 環境を拡張する
         return (queryIdentifier) => {
-          expect(queryIdentifier).to.a('string');
           if(identifier === queryIdentifier) {
             return value;
           } else {
@@ -229,58 +225,53 @@ describe('関数型言語を作る', () => {
       // ## 式の代数的データ構造
       var exp = {
       /* #@range_begin(expression_algebraic_datatype) */
-        // 式のパターンマッチ関数
-        match : (data, pattern) => {
+        match : (data, pattern) => { // 式のパターンマッチ関数
           return data(pattern);
         },
-        // 数値の式
-        num: (value) => {
-          expect(value).to.a('number');
+        num: (value) => {             // 数値の式
           return (pattern) => {
             return pattern.num(value);
           };
         },
-        // 変数の式
-        variable : (name) => {
+        variable : (name) => {        // 変数の式
           return (pattern) => {
             return pattern.variable(name);
           };
         },
-        // 関数定義の式(λ式)
-        lambda: (variable, body) => {
+        lambda: (variable, body) => { // 関数定義の式(λ式)
           return (pattern) => {
             return pattern.lambda(variable, body);
           };
         },
-        // 関数適用の式
-        app: (lambda, arg) => {
+        
+        app: (lambda, arg) => {       // 関数適用の式
           return (pattern) => {
             return pattern.app(lambda, arg);
           };
         },
       /* #@range_end(expression_algebraic_datatype) */
       /* #@range_begin(expression_arithmetic) */
-        add : (exp1,exp2) => {
+        add : (expL,expR) => {        // 足し算の式
           return (pattern) => {
-            return pattern.add(exp1, exp2);
+            return pattern.add(expL, expR);
           };
         },
-        // mul : (exp1,exp2) => {
-        //   return (pattern) => {
-        //     return pattern.mul(exp1, exp2);
-        //   };
-        // },
-        div : (exp1,exp2) => {
+        mul : (exp1,exp2) => {        // かけ算の式
           return (pattern) => {
-            return pattern.div(exp1, exp2);
-          };
-        },
-        equal: (expL,expR) => {
-          return (pattern) => {
-            return pattern.equal(expL, expR);
+            return pattern.mul(exp1, exp2);
           };
         }
       /* #@range_end(expression_arithmetic) */
+        // div : (exp1,exp2) => {
+        //   return (pattern) => {
+        //     return pattern.div(exp1, exp2);
+        //   };
+        // },
+        // equal: (expL,expR) => {
+        //   return (pattern) => {
+        //     return pattern.equal(expL, expR);
+        //   };
+        // }
       };
       describe('式をテストする', () => {
         it("\\x.\\y.x", (next) => {
@@ -322,16 +313,13 @@ describe('関数型言語を作る', () => {
           // evaluate:: (EXP, ENV) => ID[VALUE]
           var evaluate = (anExp, environment) => {
             return exp.match(anExp,{
-              /* 数値の評価 */
-              num: (numericValue) => {
+              num: (numericValue) => {        // 数値の評価
                 return ID.unit(numericValue);
               },
-              /* 変数の評価 */
-              variable: (name) => {
-                return env.lookup(name, environment);
+              variable: (name) => {           // 変数の評価 
+                return ID.unit(env.lookup(name, environment));
               },
-              /* λ式の評価 */
-              lambda: (variable, body) => {
+              lambda: (variable, body) => {   // λ式の評価 
                 /* クロージャーを返す */
                 return exp.match(variable,{
                   variable: (name) => {
@@ -341,37 +329,37 @@ describe('関数型言語を作る', () => {
                   }
                 });
               },
-              /* 関数適用の評価 */
-              app: (lambda, arg) => {
+              app: (lambda, arg) => {         // 関数適用の評価
                 return ID.flatMap(evaluate(lambda, environment))((closure) => {
                   return ID.flatMap(evaluate(arg, environment))((actualArg) => {
                     return ID.unit(closure(actualArg)); 
                   });
                 });
               },
-              /* 足し算の評価 */
-              add: (expL, expR) => {
+              add: (expL, expR) => {          // 足し算の評価
                 return ID.flatMap(evaluate(expL, environment))((valueR) => {
                   return ID.flatMap(evaluate(expR, environment))((valueL) => {
                     return ID.unit(valueL + valueR); 
                   });
                 });
               },
-              equal: (expL, expR) => {
+              mul: (expL, expR) => {          // かけ算の評価
                 return ID.flatMap(evaluate(expL, environment))((valueR) => {
                   return ID.flatMap(evaluate(expR, environment))((valueL) => {
-                    return ID.unit(valueL === valueR); 
+                    return ID.unit(valueL * valueR); 
                   });
                 });
               }
-              /* かけ算の評価 */
-              // mul: (expL, expR) => {
+            });
+          };
+          /* #@range_end(identity_monad_evaluator) */
+              // equal: (expL, expR) => {
               //   return ID.flatMap(evaluate(expL, environment))((valueR) => {
               //     return ID.flatMap(evaluate(expR, environment))((valueL) => {
-              //       return ID.unit(valueL * valueR); 
+              //       return ID.unit(valueL === valueR); 
               //     });
               //   });
-              // },
+              // }
               // /* 割り算の評価 */
               // div: (expL, expR) => {
               //   return ID.flatMap(evaluate(expL, environment))((valueR) => {
@@ -380,9 +368,6 @@ describe('関数型言語を作る', () => {
               //     });
               //   });
               // }
-            });
-          };
-          /* #@range_end(identity_monad_evaluator) */
           it('ID評価器で数値を評価する', (next) => {
             /* #@range_begin(number_evaluation_test) */
             expect(
@@ -443,7 +428,7 @@ describe('関数型言語を作る', () => {
             expect(
               evaluate(expression, env.empty)
             ).to.eql(
-              3  
+              ID.unit(3)
             );
             /* #@range_end(application_evaluation_test) */
             next();
@@ -466,7 +451,7 @@ describe('関数型言語を作る', () => {
             expect(
               evaluate(expression, env.empty)
             ).to.eql(
-              5
+              ID.unit(5)
             );
             /* #@range_end(curried_function_evaluation_test) */
             next();

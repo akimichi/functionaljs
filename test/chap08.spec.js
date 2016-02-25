@@ -533,7 +533,6 @@ describe('関数型言語を作る', () => {
           /* #@range_begin(expression_logger_interpreter) */
           var exp = {
             log: (anExp) => { // ログ出力用の式
-              expect(anExp).to.a('function');
               return (pattern) => {
                 return pattern.log(anExp);
               };
@@ -548,12 +547,6 @@ describe('関数型言語を作る', () => {
                 return pattern.num(value);
               };
             },
-            // closure: (lambdaExpssion) => {
-            //   expect(lambdaExpssion).to.a('function');
-            //   return (pattern) => {
-            //     return pattern.closure(lambdaExpssion);
-            //   };
-            // },
             variable : (name) => {
               expect(name).to.a('string');
               return (pattern) => {
@@ -582,11 +575,11 @@ describe('関数型言語を作る', () => {
                 return pattern.mul(exp1, exp2);
               };
             },
-            div : (exp1,exp2) => {
-              return (pattern) => {
-                return pattern.div(exp1, exp2);
-              };
-            }
+            // div : (exp1,exp2) => {
+            //   return (pattern) => {
+            //     return pattern.div(exp1, exp2);
+            //   };
+            // }
           };
           /* #@range_begin(logger_monad) */
           var LOG = {
@@ -598,10 +591,9 @@ describe('関数型言語を作る', () => {
             // flatMap:: LOG[T] => FUN[T => LOG[T]] => LOG[T]
             flatMap: (instanceM) => {
               return (transform) => {
-                expect(transform).to.a('function');
                 return pair.match(instanceM,{
                   cons: (value, log) => {
-                    var newInstance = transform(value);
+                    var newInstance = transform(value); // 取り出した値で計算する
                     return pair.cons(
                       pair.left(newInstance), // 計算の結果をPairの左側に格納する
                       list.append(log)(pair.right(newInstance))); // 新しいログを既存のログに追加する
@@ -623,7 +615,7 @@ describe('関数型言語を作る', () => {
               // log式の評価
               log: (anExp) => {
                 return LOG.flatMap(evaluate(anExp, environment))((value) => {
-                  return LOG.flatMap(LOG.output(value))((_) => { // Log.output(value) で value をログに格納する
+                  return LOG.flatMap(LOG.output(value))((_) => { // value をログに格納する
                     return LOG.unit(value); 
                   });
                 });
@@ -651,9 +643,9 @@ describe('関数型言語を作る', () => {
               app: (lambda, arg) => {         // 関数適用の評価
                 return LOG.flatMap(evaluate(lambda, environment))((closure) => {
                   return LOG.flatMap(evaluate(arg, environment))((actualArg) => {
-                    return LOG.flatMap(LOG.output(actualArg))((_) => {
+                    // return LOG.flatMap(LOG.output(actualArg))((_) => {
                     return closure(actualArg); 
-                    });
+                    // });
                   });
                 });
               },
@@ -704,6 +696,26 @@ describe('関数型言語を作る', () => {
               }
             });
             /* #@range_end(log_interpreter_number) */
+            next();
+          });
+          it('LOG評価器で変数を評価する', (next) => {
+            /* #@range_begin(log_interpreter_variable) */
+            var newEnv = env.extend("x",1, env.empty);
+            pair.match(evaluate(exp.log(exp.variable("x")), newEnv), {
+              cons: (value, log) => {
+                expect( // 結果の値をテストする
+                  value
+                ).to.eql(
+                  1
+                );
+                expect( // 保存されたログを見る
+                  list.toArray(log)
+                ).to.eql(
+                  [1]
+                );
+              }
+            });
+            /* #@range_end(log_interpreter_variable) */
             next();
           });
           it('LOG評価器で演算を評価する', (next) => {
@@ -758,20 +770,6 @@ describe('関数型言語を作る', () => {
             /* #@range_end(log_interpreter_evaluation_strategy) */
             next();
           });
-          it('LOG評価器で変数を評価する', (next) => {
-            var newEnv = env.extend("x",1, emptyEnv);
-            expect(
-              pair.left(evaluate(exp.variable("x"), newEnv))
-            ).to.be(
-              1
-            );
-            expect(
-              pair.left(evaluate(exp.variable("y"), newEnv))
-            ).to.be(
-              undefined
-            );
-            next();
-          });
           it('LOG評価器で関数適用を評価する', (next) => {
             // \x.add(x,x)(2)
             var expression = exp.app(exp.lambda(exp.variable("x"),
@@ -785,7 +783,7 @@ describe('関数型言語を作る', () => {
             expect(
               list.toArray(pair.right(evaluate(expression, env.empty)))
             ).to.eql(
-              ['2']
+              []
             );
             next();
           });

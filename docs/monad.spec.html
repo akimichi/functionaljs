@@ -466,10 +466,7 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
             <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* done:: T =&gt; IO[T] */</span>
   done : (any) =&gt; {
     <span class="hljs-keyword">return</span> IO.unit();
-  },
-  <span class="hljs-comment">/* IO.run関数
-     IOアクションを実行する
-  */</span></pre></div></div>
+  },</pre></div></div>
             
         </li>
         
@@ -480,11 +477,13 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>run:: IO[A] =&gt; A</p>
+              <h3 id="io-run-">IO.run関数</h3>
+<p>IOアクションを実行する</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  run : (instanceM) =&gt; {
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* run:: IO[A] =&gt; A */</span>
+  run : (instanceM) =&gt; {
     <span class="hljs-keyword">return</span> instanceM();
   },</pre></div></div>
             

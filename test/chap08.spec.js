@@ -145,8 +145,8 @@ describe('関数型言語を作る', () => {
         return undefined;
       },
       // lookup:: (STRING, ENV) => VALUE
-      lookup : (identifier, environment) => {       // 変数名に対応する値を環境から取りだす
-        return environment(identifier);
+      lookup : (name, environment) => {       // 変数名に対応する値を環境から取りだす
+        return environment(name);
       },
       // extend:: (STRING, VALUE, ENV) => ENV 
       extend: (identifier, value, environment) => { // 環境を拡張する
@@ -163,8 +163,8 @@ describe('関数型言語を作る', () => {
     it('環境をテストする', (next) => {
       /* #@range_begin(environment_code_test) */
       expect(((_) => {
-        var aEnv = env.extend('a',1, env.empty); // 空の環境からaEnv環境を作る
-        return env.lookup("a", aEnv);            // aEnv環境を利用して a の値を求める
+        var newEnv = env.extend('a',1, env.empty); // 空の環境からnewEnv環境を作る
+        return env.lookup("a", newEnv);            // newEnv環境を利用して a の値を求める
       })()).to.eql(
         1
       );
@@ -255,13 +255,13 @@ describe('関数型言語を作る', () => {
           return (pattern) => {
             return pattern.add(expL, expR);
           };
-        },
-        mul : (exp1,exp2) => {        // かけ算の式
-          return (pattern) => {
-            return pattern.mul(exp1, exp2);
-          };
         }
       /* #@range_end(expression_arithmetic) */
+        // mul : (exp1,exp2) => {        // かけ算の式
+        //   return (pattern) => {
+        //     return pattern.mul(exp1, exp2);
+        //   };
+        // }
         // div : (exp1,exp2) => {
         //   return (pattern) => {
         //     return pattern.div(exp1, exp2);
@@ -313,8 +313,8 @@ describe('関数型言語を作る', () => {
           // evaluate:: (EXP, ENV) => ID[VALUE]
           var evaluate = (anExp, environment) => {
             return exp.match(anExp,{
-              num: (numericValue) => {        // 数値の評価
-                return ID.unit(numericValue);
+              num: (value) => {        // 数値の評価
+                return ID.unit(value);
               },
               variable: (name) => {           // 変数の評価 
                 return ID.unit(env.lookup(name, environment));
@@ -333,21 +333,13 @@ describe('関数型言語を作る', () => {
                 return ID.flatMap(evaluate(lambda, environment))((closure) => {
                   return ID.flatMap(evaluate(arg, environment))((actualArg) => {
                     return closure(actualArg); 
-                    // return ID.unit(closure(actualArg)); 
                   });
                 });
               },
               add: (expL, expR) => {          // 足し算の評価
-                return ID.flatMap(evaluate(expL, environment))((valueR) => {
-                  return ID.flatMap(evaluate(expR, environment))((valueL) => {
+                return ID.flatMap(evaluate(expL, environment))((valueL) => {
+                  return ID.flatMap(evaluate(expR, environment))((valueR) => {
                     return ID.unit(valueL + valueR); 
-                  });
-                });
-              },
-              mul: (expL, expR) => {          // かけ算の評価
-                return ID.flatMap(evaluate(expL, environment))((valueR) => {
-                  return ID.flatMap(evaluate(expR, environment))((valueL) => {
-                    return ID.unit(valueL * valueR); 
                   });
                 });
               }
@@ -373,7 +365,7 @@ describe('関数型言語を作る', () => {
             /* #@range_begin(number_evaluation_test) */
             expect(
               evaluate(exp.num(2), env.empty)
-            ).to.be(
+            ).to.eql(
               ID.unit(2)
             );
             /* #@range_end(number_evaluation_test) */
@@ -394,7 +386,7 @@ describe('関数型言語を作る', () => {
           });
           it('ID評価器で変数を評価する', (next) => {
             /* #@range_begin(variable_evaluation_test) */
-            var newEnv = env.extend("x",1, env.empty);
+            var newEnv = env.extend("x",1, env.empty); // 変数xを1に対応させた環境を作る
             expect(
               evaluate(exp.variable("x"), newEnv)
             ).to.be(
@@ -420,8 +412,8 @@ describe('関数型言語を作る', () => {
             next();
           });
           it('ID評価器で関数適用を評価する', (next) => {
-            /* #@range_begin(application_evaluation_test) */
             // ((n) => { return n + 1; })(2)
+            /* #@range_begin(application_evaluation_test) */
             var expression = exp.app(exp.lambda(exp.variable("n"),
                                                 exp.add(exp.variable("n"),
                                                         exp.num(1))),
@@ -609,7 +601,7 @@ describe('関数型言語を作る', () => {
           };
           /* #@range_end(logger_monad) */
           /* #@range_begin(logger_monad_evaluator) */
-          // evaluate:: (EXP, ENV) => LOG[NUM]
+          // evaluate:: (EXP, ENV) => LOG[VALUE]
           var evaluate = (anExp, environment) => {
             return exp.match(anExp,{
               // log式の評価
@@ -664,19 +656,19 @@ describe('関数型言語を作る', () => {
               //   });
               // },
               add: (expL, expR) => {
-                return LOG.flatMap(evaluate(expL, environment))((valueR) => {
-                  return LOG.flatMap(evaluate(expR, environment))((valueL) => {
+                return LOG.flatMap(evaluate(expL, environment))((valueL) => {
+                  return LOG.flatMap(evaluate(expR, environment))((valueR) => {
                     return LOG.unit(valueL + valueR); 
                   });
                 });
               },
-              mul: (expL, expR) => {
-                return LOG.flatMap(evaluate(expL, environment))((valueR) => {
-                  return LOG.flatMap(evaluate(expR, environment))((valueL) => {
-                    return LOG.unit(valueL * valueR); 
-                  });
-                });
-              },
+              // mul: (expL, expR) => {
+              //   return LOG.flatMap(evaluate(expL, environment))((valueR) => {
+              //     return LOG.flatMap(evaluate(expR, environment))((valueL) => {
+              //       return LOG.unit(valueL * valueR); 
+              //     });
+              //   });
+              // },
             });
           };
           it('LOG評価器で数値を評価する', (next) => {
@@ -748,26 +740,43 @@ describe('関数型言語を作る', () => {
               }
             });
             /* #@range_begin(log_interpreter_evaluation_strategy) */
-            var expression = exp.log(exp.add(
-                exp.log(exp.add(
-                  exp.log(exp.num(1)),
-                  exp.log(exp.num(2)))),
-              exp.log(exp.num(4))));
+            var expression = exp.log(exp.app(exp.lambda(exp.variable("n"),
+                                                exp.add(exp.log(exp.num(1)), exp.variable("n"))),
+                                     exp.log(exp.num(2))));
             pair.match(evaluate(expression, env.empty),{
               cons: (value, log) => {
                 expect(
                   value
                 ).to.be(
-                  7 // (1 + 2) + 4 = 7
+                  3 // ((n) => { return 1 + n})(2) 
                 );
                 expect(
                   list.toArray(log)
                 ).to.eql(
-                  [1,2,3,4,7]
+                  [2,1,3]
                 );
               }
             });
             /* #@range_end(log_interpreter_evaluation_strategy) */
+            // var expression = exp.log(exp.add(
+            //     exp.log(exp.add(
+            //       exp.log(exp.num(1)),
+            //       exp.log(exp.num(2)))),
+            //   exp.log(exp.num(4))));
+            // pair.match(evaluate(expression, env.empty),{
+            //   cons: (value, log) => {
+            //     expect(
+            //       value
+            //     ).to.be(
+            //       7 // (1 + 2) + 4 = 7
+            //     );
+            //     expect(
+            //       list.toArray(log)
+            //     ).to.eql(
+            //       [1,2,3,4,7]
+            //     );
+            //   }
+            // });
             next();
           });
           it('LOG評価器で関数適用を評価する', (next) => {
@@ -790,18 +799,18 @@ describe('関数型言語を作る', () => {
           it('LOG評価器でカリー化関数を評価する', (next) => {
             // (\x.
             //    \y.
-            //       x*y)(2)(3)
+            //       x+y)(2)(3)
             // 
             var expression = exp.app(
               exp.app(exp.lambda(exp.variable("x"),
                                          exp.lambda(exp.variable("y"),
-                                                    exp.mul(exp.variable("x"),exp.variable("y")))),
+                                                    exp.add(exp.variable("x"),exp.variable("y")))),
                               exp.num(2)),
               exp.num(3));
             expect(
               pair.left(evaluate(expression, emptyEnv))
             ).to.be(
-              6
+              5
             );
             next();
           });

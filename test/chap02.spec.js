@@ -30,7 +30,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
       describe('第1級市民としての関数', function() {
         it('数値は第1級市民である', function(next) {
           /*  #@range_begin(number_as_first_class_citizen) */
-          // 値を変数に束縛する
+          // 値を変数にバインドする
           var zero = 0;
           var name = "Haskell Curry";
           // 値をデータ構造に埋めこむ
@@ -291,6 +291,23 @@ describe('なぜ関数型プログラミングが重要か', () => {
             2
           );
           /* #@range_end(any_value_has_referential_transparency) */
+          next();
+        });
+        it('変数が参照透明性を持つ場合', (next) => {
+          /* #@range_begin(variable_is_referential_transparent) */
+          var x = 1;
+          expect(
+            x 
+          ).to.eql(
+            x
+          );
+          var y = x;
+          expect(
+            y
+          ).to.eql(
+            1
+          );
+          /* #@range_end(variable_is_referential_transparent) */
           next();
         });
         it('変数は参照透明性を持つとは限らない', (next) => {

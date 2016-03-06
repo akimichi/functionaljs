@@ -39,22 +39,22 @@ describe('なぜ関数型プログラミングが重要か', () => {
             month: 1,
             day: 12
           };
+          // 関数から値を返す
+          var birthYear = (birthdayObject) => {
+            return birthdayObject.year;
+          };
+          /* #@range_end(number_as_first_class_citizen) */
           // 値を関数に渡す
           expect(
             Math.sqrt(1)
           ).to.eql(
             1
           );
-          // 関数から値を返す
-          var birthYear = (birthdayObject) => {
-            return birthdayObject.year;
-          };
           expect(
             birthYear(birthday)
           ).to.eql(
             1999
           );
-          /* #@range_end(number_as_first_class_citizen) */
           next();
         });
         it('関数は変数に束縛できる', function(next) {
@@ -62,12 +62,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
           var succ = (n) => {
             return n + 1;
           };
+          /* #@range_end(function_bound_to_variable) */
           expect(
             succ(1) // 変数succを用いてλ式を呼びだす
           ).to.eql(
             2
           );
-          /* #@range_end(function_bound_to_variable) */
           next();
         });
         it('関数をオブジェクトに埋めこむ', (next) => {
@@ -417,6 +417,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
             fs.writeFileSync(path, n);
             return n;
           };
+          /* #@range_end(fileio_breaks_referential_transparency)  */
           write('/tmp/io.txt', 1);
           expect(
             read('/tmp/io.txt')
@@ -429,7 +430,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
           ).to.eql(
             2
           );
-          /* #@range_end(fileio_breaks_referential_transparency)  */
           next();
         });
       });

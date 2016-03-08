@@ -515,6 +515,45 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
         describe('不変なデータ', () =>  {
+          it('不変なデータ型', (next) => {
+            /* #@range_begin(immutable_datatype) */
+            var empty =  (_) => {
+              return null;
+            };
+            var get = (key, obj) => {
+              return obj(key);
+            };
+            var set = (key, value, obj) => {
+              return (key2) => {
+                if(key === key2) {
+                  return value;
+                } else {
+                  return get(key2,obj);
+                }
+              };
+            };
+            /* #@range_end(immutable_datatype) */
+            next();
+          });
+          describe('命令的なstackの実装', () => {
+            var object = {
+              empty: (_) => {
+                return null;
+              },
+              get: (key, obj) => {
+                return obj(key);
+              },
+              set: (key, value, obj) => {
+                return (key2) => {
+                  if(key === key2) {
+                    return value;
+                  } else {
+                    return object.get(key2,obj);
+                  }
+                };
+              }
+            };
+          });
           describe('命令的なstackの実装', () => {
             /* #@range_begin(imperative_stack) */
             var stack = [];
@@ -623,7 +662,17 @@ describe('なぜ関数型プログラミングが重要か', () => {
           });
         });
         describe('副作用への対処', () =>  {
-          describe('モナド', () => {
+          describe('副作用を関数のスコープに閉じこめる', () => {
+            /* #@range_begin(action) */
+            var action = (arg) => {
+              return () => {
+                return action(arg); 
+              };
+            };
+            /* #@range_end(action) */
+            
+          });
+          describe('状態モナド', () => {
             var bind = (operate, continues) => {
               return (stack) => {
                 var newState = operate(stack);

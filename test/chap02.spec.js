@@ -102,53 +102,87 @@ describe('なぜ関数型プログラミングが重要か', () => {
         );
         next();
       });
-      it('関数を返す', (next) => {
-        /* #@range_begin(function_returning_function) */
-        var reduce = (init,glue) => {
-          return (array) => { // 関数が返る
-            if(array.length === 0){
-              return init;
-            } else {
-              var accumulator = glue(array[0], init);
-              var tail = array.slice(1,array.length);
-              return reduce(accumulator,glue)(tail);
-            }
+      describe('関数を返す', () => {
+        it('adderを定義する', (next) => {
+          /* #@range_begin(adder_definition) */
+          var adder = (n) => {
+            return (m) => { // 関数を返す
+              return n + m;
+            };
           };
-        };
-        /* #@range_end(function_returning_function) */
-        /* #@range_begin(function_returning_function_test) */
-        var adder = (x,y) => {
-          return x + y;
-        };
-        var sum = reduce(0,adder);
-        expect(
-          sum([1,2,3,4])
-        ).to.eql(
-          10
-        );
-        /* #@range_end(function_returning_function_test) */
+          /* #@range_end(adder_definition) */
+          var succ = adder(1);
+          expect(
+            succ(0)
+          ).to.eql(
+            1
+          );
+          next();
+        });
+        // it('forEachを定義する', (next) => {
+        //   /* #@range_begin(forEach_definition) */
+        //   var forEach = (array) => {
+        //     return (func) => {
+        //       if(array.length === 0){
+        //         return null;
+        //       } else {
+        //         func(array[0]);
+        //         var tail = array.slice(1,array.length);
+        //         return forEach(tail);
+        //       }
+        //     };
+        //   };
+        //   /* #@range_end(forEach_definition) */
+        //   next();
+        // });
+        it('reduceを定義する', (next) => {
+          /* #@range_begin(reduce_definition) */
+          var reduce = (init,glue) => {
+            return (array) => { // 関数が返る
+              if(array.length === 0){
+                return init;
+              } else {
+                var accumulator = glue(array[0], init);
+                var tail = array.slice(1,array.length);
+                return reduce(accumulator,glue)(tail);
+              }
+            };
+          };
+          /* #@range_end(reduce_definition) */
+          /* #@range_begin(function_returning_function_test) */
+          var adder = (x,y) => {
+            return x + y;
+          };
+          var sum = reduce(0,adder);
+          expect(
+            sum([1,2,3,4])
+          ).to.eql(
+            10
+          );
+          /* #@range_end(function_returning_function_test) */
 
-        // var returnFunction = (func) => {
-        //    return (args) => {
-        //      return func.apply(this, args);
-        //    };
-        // };
-        // adder . multiplyier
-        // expect(
-        //    compose(adder)(multiplyier)(2,3)
-        // ).to.eql(
-        //    10
-        // );
-        // // expo([2,3,4,...]) = 2 ^ 3 ^ 4 ^ .... = (2 * 2 * 2) * (2 * 2 * 2) * (2 * 2 * 2) * (2 * 2 * 2) * ...
-        // var expo = (array) => {
-        //   return array.reduce(returnFunctionFromFunction(returnFunctionFromFunction(multiplyier)),1);
-        // };
-        // expect(
-        //    expo([2,3,4])
-        // ).to.eql(
-        //    24
-        // );
-        next();
+          // var returnFunction = (func) => {
+          //    return (args) => {
+          //      return func.apply(this, args);
+          //    };
+          // };
+          // adder . multiplyier
+          // expect(
+          //    compose(adder)(multiplyier)(2,3)
+          // ).to.eql(
+          //    10
+          // );
+          // // expo([2,3,4,...]) = 2 ^ 3 ^ 4 ^ .... = (2 * 2 * 2) * (2 * 2 * 2) * (2 * 2 * 2) * (2 * 2 * 2) * ...
+          // var expo = (array) => {
+          //   return array.reduce(returnFunctionFromFunction(returnFunctionFromFunction(multiplyier)),1);
+          // };
+          // expect(
+          //    expo([2,3,4])
+          // ).to.eql(
+          //    24
+          // );
+          next();
+        });
       });
       describe('関数の参照透明性', () => {
         it('算術関数は参照透明性を持つ', (next) => {

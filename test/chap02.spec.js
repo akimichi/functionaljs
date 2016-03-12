@@ -86,6 +86,23 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
       });
+      it('Array.forEachによるsumの定義', (next) => {
+        /* #@range_begin(sum_forEach) */
+        var sum = (array) => {
+          var result = 0;
+          array.forEach((item) => { // forEachに関数を渡す
+            result = result + item;
+          });
+          return result;
+        };
+        /* #@range_end(sum_forEach)  */
+        expect(
+          sum([1,2,3,4])
+        ).to.eql(
+          10
+        );
+        next();
+      });
       it('Array.reduceによるsumの定義', (next) => {
         /* #@range_begin(sum_in_array_reduce) */
         var add = (x, y) => {
@@ -468,22 +485,24 @@ describe('なぜ関数型プログラミングが重要か', () => {
         });
       });
       describe('副作用への対処', () => {
-        it('命令型プログラミングによる乗算', function(next) {
+        it('命令型プログラミングによる乗算', (next) => {
           /* #@range_begin(imperative_addition) */
-          var add = function(x,y){
-            var times = 0;
-            while(times < y){
-              x = x + 1;
-              times = times + 1;
+          var add = (x,y) => {
+            var times = 0;          // times変数は反復の回数を数えるための変数
+            var result = x;         // result変数は足し算の結果を保持するための変数
+
+            while(times < y){       // while文は反復を処理する
+              result = result + 1;
+              times = times + 1;    // times変数を代入で更新する
             };
-            return x;
+            return result;
           };
+          /* #@range_end(imperative_addition) */
           expect(
             add(2,3)
           ).to.eql(
             5
           );
-          /* #@range_end(imperative_addition) */
           var x = 4;
           var y = 5;
           expect(
@@ -500,11 +519,11 @@ describe('なぜ関数型プログラミングが重要か', () => {
         });
         it('関数型プログラミングによる乗算', function(next) {
           /* #@range_begin(functional_addition) */
-          var add = function(x,y){
+          var add = (x,y) => {
             if(y < 1){
               return x;
             } else {
-              return add(x + 1, y - 1);
+              return add(x + 1, y - 1); // 新しい引数でadd関数を再帰的に呼び出す
             }
           };
           /* #@range_end(functional_addition) */
@@ -662,15 +681,79 @@ describe('なぜ関数型プログラミングが重要か', () => {
           });
         });
         describe('副作用への対処', () =>  {
+          it('副作用が分離されていないコード', (next) => {
+            /* #@range_begin(age_sideeffect) */
+            var age = (birthYear) => {
+              var today = new Date();
+              var thisYear = today.getFullYear(); // 今年の西暦を得る
+              return thisYear - birthYear;
+            };
+            /* #@range_end(age_sideeffect) */
+            next();
+          });
+          it('副作用が分離されているコード', (next) => {
+            /* #@range_begin(age_without_sideeffect) */
+            var age = (birthYear, thisYear) => {
+              return thisYear - birthYear;
+            };
+            /* #@range_end(age_without_sideeffect) */
+            next();
+          });
+          it('画面出力を分離する', (next) => {
+            /* #@range_begin(tap_console_log) */
+            var tap = (target, sideEffect) => {
+              sideEffect(target);
+              return target;
+            };
+            var logger = (value) =>{
+              console.log(value);
+            };
+            /* #@range_end(tap_console_log) */
+            next();
+          });
           describe('副作用を関数のスコープに閉じこめる', () => {
             /* #@range_begin(action) */
-            var action = (arg) => {
-              return () => {
-                return action(arg); 
+            var action = (io) => {
+              return (_) => { // 入出力を関数で包み込む
+                 return io;
               };
             };
             /* #@range_end(action) */
-            
+            var logger = (value) => {
+              return action(console.log(value));
+            };
+            // expect(
+            //   action(logger(2))
+            // ).to.eql(
+            //   2
+            // );
+            /* #@range_begin(reader_and_writer) */
+            var fs = require('fs'); // ファイルを操作するライブラリーfsをロードする
+            var reader = (path) => { // ファイルを読み込む操作を関数で包みこむ
+              return action(fs.readFileSync(path, 'utf8'));
+            };
+            var writer = (path, content) => { // ファイルを書き込む操作を関数で包みこむ
+              return action(fs.writeFileSync(path,content));
+            };
+            /* #@range_end(reader_and_writer) */
+            /* #@range_begin(fileio_actions) */
+            var fileio_actions = () => {
+              writer('/tmp/test.txt', 1)();
+              reader('/tmp/test.txt')();
+              writer('/tmp/test.txt', 2)();
+              return reader('/tmp/test.txt')();
+            };
+            /* #@range_end(fileio_actions) */
+            expect(
+              fileio_actions()
+            ).to.eql(
+              2
+            );
+            expect(
+              fileio_actions()
+            ).to.eql(
+              2
+            );
           });
           describe('状態モナド', () => {
             var bind = (operate, continues) => {

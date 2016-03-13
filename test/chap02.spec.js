@@ -729,6 +729,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
             // );
             /* #@range_begin(reader_and_writer) */
             var fs = require('fs'); // ファイルを操作するライブラリーfsをロードする
+            var read = (path) => { // ファイルを読み込む操作を関数で包みこむ
+              return fs.readFileSync(path, 'utf8');
+            };
+            var write = (path, content) => { // ファイルを書き込む操作を関数で包みこむ
+              return fs.writeFileSync(path,content);
+            };
             var reader = (path) => { // ファイルを読み込む操作を関数で包みこむ
               return action(fs.readFileSync(path, 'utf8'));
             };
@@ -738,10 +744,10 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_end(reader_and_writer) */
             /* #@range_begin(fileio_actions) */
             var fileio_actions = () => {
-              writer('/tmp/test.txt', 1)();
-              reader('/tmp/test.txt')();
-              writer('/tmp/test.txt', 2)();
-              return reader('/tmp/test.txt')();
+              write('/tmp/test.txt', 1);
+              read('/tmp/test.txt');
+              write('/tmp/test.txt', 2);
+              return read('/tmp/test.txt');
             };
             /* #@range_end(fileio_actions) */
             expect(

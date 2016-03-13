@@ -229,9 +229,9 @@ describe('「計算」とは', () => {
         /* #@range_begin(recursion) */
         var a = (n) => {
           if(n === 1) {
-            return 1;
+            return 1; // 初項は1
           } else {
-            return a(n-1) + 3;
+            return a(n-1) + 3; // 公差は3
           }
         };
         /* #@range_end(recursion) */

@@ -1035,4 +1035,127 @@ describe('なぜ関数型プログラミングが重要か', () => {
       });
     });
   });
+  describe('関数型プログラミングの利点', () => {
+    describe('モジュール性とは何か', () => {
+      it('名前空間としてのモジュール', (next) => {
+        /* #@range_begin(module_as_namespace) */
+        // 数値計算のモジュール
+        var math = {
+          add: (n, m) => { // 数値の足し算
+            return n + m;
+          },
+          multiply: (n, m) => {
+            return n * m;
+          }
+        };
+        // 文字列操作のモジュール
+        var string = {
+          add: (strL, strR) => { // 文字列の連結
+            return strL.concat(strR);
+          },
+          multiply: (str, nTimes) => {
+            //
+          }
+        };
+        /* #@range_end(module_as_namespace) */
+        next();
+      });
+      describe('階乗の計算', () => {
+        it('命令型プログラミングによる階乗の計算', (next) => {
+          /* #@range_begin(imperative_factorial) */
+          var factorial = (n) => {
+            var result = 1;
+            var index = 1;
+            while(index < n + 1) {
+              result = result * index;
+              index = index + 1;
+            }
+            return result;
+          };
+          /* #@range_end(imperative_factorial) */
+          expect(
+            factorial(2)
+          ).to.eql(
+            2
+          );
+          expect(
+            factorial(3)
+          ).to.eql(
+            6
+          );
+          expect(
+            factorial(4)
+          ).to.eql(
+            24
+          );
+          next();
+        });
+        it('関数型プログラミングによる階乗の計算', (next) => {
+          /* #@range_begin(functional_factorial) */
+          var adder = (m) => {
+            return (n) => {
+              return m + n;
+            };
+          };
+          var multiply = (m,n) => {
+            return m * n;
+          };
+          var succ = adder(1);
+          var upto = (m, n) => {
+            return (step) => {
+              if(m > n)
+                return [];
+              else {
+                return [m].concat(upto(step(m),n)(step));
+              };
+            };
+          };
+          var product = (array) => {
+            return array.reduce(multiply, 1);
+          };
+          var factorial = (n) => {
+            return product(upto(1,n)(succ));
+          };
+          /* #@range_end(functional_factorial) */
+          expect(
+            factorial(2)
+          ).to.eql(
+            2
+          );
+          expect(
+            factorial(3)
+          ).to.eql(
+            6
+          );
+          expect(
+            factorial(4)
+          ).to.eql(
+            24
+          );
+          var permutation = (n, r) => {
+            return factorial(n) / factorial(n-r);          
+          };
+          var combination = (n, r) => {
+            return permutation(n,r) / factorial(r);
+          };
+          expect(
+            permutation(3,3)
+          ).to.eql(
+            6
+          );
+          expect(
+            combination(10,4)
+          ).to.eql(
+            210
+          );
+          next();
+        });
+      });
+      it('素数の計算', (next) => {
+        next();
+      });
+    });
+    describe('テスト', () => {
+    });
+  });
 });

@@ -39,6 +39,7 @@
     "random-js": "^1.0.4",
     "run-sequence": "^1.1.5",
     "seedrandom": "^2.3.11",
+    "sinon": "1.17.3",
     "sleep-async": "^1.0.1"
   }
 }

@@ -1060,6 +1060,189 @@ describe('なぜ関数型プログラミングが重要か', () => {
         /* #@range_end(module_as_namespace) */
         next();
       });
+      describe('モジュールの独立性', () => {
+        it('統一的なインターフェイス', (next) => {
+          /* #@range_begin(books_as_array) */
+          var books = [
+            {name: "こころ", author: ["夏目漱石"], genre: "文学"},
+            {name: "夢十夜", author: ["夏目漱石"], genre: "文学"},
+            {name: "ソクラテスの弁明", author: ["プラトン"], genre: "哲学"},
+            {name: "国家", author: ["プラトン"], genre: ["哲学"]},
+            {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
+
+            {name: "計算機プログラムの構造と解釈", author: ["サスマン","エイベルソン"], genre: "コンピュータ"},
+          ];
+          /* #@range_end(books_as_array) */
+          var get = (object) => {
+            return (key) => {
+              return object[key];
+            };
+          };
+          /* #@range_begin(pluck) */
+          var pluck = (key) => {
+            return (object) => {
+              return object[key];
+            };
+          };
+          /* #@range_end(pluck) */
+          /* #@range_begin(mapWith) */
+          var mapWith = (func) => {
+            return (array) => {
+              return array.map(func);
+            };
+          };
+          /* #@range_end(mapWith) */
+          var multiplier = (n) => {
+            return (m) => {
+              return n * m;
+            };
+          };
+          var square = (n) => {
+            return multiplier(n)(n);
+          };
+          expect(
+            mapWith(square)([1,2,3])
+          ).to.eql(
+            [1,4,9]
+          );
+          expect(
+            /* #@range_begin(mapWith_pluck) */
+            mapWith(pluck("name"))(books)
+            /* #@range_end(mapWith_pluck) */
+          ).to.eql(
+            ['こころ','夢十夜','ソクラテスの弁明','国家','プログラミング言語C','計算機プログラムの構造と解釈']
+          );
+          /* #@range_begin(filterWith) */
+          var filterWith = (predicate) => {
+            return (array) => {
+              return array.filter(predicate);
+            };
+          };
+          /* #@range_end(filterWith) */
+          var isEqual = (a,b) => {
+            return a === b;
+          };
+          expect(
+            /* #@range_begin(filterWith_pluck) */
+            filterWith((book) => { 
+              return pluck("genre")(book) ===  "文学";
+            })(books)
+            /* #@range_end(filterWith_pluck) */
+          ).to.eql(
+            /* #@range_begin(filterWith_pluck_result) */
+            [
+              {name: "こころ", author: ["夏目漱石"], genre: "文学"},
+              {name: "夢十夜", author: ["夏目漱石"], genre: "文学"},
+            ]
+            /* #@range_end(filterWith_pluck_result) */
+          );
+          /* #@range_begin(doesContain) */
+          var doesContain = (value) => {
+            return (array) => {
+              return array.reduce((accumulator, item) => {
+                return accumulator || (item === value);
+              },false);
+            };
+          };
+          /* #@range_end(doesContain) */
+          var doesMatch = (predicate) => {
+            return (array) => {
+              return array.reduce((accumulator, item) => {
+                return accumulator || predicate(item);
+              },false);
+            };
+          };
+          expect(
+            /* #@range_begin(filterWith_doesContain) */
+            filterWith((book) => { 
+              return doesContain("カーニハン")(pluck("author")(book));
+            })(books)
+            /* #@range_end(filterWith_doesContain) */
+          ).to.eql(
+            /* #@range_begin(filterWith_doesContain_result) */
+            [
+              {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
+            ]
+            /* #@range_end(filterWith_doesContain_result) */
+          );
+          /* #@range_begin(findWith) */
+          var findWith = (predicate) => {
+            return (array) => {
+              return array.filter(predicate)[0];
+            };
+          };
+          /* #@range_end(findWith) */
+          expect(
+            findWith((book) => { 
+              return pluck("genre")(book) === "哲学";
+            })(books)
+          ).to.eql(
+            {name: "ソクラテスの弁明", author: ["プラトン"], genre: "哲学"}
+          );
+          next();
+        });
+        it('単純なインターフェイス', (next) => {
+          /* #@range_begin(add_uncurried) */
+          var add = (n,m) => {
+            return n + m;
+          };
+          /* #@range_end(add_uncurried) */
+          expect(
+            add(1,2)
+          ).to.eql(
+            3
+          );
+          /* #@range_begin(add_curried) */
+          var adder = (n) => {
+            return (m) => {
+              return n + m;
+            };
+          };
+          /* #@range_end(add_curried) */
+          expect(
+            adder(1)(2)
+          ).to.eql(
+            3
+          );
+          /* #@range_begin(succ_defined) */
+          var succ = adder(1); 
+          /* #@range_end(succ_defined) */
+          expect(
+            succ(1)
+          ).to.eql(
+            2
+          );
+          /* #@range_begin(multiply_uncurried) */
+          var multiply = (n,m) => {
+            return n * m;
+          };
+          /* #@range_end(multiply_uncurried) */
+          expect(
+            multiply(2,3)
+          ).to.eql(
+            6
+          );
+          /* #@range_begin(multiply_curried) */
+          var multiplier = (n) => {
+            return (m) => {
+              return n * m;
+            };
+          };
+          /* #@range_end(multiply_curried) */
+          var square = (n) => {
+            return multiply(n,n);
+          };
+          var cube = (n) => {
+            return multiplier(n)(square(n));
+          };
+          expect(
+            cube(2)
+          ).to.eql(
+            8
+          );
+          next();
+        });
+      });
       describe('階乗の計算', () => {
         it('命令型プログラミングによる階乗の計算', (next) => {
           /* #@range_begin(imperative_factorial) */
@@ -1152,10 +1335,275 @@ describe('なぜ関数型プログラミングが重要か', () => {
         });
       });
       it('素数の計算', (next) => {
+        var match = (data, pattern) => {
+          return data(pattern);
+        };
+        var stream = {
+          empty: (_) => {
+            return (pattern) => {
+              return pattern.empty();
+            };
+          },
+          cons: (head,tailThunk) => {
+            return (pattern) => {
+              return pattern.cons(head,tailThunk);
+            };
+          },
+          // head:: STREAM[T] => T
+          /* ストリーム型headの定義は、リスト型headと同じ */
+          head: (astream) => {
+            return match(astream,{
+              empty: (_) => { return null; },
+              cons: (value, tailThunk) => { return value; }
+            });
+          },
+          // tail:: STREAM[T] => STREAM[T]
+          tail: (astream) => {
+            return match(astream,{
+              empty: (_) => { return null; },
+              cons: (head, tailThunk) => {
+                return tailThunk();  // ここで初めてサンクを評価する
+              }
+            });
+          },
+          take: (astream, n) => {
+            return match(astream,{
+              empty: (_) => {
+                return list.empty();
+              },
+              cons: (head,tailThunk) => {
+                if(n === 0) {
+                  return list.empty();
+                } else {
+                  return list.cons(head,stream.take(tailThunk(),(n -1)));
+                }
+              }
+            });
+          }
+        };
+        var list = {
+          empty: (_) => {
+            return (pattern) => {
+              return pattern.empty();
+            };
+          },
+          cons: (value, list) => {
+            return (pattern) => {
+              return pattern.cons(value, list);
+            };
+          },
+          isEmpty: (alist) => {
+            return match(alist, { // match関数で分岐する
+              empty: true,
+              cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+                return false;
+              }
+            });
+          },
+          head: (alist) => {
+            return match(alist, {
+              empty: null, // 空のリストには先頭要素はありません
+              cons: (head, tail) => {
+                return head;
+              }
+            });
+          },
+          tail: (alist) => {
+            return match(alist, {
+              empty: null,  // 空のリストには末尾要素はありません
+              cons: (head, tail) => {
+                return tail;
+              }
+            });
+          },
+          toArray: (alist) => {
+            var toArrayAux = (alist,accumulator) => {
+              return match(alist, {
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return toArrayAux(tail, accumulator.concat(head));
+                }
+              });
+            };
+            return toArrayAux(alist, []);
+          }
+        };
+        var integersFrom = (n) => {
+          return stream.cons(n, (_) => {
+            return integersFrom(n + 1);
+          });
+        };
+        /* #@range_begin(sieve_primes) */
+        var sieve = (astream) => {
+          var head = stream.head(astream);
+          var tail = stream.tail(astream);
+          var mark = (astream, k, m) => {
+            var head = stream.head(astream);
+            var tail = stream.tail(astream);
+            if(k === m) {
+              return stream.cons(0,(_) => {
+                return mark(tail, 1, m);
+              });
+            } else {
+              return stream.cons(head, (_) => {
+                return mark(tail, k+1, m);
+              });
+            }
+          };
+          if(head === 0) {
+            return sieve(tail);
+          } else {
+            return stream.cons(head, (_) => {
+              return sieve(mark(tail, 1, head));
+            });
+          }
+        };
+        /* #@range_end(sieve_primes) */
+        expect(
+          list.toArray(stream.take(sieve(integersFrom(2)), 10))
+        ).to.eql(
+          [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+        );
         next();
       });
     });
     describe('テスト', () => {
+      it('参照透過性のあるコードはテストが容易である', (next) => {
+        var adder = (m) => {
+          return (n) => {
+            return m + n;
+          };
+        };
+        /* #@range_begin(adder_test) */
+        expect(
+          adder(1)(2)
+        ).to.eql(
+          3
+        );
+        /* #@range_end(adder_test) */
+        next();
+      });
+      describe('参照透過性のないコードはテストが困難である', () => {
+        it('adderの例', (next) => {
+          // var sinon = require('sinon');
+          // var m = sinon.stub();
+          // m.returns(1);
+          var m = 1;
+          var adder = (n) => {
+            return m + n;
+          };
+          expect(
+            adder(2)
+          ).to.eql(
+            3
+          );
+          next();
+        });
+        it('認証の例', (next) => {
+          var length = (array) => {
+            return array.length; 
+          };
+          var pluck = (key) => {
+            return (object) => {
+              return object[key];
+            };
+          };
+          var filterWith = (predicate) => {
+            return (array) => {
+              return array.filter(predicate);
+            };
+          };
+          var doesContain = (value) => {
+            return (array) => {
+              return array.reduce((accumulator, item) => {
+                return accumulator || (item === value);
+              },false);
+            };
+          };
+          /* #@range_begin(authenticate_test) */
+          var database = [
+            {
+              name: "夏目漱石",
+              password: "12345"
+            },
+            {
+              name: "プラトン",
+              password: "54321"
+            }
+          ];
+          var authenticate = (name, password) => {
+            var match = (key) => {
+              return pluck(key);
+            };
+            return length(filterWith((record) => { 
+              return (pluck("name")(record) === name) && (pluck("password")(record) === password);
+            })(database)) === 1;
+          };
+          /* #@range_end(authenticate_test) */
+          expect(
+            authenticate("夏目漱石","12345")
+          ).to.eql(
+            true
+          );
+          next();
+        });
+        // it('認証をテスト可能にする', (next) => {
+        //   var length = (array) => {
+        //     return array.length; 
+        //   };
+        //   var pluck = (key) => {
+        //     return (object) => {
+        //       return object[key];
+        //     };
+        //   };
+        //   var filterWith = (predicate) => {
+        //     return (array) => {
+        //       return array.filter(predicate);
+        //     };
+        //   };
+        //   var doesContain = (value) => {
+        //     return (array) => {
+        //       return array.reduce((accumulator, item) => {
+        //         return accumulator || (item === value);
+        //       },false);
+        //     };
+        //   };
+        //   var doesMatch = (predicate) => {
+        //     return (array) => {
+        //       return array.reduce((accumulator, item) => {
+        //         return accumulator || predicate(item);
+        //       },false);
+        //     };
+        //   };
+        //   /* #@range_begin(authenticate_test) */
+        //   var database = [
+        //     {
+        //       name: "夏目漱石",
+        //       password: "12345"
+        //     },
+        //     {
+        //       name: "プラトン",
+        //       password: "54321"
+        //     }
+        //   ];
+        //   var password = (name) => {
+            
+        //   var authenticate = (name, challengePassword, realPassword) => {
+        //     return length(filterWith((record) => { 
+        //       return (pluck("name")(record) === name) && (pluck("password")(record) === password);
+        //     })(database)) === 1;
+        //   };
+        //   /* #@range_end(authenticate_test) */
+        //   expect(
+        //     authenticate("夏目漱石","12345")
+        //   ).to.eql(
+        //     true
+        //   );
+        //   next();
+        // });
+      });
     });
   });
 });

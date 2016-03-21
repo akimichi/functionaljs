@@ -45,6 +45,55 @@ var compose = (f) => {
   };
 };
 
+var list = {
+  empty: (_) => {
+    return (pattern) => {
+      return pattern.empty();
+    };
+  },
+  cons: (value, list) => {
+    return (pattern) => {
+      return pattern.cons(value, list);
+    };
+  },
+  isEmpty: (alist) => {
+    return match(alist, { // match関数で分岐する
+      empty: true,
+      cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+        return false;
+      }
+    });
+  },
+  head: (alist) => {
+    return match(alist, {
+      empty: null, // 空のリストには先頭要素はありません
+      cons: (head, tail) => {
+        return head;
+      }
+    });
+  },
+  tail: (alist) => {
+    return match(alist, {
+      empty: null,  // 空のリストには末尾要素はありません
+      cons: (head, tail) => {
+        return tail;
+      }
+    });
+  },
+  toArray: (alist) => {
+    var toArrayAux = (alist,accumulator) => {
+      return match(alist, {
+        empty: (_) => {
+          return accumulator;
+        },
+        cons: (head, tail) => {
+          return toArrayAux(tail, accumulator.concat(head));
+        }
+      });
+    };
+    return toArrayAux(alist, []);
+  }
+};
 // 関数の使い方
 // ========
 describe('関数の使い方', () => {
@@ -254,7 +303,7 @@ describe('関数の使い方', () => {
             var infiniteLoop = () => {
               return infiniteLoop();
             };
-            
+
             var conditional = (n) => {
               if(n === 1) {
                 return true;
@@ -263,7 +312,7 @@ describe('関数の使い方', () => {
               }
             };
             expect(
-              conditional(1) 
+              conditional(1)
             ).to.eql(
               true
             );
@@ -379,20 +428,34 @@ describe('関数の使い方', () => {
                   return pattern.cons(head,tailThunk);
                 };
               },
-              // head:: STREAM[T] => T 
+              // head:: STREAM[T] => T
               /* ストリーム型headの定義は、リスト型headと同じ */
-              head: (astream) => {      
+              head: (astream) => {
                 return match(astream,{
                   empty: (_) => { return null; },
                   cons: (value, tailThunk) => { return value; }
                 });
               },
-              // tail:: STREAM[T] => STREAM[T] 
+              // tail:: STREAM[T] => STREAM[T]
               tail: (astream) => {
                 return match(astream,{
                   empty: (_) => { return null; },
                   cons: (head, tailThunk) => {
                     return tailThunk();  // ここで初めてサンクを評価する
+                  }
+                });
+              },
+              take: (astream, n) => {
+                return match(astream,{
+                  empty: (_) => {
+                    return list.empty();
+                  },
+                  cons: (head,tailThunk) => {
+                    if(n === 0) {
+                      return list.empty();
+                    } else {
+                      return list.cons(head,stream.take(tailThunk(),(n -1)));
+                    }
                   }
                 });
               }
@@ -458,6 +521,38 @@ describe('関数の使い方', () => {
                 1
               );
               /* #@range_end(infinite_ones_test) */
+              it("素数列を作る", (next) => {
+                var sieve = (astream) => {
+                  var head = stream.head(astream);
+                  var tail = stream.tail(astream);
+                  var mark = (astream, k, m) => {
+                    var head = stream.head(astream);
+                    var tail = stream.tail(astream);
+                    if(k === m) {
+                      return stream.cons(0,(_) => {
+                        return mark(tail, 1, m);
+                      });
+                    } else {
+                      return stream.cons(head, (_) => {
+                        return mark(tail, k+1, m);
+                      });
+                    }
+                  };
+                  if(head === 0) {
+                    return sieve(tail);
+                  } else {
+                    return stream.cons(head, (_) => {
+                      return sieve(mark(tail, 1, head));
+                    });
+                  }
+                };
+                expect(
+                  list.toArray(stream.take(sieve(integersFrom(2)), 10))
+                ).to.eql(
+                  [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+                );
+                next();
+              });
               it("無限の整数列をテストする", (next) => {
                 this.timeout(3000);
                 var list = {
@@ -503,7 +598,7 @@ describe('関数の使い方', () => {
                     var toArrayAux = (alist,accumulator) => {
                       return match(alist, {
                         empty: (_) => {
-                          return accumulator;  
+                          return accumulator;
                         },
                         cons: (head, tail) => {
                           return toArrayAux(tail, accumulator.concat(head));
@@ -528,7 +623,7 @@ describe('関数の使い方', () => {
                       return pattern.cons(head,tailThunk);
                     };
                   },
-                  head: (astream) => {      
+                  head: (astream) => {
                     return match(astream,{
                       empty: (_) => { return null; },
                       cons: (value, tailThunk) => { return value; }
@@ -546,7 +641,7 @@ describe('関数の使い方', () => {
                   // take:: (STREAM[T], NUM) => LIST[T]
                   take: (astream, n) => {
                     return match(astream,{
-                      empty: (_) => { 
+                      empty: (_) => {
                         return list.empty();
                       },
                       cons: (head,tailThunk) => {
@@ -1210,11 +1305,11 @@ describe('関数の使い方', () => {
           );
           /* 途中でのファイルへの書込み */
           fs.writeFileSync('test/resources/file.txt', "This is another test.");
-          
+
           /* 第2回目のファイルの読込 */
           expect(
             fs.readFileSync("test/resources/file.txt", 'utf8')
-          ).to.eql( 
+          ).to.eql(
             "This is another test."  // 最初の readFileSync関数の結果と異なっている
           );
           /* #@range_end(fileio_destroys_referential_transparency) */

@@ -1243,6 +1243,99 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
       });
+      describe('テキスト処理の計算', () => {
+        var not = (predicate) => {
+          return (arg) => {
+            return ! predicate(arg);
+          };
+        };
+        var array = {
+          head: (anArray) => {
+            return anArray[0];
+          },
+          tail: (anArray) => {
+            return anArray.slice(1,anArray.length);
+          },
+          cons: (head, tail) => {
+            return [head].concat(tail);
+          }
+        };
+        var string = {
+          head: (str) => {
+            return str[0];
+          },
+          tail: (str) => {
+            return str.substring(1);
+          },
+          isEmpty: (str) => {
+            return str.length === 0;
+          },
+          toArray: (str) => {
+            var glue = (item) => {
+              return (rest) => {
+                return [item].concat(rest);
+              };
+            };
+            if(string.isEmpty(str)) {
+              return [];
+            } else {
+              return [string.head(str)].concat(string.toArray(string.tail(str)));
+            }
+          }
+        };
+        describe('array', () => {
+          it('array#head', (next) => {
+            expect(
+              array.head([0,1,2])
+            ).to.eql(
+              0
+            );
+            next();
+          });
+          it('array#tail', (next) => {
+            expect(
+              array.tail([0,1,2])
+            ).to.eql(
+              [1,2]
+            );
+            next();
+          });
+          it('array#cons', (next) => {
+            expect(
+              array.cons(0,[1,2])
+            ).to.eql(
+              [0,1,2]
+            );
+            next();
+          });
+        });
+        describe('string', () => {
+          it('string#head', (next) => {
+            expect(
+              string.head("abc")
+            ).to.eql(
+              'a'
+            );
+            next();
+          });
+          it('string#tail', (next) => {
+            expect(
+              string.tail("abc")
+            ).to.eql(
+              "bc"
+            );
+            next();
+          });
+          it('string#toArray', (next) => {
+            expect(
+              string.toArray("abc")
+            ).to.eql(
+              ['a','b','c']
+            );
+            next();
+          });
+        });
+      });
       describe('階乗の計算', () => {
         it('命令型プログラミングによる階乗の計算', (next) => {
           /* #@range_begin(imperative_factorial) */

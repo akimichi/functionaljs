@@ -1250,14 +1250,95 @@ describe('なぜ関数型プログラミングが重要か', () => {
           };
         };
         var array = {
+          cons: (head, tail) => {
+            return [head].concat(tail);
+          },
+          empty: (_) => {
+            return [];
+          },
           head: (anArray) => {
             return anArray[0];
           },
           tail: (anArray) => {
-            return anArray.slice(1,anArray.length);
+            return anArray.slice(1,array.length(anArray));
           },
-          cons: (head, tail) => {
-            return [head].concat(tail);
+          length: (anArray) => {
+            return anArray.length;
+          },
+          isEmpty: (anArray) => {
+            return array.length(anArray) === 0;
+          },
+          fromString: (str) => {
+            if(string.isEmpty(str)) {
+              return array.empty();
+            } else {
+              return array.cons(string.head(str), 
+                               array.fromString(string.tail(str)));
+            }
+          },
+          takeWhile: (anArray) => {
+            return (predicate) => {
+              if(array.isEmpty(anArray)){
+                return array.empty(); 
+              } else {
+                var head = array.head(anArray);
+                var tail = array.tail(anArray);
+                if(predicate(head) === true) {
+                  return array.cons(head,
+                                    array.takeWhile(tail)(predicate));
+                } else {
+                  return array.empty();
+                }
+              }
+            };
+          },
+          dropWhile: (anArray) => {
+            return (predicate) => {
+              if(array.isEmpty(anArray)){
+                return [];
+              } else {
+                var head = array.head(anArray);
+                var tail = array.tail(anArray);
+                if(predicate(head) === true) {
+                  return array.dropWhile(tail)(predicate);
+                } else {
+                  return anArray;
+                }
+              };
+            };
+          },
+          span: (anArray) => {
+            return (predicate) => {
+              if(array.isEmpty(anArray)){
+                return [];
+              } else {
+                var head = array.head(anArray);
+                var tail = array.tail(anArray);
+                return [array.takeWhile(anArray)(predicate),
+                        array.dropWhile(anArray)(predicate)];
+              };
+            };
+          },
+          break: (anArray) => {
+            return (predicate) => {
+              return array.span(anArray)(not(predicate));
+            };
+          },  
+          lines: (xs) => {
+            var isNewline = (ch) => {
+              return ch === '\n';
+            };
+            var apair = array.break(xs)(isNewline);
+            var ys = apair[0];
+            var zs = apair[1];
+
+            if(array.isEmpty(zs)){
+              return [ys];
+            } else {
+              var head = array.head(zs);
+              var tail = array.tail(zs);
+              return array.cons(ys, array.lines(tail));
+            };
           }
         };
         var string = {
@@ -1270,17 +1351,37 @@ describe('なぜ関数型プログラミングが重要か', () => {
           isEmpty: (str) => {
             return str.length === 0;
           },
+          add: (strL, strR) => {
+            return strL + strR;
+          },
           toArray: (str) => {
-            var glue = (item) => {
-              return (rest) => {
-                return [item].concat(rest);
-              };
-            };
             if(string.isEmpty(str)) {
               return [];
             } else {
-              return [string.head(str)].concat(string.toArray(string.tail(str)));
+              return array.cons(string.head(str),
+                                string.toArray(string.tail(str)));
             }
+          },
+          fromArray: (anArray) => {
+            return anArray.reduce((accumulator, item) => {
+              return string.add(accumulator, item);
+            }, "");
+          },
+          lines: (str) => {
+            var isNewline = (ch) => {
+              return ch === '\n';
+            };
+            var apair = array.break(array.fromString(str))(isNewline);
+            var ys = apair[0];
+            var zs = apair[1];
+
+            if(array.isEmpty(zs)){
+              return [string.fromArray(ys)];
+            } else {
+              var tail = array.tail(zs);
+              return array.cons(string.fromArray(ys), 
+                                string.lines(string.fromArray(tail)));
+            };
           }
         };
         describe('array', () => {
@@ -1308,6 +1409,93 @@ describe('なぜ関数型プログラミングが重要か', () => {
             );
             next();
           });
+          it('array#fromString', (next) => {
+            expect(
+              array.fromString("123")
+            ).to.eql(
+              [1,2,3]
+            );
+            next();
+          });
+          it('array#takeWhile', (next) => {
+            var theArray = [1,2,3]; 
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+            var odd = not(even);
+            expect(
+              array.takeWhile(theArray)(odd)
+            ).to.eql(
+              [1]
+            );
+            next();
+          });
+          it('array#dropWhile', (next) => {
+            var theArray = [1,2,3]; 
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+            var odd = not(even);
+            expect(
+              array.dropWhile(theArray)(odd)
+            ).to.eql(
+              [2,3]
+            );
+            next();
+          });
+          it('array#span', (next) => {
+            var theArray = [1,2,3]; 
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+            expect(
+              array.span(theArray)(even)
+            ).to.eql(
+              [[],[1,2,3]]
+            );
+            var odd = not(even);
+            expect(
+              array.span(theArray)(odd)
+            ).to.eql(
+              [[1],[2,3]]
+            );
+            next();
+          });
+          it('array#break', (next) => {
+            var theArray = [1,2,3]; 
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+            expect(
+              array.break(theArray)(even)
+            ).to.eql(
+              [[1],[2,3]]
+            );
+            var odd = not(even);
+            expect(
+              array.break(theArray)(odd)
+            ).to.eql(
+              [[],[1,2,3]]
+            );
+            var isNewline = (ch) => {
+              return ch === '\n';
+            };
+            expect(
+              array.break(['a','b','c','\n','d','e','f'])(isNewline)
+            ).to.eql(
+              [['a','b','c'],['\n','d','e','f']]
+            );
+            next();
+          });
+          it('array#lines', (next) => {
+            var theArray = array.fromString("abc\ndef"); 
+            expect(
+              array.lines(theArray)
+            ).to.eql(
+              [ [ 'a', 'b', 'c' ], [ 'd', 'e', 'f' ] ]
+            );
+            next();
+          });
         });
         describe('string', () => {
           it('string#head', (next) => {
@@ -1326,11 +1514,27 @@ describe('なぜ関数型プログラミングが重要か', () => {
             );
             next();
           });
+          it('string#fromArray', (next) => {
+            expect(
+              string.fromArray(['a','b','c'])
+            ).to.eql(
+              "abc"
+            );
+            next();
+          });
           it('string#toArray', (next) => {
             expect(
               string.toArray("abc")
             ).to.eql(
               ['a','b','c']
+            );
+            next();
+          });
+          it('string#lines', (next) => {
+            expect(
+              string.lines("abc\ndef")
+            ).to.eql(
+              [ 'abc', 'def' ]
             );
             next();
           });

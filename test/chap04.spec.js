@@ -421,13 +421,15 @@ describe('データの種類と特徴', () => {
         var tail = (list) => {
           return list.slice(1,list.length);
         };
-        var empty = [];
+        var empty = (_) => {
+          return [];
+        };
         var isEmpty = (list) => {
           return list.length === 0;
         };
         /* #@range_begin(list_as_abstract_type) */
         expect(
-          head(tail(cons(1,cons(2,empty))))
+          head(tail(cons(1,cons(2,empty()))))
         ).to.eql(
           2
         );
@@ -440,7 +442,7 @@ describe('データの種類と特徴', () => {
         };
         var top = (stack) => {
           return stack[0];
-        }
+        };
         var pop = (stack) => {
           return stack.slice(1,stack.length);
         };

@@ -1013,9 +1013,9 @@ describe('プログラムをコントロールする仕組み', () => {
     it('Listを代数的データ型として実装する', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
       /* リストの代数的データ型 */
-      var empty = (_) => { // 空のリスト
+      var empty = () => { // 空のリスト
         return (pattern) => {
-          return pattern.empty(_);
+          return pattern.empty();
         };
       };
       var cons = (value, list) => { // 空でないリスト

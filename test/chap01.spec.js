@@ -325,7 +325,7 @@ describe('「計算」とは', () => {
         /* #@range_end(variable_and_function) */
         /* #@range_begin(local_variable_usage_example) */
         var bar = () => {
-          var foo = 3;     // 変数fooに値3を束縛する
+          var foo = 3;     // 変数fooに値3をバインドする
           return foo * 10; // 変数fooの値を10倍にする
         };
         /* #@range_end(local_variable_usage_example) */
@@ -346,7 +346,7 @@ describe('「計算」とは', () => {
         expect(
           bar()
         ).to.eql(
-          baz(3)          // 仮引数fooに値3を束縛する
+          baz(3)          // 仮引数fooに値3をバインドする
         );
         next();
       });

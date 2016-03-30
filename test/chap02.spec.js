@@ -57,7 +57,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
           next();
         });
-        it('関数は変数に束縛できる', function(next) {
+        it('関数は変数にバインドできる', (next) => {
           /* #@range_begin(function_bound_to_variable) */
           var succ = (n) => {
             return n + 1;

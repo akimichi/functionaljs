@@ -19,6 +19,14 @@ gulp.task('js-test', function () {
         }));
 });
 
+gulp.task('ruby-test', function (cb) {
+  exec('rspec test/', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+});
+
 gulp.task('scala-test', function (cb) {
   exec('sbt test', function (err, stdout, stderr) {
     console.log(stdout);

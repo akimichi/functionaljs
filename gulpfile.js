@@ -66,4 +66,4 @@ gulp.task('deploy', function() {
 });
 
 gulp.task('default', ['test','doc', 'deploy']);
-gulp.task('test', ['js-test','scala-test', 'haskell-test']);
+gulp.task('test', ['js-test','ruby-test','scala-test', 'haskell-test']);

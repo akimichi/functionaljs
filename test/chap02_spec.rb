@@ -30,5 +30,9 @@ describe '第2章' do
       end
     end
     expect(User.count).to eq 0
+    user_a = User.new("a")
+    expect(User.count).to eq 1
+    user_b = User.new("b")
+    expect(User.count).to eq 2
   end
 end

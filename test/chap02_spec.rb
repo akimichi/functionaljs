@@ -34,5 +34,13 @@ describe '第2章' do
     expect(User.count).to eq 1
     user_b = User.new("b")
     expect(User.count).to eq 2
+    
+    class Player < User
+      @score = 0
+      def win
+        @score = @score + 1
+      end
+      attr_accessor :score
+    end
   end
 end

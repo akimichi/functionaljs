@@ -3,6 +3,12 @@
 var expect = require('expect.js');
 var util = require('util');
 
+var compose = (f,g) => {
+  return (arg) => {
+    return f(g(arg));
+  };
+};
+
 describe('なぜ関数型プログラミングが重要か', () => {
   describe('関数型言語と関数型プログラミング', () => {
     describe('関数の評価戦略', () => {
@@ -1243,7 +1249,55 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
       });
-      describe('テキスト処理の計算', () => {
+      describe('部品の合成可能性', () => {
+        it('sumの定義', function(next) {
+          /* #@range_begin(sum_in_array_reduce) */
+          var add = (accumulator, currentItem) => {
+            return currentItem + accumulator;
+          };
+          var sum = (array) => {
+            return array.reduce(add,0); // reduceにadd関数を渡している
+          };
+          /* #@range_end(sum_in_array_reduce)  */
+          expect(
+            sum([1,2,3,4])
+          ).to.eql(
+            10
+          );
+          next();
+        });
+        it('productの定義', function(next) {
+          /* #@range_begin(product_in_array_reduce) */
+          var multiply = (accumulator, currentItem) => {
+            return currentItem * accumulator;
+          };
+          var product = (array) => {
+            return array.reduce(multiply,1); // reduceにmultiply関数を渡している
+          };
+          /* #@range_end(product_in_array_reduce)  */
+          /* #@range_begin(product_in_array_reduce_test) */
+          expect(
+            product([1,2,3,4])
+          ).to.eql(
+            24
+          );
+          /* #@range_end(product_in_array_reduce_test)  */
+          next();
+        });
+        it('reverseの定義', function(next) {
+          /* #@range_begin(reverse_in_array_reduce) */
+          var reverse = function(array){
+            return array.reduce(function(accumulator, currentValue){
+              return [currentValue].concat(accumulator);
+            },[]);
+          };
+          expect(reverse([1,2,3,4])).to.eql([4,3,2,1]);
+          /* #@range_end(reverse_in_array_reduce)  */
+          next();
+        });
+
+      });
+      describe('モジュールの独立性', () => {
         var not = (predicate) => {
           return (arg) => {
             return ! predicate(arg);
@@ -1571,14 +1625,17 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
         it('関数型プログラミングによる階乗の計算', (next) => {
-          /* #@range_begin(functional_factorial) */
+          /* #@range_begin(functional_module_factorial) */
+          var multiply = (m,n) => {
+            return m * n;
+          };
+          var product = (array) => {
+            return array.reduce(multiply, 1);
+          };
           var adder = (m) => {
             return (n) => {
               return m + n;
             };
-          };
-          var multiply = (m,n) => {
-            return m * n;
           };
           var succ = adder(1);
           var upto = (m, n) => {
@@ -1590,9 +1647,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
               };
             };
           };
-          var product = (array) => {
-            return array.reduce(multiply, 1);
-          };
+          /* #@range_end(functional_module_factorial) */
+          /* #@range_begin(functional_factorial) */
           var factorial = (n) => {
             return product(upto(1,n)(succ));
           };
@@ -1612,22 +1668,25 @@ describe('なぜ関数型プログラミングが重要か', () => {
           ).to.eql(
             24
           );
-          var permutation = (n, r) => {
+          /* #@range_begin(permutation_combination) */
+          var perm = (n, r) => {
             return factorial(n) / factorial(n-r);          
           };
-          var combination = (n, r) => {
-            return permutation(n,r) / factorial(r);
+          var comb = (n, r) => {
+            return perm(n,r) / factorial(r);
           };
+          /* #@range_end(permutation_combination) */
           expect(
-            permutation(3,3)
+            perm(3,3)
           ).to.eql(
             6
           );
           expect(
-            combination(10,4)
+            comb(10,4)
           ).to.eql(
             210
           );
+          
           next();
         });
       });
@@ -1766,6 +1825,107 @@ describe('なぜ関数型プログラミングが重要か', () => {
         next();
       });
     });
+    describe('遅延評価', () => {
+      var take = (n, astream) => {
+        if(n === 1) {
+          return astream[0];
+        } else {
+          return [astream[0]].concat(take(n-1, astream[1]()));
+        }
+      };
+      var ones = [1, (_) => {
+        return ones;
+      }];
+      expect(
+        take(2, ones)
+      ).to.eql(
+        [1,1]
+      );
+      var repeat = (n) => {
+        return [n, (_) => {
+          return repeat(n);
+        }];
+      };
+      expect(
+        take(3, repeat(2))
+      ).to.eql(
+        [2,2,2]
+      );
+      var replicate = (n, x) => {
+        return take(n, repeat(x));
+      };
+      expect(
+        replicate(4, 3)
+      ).to.eql(
+        [3,3,3,3]
+      );
+      var upto = (m, n) => {
+        if(m > n) {
+          return [];
+        } else {
+          return [m, (_) => {
+            return upto(m+1,n);
+          }];
+        };
+      };
+      expect(
+        take(3, upto(2,10))
+      ).to.eql(
+        [2,3,4]
+      );
+      var filter = (predicate, stream) => {
+        var head = stream[0];
+        if(predicate(head) === true) {
+          return [head, (_) => {
+            return filter(predicate, stream[1]());
+          }];
+        } else {
+          return filter(predicate, stream[1]());
+        }
+      };
+      var mod = (n,m) => {
+        return n % m;
+      };
+      var even = (n) => {
+        return mod(n,2) === 0;
+      };
+      expect(
+        take(3,filter(even, upto(1,10)))
+      ).to.eql(
+        [2,4,6]
+      );
+      var reduce = (init,glue) => {
+        return (stream) => { // 関数が返る
+          if(stream.length === 0){
+            return init;
+          } else {
+            var accumulator = glue(stream[0], init);
+            var tail = stream[1](); 
+            return reduce(accumulator,glue)(tail);
+          }
+        };
+      };
+      it('エラトステネスのふるいによる素数の生成', (next) => {
+        var sieve = (stream) => {
+          var prime = stream[0];
+          return [prime, (_) => {
+            return sieve(filter((x) => {
+              return mod(x,prime) !== 0;
+            }, stream[1]()));
+          }]; 
+        };
+        expect(
+          take(3,sieve(upto(2, 10)))
+        ).to.eql(
+          [2,3,5]
+        );
+        // var sieve = (stream) => {
+        //   return reduce(2, (item, accumulator) => {
+            
+        //   })(stream);
+        next();
+      });
+    });
     describe('テスト', () => {
       it('参照透過性のあるコードはテストが容易である', (next) => {
         var adder = (m) => {
@@ -1783,6 +1943,100 @@ describe('なぜ関数型プログラミングが重要か', () => {
         next();
       });
       describe('参照透過性のないコードはテストが困難である', () => {
+        it('銀行口座', (next) => {
+          var deposit = (account, amount) => {
+            return {
+              id: account.id,
+              amount: account.amount + amount
+            };
+          };
+          var withdraw = (account, amount) => {
+            return {
+              id: account.id,
+              amount: account.amount - amount
+            };
+          };
+          next();
+        });
+        describe('ゲームの勝敗の例', () => {
+          it("参照透過性のないコードのテスト", (next) => {
+            /* #@range_begin(winner_with_sideeffect) */
+            var winner = (playerL, playerR) => {
+              if(playerR.score > playerL.score) {
+                console.log(playerR.name + "が勝者です");
+              } else if(playerR.score < playerL.score) {
+                console.log(playerL.name + "が勝者です");
+              } else {
+                console.log("引き分けです");
+              }
+            }; 
+            /* #@range_end(winner_with_sideeffect) */
+            var playerA = {
+              name: 'a',
+              score: 10
+            };
+            var playerB = {
+              name: 'b',
+              score: 20
+            };
+            next();
+          });
+          it("参照透過性のあるコードのテスト", (next) => {
+            var playerA = {
+              name: 'a',
+              score: 10
+            };
+            var playerB = {
+              name: 'b',
+              score: 20
+            };
+            /* #@range_begin(winner_without_sideeffect) */
+            var winner = (playerL, playerR) => {
+              if(playerL.score > playerR.score) {
+                return playerL;
+              } else if(playerL.score < playerR.score) {
+                return playerR;
+              } else {
+                return null;
+              }
+            }; 
+            var announce = (winner) => {
+              if(winner) {
+                return winner.name + "が勝者です";
+              } else {
+                return "引き分けです";
+              }
+            };
+            /* #@range_end(winner_without_sideeffect) */
+            expect(
+              winner(playerA, playerB)
+            ).to.eql(
+              playerB
+            );
+            expect(
+              announce(winner(playerA, playerB))
+            ).to.eql(
+              "bが勝者です"
+            );
+            // var displayWinner = compose(console.log, judge);
+            // displayWinner(playerA, playerB);
+            next();
+          });
+        });
+        it('数学モジュールの例', (next) => {
+          var math = {
+            PI: 3.14
+          };
+          var area = (radius) => {
+            return radius * radius * math.PI;
+          };
+          expect(
+            area(1)
+          ).to.eql(
+            3.14
+          );
+          next();
+        });
         it('adderの例', (next) => {
           // var sinon = require('sinon');
           // var m = sinon.stub();

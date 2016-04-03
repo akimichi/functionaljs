@@ -43,4 +43,26 @@ describe '第2章' do
       attr_accessor :score
     end
   end
+  it '銀行口座の例' do
+    #@range_begin(account_with_implicit_state)
+    class Account
+      def initialize(balance)
+        @balance = balance
+      end
+      attr_accessor :balance
+      def deposit(amount)
+        @balance = @balance + amount
+      end
+      def withdraw(amount)
+        @balance = @balance - amount
+      end
+    end
+    #@range_end(account_with_implicit_state)
+    account = Account.new(100)
+    expect(account.balance).to eq 100
+    account.deposit(20)
+    expect(account.balance).to eq 120
+    account.withdraw(40)
+    expect(account.balance).to eq 80
+  end
 end

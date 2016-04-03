@@ -1963,19 +1963,93 @@ describe('なぜ関数型プログラミングが重要か', () => {
         next();
       });
       describe('参照透過性のないコードはテストが困難である', () => {
-        it('銀行口座', (next) => {
-          var deposit = (account, amount) => {
-            return {
-              id: account.id,
-              amount: account.amount + amount
+        it('状態を持つ銀行口座', (next) => {
+          /* #@range_begin(account_with_state) */
+          var mkAccount = (balance) => {
+            var deposit = (amount) => {
+              balance = balance + amount;
+              return dispatch;
             };
-          };
-          var withdraw = (account, amount) => {
-            return {
-              id: account.id,
-              amount: account.amount - amount
+            var withdraw = (amount) => {
+              balance = balance - amount;
+              return dispatch;
             };
+            var dispatch = (method) => {
+              switch(method){
+              case "deposit":
+                return deposit;
+              case "withdraw":
+                return withdraw; 
+              case "balance":
+                return balance;
+              default:
+                throw {
+                  name: "そのようなメソッドはありません",
+                  message: "unknown: " + method
+                };
+              }
+            };
+            return dispatch;
           };
+          /* #@range_end(account_with_state) */
+          var account = mkAccount(10);
+          expect(
+            account("balance")
+          ).to.eql(
+            10
+          );
+          expect(
+            account("deposit")(20)("balance")
+          ).to.eql(
+            30
+          );
+          expect(
+            account("deposit")(20)("balance")
+          ).to.eql(
+            50
+          );
+          next();
+        });
+        it('ストリームによる銀行口座', (next) => {
+          /* #@range_begin(account_with_explicit_state) */
+          var account = {
+            init: (balance) => {
+              return (_) => {
+                return balance;
+              };
+            },
+            deposit: (amount) => {
+              return (anAccount) => {
+                return account.init(anAccount() + amount);
+              };
+            },
+            withdraw: (amount) => {
+              return (anAccount) => {
+                return account.init(anAccount() - amount);
+              };
+            },
+            commit: (anAccount, transactions) => {
+              return transactions.reduce((accumulator, transact) => {
+                return transact(accumulator);
+              },anAccount);
+            }
+          };
+          /* #@range_end(account_with_explicit_state) */
+          expect(
+            account.init(20)()
+          ).to.eql(
+            20
+          );
+          expect(
+            account.deposit(30)(account.init(20))()
+          ).to.eql(
+            50
+          );
+          expect(
+            account.commit(account.init(30), [account.deposit(20), account.withdraw(10)])()
+          ).to.eql(
+            40
+          );
           next();
         });
         describe('ゲームの勝敗の例', () => {

@@ -985,9 +985,9 @@ describe('高階関数', () => {
       /* #@range_end(simple_curried_function) */
       next();
     });
-    it('カリー化されていない multiplyOf関数', (next) => {
-      /* #@range_begin(multiplyOf_uncurried) */
-      var multiplyOf = (n,m) => {
+    it('カリー化されていない multipleOf関数', (next) => {
+      /* #@range_begin(multipleOf_uncurried) */
+      var multipleOf = (n,m) => {
         if(m % n === 0) {
           return true;
         } else {
@@ -995,21 +995,21 @@ describe('高階関数', () => {
         }
       };
       expect(
-        multiplyOf(2,4)
+        multipleOf(2,4)
       ).to.eql(
         true
       );
       expect(
-        multiplyOf(3,4)
+        multipleOf(3,4)
       ).to.eql(
         false
       );
-      /* #@range_end(multiplyOf_uncurried) */
+      /* #@range_end(multipleOf_uncurried) */
       next();
     });
     it('カリー化による関数の部品化', (next) => {
-      /* #@range_begin(multiplyOf_curried) */
-      var multiplyOf = (n) => { // 外側の関数定義
+      /* #@range_begin(multipleOf_curried) */
+      var multipleOf = (n) => { // 外側の関数定義
         return (m) => {         // 内側の関数定義
           if(m % n === 0) {
             return true;
@@ -1018,10 +1018,10 @@ describe('高階関数', () => {
           }
         };
       };
-      /* #@range_end(multiplyOf_curried) */
-      /* #@range_begin(multiplyOf_curried_test) */
-      var twoFold = multiplyOf(2);
-      var threeFold = multiplyOf(3);
+      /* #@range_end(multipleOf_curried) */
+      /* #@range_begin(multipleOf_curried_test) */
+      var twoFold = multipleOf(2);
+      var threeFold = multipleOf(3);
       expect(
         twoFold(2)
       ).to.eql(
@@ -1032,7 +1032,7 @@ describe('高階関数', () => {
       ).to.eql(
         true
       );
-      /* #@range_end(multiplyOf_curried_test) */
+      /* #@range_end(multipleOf_curried_test) */
       next();
     });
     describe('高階関数によるベクトル演算', () => {
@@ -1594,7 +1594,7 @@ describe('高階関数', () => {
       next();
     });
     it('部分適用と環境', (next) => {
-      var multiplyOf = (n) => { // 外側の関数定義
+      var multipleOf = (n) => { // 外側の関数定義
         return (m) => {         // 内側の関数定義
           if(m % n === 0) {
             return true;
@@ -1604,7 +1604,7 @@ describe('高階関数', () => {
         };
       };
       /* #@range_begin(partial_application_with_environment) */
-      var twoFold = multiplyOf(2);
+      var twoFold = multipleOf(2);
       expect(
        twoFold(4) 
       ).to.eql(
@@ -1909,8 +1909,8 @@ describe('高階関数', () => {
       next();
     });
     describe('クロージャーと参照透過性', () => {
-      it('multiplyOf関数は参照透過である', (next) => {
-        var multiplyOf = (n) => {
+      it('multipleOf関数は参照透過である', (next) => {
+        var multipleOf = (n) => {
           return (m) => {
             if(m % n === 0) {
               return true;
@@ -1919,18 +1919,18 @@ describe('高階関数', () => {
             }
           };
         };
-        /* #@range_begin(multiplyOf_is_transparent) */
+        /* #@range_begin(multipleOf_is_transparent) */
         expect(
-          multiplyOf(2)(4)
+          multipleOf(2)(4)
         ).to.eql(
-          multiplyOf(2)(4)
+          multipleOf(2)(4)
         );
         expect(
-          multiplyOf(3)(5)
+          multipleOf(3)(5)
         ).to.eql(
-          multiplyOf(3)(5)
+          multipleOf(3)(5)
         );
-        /* #@range_end(multiplyOf_is_transparent) */
+        /* #@range_end(multipleOf_is_transparent) */
         next();
       });
       it('参照透過でないクロジャーの例', (next) => {
@@ -2483,7 +2483,7 @@ describe('高階関数', () => {
           });
           it("filterで無限の素数列を作る", (next) => {
             this.timeout(7000);
-            var multiplyOf = (n) => {
+            var multipleOf = (n) => {
               return (m) => {
                 if(m % n === 0) {
                   return true;
@@ -2498,7 +2498,7 @@ describe('高階関数', () => {
               var leastDivisorHelper = (k, n) => {
                 expect(k).to.a('number');
                 expect(n).to.a('number');
-                if(multiplyOf(k)(n)) {
+                if(multipleOf(k)(n)) {
                   return k;
                 } else {
                   if(n < (k * k)) {
@@ -2700,7 +2700,7 @@ describe('高階関数', () => {
         });
         it('素数のジェネレータ',(next) => {
           this.timeout(7000);
-          var multiplyOf = (n) => {
+          var multipleOf = (n) => {
             return (m) => {
               if(m % n === 0) {
                 return true;
@@ -2714,7 +2714,7 @@ describe('高階関数', () => {
             var leastDivisorHelper = (k, n) => {
               expect(k).to.a('number');
               expect(n).to.a('number');
-              if(multiplyOf(k)(n)) {
+              if(multipleOf(k)(n)) {
                 return k;
               } else {
                 if(n < (k * k)) {
@@ -3825,9 +3825,9 @@ describe('高階関数', () => {
     }); // 継続を渡す
   }); // 関数を渡す
   describe('コンビネーター', () => {
-    it('multiplyOfコンビネータ', (next) => {
-      /* #@range_begin(multiplyOf_combinator) */
-      var multiplyOf = (n) => {
+    it('multipleOfコンビネータ', (next) => {
+      /* #@range_begin(multipleOf_combinator) */
+      var multipleOf = (n) => {
         return (m) => {
           if(m % n === 0) {
             return true;
@@ -3836,18 +3836,18 @@ describe('高階関数', () => {
           }
         };
       };
-      var even = multiplyOf(2);
+      var even = multipleOf(2);
       
       expect(
         even(2)
       ).to.eql(
         true
       );
-      /* #@range_end(multiplyOf_combinator) */
+      /* #@range_end(multipleOf_combinator) */
       next();
     }); 
     it('論理コンビネータ', (next) => {
-      var multiplyOf = (n) => {
+      var multipleOf = (n) => {
         return (m) => {
           if(m % n === 0) {
             return true;
@@ -3856,7 +3856,7 @@ describe('高階関数', () => {
           }
         };
       };
-      var even = multiplyOf(2);
+      var even = multipleOf(2);
       /* #@range_begin(not_combinator) */
       // not :: FUN[NUM => BOOL] => FUN[NUM => BOOL]
       var not = (predicate) => { // predicate:: FUN[NUM => BOOL]
@@ -3964,8 +3964,8 @@ describe('高階関数', () => {
           );
           next();
         });
-        // multiplyOf:: NUM -> NUM -> BOOL
-        var multiplyOf = (n) => {
+        // multipleOf:: NUM -> NUM -> BOOL
+        var multipleOf = (n) => {
           expect(n).to.a('number');
           return (m) => {
             expect(n).to.a('number');
@@ -3973,7 +3973,7 @@ describe('高階関数', () => {
           };
         };
         // even:: NUM -> BOOL
-        var even = multiplyOf(2);
+        var even = multipleOf(2);
         // odd:: NUM -> BOOL
         var odd = not(even);
         var or = (f,g) => {
@@ -4082,7 +4082,7 @@ describe('高階関数', () => {
           var leastDivisorHelper = (k, n) => {
             expect(k).to.a('number');
             expect(n).to.a('number');
-            if(multiplyOf(k)(n)) {
+            if(multipleOf(k)(n)) {
               return k;
             } else {
               if(is(greater(n))(k * k)) {

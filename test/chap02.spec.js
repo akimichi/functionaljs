@@ -1791,7 +1791,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
             return integersFrom(n + 1);
           });
         };
-        /* #@range_begin(sieve_primes) */
         var sieve = (astream) => {
           var head = stream.head(astream);
           var tail = stream.tail(astream);
@@ -1816,7 +1815,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
             });
           }
         };
-        /* #@range_end(sieve_primes) */
         expect(
           list.toArray(stream.take(sieve(integersFrom(2)), 10))
         ).to.eql(
@@ -1833,14 +1831,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
           return [astream[0]].concat(take(n-1, astream[1]()));
         }
       };
-      var ones = [1, (_) => {
-        return ones;
-      }];
-      expect(
-        take(2, ones)
-      ).to.eql(
-        [1,1]
-      );
       var repeat = (n) => {
         return [n, (_) => {
           return repeat(n);
@@ -1850,6 +1840,15 @@ describe('なぜ関数型プログラミングが重要か', () => {
         take(3, repeat(2))
       ).to.eql(
         [2,2,2]
+      );
+      var ones = repeat(1);
+      // var ones = [1, (_) => {
+      //   return ones;
+      // }];
+      expect(
+        take(2, ones)
+      ).to.eql(
+        [1,1]
       );
       var replicate = (n, x) => {
         return take(n, repeat(x));
@@ -1873,6 +1872,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
       ).to.eql(
         [2,3,4]
       );
+      /* #@range_begin(stream_filter) */
       var filter = (predicate, stream) => {
         var head = stream[0];
         if(predicate(head) === true) {
@@ -1889,23 +1889,37 @@ describe('なぜ関数型プログラミングが重要か', () => {
       var even = (n) => {
         return mod(n,2) === 0;
       };
+      var startsFrom = (n) => {
+        return [n, (_) => {
+          return startsFrom(n + 1);
+        }];
+      };
       expect(
-        take(3,filter(even, upto(1,10)))
+        take(3,filter(even, startsFrom(2)))
       ).to.eql(
         [2,4,6]
       );
-      var reduce = (init,glue) => {
-        return (stream) => { // 関数が返る
-          if(stream.length === 0){
-            return init;
-          } else {
-            var accumulator = glue(stream[0], init);
-            var tail = stream[1](); 
-            return reduce(accumulator,glue)(tail);
-          }
-        };
-      };
+      /* #@range_end(stream_filter) */
+      it('ストリームの例', (next) => {
+        /* #@range_begin(stream_example) */
+        var stream = [1, (_) => {
+          return 2;
+        }];
+        expect(
+          stream[0]
+        ).to.eql(
+          1
+        );
+        expect(
+          stream[1]()
+        ).to.eql(
+          2
+        );
+        /* #@range_end(stream_example) */
+        next();
+      });
       it('エラトステネスのふるいによる素数の生成', (next) => {
+        /* #@range_begin(eratosthenes_sieve) */
         var sieve = (stream) => {
           var prime = stream[0];
           return [prime, (_) => {
@@ -1914,10 +1928,16 @@ describe('なぜ関数型プログラミングが重要か', () => {
             }, stream[1]()));
           }]; 
         };
+        /* #@range_end(eratosthenes_sieve) */
         expect(
           take(3,sieve(upto(2, 10)))
         ).to.eql(
           [2,3,5]
+        );
+        expect(
+          take(10,sieve(startsFrom(2)))
+        ).to.eql(
+          [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
         );
         // var sieve = (stream) => {
         //   return reduce(2, (item, accumulator) => {

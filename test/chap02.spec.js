@@ -691,7 +691,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_begin(age_sideeffect) */
             var age = (birthYear) => {
               var today = new Date();
-              var thisYear = today.getFullYear(); // 今年の西暦を得る
+              var thisYear = today.getFullYear(); // getFullYear関数は現時点での西暦を返す
               return thisYear - birthYear;
             };
             /* #@range_end(age_sideeffect) */
@@ -1073,7 +1073,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
             {name: "こころ", author: ["夏目漱石"], genre: "文学"},
             {name: "夢十夜", author: ["夏目漱石"], genre: "文学"},
             {name: "ソクラテスの弁明", author: ["プラトン"], genre: "哲学"},
-            {name: "国家", author: ["プラトン"], genre: ["哲学"]},
+            {name: "国家", author: ["プラトン"], genre: "哲学"},
             {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
 
             {name: "計算機プログラムの構造と解釈", author: ["サスマン","エイベルソン"], genre: "コンピュータ"},
@@ -1142,6 +1142,18 @@ describe('なぜ関数型プログラミングが重要か', () => {
             ]
             /* #@range_end(filterWith_pluck_result) */
           );
+          expect(
+            /* #@range_begin(map_filter) */
+            mapWith(pluck("name"))(filterWith((book) => { 
+              return pluck("genre")(book) ===  "哲学";
+            })(books))
+            /* #@range_end(map_filter) */
+          ).to.eql(
+            /* #@range_begin(map_filter_result) */
+            ["ソクラテスの弁明", "国家"]
+            /* #@range_end(map_filter_result) */
+          );
+          
           /* #@range_begin(doesContain) */
           var doesContain = (value) => {
             return (array) => {
@@ -1187,6 +1199,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
           next();
         });
+      });
+      describe('部品の汎用性', () => {
         it('単純なインターフェイス', (next) => {
           /* #@range_begin(add_uncurried) */
           var add = (n,m) => {
@@ -1248,54 +1262,71 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
           next();
         });
+        describe('reduceによる反復処理の汎用化', () => {
+          it('sumの定義', (next) => {
+            /* #@range_begin(sum_in_array_reduce) */
+            var add = (accumulator, currentItem) => {
+              return currentItem + accumulator;
+            };
+            var sum = (array) => {
+              return array.reduce(add,0); // reduceにadd関数を渡している
+            };
+            /* #@range_end(sum_in_array_reduce)  */
+            expect(
+              sum([1,2,3,4])
+            ).to.eql(
+              10
+            );
+            next();
+          });
+          it('productの定義', function(next) {
+            /* #@range_begin(product_in_array_reduce) */
+            var multiply = (accumulator, currentItem) => {
+              return currentItem * accumulator;
+            };
+            var product = (array) => {
+              return array.reduce(multiply,1); // reduceにmultiply関数を渡している
+            };
+            /* #@range_end(product_in_array_reduce)  */
+            /* #@range_begin(product_in_array_reduce_test) */
+            expect(
+              product([1,2,3,4])
+            ).to.eql(
+              24
+            );
+            /* #@range_end(product_in_array_reduce_test)  */
+            next();
+          });
+          it('reverseの定義', function(next) {
+            /* #@range_begin(reverse_in_array_reduce) */
+            var reverse = function(array){
+              return array.reduce(function(accumulator, currentValue){
+                return [currentValue].concat(accumulator);
+              },[]);
+            };
+            expect(reverse([1,2,3,4])).to.eql([4,3,2,1]);
+            /* #@range_end(reverse_in_array_reduce)  */
+            next();
+          });
+        });
       });
-      describe('部品の合成可能性', () => {
-        it('sumの定義', function(next) {
-          /* #@range_begin(sum_in_array_reduce) */
-          var add = (accumulator, currentItem) => {
-            return currentItem + accumulator;
+      describe('部品を合成する', () => {
+        it('adderからsucc関数を作る', (next) => {
+          /* #@range_begin(succ_from_adder) */
+          var adder = (m) => {
+            return (n) => {
+              return m + n;
+            };
           };
-          var sum = (array) => {
-            return array.reduce(add,0); // reduceにadd関数を渡している
-          };
-          /* #@range_end(sum_in_array_reduce)  */
+          var succ = adder(1);
+          /* #@range_end(succ_from_adder)  */
           expect(
-            sum([1,2,3,4])
+            succ(1)
           ).to.eql(
-            10
+            2
           );
           next();
         });
-        it('productの定義', function(next) {
-          /* #@range_begin(product_in_array_reduce) */
-          var multiply = (accumulator, currentItem) => {
-            return currentItem * accumulator;
-          };
-          var product = (array) => {
-            return array.reduce(multiply,1); // reduceにmultiply関数を渡している
-          };
-          /* #@range_end(product_in_array_reduce)  */
-          /* #@range_begin(product_in_array_reduce_test) */
-          expect(
-            product([1,2,3,4])
-          ).to.eql(
-            24
-          );
-          /* #@range_end(product_in_array_reduce_test)  */
-          next();
-        });
-        it('reverseの定義', function(next) {
-          /* #@range_begin(reverse_in_array_reduce) */
-          var reverse = function(array){
-            return array.reduce(function(accumulator, currentValue){
-              return [currentValue].concat(accumulator);
-            },[]);
-          };
-          expect(reverse([1,2,3,4])).to.eql([4,3,2,1]);
-          /* #@range_end(reverse_in_array_reduce)  */
-          next();
-        });
-
       });
       describe('モジュールの独立性', () => {
         var not = (predicate) => {
@@ -1638,19 +1669,17 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
           };
           var succ = adder(1);
-          var upto = (m, n) => {
-            return (step) => {
-              if(m > n)
-                return [];
-              else {
-                return [m].concat(upto(step(m),n)(step));
-              };
+          var enumFromTo = (m, n) => {
+            if(m > n)
+              return [];
+            else {
+              return [m].concat(enumFromTo(m+1,n));
             };
           };
           /* #@range_end(functional_module_factorial) */
           /* #@range_begin(functional_factorial) */
           var factorial = (n) => {
-            return product(upto(1,n)(succ));
+            return product(enumFromTo(1,n));
           };
           /* #@range_end(functional_factorial) */
           expect(

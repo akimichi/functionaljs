@@ -1327,6 +1327,26 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
           next();
         });
+        it('関数の合成', (next) => {
+          /* #@range_begin(function_compose) */
+          var compose = (f,g) => {
+            return (arg) => {
+              return f(g(arg));
+            };
+          };
+          /* #@range_end(function_compose)  */
+          var adder = (m) => {
+            return (n) => {
+              return m + n;
+            };
+          };
+          expect(
+            compose(adder(1), adder(1))(1)
+          ).to.eql(
+            3
+          );
+          next();
+        });
       });
       describe('モジュールの独立性', () => {
         var not = (predicate) => {
@@ -1656,32 +1676,68 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
         it('関数型プログラミングによる階乗の計算', (next) => {
-          /* #@range_begin(functional_module_factorial) */
+          // var foldr = (aStream) => {
+          //   return (accumulator) => {
+          //     return (glue) => {
+          //       if(aStream.length === 1) {
+          //         return accumulator;
+          //       } else {
+          //         return glue(aStream[0])(foldr(aStream[1]())(accumulator)(glue));
+          //       };
+          //     };
+          //   };
+          // };
+          /* #@range_begin(functional_factorial) */
           var multiply = (m,n) => {
             return m * n;
           };
           var product = (array) => {
-            return array.reduce(multiply, 1);
-          };
+           return array.reduce(multiply,1);
+          }; 
           var adder = (m) => {
             return (n) => {
               return m + n;
             };
           };
           var succ = adder(1);
-          var enumFromTo = (m, n) => {
-            if(m > n)
-              return [];
-            else {
-              return [m].concat(enumFromTo(m+1,n));
+          var iterate = (step) => {
+            return (init) => {
+              return [init, (_) => {
+                return iterate(step)(step(init));
+              }];
             };
           };
-          /* #@range_end(functional_module_factorial) */
-          /* #@range_begin(functional_factorial) */
+          var take = (n) => {
+            return (aStream) => {
+              if(n === 0) {
+                return [];
+              } else {
+                return [aStream[0]].concat(take(n-1)(aStream[1]()));
+              }
+            };
+          };
+          var enumFrom = (from) => {
+            return iterate(succ)(from);
+          };
+          var enumFromTo = (from, to) => {
+            return take(to - from + 1)(enumFrom(from));
+          };
+          // var enumFromTo = (m, n) => {
+          //   if(m > n)
+          //     return [];
+          //   else {
+          //     return [m].concat(enumFromTo(m+1,n));
+          //   };
+          // };
           var factorial = (n) => {
             return product(enumFromTo(1,n));
           };
           /* #@range_end(functional_factorial) */
+          expect(
+            enumFromTo(2,4)
+          ).to.eql(
+            [2,3,4]
+          );
           expect(
             factorial(2)
           ).to.eql(
@@ -1902,33 +1958,115 @@ describe('なぜ関数型プログラミングが重要か', () => {
         [2,3,4]
       );
       /* #@range_begin(stream_filter) */
-      var filter = (predicate, stream) => {
-        var head = stream[0];
-        if(predicate(head) === true) {
-          return [head, (_) => {
-            return filter(predicate, stream[1]());
-          }];
-        } else {
-          return filter(predicate, stream[1]());
-        }
+      var filter = (predicate) => {
+        return (aStream) => {
+          var head = aStream[0];
+          if(predicate(head) === true) {
+            return [head, (_) => {
+              return filter(predicate)(aStream[1]());
+            }];
+          } else {
+            return filter(predicate)(aStream[1]());
+          }
+        };
       };
+      /* #@range_end(stream_filter) */
+      // var filter = (predicate, stream) => {
+      //   var head = stream[0];
+      //   if(predicate(head) === true) {
+      //     return [head, (_) => {
+      //       return filter(predicate, stream[1]());
+      //     }];
+      //   } else {
+      //     return filter(predicate, stream[1]());
+      //   }
+      // };
       var mod = (n,m) => {
         return n % m;
       };
       var even = (n) => {
         return mod(n,2) === 0;
       };
-      var startsFrom = (n) => {
-        return [n, (_) => {
-          return startsFrom(n + 1);
-        }];
+      /* #@range_begin(stream_enumFrom) */
+      var iterate = (step) => {
+        return (init) => {
+          return [init, (_) => {
+            return iterate(step)(step(init));
+          }];
+        };
       };
+      var adder = (m) => {
+        return (n) => {
+          return m + n;
+        };
+      };
+      var succ = adder(1);
+      var enumFrom = (n) => {
+        return iterate(succ)(n);
+      };
+      /* #@range_end(stream_enumFrom) */
+      // var enumFrom = (n) => {
+      //   return [n, (_) => {
+      //     return enumFrom(n + 1);
+      //   }];
+      // };
       expect(
-        take(3,filter(even, startsFrom(2)))
+        take(3,filter(even)(enumFrom(2)))
       ).to.eql(
         [2,4,6]
       );
-      /* #@range_end(stream_filter) */
+      describe('カリー化バージョン', () => {
+        var take = (n) => {
+          return (aStream) => {
+            if(n === 1) {
+              return aStream[0];
+            } else {
+              return [aStream[0]].concat(take(n-1)(aStream[1]()));
+            }
+          };
+        };
+        var filter = (predicate) => {
+          return (aStream) => {
+            var head = aStream[0];
+            if(predicate(head) === true) {
+              return [head, (_) => {
+                return filter(predicate)(aStream[1]());
+              }];
+            } else {
+              return filter(predicate)(aStream[1]());
+            }
+          };
+        };
+        var even = (n) => {
+          return n % 2 === 0;
+        };
+        var iterate = (step) => {
+          return (init) => {
+            return [init, (_) => {
+              return iterate(step)(step(init));
+            }];
+          };
+        };
+        var adder = (m) => {
+          return (n) => {
+            return m + n;
+          };
+        };
+        var succ = adder(1);
+        var enumFrom = (n) => {
+          return iterate(succ)(n);
+        };
+        // var enumFrom = (n) => {
+        //   return [n, (_) => {
+        //     return enumFrom(n + 1);
+        //   }];
+        // };
+        expect(
+          compose(take(3), filter(even))(enumFrom(2))
+        ).to.eql(
+          [2,4,6]
+        );
+      });
       it('ストリームの例', (next) => {
         /* #@range_begin(stream_example) */
         var stream = [1, (_) => {
@@ -1948,30 +2086,50 @@ describe('なぜ関数型プログラミングが重要か', () => {
         next();
       });
       it('エラトステネスのふるいによる素数の生成', (next) => {
+        var take = (n) => {
+          return (aStream) => {
+            if(n === 1) {
+              return aStream[0];
+            } else {
+              return [aStream[0]].concat(take(n-1)(aStream[1]()));
+            }
+          };
+        };
+        var filter = (predicate) => {
+          return (aStream) => {
+            var head = aStream[0];
+            if(predicate(head) === true) {
+              return [head, (_) => {
+                return filter(predicate)(aStream[1]());
+              }];
+            } else {
+              return filter(predicate)(aStream[1]());
+            }
+          };
+        };
         /* #@range_begin(eratosthenes_sieve) */
-        var sieve = (stream) => {
-          var prime = stream[0];
+        var sieve = (aStream) => {
+          var prime = aStream[0];
           return [prime, (_) => {
             return sieve(filter((x) => {
-              return mod(x,prime) !== 0;
-            }, stream[1]()));
+              return x % prime !== 0;
+            })(aStream[1]()));
           }]; 
         };
+        var primes = sieve(enumFrom(2)); // 無限の素数列
         /* #@range_end(eratosthenes_sieve) */
+        /* #@range_begin(eratosthenes_sieve_test) */
         expect(
-          take(3,sieve(upto(2, 10)))
-        ).to.eql(
-          [2,3,5]
-        );
-        expect(
-          take(10,sieve(startsFrom(2)))
+          take(10)(primes)
         ).to.eql(
           [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
         );
-        // var sieve = (stream) => {
-        //   return reduce(2, (item, accumulator) => {
-            
-        //   })(stream);
+        /* #@range_end(eratosthenes_sieve_test) */
+        expect(
+          take(50)(primes)
+        ).to.eql(
+          [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229]
+       );
         next();
       });
     });

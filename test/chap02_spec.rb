@@ -43,7 +43,7 @@ describe '第2章' do
       attr_accessor :score
     end
   end
-  it '銀行口座の例' do
+  describe '銀行口座の例' do
     #@range_begin(account_with_implicit_state)
     class Account
       def initialize(balance)
@@ -58,11 +58,23 @@ describe '第2章' do
       end
     end
     #@range_end(account_with_implicit_state)
-    account = Account.new(100)
-    expect(account.balance).to eq 100
-    account.deposit(20)
-    expect(account.balance).to eq 120
-    account.withdraw(40)
-    expect(account.balance).to eq 80
+    it '浪費家の例' do
+      #@range_begin(account_waster_test)
+      account = Account.new(100)
+      expect(account.balance).to eq 100
+      account.withdraw(60)
+      expect(account.balance).to eq 40
+      account.withdraw(60)
+      expect(account.balance).to eq -20
+      #@range_end(account_waster_test)
+    end
+    it '吝嗇家の例' do
+      account = Account.new(100)
+      expect(account.balance).to eq 100
+      account.deposit(20)
+      expect(account.balance).to eq 120
+      account.withdraw(40)
+      expect(account.balance).to eq 80
+    end
   end
 end

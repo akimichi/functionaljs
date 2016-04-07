@@ -1722,13 +1722,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
           var enumFromTo = (from, to) => {
             return take(to - from + 1)(enumFrom(from));
           };
-          // var enumFromTo = (m, n) => {
-          //   if(m > n)
-          //     return [];
-          //   else {
-          //     return [m].concat(enumFromTo(m+1,n));
-          //   };
-          // };
           var factorial = (n) => {
             return product(enumFromTo(1,n));
           };
@@ -2215,10 +2208,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
                 return account.init(anAccount() - amount);
               };
             },
-            commit: (anAccount, transactions) => {
-              return transactions.reduce((accumulator, transact) => {
-                return transact(accumulator);
-              },anAccount);
+            commit: (anAccount) => {
+              return (transactions) => {
+                return transactions.reduce((accumulator, transact) => {
+                  return transact(accumulator);
+                },anAccount);
+              };
             }
           };
           /* #@range_end(account_with_explicit_state) */
@@ -2232,11 +2227,16 @@ describe('なぜ関数型プログラミングが重要か', () => {
           ).to.eql(
             50
           );
+
+          /* #@range_begin(account_test) */
           expect(
-            account.commit(account.init(30), [account.deposit(20), account.withdraw(10)])()
+            account.commit(account.init(30))(
+              [account.deposit(20), account.withdraw(10)] // 一連の処理
+            )()
           ).to.eql(
             40
           );
+          /* #@range_end(account_test) */
           next();
         });
         describe('ゲームの勝敗の例', () => {

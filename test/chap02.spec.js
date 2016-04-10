@@ -111,11 +111,10 @@ describe('なぜ関数型プログラミングが重要か', () => {
       });
       it('Array.reduceによるsumの定義', (next) => {
         /* #@range_begin(sum_in_array_reduce) */
-        var add = (x, y) => {
-          return x + y;
-        };
         var sum = (array) => {
-          return array.reduce(add,0); // reduceにadd関数を渡している
+          return array.reduce((accumulator, item) => {
+            return accumulator + item;
+          }, 0);
         };
         /* #@range_end(sum_in_array_reduce)  */
         expect(
@@ -1281,11 +1280,10 @@ describe('なぜ関数型プログラミングが重要か', () => {
           });
           it('productの定義', function(next) {
             /* #@range_begin(product_in_array_reduce) */
-            var multiply = (accumulator, currentItem) => {
-              return currentItem * accumulator;
-            };
             var product = (array) => {
-              return array.reduce(multiply,1); // reduceにmultiply関数を渡している
+              return array.reduce((accumulator, item) => {
+                return accumulator * item;
+              }, 1);
             };
             /* #@range_end(product_in_array_reduce)  */
             /* #@range_begin(product_in_array_reduce_test) */
@@ -1687,7 +1685,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
           //     };
           //   };
           // };
-          /* #@range_begin(functional_factorial) */
           var multiply = (m,n) => {
             return m * n;
           };
@@ -1719,6 +1716,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           var enumFrom = (from) => {
             return iterate(succ)(from);
           };
+          /* #@range_begin(functional_factorial) */
           var enumFromTo = (from, to) => {
             return take(to - from + 1)(enumFrom(from));
           };
@@ -1980,6 +1978,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
       var even = (n) => {
         return mod(n,2) === 0;
       };
+      var adder = (m) => {
+        return (n) => {
+          return m + n;
+        };
+      };
+      var succ = adder(1);
       /* #@range_begin(stream_enumFrom) */
       var iterate = (step) => {
         return (init) => {
@@ -1988,12 +1992,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
           }];
         };
       };
-      var adder = (m) => {
-        return (n) => {
-          return m + n;
-        };
-      };
-      var succ = adder(1);
       var enumFrom = (n) => {
         return iterate(succ)(n);
       };
@@ -2079,15 +2077,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
         next();
       });
       it('エラトステネスのふるいによる素数の生成', (next) => {
-        var take = (n) => {
-          return (aStream) => {
-            if(n === 1) {
-              return aStream[0];
-            } else {
-              return [aStream[0]].concat(take(n-1)(aStream[1]()));
-            }
-          };
-        };
         var filter = (predicate) => {
           return (aStream) => {
             var head = aStream[0];
@@ -2100,6 +2089,17 @@ describe('なぜ関数型プログラミングが重要か', () => {
             }
           };
         };
+        /* #@range_begin(stream_take) */
+        var take = (n) => {
+          return (aStream) => {
+            if(n === 1) {
+              return aStream[0];
+            } else {
+              return [aStream[0]].concat(take(n-1)(aStream[1]()));
+            }
+          };
+        };
+        /* #@range_end(stream_take) */
         /* #@range_begin(eratosthenes_sieve) */
         var sieve = (aStream) => {
           var prime = aStream[0];

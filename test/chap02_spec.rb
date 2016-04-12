@@ -45,15 +45,15 @@ describe '第2章' do
   end
   describe '銀行口座の例' do
     #@range_begin(account_with_implicit_state)
-    class Account
-      def initialize(balance)
+    class Account             # 銀行口座のクラス
+      def initialize(balance) # 銀行口座のインスタンスを作る
         @balance = balance
       end
       attr_accessor :balance
-      def deposit(amount)
+      def deposit(amount)     # 口座にお金を預ける
         @balance = @balance + amount
       end
-      def withdraw(amount)
+      def withdraw(amount)    # 口座からお金を引き出す
         @balance = @balance - amount
       end
     end

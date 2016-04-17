@@ -1186,6 +1186,14 @@ describe('なぜ関数型プログラミングが重要か', () => {
       });
       describe('部品の汎用性', () => {
         it('単純なインターフェイス', (next) => {
+          /* #@range_begin(alwaysOne) */
+          var constant = (any) => {
+            return (_) => {
+              return any;
+            };
+          };
+          var alwaysOne = constant(1); 
+          /* #@range_end(alwaysOne) */
           /* #@range_begin(add_uncurried) */
           var add = (n,m) => {
             return n + m;
@@ -1279,6 +1287,33 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_end(product_in_array_reduce_test)  */
             next();
           });
+          it('maxの定義', (next) => {
+            /* #@range_begin(max_in_array_reduce) */
+            var max = (array) => {
+              var bigger = (n,m) => {
+                if(n > m) {
+                  return n;
+                } else {
+                  return m;
+                };
+              };
+              return array.reduce((accumulator, item) => {
+                return bigger(accumulator, item);
+              });
+            };
+            /* #@range_end(max_in_array_reduce)  */
+            expect(
+              max([1,2,3,4])
+            ).to.eql(
+              4
+            );
+            expect(
+              max([1,-2,3,-4])
+            ).to.eql(
+              3
+            );
+            next();
+          });
           it('reverseの定義', (next) => {
             /* #@range_begin(reverse_in_array_reduce) */
             var reverse = (array) => {
@@ -1295,8 +1330,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
               return n + 1;
             };
             /* #@range_begin(map_in_array_reduce) */
-            var map = (array) => {
-              return (transform) => {
+            var map = (transform) => {
+              return (array) => {
                 return array.reduce((accumulator, item) => {
                   return accumulator.concat(transform(item));
                 },[]); // 蓄積変数の初期値として空の配列[]を指定する
@@ -1304,9 +1339,24 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
             /* #@range_end(map_in_array_reduce)  */
             expect(
-              map([1,2,3])(succ)
+              map(succ)([1,2,3])
             ).to.eql(
               [2,3,4]
+            );
+            var constant = (any) => {
+              return (_) => {
+                return any;
+              };
+            };
+            var alwaysOne = constant(1); 
+            expect(
+              /* #@range_begin(map_in_array_reduce_test) */
+              map(alwaysOne)([1,2,3])
+              /* #@range_end(map_in_array_reduce_test) */
+            ).to.eql(
+              /* #@range_begin(map_in_array_reduce_test_result) */
+              [1,1,1]
+              /* #@range_end(map_in_array_reduce_test_result) */
             );
             next();
           });
@@ -1366,13 +1416,13 @@ describe('なぜ関数型プログラミングが重要か', () => {
               return accumulator + item;                 // 足し算を実行する
             },0); // 第2引数には、蓄積変数の初期値として0を渡す 
           };
-          /* #@range_begin(array_length) */
           var constant = (any) => {
             return (_) => {
               return any;
             };
           };
           var alwaysOne = constant(1); 
+          /* #@range_begin(array_length) */
           var length = (array) => {
             return sum(map(array)(alwaysOne));
           };
@@ -1392,9 +1442,9 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
           };
           /* #@range_end(function_compose)  */
-          it('関数合成でlength関数を作る', (next) => {
-            var map = (array) => {
-              return (transform) => {
+          it('関数合成でlength関数を作る(ポイントフリー版)', (next) => {
+            var map = (transform) => {
+              return (array) => {
                 return array.reduce((accumulator, item) => {
                   return accumulator.concat(transform(item));
                 },[]); // 蓄積変数の初期値として空の配列[]を指定する
@@ -1420,8 +1470,46 @@ describe('なぜ関数型プログラミングが重要か', () => {
               };
             };
             /* #@range_end(flip_definition) */
+            /* #@range_begin(array_length_in_composition_with_point_free_style) */
+            var length = compose(sum,map(alwaysOne));
+            /* #@range_end(array_length_in_composition_with_point_free_style)  */
+            expect(
+              length([1,2,3])
+            ).to.eql(
+              3
+            );
+            next();
+          });
+          it('関数合成でlength関数を作る', (next) => {
+            var map = (transform) => {
+              return (array) => {
+                return array.reduce((accumulator, item) => {
+                  return accumulator.concat(transform(item));
+                },[]); // 蓄積変数の初期値として空の配列[]を指定する
+              };
+            };
+            var sum = (array) => {
+              return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
+                return accumulator + item;                 // 足し算を実行する
+              },0); // 第2引数には、蓄積変数の初期値として0を渡す 
+            };
+            var constant = (any) => {
+              return (_) => {
+                return any;
+              };
+            };
+            var alwaysOne = constant(1); 
+            var flip = (fun) => {
+              return  (x) => {
+                return (y) => {
+                  return fun(y)(x);
+                };
+              };
+            };
             /* #@range_begin(array_length_in_composition) */
-            var length = compose(sum,flip(map)(alwaysOne));
+            var length = (array) => { // 引数が配列であることを明示する
+              return compose(sum,map(alwaysOne))(array);
+            };
             /* #@range_end(array_length_in_composition)  */
             expect(
               length([1,2,3])
@@ -1813,14 +1901,16 @@ describe('なぜ関数型プログラミングが重要か', () => {
               return take(to - from + 1)(enumFrom(from));
             };
           };
-          var factorial = compose(product, enumFromTo(1));
+          var factorial = (n) => {
+            return compose(product, enumFromTo(1))(n);
+          };
+          /* #@range_end(functional_factorial) */
           // var enumFromTo = (from, to) => {
           //   return take(to - from + 1)(enumFrom(from));
           // };
           // var factorial = (n) => {
           //   return product(enumFromTo(1,n));
           // };
-          /* #@range_end(functional_factorial) */
           expect(
             enumFromTo(2)(4)
           ).to.eql(
@@ -2015,9 +2105,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
         [2,2,2]
       );
       var ones = repeat(1);
-      // var ones = [1, (_) => {
-      //   return ones;
-      // }];
       expect(
         take(2, ones)
       ).to.eql(
@@ -2059,16 +2146,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
         };
       };
       /* #@range_end(stream_filter) */
-      // var filter = (predicate, stream) => {
-      //   var head = stream[0];
-      //   if(predicate(head) === true) {
-      //     return [head, (_) => {
-      //       return filter(predicate, stream[1]());
-      //     }];
-      //   } else {
-      //     return filter(predicate, stream[1]());
-      //   }
-      // };
       var mod = (n,m) => {
         return n % m;
       };
@@ -2093,11 +2170,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
         return iterate(succ)(n);
       };
       /* #@range_end(stream_enumFrom) */
-      // var enumFrom = (n) => {
-      //   return [n, (_) => {
-      //     return enumFrom(n + 1);
-      //   }];
-      // };
       expect(
         take(3,filter(even)(enumFrom(2)))
       ).to.eql(
@@ -2144,11 +2216,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
         var enumFrom = (n) => {
           return iterate(succ)(n);
         };
-        // var enumFrom = (n) => {
-        //   return [n, (_) => {
-        //     return enumFrom(n + 1);
-        //   }];
-        // };
         expect(
           compose(take(3), filter(even))(enumFrom(2))
         ).to.eql(
@@ -2171,6 +2238,33 @@ describe('なぜ関数型プログラミングが重要か', () => {
           2
         );
         /* #@range_end(stream_example) */
+        var series = (func) => {
+          return (init) => {
+            return [init, (_) => {
+              return series(func)(func(init));
+            }];
+          };
+        };
+        var identity = (any) => {
+          return any;
+        };
+        var ones = series(identity)(1);
+        expect(
+          take(10,ones)
+        ).to.eql(
+          [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+        );
+        /* #@range_begin(stream_limit) */
+        var limit = (predicate) => {
+          return (aStream) => {
+            if(predicate(aStream)) {
+              return aStream[0];
+            } else {
+              return limit(predicate)(aStream[1]());
+            };
+          };
+        };
+        /* #@range_end(stream_limit) */
         next();
       });
       it('エラトステネスのふるいによる素数の生成', (next) => {
@@ -2186,12 +2280,29 @@ describe('なぜ関数型プログラミングが重要か', () => {
             }
           };
         };
+        /* #@range_begin(stream_remove) */
+        var not = (arg) => {
+          return ! arg;
+        };
+        var remove = (predicate) => {
+          return (aStream) => {
+            return filter(compose(not,predicate))(aStream);
+          };
+        };
+        /* #@range_end(stream_remove) */
+        var multiplyOf = (n,m) => {
+          if((n % m) === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
         /* #@range_begin(eratosthenes_sieve) */
         var sieve = (aStream) => {
           var prime = aStream[0];
           return [prime, (_) => {
-            return sieve(filter((item) => {
-              return item % prime !== 0;
+            return sieve(remove((item) => { // 素数の倍数を除去する
+              return multiplyOf(item, prime);  
             })(aStream[1]()));
           }]; 
         };
@@ -2305,7 +2416,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
                 return account.init(anAccount - amount);
               };
             },
-            commit: (anAccount) => { // 複数の処理を続けて実行する
+            commit: (anAccount) => { // 処理を実行する
               return (transactions) => {
                 return transactions.reduce((accumulator, transact) => {
                   return transact(accumulator);
@@ -2328,7 +2439,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           /* #@range_begin(account_test) */
           expect(
             account.commit(account.init(30))(
-              [account.deposit(20), account.withdraw(10)] // 一連の処理
+              [account.deposit(20), account.withdraw(10)] // 一連の取り引きを実行する
             )
           ).to.eql(
             40
@@ -2392,6 +2503,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
               name: 'b',
               score: 20
             };
+            // 純粋な関数をテストする
             expect(
               announce(judge(playerA, playerB))
             ).to.eql(

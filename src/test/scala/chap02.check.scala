@@ -4,14 +4,13 @@ import org.scalacheck.Prop.{forAll, BooleanOperators}
 import scala.annotation.tailrec
 
 object MathSpecification extends Properties("Math") {
-  def factorial(i: Int): Long = {
+  def factorial(n: Int): Long = {
     @tailrec
-    def fact(i: Int, accumulator: Int): Long = {
-      if (i <= 1) accumulator
-      else fact(i - 1, i * accumulator)
+    def fact(n: Int, accumulator: Int): Long = {
+      if (n <= 1) accumulator
+      else fact(n - 1, n * accumulator)
     }
-
-    fact(i, 1)
+    fact(n, 1)
   }
   // def factorial(n: Int): Int = {
   //   @tailrec def factorialAcc(acc: Int, n: Int): Int = {
@@ -29,9 +28,19 @@ object MathSpecification extends Properties("Math") {
   // property("comb") = forAll { (n: Int, r: Int) =>
   //   (n > 1 && r > 1 && n > r)  ==>   (comb(n,r) == comb(n, n-r))
   // }
+  def succ(n:Int) = {
+    n + 1
+  }
+  /* #@range_begin(check_succ) */
+  property("succ") = forAll( (x:Int) => 
+    succ(0) + succ(x) == succ(succ(x))
+  )
+  /* #@range_end(check_succ) */
+  /* #@range_begin(check_multiplication) */
   property("multiply") = forAll( (x:Int) => 
     x+x == 2*x 
   )
+  /* #@range_end(check_multiplication) */
 }
 
 object StringSpecification extends Properties("String") {

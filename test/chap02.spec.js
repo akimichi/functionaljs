@@ -1186,14 +1186,14 @@ describe('なぜ関数型プログラミングが重要か', () => {
       });
       describe('部品の汎用性', () => {
         it('単純なインターフェイス', (next) => {
-          /* #@range_begin(alwaysOne) */
+          /* #@range_begin(constant) */
           var constant = (any) => {
             return (_) => {
               return any;
             };
           };
+          /* #@range_end(constant) */
           var alwaysOne = constant(1); 
-          /* #@range_end(alwaysOne) */
           /* #@range_begin(add_uncurried) */
           var add = (n,m) => {
             return n + m;
@@ -1285,6 +1285,31 @@ describe('なぜ関数型プログラミングが重要か', () => {
               24
             );
             /* #@range_end(product_in_array_reduce_test)  */
+            next();
+          });
+          it('allの定義', (next) => {
+            /* #@range_begin(all_in_array_reduce) */
+            var all = (array) => {
+              return array.reduce((accumulator, item) => {
+                return accumulator && item;
+              }); // 第2引数を指定していない場合は、
+                  // 配列の先頭要素が変数accumulatorの初期値になる
+            };
+            /* #@range_end(all_in_array_reduce)  */
+            expect(
+              all([true,true,true])
+            ).to.eql(
+              true
+            );
+            expect(
+              /* #@range_begin(all_in_array_reduce_test) */
+              all([true,false,true])
+              /* #@range_end(all_in_array_reduce_test) */
+            ).to.eql(
+              /* #@range_begin(all_in_array_reduce_test_result) */
+              false
+              /* #@range_end(all_in_array_reduce_test_result) */
+            );
             next();
           });
           it('maxの定義', (next) => {
@@ -1404,8 +1429,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
         it('length関数を作る', (next) => {
-          var map = (array) => {
-            return (transform) => {
+          var map = (transform) => {
+            return (array) => {
               return array.reduce((accumulator, item) => {
                 return accumulator.concat(transform(item));
               },[]); // 蓄積変数の初期値として空の配列[]を指定する
@@ -1424,7 +1449,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           var alwaysOne = constant(1); 
           /* #@range_begin(array_length) */
           var length = (array) => {
-            return sum(map(array)(alwaysOne));
+            return sum(map(alwaysOne)(array));
           };
           /* #@range_end(array_length)  */
           expect(
@@ -2222,22 +2247,40 @@ describe('なぜ関数型プログラミングが重要か', () => {
           [2,4,6]
         );
       });
-      it('ストリームの例', (next) => {
-        /* #@range_begin(stream_example) */
-        var stream = [1, (_) => {
-          return 2;
-        }];
-        expect(
-          stream[0]
-        ).to.eql(
-          1
-        );
-        expect(
-          stream[1]()
-        ).to.eql(
-          2
-        );
-        /* #@range_end(stream_example) */
+      describe('ストリーム', () => {
+        it('簡単なストリームの例', (next) => {
+          /* #@range_begin(stream_example) */
+          var stream = [1, (_) => { // 末尾要素は関数で表現する
+            return 2;
+          }];
+          /* #@range_end(stream_example) */
+          expect(
+            stream[0]
+          ).to.eql(
+            1
+          );
+          expect(
+            stream[1]()
+          ).to.eql(
+            2
+          );
+          /* #@range_begin(stream_ones) */
+          var ones = [1, (_) => {
+            return ones;
+          }];
+          /* #@range_end(stream_ones) */
+          expect(
+            ones[0]
+          ).to.eql(
+            1
+          );
+          expect(
+            ones[1]()[0]
+          ).to.eql(
+            1
+          );
+          next();
+        });
         var series = (func) => {
           return (init) => {
             return [init, (_) => {
@@ -2265,75 +2308,107 @@ describe('なぜ関数型プログラミングが重要か', () => {
           };
         };
         /* #@range_end(stream_limit) */
-        next();
-      });
-      it('エラトステネスのふるいによる素数の生成', (next) => {
-        var filter = (predicate) => {
-          return (aStream) => {
-            var head = aStream[0];
-            if(predicate(head) === true) {
-              return [head, (_) => {
+        it('エラトステネスのふるいによる素数の生成', (next) => {
+          var filter = (predicate) => {
+            return (aStream) => {
+              var head = aStream[0];
+              if(predicate(head) === true) {
+                return [head, (_) => {
+                  return filter(predicate)(aStream[1]());
+                }];
+              } else {
                 return filter(predicate)(aStream[1]());
-              }];
+              }
+            };
+          };
+          /* #@range_begin(stream_remove) */
+          var not = (arg) => {
+            return ! arg;
+          };
+          var remove = (predicate) => {
+            return (aStream) => {
+              return filter(compose(not,predicate))(aStream);
+            };
+          };
+          /* #@range_end(stream_remove) */
+          var take = (n) => {
+            return (aStream) => {
+              if(n === 1) {
+                return aStream[0];
+              } else {
+                return [aStream[0]].concat(take(n-1)(aStream[1]()));
+              }
+            };
+          };
+          var even = (n) => {
+            return n % 2 === 0;
+          };
+          expect(
+            /* #@range_begin(stream_remove_test) */
+            take(5)(remove(even)(enumFrom(1)))
+            /* #@range_end(stream_remove_test) */
+          ).to.eql(
+            /* #@range_begin(stream_remove_test_result) */
+            [1,3,5,7,9]
+            /* #@range_end(stream_remove_test_result) */
+          );
+          /* #@range_begin(multipleOf) */
+          var multipleOf = (n,m) => {
+            if((n % m) === 0) {
+              return true;
             } else {
-              return filter(predicate)(aStream[1]());
+              return false;
             }
           };
-        };
-        /* #@range_begin(stream_remove) */
-        var not = (arg) => {
-          return ! arg;
-        };
-        var remove = (predicate) => {
-          return (aStream) => {
-            return filter(compose(not,predicate))(aStream);
+          /* #@range_end(multipleOf) */
+          expect(
+            multipleOf(4,2)
+          ).to.eql(
+            true
+          );
+          expect(
+            multipleOf(5,2)
+          ).to.eql(
+            false
+          );
+          /* #@range_begin(eratosthenes_sieve) */
+          var sieve = (aStream) => {
+            var prime = aStream[0];
+            return [prime, (_) => {
+              return sieve(remove((item) => { // 素数の倍数を除去する
+                return multipleOf(item, prime);  
+              })(aStream[1]()));
+            }]; 
           };
-        };
-        /* #@range_end(stream_remove) */
-        var multiplyOf = (n,m) => {
-          if((n % m) === 0) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-        /* #@range_begin(eratosthenes_sieve) */
-        var sieve = (aStream) => {
-          var prime = aStream[0];
-          return [prime, (_) => {
-            return sieve(remove((item) => { // 素数の倍数を除去する
-              return multiplyOf(item, prime);  
-            })(aStream[1]()));
-          }]; 
-        };
-        var primes = sieve(enumFrom(2)); // 無限の素数列
-        /* #@range_end(eratosthenes_sieve) */
-        /* #@range_begin(stream_take) */
-        var take = (n) => {
-          return (aStream) => {
-            if(n === 1) {
-              return aStream[0];
-            } else {
-              return [aStream[0]].concat(take(n-1)(aStream[1]()));
-            }
+          var primes = sieve(enumFrom(2)); // 無限の素数列
+          /* #@range_end(eratosthenes_sieve) */
+          /* #@range_begin(stream_take) */
+          var take = (n) => {
+            return (aStream) => {
+              if(n === 1) {
+                return aStream[0];
+              } else {
+                return [aStream[0]].concat(take(n-1)(aStream[1]()));
+              }
+            };
           };
-        };
-        /* #@range_end(stream_take) */
-        expect(
-          /* #@range_begin(eratosthenes_sieve_test) */
-          take(10)(primes)
-          /* #@range_end(eratosthenes_sieve_test) */
-        ).to.eql(
-          /* #@range_begin(eratosthenes_sieve_test_result) */
-          [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
-          /* #@range_end(eratosthenes_sieve_test_result) */
-        );
-        expect(
-          take(50)(primes)
-        ).to.eql(
-          [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229]
-       );
-        next();
+          /* #@range_end(stream_take) */
+          expect(
+            /* #@range_begin(eratosthenes_sieve_test) */
+            take(10)(primes)
+            /* #@range_end(eratosthenes_sieve_test) */
+          ).to.eql(
+            /* #@range_begin(eratosthenes_sieve_test_result) */
+            [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
+            /* #@range_end(eratosthenes_sieve_test_result) */
+          );
+          expect(
+            take(50)(primes)
+          ).to.eql(
+            [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229]
+          );
+          next();
+        });
       });
     });
     describe('テスト', () => {
@@ -2646,6 +2721,79 @@ describe('なぜ関数型プログラミングが重要か', () => {
         //   );
         //   next();
         // });
+      });
+      describe('参照透過性のあるコードはテストが容易である', () => {
+        describe('性質テスト', () => {
+          var adder = (m) => {
+            return (n) => {
+              return m + n;
+            };
+          };
+          var succ = adder(1);
+          var iterate = (step) => {
+            return (init) => {
+              return [init, (_) => {
+                return iterate(step)(step(init));
+              }];
+            };
+          };
+          var take = (n) => {
+            return (aStream) => {
+              if(n === 0) {
+                return [];
+              } else {
+                return [aStream[0]].concat(take(n-1)(aStream[1]()));
+              }
+            };
+          };
+          var enumFrom = (from) => {
+            return iterate(succ)(from);
+          };
+          var filter = (predicate) => {
+            return (aStream) => {
+              var head = aStream[0];
+              if(predicate(head) === true) {
+                return [head, (_) => {
+                  return filter(predicate)(aStream[1]());
+                }];
+              } else {
+                return filter(predicate)(aStream[1]());
+              }
+            };
+          };
+          it('succ関数の性質テスト', (next) => {
+            /* #@range_begin(succ_property_test) */
+            // ストリームのmap関数
+            var map = (transform) => {
+              return (aStream) => {
+                var head = aStream[0];
+                return [transform(head), (_) => {
+                  return map(transform)(aStream[1]());
+                }];
+              };
+            };
+            // 配列のall関数
+            var all = (array) => {
+              return array.reduce((accumulator, item) => {
+                return accumulator && item;
+              },true);
+            };
+            // 検証の対象となる命題
+            var proposition = (x) => {
+              return succ(0) + succ(x) == succ(succ(x));
+            };
+            expect(
+              all(take(100)(map(proposition)(enumFrom(0))))
+            ).to.eql(
+              true
+            );
+            /* #@range_end(succ_property_test) */
+            // compose(all,
+            //         compose(take(100),map(proposition)))(enumFrom(0))
+            // all(compose(take(100),map(proposition))(enumFrom(0)))
+            next();
+          });
+        });
       });
     });
   });

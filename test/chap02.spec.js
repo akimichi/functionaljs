@@ -2331,15 +2331,31 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
           };
           /* #@range_end(stream_remove) */
+          /* #@range_begin(stream_take) */
           var take = (n) => {
             return (aStream) => {
-              if(n === 1) {
+              if(n === 1) { // 再帰処理の終了条件
                 return aStream[0];
               } else {
-                return [aStream[0]].concat(take(n-1)(aStream[1]()));
+                return [aStream[0]].concat(take(n-1)(aStream[1]())); // take関数の再帰呼び出し
               }
             };
           };
+          /* #@range_end(stream_take) */
+          // var take = (n) => {
+          //   return (aStream) => {
+          //     var takeHelper = (n, aStream, accumulator) => {
+          //       if(n === 0) {
+          //         return accumulator;
+          //       } else {
+          //         var head = aStream[0];
+          //         var tail = aStream[1]();
+          //         return takeHelper(n - 1, tail, accumulator.concat(head));
+          //       }
+          //     };
+          //     return takeHelper(n, aStream, []);
+          //   };
+          // };
           var even = (n) => {
             return n % 2 === 0;
           };
@@ -2351,6 +2367,11 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_begin(stream_remove_test_result) */
             [1,3,5,7,9]
             /* #@range_end(stream_remove_test_result) */
+          );
+          expect(
+            take(10000)(remove(even)(enumFrom(1))).length
+          ).to.eql(
+            10000
           );
           /* #@range_begin(multipleOf) */
           var multipleOf = (n,m) => {
@@ -2380,19 +2401,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
               })(aStream[1]()));
             }]; 
           };
-          var primes = sieve(enumFrom(2)); // 無限の素数列
           /* #@range_end(eratosthenes_sieve) */
-          /* #@range_begin(stream_take) */
-          var take = (n) => {
-            return (aStream) => {
-              if(n === 1) {
-                return aStream[0];
-              } else {
-                return [aStream[0]].concat(take(n-1)(aStream[1]()));
-              }
-            };
-          };
-          /* #@range_end(stream_take) */
+          var primes = sieve(enumFrom(2)); // 無限の素数列
           expect(
             /* #@range_begin(eratosthenes_sieve_test) */
             take(10)(primes)
@@ -2512,12 +2522,21 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
 
           /* #@range_begin(account_test) */
+          var theAcount = account.init(1000);
           expect(
-            account.commit(account.init(30))(
-              [account.deposit(20), account.withdraw(10)] // 一連の取り引きを実行する
+            account.commit(theAcount)(
+              [account.withdraw(200), account.deposit(100)] // 一連の取り引きを実行する
             )
           ).to.eql(
-            40
+            900
+          );
+          // 小まめに引き出す
+          expect(
+            account.commit(theAcount)( // 先ほどの口座を再利用する
+              [account.withdraw(10), account.withdraw(20), account.withdraw(30)]
+            )
+          ).to.eql(
+            940
           );
           /* #@range_end(account_test) */
           next();
@@ -2547,6 +2566,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           });
           it("参照透過性のあるコードのテスト", (next) => {
             /* #@range_begin(winner_without_sideeffect) */
+            // 勝者を判定する
             var judge = (playerL, playerR) => {
               if(playerL.score > playerR.score) {
                 return playerL;
@@ -2556,6 +2576,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
                 return null;
               }
             }; 
+            // 勝者を告げる文字列を生成する
             var announce = (winner) => {
               if(winner) {
                 return winner.name + "が勝者です";
@@ -2563,26 +2584,25 @@ describe('なぜ関数型プログラミングが重要か', () => {
                 return "引き分けです";
               }
             };
+            // 勝者を表示する
+            var displayWinner = (winner) => {
+              console.log(announce(winner));
+            };
             /* #@range_end(winner_without_sideeffect) */
-            // expect(
-            //   judge(playerA, playerB)
-            // ).to.eql(
-            //   playerB
-            // );
             /* #@range_begin(announce_winner) */
-            var playerA = {
-              name: 'a',
+            var socrates = {
+              name: 'ソクラテス',
               score: 10
             };
-            var playerB = {
-              name: 'b',
+            var plato = {
+              name: 'プラトン',
               score: 20
             };
             // 純粋な関数をテストする
             expect(
-              announce(judge(playerA, playerB))
+              announce(judge(socrates, plato))
             ).to.eql(
-              "bが勝者です"
+              "プラトンが勝者です"
             );
             /* #@range_end(announce_winner) */
             // var displayWinner = compose(console.log, judge);
@@ -2762,6 +2782,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
           };
           it('succ関数の性質テスト', (next) => {
+            // 配列のall関数
+            var all = (array) => {
+              return array.reduce((accumulator, item) => {
+                return accumulator && item;
+              },true);
+            };
             /* #@range_begin(succ_property_test) */
             // ストリームのmap関数
             var map = (transform) => {
@@ -2772,16 +2798,11 @@ describe('なぜ関数型プログラミングが重要か', () => {
                 }];
               };
             };
-            // 配列のall関数
-            var all = (array) => {
-              return array.reduce((accumulator, item) => {
-                return accumulator && item;
-              },true);
-            };
             // 検証の対象となる命題
             var proposition = (x) => {
-              return succ(0) + succ(x) == succ(succ(x));
+              return succ(0) + succ(x) === succ(succ(x));
             };
+            // 100個の整数について命題が正しいかをテストする
             expect(
               all(take(100)(map(proposition)(enumFrom(0))))
             ).to.eql(

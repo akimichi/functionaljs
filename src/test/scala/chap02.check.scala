@@ -2,6 +2,7 @@ import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Prop.{forAll, BooleanOperators}
 import scala.annotation.tailrec
+import org.scalacheck.Gen
 
 object MathSpecification extends Properties("Math") {
   def factorial(n: Int): Long = {
@@ -19,21 +20,29 @@ object MathSpecification extends Properties("Math") {
   //   }
   //   factorialAcc(1, n)
   // }
+  property("factorial") = forAll( { (n: Int) =>
+    (n > 0)  ==>   (factorial(n) == n * factorial(n-1))
+  })
   def perm(n:Int, r:Int) = {
     factorial(n) / factorial(n-r)
   }
   def comb(n:Int, r:Int) = {
     perm(n,r) / factorial(r)
   }
-  // property("comb") = forAll { (n: Int, r: Int) =>
+  // property("comb") = forAll( { (n: Int, r: Int) =>
   //   (n > 1 && r > 1 && n > r)  ==>   (comb(n,r) == comb(n, n-r))
-  // }
+  // })
+  // property("comb") = forAll((Gen.choose(1, 10000),Gen.choose(1, 10000)) { (n: Int, r: Int) =>
+  //   comb(n,r) == comb(n, n-r)
+  //   // (n > 1 && r > 1 && n > r)  ==>   (comb(n,r) == comb(n, n-r))
+  // })
   def succ(n:Int) = {
     n + 1
   }
   /* #@range_begin(check_succ) */
-  property("succ") = forAll( (x:Int) => 
-    succ(0) + succ(x) == succ(succ(x))
+  property("succ") = forAll( (x:Int) => // 変数xは整数である
+    (x >= 0) ==>  // xは0以上であるとする事前条件を設定する
+      (succ(0) + succ(x) == succ(succ(x)))
   )
   /* #@range_end(check_succ) */
   /* #@range_begin(check_multiplication) */

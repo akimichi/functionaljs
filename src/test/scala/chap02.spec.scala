@@ -21,6 +21,15 @@ class Chap02Spec extends FunSpec with ShouldMatchers {
         }
       }
       // ##@range_end(account_class)
+      it("取り引きの例"){
+        /************* テスト *************/
+        // ##@range_begin(account_with_state_test)
+        val theAccount = new Account(1000) // 口座を1000円で開設する
+        theAccount.balance should equal(1000)
+        theAccount.withdraw(200)           // 口座から200円を引き出す
+        theAccount.balance should equal(800) // 残高は800円となる
+        // ##@range_end(account_with_state_test)
+      }
       it("貧乏人の例"){
         /************* テスト *************/
         // ##@range_begin(poormansAccount_test)

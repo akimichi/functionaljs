@@ -20,9 +20,9 @@ object MathSpecification extends Properties("Math") {
   //   }
   //   factorialAcc(1, n)
   // }
-  property("factorial") = forAll( { (n: Int) =>
-    (n > 0)  ==>   (factorial(n) == n * factorial(n-1))
-  })
+  // property("factorial") = forAll( { (n: Int) =>
+  //   (n > 0 && n < 10000)  ==>   (factorial(n) == n * factorial(n-1))
+  // })
   def perm(n:Int, r:Int) = {
     factorial(n) / factorial(n-r)
   }

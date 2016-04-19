@@ -2161,11 +2161,11 @@ describe('なぜ関数型プログラミングが重要か', () => {
       var filter = (predicate) => {
         return (aStream) => {
           var head = aStream[0];
-          if(predicate(head) === true) {
+          if(predicate(head) === true) { // 先頭要素が条件に合致する場合
             return [head, (_) => {
               return filter(predicate)(aStream[1]());
             }];
-          } else {
+          } else {                       // 先頭要素が条件に合致しない場合
             return filter(predicate)(aStream[1]());
           }
         };
@@ -2184,9 +2184,9 @@ describe('なぜ関数型プログラミングが重要か', () => {
       };
       var succ = adder(1);
       /* #@range_begin(stream_enumFrom) */
-      var iterate = (step) => {
-        return (init) => {
-          return [init, (_) => {
+      var iterate = (step) => {  // 次の値との差を計算する関数を渡す
+        return (init) => {       // 先頭の値を渡す
+          return [init, (_) => { // ストリーム型を返す
             return iterate(step)(step(init));
           }];
         };
@@ -2394,9 +2394,9 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
           /* #@range_begin(eratosthenes_sieve) */
           var sieve = (aStream) => {
-            var prime = aStream[0];
+            var prime = aStream[0];           // 先頭の素数を取り出す
             return [prime, (_) => {
-              return sieve(remove((item) => { // 素数の倍数を除去する
+              return sieve(remove((item) => { // その素数の倍数を除去する
                 return multipleOf(item, prime);  
               })(aStream[1]()));
             }]; 
@@ -2488,20 +2488,24 @@ describe('なぜ関数型プログラミングが重要か', () => {
         it('参照透過性のある銀行口座', (next) => {
           /* #@range_begin(account_with_explicit_state) */
           var account = {
-            init: (balance) => { // 銀行口座を作る
+            // 銀行口座を作る
+            init: (balance) => {
               return balance;
             },
-            deposit: (amount) => { // 口座にお金を預ける処理
+            // 口座にお金を預ける処理           
+            deposit: (amount) => { 
               return (anAccount) => {
-                return account.init(anAccount + amount);
+                return account.init(anAccount + amount); // 銀行口座を作り直す
               };
             },
-            withdraw: (amount) => { // 口座からお金を引き出す処理
+            // 口座からお金を引き出す処理
+            withdraw: (amount) => { 
               return (anAccount) => {
-                return account.init(anAccount - amount);
+                return account.init(anAccount - amount); // 銀行口座を作り直す
               };
             },
-            commit: (anAccount) => { // 処理を実行する
+            // 取り引きを実行する 
+            commit: (anAccount) => { 
               return (transactions) => {
                 return transactions.reduce((accumulator, transact) => {
                   return transact(accumulator);
@@ -2523,6 +2527,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
 
           /* #@range_begin(account_test) */
           var theAcount = account.init(1000);
+          // お金を引き出してから、預金する
           expect(
             account.commit(theAcount)(
               [account.withdraw(200), account.deposit(100)] // 一連の取り引きを実行する
@@ -2530,7 +2535,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           ).to.eql(
             900
           );
-          // 小まめに引き出す
+          // お金を引き出すのみ 
           expect(
             account.commit(theAcount)( // 先ほどの口座を再利用する
               [account.withdraw(10), account.withdraw(20), account.withdraw(30)]

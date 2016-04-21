@@ -459,15 +459,15 @@ describe('なぜ関数型プログラミングが重要か', () => {
             return n;
           };
           /* #@range_end(fileio_breaks_referential_transparency)  */
-          write('/tmp/io.txt', 1);
+          write('test/resources/io.txt', 1);
           expect(
-            read('/tmp/io.txt')
+            read('test/resources/io.txt')
           ).to.eql(
             1
           );
-          write('/tmp/io.txt', 2); // ここでファイルに値を書きこむ
+          write('test/resources/io.txt', 2); // ここでファイルに値を書きこむ
           expect(
-            read('/tmp/io.txt')
+            read('test/resources/io.txt')
           ).to.eql(
             2
           );
@@ -734,10 +734,10 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_end(reader_and_writer) */
             /* #@range_begin(fileio_actions) */
             var fileio_actions = () => {
-              write('/tmp/test.txt', 1);
-              read('/tmp/test.txt');
-              write('/tmp/test.txt', 2);
-              return read('/tmp/test.txt');
+              write('test/resources/test.txt', 1);
+              read('test/resources/test.txt');
+              write('test/resources/test.txt', 2);
+              return read('test/resources/test.txt');
             };
             /* #@range_end(fileio_actions) */
             expect(

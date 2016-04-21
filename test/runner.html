@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.5/mocha.css" />
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.2.5/mocha.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/3.0.0/chai.js"></script>
+  <script>
+    mocha.setup('bdd')
+    mocha.reporter('html');
+    var expect = chai.expect;
+  </script>
+  <!-- ここからテスト -->
+  <script>
+  describe('Array', function(){
+    describe('#indexOf()', function(){
+      it('成功するテストの例', function(){
+        expect(true).to.eql(true);
+      });
+      it('失敗するテストの例', function(){
+        expect(true).to.eql(false);
+      });
+    });
+  });
+  </script>
+  <!-- ここまでテスト -->
+  <script>
+    mocha.checkLeaks();
+    mocha.globals(['jQuery']);
+    mocha.run();
+  </script>
+</body>
+</html>

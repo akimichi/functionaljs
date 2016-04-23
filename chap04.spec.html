@@ -515,13 +515,15 @@ expect(
         <span class="hljs-keyword">var</span> tail = (list) =&gt; {
           <span class="hljs-keyword">return</span> list.slice(<span class="hljs-number">1</span>,list.length);
         };
-        <span class="hljs-keyword">var</span> empty = [];
+        <span class="hljs-keyword">var</span> empty = (_) =&gt; {
+          <span class="hljs-keyword">return</span> [];
+        };
         <span class="hljs-keyword">var</span> isEmpty = (list) =&gt; {
           <span class="hljs-keyword">return</span> list.length === <span class="hljs-number">0</span>;
         };
         <span class="hljs-comment">/* #@range_begin(list_as_abstract_type) */</span>
         expect(
-          head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty))))
+          head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty()))))
         ).to.eql(
           <span class="hljs-number">2</span>
         );
@@ -534,7 +536,7 @@ expect(
         };
         <span class="hljs-keyword">var</span> top = (stack) =&gt; {
           <span class="hljs-keyword">return</span> stack[<span class="hljs-number">0</span>];
-        }
+        };
         <span class="hljs-keyword">var</span> pop = (stack) =&gt; {
           <span class="hljs-keyword">return</span> stack.slice(<span class="hljs-number">1</span>,stack.length);
         };

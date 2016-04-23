@@ -87,6 +87,56 @@
       <span class="hljs-keyword">return</span> f(g(arg));
     };
   };
+};
+
+<span class="hljs-keyword">var</span> list = {
+  empty: (_) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.empty();
+    };
+  },
+  cons: (value, list) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.cons(value, list);
+    };
+  },
+  isEmpty: (alist) =&gt; {
+    <span class="hljs-keyword">return</span> match(alist, { <span class="hljs-comment">// match関数で分岐する</span>
+      empty: <span class="hljs-literal">true</span>,
+      cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    });
+  },
+  head: (alist) =&gt; {
+    <span class="hljs-keyword">return</span> match(alist, {
+      empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> head;
+      }
+    });
+  },
+  tail: (alist) =&gt; {
+    <span class="hljs-keyword">return</span> match(alist, {
+      empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> tail;
+      }
+    });
+  },
+  toArray: (alist) =&gt; {
+    <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
+      <span class="hljs-keyword">return</span> match(alist, {
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> accumulator;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
+        }
+      });
+    };
+    <span class="hljs-keyword">return</span> toArrayAux(alist, []);
+  }
 };</pre></div></div>
             
         </li>
@@ -347,7 +397,7 @@
             <span class="hljs-keyword">var</span> infiniteLoop = () =&gt; {
               <span class="hljs-keyword">return</span> infiniteLoop();
             };
-            
+
             <span class="hljs-keyword">var</span> conditional = (n) =&gt; {
               <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
                 <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -356,7 +406,7 @@
               }
             };
             expect(
-              conditional(<span class="hljs-number">1</span>) 
+              conditional(<span class="hljs-number">1</span>)
             ).to.eql(
               <span class="hljs-literal">true</span>
             );
@@ -508,12 +558,12 @@ expect(
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>head:: STREAM[T] =&gt; T </p>
+              <p>head:: STREAM[T] =&gt; T</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>              <span class="hljs-comment">/* ストリーム型headの定義は、リスト型headと同じ */</span>
-              head: (astream) =&gt; {      
+              head: (astream) =&gt; {
                 <span class="hljs-keyword">return</span> match(astream,{
                   empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                   cons: (value, tailThunk) =&gt; { <span class="hljs-keyword">return</span> value; }
@@ -529,7 +579,7 @@ expect(
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>tail:: STREAM[T] =&gt; STREAM[T] </p>
+              <p>tail:: STREAM[T] =&gt; STREAM[T]</p>
 
             </div>
             
@@ -538,6 +588,20 @@ expect(
                   empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                   cons: (head, tailThunk) =&gt; {
                     <span class="hljs-keyword">return</span> tailThunk();  <span class="hljs-comment">// ここで初めてサンクを評価する</span>
+                  }
+                });
+              },
+              take: (astream, n) =&gt; {
+                <span class="hljs-keyword">return</span> match(astream,{
+                  empty: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> list.empty();
+                  },
+                  cons: (head,tailThunk) =&gt; {
+                    <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
+                      <span class="hljs-keyword">return</span> list.empty();
+                    } <span class="hljs-keyword">else</span> {
+                      <span class="hljs-keyword">return</span> list.cons(head,stream.take(tailThunk(),(n -<span class="hljs-number">1</span>)));
+                    }
                   }
                 });
               }
@@ -640,6 +704,38 @@ expect(
                 <span class="hljs-number">1</span>
               );
               <span class="hljs-comment">/* #@range_end(infinite_ones_test) */</span>
+              it(<span class="hljs-string">"素数列を作る"</span>, (next) =&gt; {
+                <span class="hljs-keyword">var</span> sieve = (astream) =&gt; {
+                  <span class="hljs-keyword">var</span> head = stream.head(astream);
+                  <span class="hljs-keyword">var</span> tail = stream.tail(astream);
+                  <span class="hljs-keyword">var</span> mark = (astream, k, m) =&gt; {
+                    <span class="hljs-keyword">var</span> head = stream.head(astream);
+                    <span class="hljs-keyword">var</span> tail = stream.tail(astream);
+                    <span class="hljs-keyword">if</span>(k === m) {
+                      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">0</span>,(_) =&gt; {
+                        <span class="hljs-keyword">return</span> mark(tail, <span class="hljs-number">1</span>, m);
+                      });
+                    } <span class="hljs-keyword">else</span> {
+                      <span class="hljs-keyword">return</span> stream.cons(head, (_) =&gt; {
+                        <span class="hljs-keyword">return</span> mark(tail, k+<span class="hljs-number">1</span>, m);
+                      });
+                    }
+                  };
+                  <span class="hljs-keyword">if</span>(head === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> sieve(tail);
+                  } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">return</span> stream.cons(head, (_) =&gt; {
+                      <span class="hljs-keyword">return</span> sieve(mark(tail, <span class="hljs-number">1</span>, head));
+                    });
+                  }
+                };
+                expect(
+                  list.toArray(stream.take(sieve(integersFrom(<span class="hljs-number">2</span>)), <span class="hljs-number">10</span>))
+                ).to.eql(
+                  [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">11</span>, <span class="hljs-number">13</span>, <span class="hljs-number">17</span>, <span class="hljs-number">19</span>, <span class="hljs-number">23</span>, <span class="hljs-number">29</span>]
+                );
+                next();
+              });
               it(<span class="hljs-string">"無限の整数列をテストする"</span>, (next) =&gt; {
                 <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">3000</span>);
                 <span class="hljs-keyword">var</span> list = {</pre></div></div>
@@ -698,7 +794,7 @@ expect(
                     <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
                       <span class="hljs-keyword">return</span> match(alist, {
                         empty: (_) =&gt; {
-                          <span class="hljs-keyword">return</span> accumulator;  
+                          <span class="hljs-keyword">return</span> accumulator;
                         },
                         cons: (head, tail) =&gt; {
                           <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
@@ -736,7 +832,7 @@ expect(
                       <span class="hljs-keyword">return</span> pattern.cons(head,tailThunk);
                     };
                   },
-                  head: (astream) =&gt; {      
+                  head: (astream) =&gt; {
                     <span class="hljs-keyword">return</span> match(astream,{
                       empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
                       cons: (value, tailThunk) =&gt; { <span class="hljs-keyword">return</span> value; }
@@ -767,7 +863,7 @@ expect(
             
             <div class="content"><div class='highlight'><pre>                  take: (astream, n) =&gt; {
                     <span class="hljs-keyword">return</span> match(astream,{
-                      empty: (_) =&gt; { 
+                      empty: (_) =&gt; {
                         <span class="hljs-keyword">return</span> list.empty();
                       },
                       cons: (head,tailThunk) =&gt; {
@@ -1652,11 +1748,11 @@ it(“compose several functions”, function(next) {
           );
           <span class="hljs-comment">/* 途中でのファイルへの書込み */</span>
           fs.writeFileSync(<span class="hljs-string">'test/resources/file.txt'</span>, <span class="hljs-string">"This is another test."</span>);
-          
+
           <span class="hljs-comment">/* 第2回目のファイルの読込 */</span>
           expect(
             fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>, <span class="hljs-string">'utf8'</span>)
-          ).to.eql( 
+          ).to.eql(
             <span class="hljs-string">"This is another test."</span>  <span class="hljs-comment">// 最初の readFileSync関数の結果と異なっている</span>
           );
           <span class="hljs-comment">/* #@range_end(fileio_destroys_referential_transparency) */</span>

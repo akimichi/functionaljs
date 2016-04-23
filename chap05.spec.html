@@ -1581,9 +1581,9 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
     it(<span class="hljs-string">'Listを代数的データ型として実装する'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
       <span class="hljs-comment">/* リストの代数的データ型 */</span>
-      <span class="hljs-keyword">var</span> empty = (_) =&gt; { <span class="hljs-comment">// 空のリスト</span>
+      <span class="hljs-keyword">var</span> empty = () =&gt; { <span class="hljs-comment">// 空のリスト</span>
         <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.empty(_);
+          <span class="hljs-keyword">return</span> pattern.empty();
         };
       };
       <span class="hljs-keyword">var</span> cons = (value, list) =&gt; { <span class="hljs-comment">// 空でないリスト</span>
@@ -2068,8 +2068,22 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         <span class="hljs-keyword">var</span> compoundInterest = (a, r, n) =&gt; {
           <span class="hljs-keyword">if</span> (n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> a;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> compoundInterest(a, r, n - <span class="hljs-number">1</span>) * (<span class="hljs-number">1</span> + r); <span class="hljs-comment">// compoundInterestの再帰呼び出し</span>
+          } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>compoundInterestの再帰呼び出し</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">return</span> compoundInterest(a, r, n - <span class="hljs-number">1</span>) * (<span class="hljs-number">1</span> + r); 
           }
         };
         <span class="hljs-comment">/* #@range_end(compound_interest) */</span>
@@ -2326,11 +2340,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-57">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>map :: LIST[T] -&gt; FUN[T -&gt; T] -&gt; LIST[T]</p>
 
@@ -2413,11 +2427,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-58">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>append :: (LIST[T], LIST[T]) -&gt; LIST[T]</p>
 
@@ -2558,11 +2572,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-59">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>自然数の総和(一般形)</p>
 

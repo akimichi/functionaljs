@@ -274,9 +274,9 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         <span class="hljs-comment">/* #@range_begin(recursion) */</span>
         <span class="hljs-keyword">var</span> a = (n) =&gt; {
           <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; <span class="hljs-comment">// 初項は1</span>
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> a(n-<span class="hljs-number">1</span>) + <span class="hljs-number">3</span>;
+            <span class="hljs-keyword">return</span> a(n-<span class="hljs-number">1</span>) + <span class="hljs-number">3</span>; <span class="hljs-comment">// 公差は3</span>
           }
         };
         <span class="hljs-comment">/* #@range_end(recursion) */</span>
@@ -394,7 +394,7 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         <span class="hljs-comment">/* #@range_end(variable_and_function) */</span>
         <span class="hljs-comment">/* #@range_begin(local_variable_usage_example) */</span>
         <span class="hljs-keyword">var</span> bar = () =&gt; {
-          <span class="hljs-keyword">var</span> foo = <span class="hljs-number">3</span>;     <span class="hljs-comment">// 変数fooに値3を束縛する</span>
+          <span class="hljs-keyword">var</span> foo = <span class="hljs-number">3</span>;     <span class="hljs-comment">// 変数fooに値3をバインドする</span>
           <span class="hljs-keyword">return</span> foo * <span class="hljs-number">10</span>; <span class="hljs-comment">// 変数fooの値を10倍にする</span>
         };
         <span class="hljs-comment">/* #@range_end(local_variable_usage_example) */</span>
@@ -415,7 +415,7 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         expect(
           bar()
         ).to.eql(
-          baz(<span class="hljs-number">3</span>)          <span class="hljs-comment">// 仮引数fooに値3を束縛する</span>
+          baz(<span class="hljs-number">3</span>)          <span class="hljs-comment">// 仮引数fooに値3をバインドする</span>
         );
         next();
       });

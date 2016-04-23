@@ -324,7 +324,8 @@ describe('関数型言語を作る', () => {
                 return exp.match(variable,{
                   variable: (name) => {
                     return ID.unit((actualArg) => {
-                      return evaluate(body, env.extend(name, actualArg, environment));
+                      return evaluate(body, 
+                                      env.extend(name, actualArg, environment));
                     });
                   }
                 });

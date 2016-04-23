@@ -1581,9 +1581,9 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
     it(<span class="hljs-string">'Listを代数的データ型として実装する'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
       <span class="hljs-comment">/* リストの代数的データ型 */</span>
-      <span class="hljs-keyword">var</span> empty = (_) =&gt; { <span class="hljs-comment">// 空のリスト</span>
+      <span class="hljs-keyword">var</span> empty = () =&gt; { <span class="hljs-comment">// 空のリスト</span>
         <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.empty(_);
+          <span class="hljs-keyword">return</span> pattern.empty();
         };
       };
       <span class="hljs-keyword">var</span> cons = (value, list) =&gt; { <span class="hljs-comment">// 空でないリスト</span>
@@ -2069,7 +2069,8 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
           <span class="hljs-keyword">if</span> (n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> a;
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> compoundInterest(a, r, n - <span class="hljs-number">1</span>) * (<span class="hljs-number">1</span> + r); <span class="hljs-comment">// compoundInterestの再帰呼び出し</span>
+            <span class="hljs-comment">/* compoundInterestの再帰呼び出し */</span>
+            <span class="hljs-keyword">return</span> compoundInterest(a, r, n - <span class="hljs-number">1</span>) * (<span class="hljs-number">1</span> + r); 
           }
         };
         <span class="hljs-comment">/* #@range_end(compound_interest) */</span>

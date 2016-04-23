@@ -1331,7 +1331,8 @@ describe('プログラムをコントロールする仕組み', () => {
           if (n === 0) {
             return a;
           } else {
-            return compoundInterest(a, r, n - 1) * (1 + r); // compoundInterestの再帰呼び出し
+            /* compoundInterestの再帰呼び出し */
+            return compoundInterest(a, r, n - 1) * (1 + r); 
           }
         };
         /* #@range_end(compound_interest) */

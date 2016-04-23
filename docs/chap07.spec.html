@@ -1364,9 +1364,9 @@ describe(<span class="hljs-string">'高階関数'</span>, () =&gt; {
       <span class="hljs-comment">/* #@range_end(simple_curried_function) */</span>
       next();
     });
-    it(<span class="hljs-string">'カリー化されていない multiplyOf関数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(multiplyOf_uncurried) */</span>
-      <span class="hljs-keyword">var</span> multiplyOf = (n,m) =&gt; {
+    it(<span class="hljs-string">'カリー化されていない multipleOf関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(multipleOf_uncurried) */</span>
+      <span class="hljs-keyword">var</span> multipleOf = (n,m) =&gt; {
         <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
           <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
         } <span class="hljs-keyword">else</span> {
@@ -1374,21 +1374,21 @@ describe(<span class="hljs-string">'高階関数'</span>, () =&gt; {
         }
       };
       expect(
-        multiplyOf(<span class="hljs-number">2</span>,<span class="hljs-number">4</span>)
+        multipleOf(<span class="hljs-number">2</span>,<span class="hljs-number">4</span>)
       ).to.eql(
         <span class="hljs-literal">true</span>
       );
       expect(
-        multiplyOf(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>)
+        multipleOf(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>)
       ).to.eql(
         <span class="hljs-literal">false</span>
       );
-      <span class="hljs-comment">/* #@range_end(multiplyOf_uncurried) */</span>
+      <span class="hljs-comment">/* #@range_end(multipleOf_uncurried) */</span>
       next();
     });
     it(<span class="hljs-string">'カリー化による関数の部品化'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(multiplyOf_curried) */</span>
-      <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; { <span class="hljs-comment">// 外側の関数定義</span>
+      <span class="hljs-comment">/* #@range_begin(multipleOf_curried) */</span>
+      <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; { <span class="hljs-comment">// 外側の関数定義</span>
         <span class="hljs-keyword">return</span> (m) =&gt; {         <span class="hljs-comment">// 内側の関数定義</span>
           <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -1397,10 +1397,10 @@ describe(<span class="hljs-string">'高階関数'</span>, () =&gt; {
           }
         };
       };
-      <span class="hljs-comment">/* #@range_end(multiplyOf_curried) */</span>
-      <span class="hljs-comment">/* #@range_begin(multiplyOf_curried_test) */</span>
-      <span class="hljs-keyword">var</span> twoFold = multiplyOf(<span class="hljs-number">2</span>);
-      <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>);
+      <span class="hljs-comment">/* #@range_end(multipleOf_curried) */</span>
+      <span class="hljs-comment">/* #@range_begin(multipleOf_curried_test) */</span>
+      <span class="hljs-keyword">var</span> twoFold = multipleOf(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">var</span> threeFold = multipleOf(<span class="hljs-number">3</span>);
       expect(
         twoFold(<span class="hljs-number">2</span>)
       ).to.eql(
@@ -1411,7 +1411,7 @@ describe(<span class="hljs-string">'高階関数'</span>, () =&gt; {
       ).to.eql(
         <span class="hljs-literal">true</span>
       );
-      <span class="hljs-comment">/* #@range_end(multiplyOf_curried_test) */</span>
+      <span class="hljs-comment">/* #@range_end(multipleOf_curried_test) */</span>
       next();
     });
     describe(<span class="hljs-string">'高階関数によるベクトル演算'</span>, () =&gt; {
@@ -2051,7 +2051,7 @@ it(“compose several functions”, function(next) {
       next();
     });
     it(<span class="hljs-string">'部分適用と環境'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; { <span class="hljs-comment">// 外側の関数定義</span>
+      <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; { <span class="hljs-comment">// 外側の関数定義</span>
         <span class="hljs-keyword">return</span> (m) =&gt; {         <span class="hljs-comment">// 内側の関数定義</span>
           <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -2061,7 +2061,7 @@ it(“compose several functions”, function(next) {
         };
       };
       <span class="hljs-comment">/* #@range_begin(partial_application_with_environment) */</span>
-      <span class="hljs-keyword">var</span> twoFold = multiplyOf(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">var</span> twoFold = multipleOf(<span class="hljs-number">2</span>);
       expect(
        twoFold(<span class="hljs-number">4</span>) 
       ).to.eql(
@@ -2535,8 +2535,8 @@ expect(
       next();
     });
     describe(<span class="hljs-string">'クロージャーと参照透過性'</span>, () =&gt; {
-      it(<span class="hljs-string">'multiplyOf関数は参照透過である'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+      it(<span class="hljs-string">'multipleOf関数は参照透過である'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
           <span class="hljs-keyword">return</span> (m) =&gt; {
             <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
               <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -2545,18 +2545,18 @@ expect(
             }
           };
         };
-        <span class="hljs-comment">/* #@range_begin(multiplyOf_is_transparent) */</span>
+        <span class="hljs-comment">/* #@range_begin(multipleOf_is_transparent) */</span>
         expect(
-          multiplyOf(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
+          multipleOf(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
         ).to.eql(
-          multiplyOf(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
+          multipleOf(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
         );
         expect(
-          multiplyOf(<span class="hljs-number">3</span>)(<span class="hljs-number">5</span>)
+          multipleOf(<span class="hljs-number">3</span>)(<span class="hljs-number">5</span>)
         ).to.eql(
-          multiplyOf(<span class="hljs-number">3</span>)(<span class="hljs-number">5</span>)
+          multipleOf(<span class="hljs-number">3</span>)(<span class="hljs-number">5</span>)
         );
-        <span class="hljs-comment">/* #@range_end(multiplyOf_is_transparent) */</span>
+        <span class="hljs-comment">/* #@range_end(multipleOf_is_transparent) */</span>
         next();
       });
       it(<span class="hljs-string">'参照透過でないクロジャーの例'</span>, (next) =&gt; {
@@ -3252,7 +3252,7 @@ expect(
           });
           it(<span class="hljs-string">"filterで無限の素数列を作る"</span>, (next) =&gt; {
             <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">7000</span>);
-            <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+            <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
               <span class="hljs-keyword">return</span> (m) =&gt; {
                 <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
                   <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -3267,7 +3267,7 @@ expect(
               <span class="hljs-keyword">var</span> leastDivisorHelper = (k, n) =&gt; {
                 expect(k).to.a(<span class="hljs-string">'number'</span>);
                 expect(n).to.a(<span class="hljs-string">'number'</span>);
-                <span class="hljs-keyword">if</span>(multiplyOf(k)(n)) {
+                <span class="hljs-keyword">if</span>(multipleOf(k)(n)) {
                   <span class="hljs-keyword">return</span> k;
                 } <span class="hljs-keyword">else</span> {
                   <span class="hljs-keyword">if</span>(n &lt; (k * k)) {
@@ -3469,7 +3469,7 @@ expect(
         });
         it(<span class="hljs-string">'素数のジェネレータ'</span>,(next) =&gt; {
           <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">7000</span>);
-          <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+          <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
             <span class="hljs-keyword">return</span> (m) =&gt; {
               <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
                 <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -3483,7 +3483,7 @@ expect(
             <span class="hljs-keyword">var</span> leastDivisorHelper = (k, n) =&gt; {
               expect(k).to.a(<span class="hljs-string">'number'</span>);
               expect(n).to.a(<span class="hljs-string">'number'</span>);
-              <span class="hljs-keyword">if</span>(multiplyOf(k)(n)) {
+              <span class="hljs-keyword">if</span>(multipleOf(k)(n)) {
                 <span class="hljs-keyword">return</span> k;
               } <span class="hljs-keyword">else</span> {
                 <span class="hljs-keyword">if</span>(n &lt; (k * k)) {
@@ -5020,9 +5020,9 @@ expect(
     }); <span class="hljs-comment">// 継続を渡す</span>
   }); <span class="hljs-comment">// 関数を渡す</span>
   describe(<span class="hljs-string">'コンビネーター'</span>, () =&gt; {
-    it(<span class="hljs-string">'multiplyOfコンビネータ'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(multiplyOf_combinator) */</span>
-      <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+    it(<span class="hljs-string">'multipleOfコンビネータ'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(multipleOf_combinator) */</span>
+      <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
         <span class="hljs-keyword">return</span> (m) =&gt; {
           <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -5031,18 +5031,18 @@ expect(
           }
         };
       };
-      <span class="hljs-keyword">var</span> even = multiplyOf(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">var</span> even = multipleOf(<span class="hljs-number">2</span>);
       
       expect(
         even(<span class="hljs-number">2</span>)
       ).to.eql(
         <span class="hljs-literal">true</span>
       );
-      <span class="hljs-comment">/* #@range_end(multiplyOf_combinator) */</span>
+      <span class="hljs-comment">/* #@range_end(multipleOf_combinator) */</span>
       next();
     }); 
     it(<span class="hljs-string">'論理コンビネータ'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+      <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
         <span class="hljs-keyword">return</span> (m) =&gt; {
           <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
@@ -5051,7 +5051,7 @@ expect(
           }
         };
       };
-      <span class="hljs-keyword">var</span> even = multiplyOf(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">var</span> even = multipleOf(<span class="hljs-number">2</span>);
       <span class="hljs-comment">/* #@range_begin(not_combinator) */</span></pre></div></div>
             
         </li>
@@ -5208,11 +5208,11 @@ expect(
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
-              <p>multiplyOf:: NUM -&gt; NUM -&gt; BOOL</p>
+              <p>multipleOf:: NUM -&gt; NUM -&gt; BOOL</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
           expect(n).to.a(<span class="hljs-string">'number'</span>);
           <span class="hljs-keyword">return</span> (m) =&gt; {
             expect(n).to.a(<span class="hljs-string">'number'</span>);
@@ -5233,7 +5233,7 @@ expect(
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> even = multiplyOf(<span class="hljs-number">2</span>);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> even = multipleOf(<span class="hljs-number">2</span>);</pre></div></div>
             
         </li>
         
@@ -5368,7 +5368,7 @@ expect(
           <span class="hljs-keyword">var</span> leastDivisorHelper = (k, n) =&gt; {
             expect(k).to.a(<span class="hljs-string">'number'</span>);
             expect(n).to.a(<span class="hljs-string">'number'</span>);
-            <span class="hljs-keyword">if</span>(multiplyOf(k)(n)) {
+            <span class="hljs-keyword">if</span>(multipleOf(k)(n)) {
               <span class="hljs-keyword">return</span> k;
             } <span class="hljs-keyword">else</span> {
               <span class="hljs-keyword">if</span>(is(greater(n))(k * k)) {

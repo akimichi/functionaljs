@@ -19,10 +19,15 @@ var IO = {
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: A -> IO[B]
       return (world) => {
-        var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
+        /* 現在の外界のなかで instanceAのIOアクションを実行する */
+        var newPair = instanceA(world); 
         return pair.match(newPair,{
           cons: (value, newWorld) => {
-            return actionAB(value)(newWorld); // 新しい外界のなかで、actionAB(value)で作られたIOアクションを実行する
+            /* 
+               新しい外界のなかで、actionAB(value)で作られた
+               IOアクションを実行する
+            */
+            return actionAB(value)(newWorld); 
           }
         });
       };

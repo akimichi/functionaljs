@@ -1492,10 +1492,15 @@ describe('高階関数', () => {
         /* #@range_begin(abstract_init) */
         // init = reverse . tail . reverse 
         var init = (alist) => {
-          return compose(list.reverse)(compose(list.tail)(list.reverse))(alist);
+          return compose(list.reverse)(
+            compose(list.tail)(list.reverse)
+          )(alist);
         };
         /****** テスト *******/
-        var sequence = list.cons(1,list.cons(2,list.cons(3,list.empty())));
+        var sequence = list.cons(1,
+                                 list.cons(2,
+                                           list.cons(3,
+                                                     list.empty())));
         expect(
           list.toArray(init(sequence))
         ).to.eql(
@@ -2134,13 +2139,16 @@ describe('高階関数', () => {
         };
         /* #@range_end(immutable_object_type_curried) */
         /* #@range_begin(immutable_object_type_curried_test) */
-        var robots = compose(object.set("C3PO", "Star Wars"),
-                             object.set("HAL9000","2001: a space odessay"))(object.empty);
-         expect(
-           object.get("HAL9000")(robots)
-         ).to.eql(
-           "2001: a space odessay"
-         );
+        var robots = compose(
+          object.set("C3PO", "Star Wars"),
+          object.set("HAL9000","2001: a space odessay")
+        )(object.empty);
+
+        expect(
+          object.get("HAL9000")(robots)
+        ).to.eql(
+          "2001: a space odessay"
+        );
         /* #@range_end(immutable_object_type_curried_test) */
         next();
       });
@@ -3011,7 +3019,9 @@ describe('高階関数', () => {
                     return accumulator;
                   },
                   cons: (head, tail) => {
-                    return sumWithCallBack(tail)(CALLBACK(head)(accumulator))(CALLBACK);
+                    return sumWithCallBack(tail)(
+                      CALLBACK(head)(accumulator)
+                    )(CALLBACK);
                   }
                 });
               };
@@ -3063,7 +3073,9 @@ describe('高階関数', () => {
                     return accumulator;
                   },
                   cons: (head, tail) => {
-                    return lengthWithCallBack(tail)(CALLBACK(accumulator))(CALLBACK);
+                    return lengthWithCallBack(tail)(
+                      CALLBACK(accumulator)
+                    )(CALLBACK);
                   }
                 });
               };
@@ -3557,15 +3569,25 @@ describe('高階関数', () => {
         }); 
         it("継続渡しfind関数", (next) => {
           /* #@range_begin(list_find_cps) */
-          var find = (alist,accumulator, predicate, continuesOnFailure, continuesOnSuccess) => {
+          var find = (alist,accumulator, 
+                      predicate, 
+                      continuesOnFailure, 
+                      continuesOnSuccess) => {
             return list.match(alist, {
               empty: () => {
-                return continuesOnSuccess(accumulator); // 成功継続で反復処理を抜ける
+                /* 成功継続で反復処理を抜ける */
+                return continuesOnSuccess(accumulator); 
               },
               cons: (head, tail) => { 
-                if(predicate(head) === true) { // 目的の要素を見つけた場合、
-                  return continuesOnSuccess(head); // 成功継続で反復処理を脱出する
-                } else { // 目的の要素を見つけられなった場合、失敗継続で次の反復処理を続ける
+                /* 目的の要素を見つけた場合 */
+                if(predicate(head) === true) { 
+                  /* 成功継続で反復処理を脱出する */
+                  return continuesOnSuccess(head); 
+                } else { 
+                  /* 
+                     目的の要素を見つけられなった場合、
+                     失敗継続で次の反復処理を続ける 
+                  */
                   return continuesOnFailure(tail, accumulator, predicate,
                                             continuesOnFailure,
                                             continuesOnSuccess);
@@ -3575,13 +3597,27 @@ describe('高階関数', () => {
           };
           /* #@range_end(list_find_cps) */
           /* #@range_begin(list_find_cps_test) */
-          // 失敗継続では、反復処理を続ける
-          var failureContinuation = (alist, accumulator, predicate, continuesOnRecursion, escapesFromRecursion) => { 
-            return find(alist, accumulator, predicate, continuesOnRecursion, escapesFromRecursion);  // find関数を再帰的に呼び出す
+          /* 失敗継続では、反復処理を続ける */
+          var failureContinuation = (alist,
+                                     accumulator, 
+                                     predicate, 
+                                     continuesOnRecursion, 
+                                     escapesFromRecursion) => { 
+            return find( // find関数を再帰的に呼び出す
+              alist, 
+              accumulator, 
+              predicate, 
+              continuesOnRecursion, 
+              escapesFromRecursion
+            );  
           };
-          // 成功継続では、反復処理を脱出する
+          /* 成功継続では、反復処理を脱出する */
           var successContinuation = identity; 
-          var numbers = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+          var numbers = list.cons(1,
+                                  list.cons(2,
+                                            list.cons(3,
+                                                      list.cons(4,
+                                                                list.empty()))));
           expect(
             find(numbers,null, (item) => {
               return (item === 10); // 10の要素を探します
@@ -3669,53 +3705,71 @@ describe('高階関数', () => {
             num: (n) => {
               return continuesOnSuccess(n, continuesOnFailure);
             },
-            // 足し算を評価する
+            /* 足し算を評価する */
             add: (x, y) => {
-              return calculate(x, (resultX, continuesOnFailureX) => { // 引数xを評価する
-                return calculate(y, (resultY, continuesOnFailureY) => { // 引数yを評価する
-                  return continuesOnSuccess(resultX + resultY, continuesOnFailureY); // 足し算を計算する
+              return calculate(x, (resultX, // 引数xを評価する
+                                   continuesOnFailureX) => { 
+                return calculate(y, // 引数yを評価する
+                                 (resultY, continuesOnFailureY) => { 
+                  return continuesOnSuccess(resultX + resultY, // 足し算を計算する
+                                            continuesOnFailureY); 
                 }, continuesOnFailureX); // y の計算に失敗すれば、xの失敗継続を渡す
               }, continuesOnFailure);
             },
-            // amb式を評価する
+            /* amb式を評価する */
             amb: (choices) => {
               var calculateAmb = (choices) => {
                 return list.match(choices, {
-                  // amb(list.empty()) の場合、すなわち選択肢がなければ、失敗継続を実行する
+                  /* 
+                     amb(list.empty()) の場合、
+                     すなわち選択肢がなければ、失敗継続を実行する
+                  */
                   empty: () => {         
                     return continuesOnFailure();
                   },
-                  // amb(list.cons(head, tail))の場合、最初の要素を計算して、殘りは失敗継続に渡す
+                  /* 
+                     amb(list.cons(head, tail))の場合、
+                     最初の要素を計算して、殘りは失敗継続に渡す
+                  */
                   cons: (head, tail) => { 
                     return calculate(head, 
                                      continuesOnSuccess, 
-                                     (_) => { // 失敗継続を作り、そのなかで次の選択肢について計算する
-                                       return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
+                                     (_) => { // 失敗継続のなかで次の選択肢について計算する
+                                       return calculateAmb(tail, 
+                                                           continuesOnSuccess, 
+                                                           continuesOnFailure);
                                      });
                   }
                 });
               };
-              return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
+              return calculateAmb(choices, 
+                                  continuesOnSuccess, 
+                                  continuesOnFailure);
             }
           });
         };
         /* #@range_end(amb_calculate) */
         /* #@range_begin(amb_driver) */
         var driver = (expression) =>{
-          var suspendedComputation = null; // 中断された計算を継続として保存する 
-          // 成功継続
+          /* 中断された計算を継続として保存する  */
+          var suspendedComputation = null; 
+          /* 成功継続 */
           var continuesOnSuccess = (anyValue, continuesOnFailure) => {
-            suspendedComputation = continuesOnFailure; // 再開に備えて、失敗継続を保存しておく
+            /* 再開に備えて、失敗継続を保存しておく */
+            suspendedComputation = continuesOnFailure; 
             return anyValue;
           };
-          // 失敗継続
+          /* 失敗継続 */
           var continuesOnFailure = () => {
             return null;
           };
           return () => {
-            if(suspendedComputation === null) { // 中断された継続がなければ、最初から計算する
-              return calculate(expression, continuesOnSuccess, continuesOnFailure);
-            } else {                            // 中断された継続があれば、その継続を実行する
+            /* 中断された継続がなければ、最初から計算する */
+            if(suspendedComputation === null) { 
+              return calculate(expression, 
+                               continuesOnSuccess, 
+                               continuesOnFailure);
+            } else { /* 中断された継続があれば、その継続を実行する */
               return suspendedComputation();
             }
           };
@@ -3743,12 +3797,11 @@ describe('高階関数', () => {
           next();
         });
         it("amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]", (next) => {
-          // var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))),
-          //                      exp.amb(list.cons(exp.num(3),list.cons(exp.num(4), list.empty()))));
           /* #@range_begin(amb_test) */
           // amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]
-          var ambExp = exp.add(exp.amb(list.fromArray([exp.num(1),exp.num(2)])),
-                               exp.amb(list.fromArray([exp.num(3),exp.num(4)])));
+          var ambExp = exp.add(
+            exp.amb(list.fromArray([exp.num(1),exp.num(2)])),
+            exp.amb(list.fromArray([exp.num(3),exp.num(4)])));
           var calculator = driver(ambExp);
           expect(
             calculator()
@@ -6200,7 +6253,8 @@ describe('高階関数', () => {
         it('IO.println', (next) => {
           /* #@range_begin(run_println_without_world) */
           expect(
-            IO.run(IO.println("this is another test")) // 外界を指定する必要はありません
+            /* 外界を指定する必要はありません */
+            IO.run(IO.println("this is another test")) 
           ).to.eql(
             null
           );

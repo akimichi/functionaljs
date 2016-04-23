@@ -176,23 +176,28 @@ describe('心の準備', () => {
         return mergedObject;
       };
       /* #@range_begin(environment_example) */
-      // 空の環境
+      /* 空の環境 */
       var emptyEnv = {};
-      // 環境を拡張する
+      /* 環境を拡張する */
       var extendEnv = (binding, oldEnv) => {
-        return merge(binding, oldEnv); // merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする
+        /* merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする */
+        return merge(binding, oldEnv); 
       };
-      // 変数名に対応する値を環境から取りだす
+      /* 変数名に対応する値を環境から取りだす */
       var lookupEnv = (name, env) => {
         return env[name];
       };
       /* #@range_end(environment_example) */
       expect(((_) => {
         /* #@range_begin(environment_example_usage) */
-        var initEnv = emptyEnv;                       // 空の辞書を作成する
-        var firstEnv = extendEnv({"a": 1}, initEnv);  // var a = 1 を実行して、辞書を拡張する
-        var secondEnv = extendEnv({"b": 3}, firstEnv); // var b = 3 を実行して、辞書を拡張する
-        return lookupEnv("b",secondEnv);                 // 辞書から b の値を参照する
+        /* 空の辞書を作成する */
+        var initEnv = emptyEnv;                       
+        /* var a = 1 を実行して、辞書を拡張する */
+        var firstEnv = extendEnv({"a": 1}, initEnv);  
+        /* var b = 3 を実行して、辞書を拡張する */
+        var secondEnv = extendEnv({"b": 3}, firstEnv); 
+        /* 辞書から b の値を参照する */
+        return lookupEnv("b",secondEnv);                 
         /* #@range_end(environment_example_usage) */
       })()).to.eql(
         3

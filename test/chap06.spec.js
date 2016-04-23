@@ -648,7 +648,8 @@ describe('関数の使い方', () => {
                         if(n === 0) {
                           return list.empty();
                         } else {
-                          return list.cons(head,stream.take(tailThunk(),(n -1)));
+                          return list.cons(head,
+                                           stream.take(tailThunk(),(n -1)));
                         }
                       }
                     });
@@ -1274,167 +1275,169 @@ describe('関数の使い方', () => {
     //   next();
     // });
   });
-  describe('関数の純粋性', () => {
-    it('関数の参照透過性', (next) => {
-      var succ = (n) => {
-        return n + 1;
-      };
-      /* #@range_begin(succ_has_referential_transparency) */
+});
+describe('関数の純粋性', () => {
+  it('関数の参照透過性', (next) => {
+    var succ = (n) => {
+      return n + 1;
+    };
+    /* #@range_begin(succ_has_referential_transparency) */
+    expect(
+      succ(1)
+    ).to.eql(
+      succ(1)
+    );
+    /* #@range_end(succ_has_referential_transparency) */
+    next();
+  });
+  describe('副作用が参照透過性を損なうこと', () => {
+    describe('ファイル操作が参照透過性を損なうこと', () => {
+      it('ファイルを操作する', (next) => {
+        /* #@range_begin(fileio_destroys_referential_transparency) */
+        var fs = require('fs'); // fsモジュールを変数fsにバインドする
+        /* テストの実行前にあらかじめ "This is a test." という文字列をファイルに書きこんでおく。 */
+        fs.writeFileSync('test/resources/file.txt', "This is a test.");
+
+        /* 第1回目のファイルの読込 */
+        var text = fs.readFileSync("test/resources/file.txt", 'utf8');
+        expect(
+          fs.readFileSync("test/resources/file.txt", 'utf8')
+        ).to.eql(
+          "This is a test."
+        );
+        /* 途中でのファイルへの書込み */
+        fs.writeFileSync('test/resources/file.txt', "This is another test.");
+
+        /* 第2回目のファイルの読込 */
+        expect(
+          fs.readFileSync("test/resources/file.txt", 'utf8')
+        ).to.eql(
+          "This is another test."  // 最初の readFileSync関数の結果と異なっている
+        );
+        /* #@range_end(fileio_destroys_referential_transparency) */
+        next();
+      });
+    });
+    it('画面出力が参照透過性を損なうこと', (next) => {
+      /* #@range_begin(log_destroys_referential_transparency) */
       expect(
-        succ(1)
+        console.log("this is a test")
       ).to.eql(
-        succ(1)
+        console.log("this is anoter test")
       );
-      /* #@range_end(succ_has_referential_transparency) */
+      /* #@range_end(log_destroys_referential_transparency) */
       next();
     });
-    describe('副作用が参照透過性を損なうこと', () => {
-      describe('ファイル操作が参照透過性を損なうこと', () => {
-        it('ファイルを操作する', (next) => {
-          /* #@range_begin(fileio_destroys_referential_transparency) */
-          var fs = require('fs'); // fsモジュールを変数fsにバインドする
-          /* テストの実行前にあらかじめ "This is a test." という文字列をファイルに書きこんでおく。 */
-          fs.writeFileSync('test/resources/file.txt', "This is a test.");
+  });
+  describe('副作用の分離', () => {
+    it('kestrelコンビネーター', (next) => {
+      // this.timeout(2000);
+      // var timeout = setTimeout(next, 2000);
+      /* #@range_begin(kestrel_combinator) */
+      var kestrel = (x) => {
+        return (y) => {
+          return x;
+        };
+      };
+      /* #@range_end(kestrel_combinator) */
+      /* #@range_begin(kestrel_combinator_test) */
+      expect(
+        kestrel(1)(2)
+      ).to.eql(
+        1
+      );
+      /*
+       expect(
+       kestrel(1)(infiniteLoop())
+       ).to.eql(
+       1
+       );
+       */
+      /* #@range_end(kestrel_combinator_test) */
+      // setTimeout(function(){
+      //   // happens 0.5 seconds later:
+      //   expect(
+      //  kestrel(1)(infiniteLoop())
+      //   ).to.eql(
+      //  1
+      //   );
+      //   next(); // this tells mocha to run the next test
+      // },500);
+      next();
+    });
+    describe('tapコンビネーター', () => {
+      /* #@range_begin(tap_combinator) */
+      var tap = (target,sideEffect) => {
+        sideEffect(target); // 副作用を実行する
+        return target;
+      };
+      /* #@range_end(tap_combinator) */
+      it('tapコンビネーターによる console.logのテスト', (next) => {
+        var succ = (n) => {
+          return n + 1;
+        };
+        /* #@range_begin(tap_combinator_test_in_console) */
+        var consoleSideEffect = (any) => { // 画面出力という副作用を実行する関数
+          console.log(any);
+        };
+        expect(
+          tap(succ(1), consoleSideEffect)
+        ).to.eql(
+          tap(succ(1), consoleSideEffect)
+        );
+        /* #@range_end(tap_combinator_test_in_console) */
+        var updateSideEffect = (n) => {
+          n = n + 1;
+          return n;
+        };
+        expect(
+          tap(succ(2), updateSideEffect)
+        ).to.eql(
+          tap(succ(2), updateSideEffect)
+        );
+        next();
+      });
+      it('tapコンビネーターによるオブジェクトの操作', (next) => {
+        /* #@range_begin(tap_combinator_test_in_object) */
+        var updateSideEffect = (obj) => {
+          obj.name = "C3PO";
+          return obj;
+        };
+        var r2d2 = {name: "R2D2"};
+        expect(
+          tap(r2d2, updateSideEffect).name
+        ).to.eql(
+          tap(r2d2, updateSideEffect).name
+        );
+        expect(
+          r2d2.name
+        ).to.eql(
+          "C3PO"
+        );
+        /* #@range_end(tap_combinator_test_in_object) */
+        next();
+      });
+      it('tapコンビネーターによるファイル入出力のテストは失敗する', (next) => {
+        var fs = require('fs'); // fsモジュールを変数fsにバインドする
+        /* #@range_begin(tap_combinator_test_in_fileio) */
+        fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
-          /* 第1回目のファイルの読込 */
-          var text = fs.readFileSync("test/resources/file.txt", 'utf8');
-          expect(
-            fs.readFileSync("test/resources/file.txt", 'utf8')
-          ).to.eql(
-            "This is a test."
-          );
-          /* 途中でのファイルへの書込み */
+        /* ファイルへの書込みという副作用を実行する */
+        var fileioSideEffect = (n) => {
+          var content = fs.readFileSync("test/resources/file.txt", 'utf8');
           fs.writeFileSync('test/resources/file.txt', "This is another test.");
-
-          /* 第2回目のファイルの読込 */
-          expect(
-            fs.readFileSync("test/resources/file.txt", 'utf8')
-          ).to.eql(
-            "This is another test."  // 最初の readFileSync関数の結果と異なっている
-          );
-          /* #@range_end(fileio_destroys_referential_transparency) */
-          next();
-        });
-      });
-      it('画面出力が参照透過性を損なうこと', (next) => {
-        /* #@range_begin(log_destroys_referential_transparency) */
+          return content;
+        };
         expect(
-          console.log("this is a test")
-        ).to.eql(
-          console.log("this is anoter test")
+          tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
+              fileioSideEffect)
+        ).not.to.eql( /* 両者は等しくない */
+          tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
+              fileioSideEffect)
         );
-        /* #@range_end(log_destroys_referential_transparency) */
+        /* #@range_end(tap_combinator_test_in_fileio) */
         next();
       });
     });
-    describe('副作用の分離', () => {
-      it('kestrelコンビネーター', (next) => {
-        // this.timeout(2000);
-        // var timeout = setTimeout(next, 2000);
-        /* #@range_begin(kestrel_combinator) */
-        var kestrel = (x) => {
-          return (y) => {
-            return x;
-          };
-        };
-        /* #@range_end(kestrel_combinator) */
-        /* #@range_begin(kestrel_combinator_test) */
-        expect(
-          kestrel(1)(2)
-        ).to.eql(
-          1
-        );
-        /*
-          expect(
-          kestrel(1)(infiniteLoop())
-          ).to.eql(
-          1
-          );
-        */
-        /* #@range_end(kestrel_combinator_test) */
-        // setTimeout(function(){
-        //   // happens 0.5 seconds later:
-        //   expect(
-        //  kestrel(1)(infiniteLoop())
-        //   ).to.eql(
-        //  1
-        //   );
-        //   next(); // this tells mocha to run the next test
-        // },500);
-        next();
-      });
-      describe('tapコンビネーター', () => {
-        /* #@range_begin(tap_combinator) */
-        var tap = (target,sideEffect) => {
-          sideEffect(target); // 副作用を実行する
-          return target;
-        };
-        /* #@range_end(tap_combinator) */
-        it('tapコンビネーターによる console.logのテスト', (next) => {
-          var succ = (n) => {
-            return n + 1;
-          };
-          /* #@range_begin(tap_combinator_test_in_console) */
-          var consoleSideEffect = (any) => { // 画面出力という副作用を実行する関数
-            console.log(any);
-          };
-          expect(
-            tap(succ(1), consoleSideEffect)
-          ).to.eql(
-            tap(succ(1), consoleSideEffect)
-          );
-          /* #@range_end(tap_combinator_test_in_console) */
-          var updateSideEffect = (n) => {
-            n = n + 1;
-            return n;
-          };
-          expect(
-            tap(succ(2), updateSideEffect)
-          ).to.eql(
-            tap(succ(2), updateSideEffect)
-          );
-          next();
-        });
-        it('tapコンビネーターによるオブジェクトの操作', (next) => {
-          /* #@range_begin(tap_combinator_test_in_object) */
-          var updateSideEffect = (obj) => {
-            obj.name = "C3PO";
-            return obj;
-          };
-          var r2d2 = {name: "R2D2"};
-          expect(
-            tap(r2d2, updateSideEffect).name
-          ).to.eql(
-            tap(r2d2, updateSideEffect).name
-          );
-          expect(
-           r2d2.name
-          ).to.eql(
-            "C3PO"
-          );
-          /* #@range_end(tap_combinator_test_in_object) */
-          next();
-        });
-        it('tapコンビネーターによるファイル入出力のテストは失敗する', (next) => {
-          var fs = require('fs'); // fsモジュールを変数fsにバインドする
-          /* #@range_begin(tap_combinator_test_in_fileio) */
-          fs.writeFileSync('test/resources/file.txt', "This is a test.");
-
-          /* ファイルへの書込みという副作用を実行する */
-          var fileioSideEffect = (n) => {
-            var content = fs.readFileSync("test/resources/file.txt", 'utf8');
-            fs.writeFileSync('test/resources/file.txt', "This is another test.");
-            return content;
-          };
-          expect(
-            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), fileioSideEffect)
-          ).not.to.eql( // 両者は等しくない
-            tap(fs.readFileSync("test/resources/file.txt", 'utf8'), fileioSideEffect)
-          );
-          /* #@range_end(tap_combinator_test_in_fileio) */
-          next();
-        });
-      });
-    });
-  }); // 関数の純粋性
-});
+  });
+}); // 関数の純粋性

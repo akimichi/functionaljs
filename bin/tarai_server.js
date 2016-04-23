@@ -14,13 +14,15 @@ var tarai = (x,y,z) => {
 };
 
 net.createServer((socket) => {
-  // 'data' イベントハンドラー
+  /* 'data' イベントハンドラー */
   socket.on('data', (incommingData) => {
-    var number = parseInt(incommingData,10); // クライアントからデータを数値に変換します
+    /* クライアントからデータを数値に変換します */
+    var number = parseInt(incommingData,10); 
     console.log(number);
-    socket.write(tarai(number * 2, number, 0) + '\r\n'); // tarai関数を計算して、クライアントに返します
+    /* tarai関数を計算して、クライアントに返します */
+    socket.write(tarai(number * 2, number, 0) + '\r\n'); 
   });
-  // 'close'イベントハンドラー
+  /* 'close'イベントハンドラー */
   socket.on('close', (error) => {
     console.log("connection closed");
   });
@@ -33,9 +35,3 @@ var sleep = (sec) => {
     ;
   }
 };
-
-    // if(isNaN(maybeInt)){ // データが数値でなければ 0 を返します
-    //   socket.write('0\r\n');
-    // } else { // データが数値ならば、 tarai(maybeInt * 2, maybeInt, 0) を返します
-    //   socket.write(tarai(maybeInt * 2, maybeInt, 0) + '\r\n');
-    // };

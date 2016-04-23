@@ -234,45 +234,50 @@ var list  = {
 };
 
 var IO = {
-/* #@range_begin(io_monad_definition) */
-  // unit:: T => IO[T]
+  /* #@range_begin(io_monad_definition) */
+  /* unit:: T => IO[T] */
   unit: (any) => {
     return (_) =>  { // 外界を指定しない
       return any;  // 値だけを返す
     };
   },
-  // flatMap:: IO[A] => FUN[A => IO[B]] => IO[B]
+  /* flatMap:: IO[A] => FUN[A => IO[B]] => IO[B] */
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: A -> IO[B]
-      return actionAB(IO.run(instanceA)); // instanceAのIOアクションを実行し、続いて actionABを実行する
+      /* instanceAのIOアクションを実行し、続いて actionABを実行する */
+      return actionAB(IO.run(instanceA)); 
     };
   },
-  // done:: T => IO[T]
+  /* done:: T => IO[T] */
   done: (any) => {
     return IO.unit();
   },
-  // run:: IO[A] => A
+  /* run:: IO[A] => A */
   run: (instance) => {
     return instance();
   },
-  // readFile:: STRING => IO[STRING]
+  /* readFile:: STRING => IO[STRING] */
   readFile: (path) => {
     var fs = require('fs');
     return IO.unit(fs.readFileSync(path, 'utf8'));
   },
-  // println:: STRING => IO[]
+  /* println:: STRING => IO[] */
   println: (message) => {
     console.log(message);
     return IO.unit();
   },
-/* #@range_end(io_monad_definition) */
+  /* #@range_end(io_monad_definition) */
   /* #@range_begin(IO_seq) */
-  // IO.seq関数は、2つのIOアクションを続けて実行する
-  // IO.seq:: IO[T] => IO[U] => IO[V]
+  /* 
+     IO.seq関数は、2つのIOアクションを続けて実行する
+     IO.seq:: IO[T] => IO[U] => IO[V] 
+  */
   seq: (instanceA) => {
     return (instanceB) => {
-      IO.run(instanceA); // 最初のIOアクションである instanceAを実行する
-      return IO.unit(IO.run(instanceB)); // 続いて、 instanceB を実行する
+      /* 最初のIOアクションである instanceAを実行する */
+      IO.run(instanceA); 
+      /* 続いて、 instanceB を実行する */
+      return IO.unit(IO.run(instanceB)); 
     };
   },
   /* #@range_end(IO_seq) */
@@ -303,23 +308,20 @@ var IO = {
   /* #@range_end(IO_putStrLn) */
 };
 
-/* 
+/*
 // #@range_begin(io_monad_combined)
 var path = process.argv[2];
 
-var composed_action = IO.flatMap(IO.readFile(path))((content) => { // ファイルを読みこむ 
-  return IO.flatMap(IO.println(content))((_) => { // 読み込んだ内容を画面に出力する
-    return IO.done(_);
+var composed_action = 
+  IO.flatMap(IO.readFile(path))((content) => { // ファイルを読みこむ
+    // 次に読み込んだ内容を画面に出力する
+    return IO.flatMap(IO.println(content))((_) => { 
+      return IO.done(_);
+    });
   });
-});
 
 IO.run(composed_action); // 合成されたIOアクションを実行する
-// #@range_end(io_monad_combined) 
-// IO.flatMap(IO.readFile(path))((content) => {
-//   return IO.flatMap(IO.println(content))((_) => {
-//     return IO.done(_);
-//   });
-// })(); // 外界を明示的に渡さず、単に関数を実行するだけ
+// #@range_end(io_monad_combined)
 */
 
 // #@range_begin(run_putStrLn)

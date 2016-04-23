@@ -2334,10 +2334,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
           /* #@range_begin(stream_take) */
           var take = (n) => {
             return (aStream) => {
-              if(n === 1) { // 再帰処理の終了条件
+              /* 再帰処理の終了条件 */
+              if(n === 1) { 
                 return aStream[0];
               } else {
-                return [aStream[0]].concat(take(n-1)(aStream[1]())); // take関数の再帰呼び出し
+                /* take関数の再帰呼び出し */
+                return [aStream[0]].concat(take(n-1)(aStream[1]())); 
               }
             };
           };
@@ -2530,15 +2532,18 @@ describe('なぜ関数型プログラミングが重要か', () => {
           // お金を引き出してから、預金する
           expect(
             account.commit(theAcount)(
-              [account.withdraw(200), account.deposit(100)] // 一連の取り引きを実行する
+              [account.withdraw(200), /* 一連の取り引きを実行する */
+               account.deposit(100)] 
             )
           ).to.eql(
             900
           );
           // お金を引き出すのみ 
           expect(
-            account.commit(theAcount)( // 先ほどの口座を再利用する
-              [account.withdraw(10), account.withdraw(20), account.withdraw(30)]
+            account.commit(theAcount)( 
+              [account.withdraw(10), /* 先ほどの口座を再利用する */
+               account.withdraw(20), 
+               account.withdraw(30)]
             )
           ).to.eql(
             940

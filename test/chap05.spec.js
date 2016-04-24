@@ -256,9 +256,11 @@ describe('プログラムをコントロールする仕組み', () => {
       /* ##@range_begin(even_function_again) */
       var even = (n) => {
         if((n % 2) === 0) {
-          return true;       // return で even関数を抜けて true を返す
+          /* returnでeven関数を抜けてtrueを返す */
+          return true;       
         } else {
-          return false;      // return で even関数を抜けて false を返す
+          /* returnでeven関数を抜けてfalseを返す */
+          return false;      
         }
       };
       /* ##@range_end(even_function_again) */
@@ -1031,33 +1033,38 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       /* #@range_end(match_in_algebraic_datatype) */
       /* #@range_begin(list_function_using_algebraic_datatype) */
-      // 引数 alist に渡されたリストが空のリストかどうかを判定する
+      /* 引数 alist に渡されたリストが
+         空のリストかどうかを判定する */
       var isEmpty = (alist) => {
-        return match(alist, { // match関数で分岐する
+        /* match関数で分岐する */
+        return match(alist, { 
           empty: (_) => {
             return true;
           },
-          cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+          /* headとtailにそれぞれ先頭要素、末尾要素が入る */
+          cons: (head, tail) => { 
             return false;
           }
         });
       };
-      // 引数alistに渡されたリストの先頭の要素を返す
+      /* 引数alistに渡されたリストの先頭の要素を返す */
       var head = (alist) => {
         return match(alist, {
+          /* 空のリストには先頭要素はありません */
           empty: (_) => {
-            return null; // 空のリストには先頭要素はありません
+            return null; 
           },
           cons: (head, tail) => {
             return head;
           }
         });
       };
-      // 引数 alist に渡されたリストの末尾のリストを返す
+      /* 引数alistに渡されたリストの末尾のリストを返す */
       var tail = (alist) => {
         return match(alist, {
+          /* 空のリストには末尾要素はありません */
           empty: (_) => {
-            return null;  // 空のリストには末尾要素はありません
+            return null;  
           },
           cons: (head, tail) => {
             return tail;
@@ -1066,23 +1073,27 @@ describe('プログラムをコントロールする仕組み', () => {
       };
       /* #@range_end(list_function_using_algebraic_datatype) */
       /* #@range_begin(list_in_algebraic_datatype_test) */
+      /* empty は空のリストではある */
       expect(
-        isEmpty(empty())         // empty は空のリストではある
+        isEmpty(empty())         
       ).to.eql(
         true
       );
+      /* [1] は空のリストではない */
       expect(
-        isEmpty(cons(1,empty())) // [1] は空のリストではない
+        isEmpty(cons(1,empty())) 
       ).to.eql(
         false
       );
+      /* [1]の先頭要素は 1 である */
       expect(
-        head(cons(1,empty()))    // [1]の先頭要素は 1 である
+        head(cons(1,empty()))    
       ).to.be(
         1
       );
+      /* [1,2]の2番目の要素は2である */
       expect(
-        head(tail(cons(1,cons(2,empty())))) // [1,2]の2番目の要素は2である
+        head(tail(cons(1,cons(2,empty())))) 
       ).to.be(
         2
       );
@@ -1435,7 +1446,8 @@ describe('プログラムをコントロールする仕組み', () => {
                 return accumulator;
               },
               cons: (head, tail) => {
-                return sum(tail, accumulator + head); // sumの再帰呼び出し
+                /* sumの再帰呼び出し */
+                return sum(tail, accumulator + head); 
               }
             });
           };
@@ -1461,7 +1473,8 @@ describe('プログラムをコントロールする仕組み', () => {
         it('蓄積変数を持たないsum関数', (next) => {
           /* #@range_begin(recursive_sum_without_accumulator) */
           var sum = (list) => {
-            var sumHelper = (list, accumulator) => { // 蓄積変数を持つ補助関数
+            /* 蓄積変数を持つ補助関数 */
+            var sumHelper = (list, accumulator) => { 
               return match(list, {
                 empty: (_) => {
                   return accumulator;
@@ -1491,10 +1504,12 @@ describe('プログラムをコントロールする仕組み', () => {
           /* #@range_begin(recursive_length_without_accumulator) */
           var length = (list) => {
             return match(list, {
-              empty: (_) => {    // emptyの場合は、終了条件となる
+              /* emptyの場合は、終了条件となる */
+              empty: (_) => {    
                 return 0;
               },
-              cons: (head, tail) => { // consの場合は、再帰的に呼び出す
+              /* consの場合は、再帰的に呼び出す */
+              cons: (head, tail) => { 
                 return 1 + length(tail);
               }
             });
@@ -1662,11 +1677,14 @@ describe('プログラムをコントロールする仕組み', () => {
           // append :: (LIST[T], LIST[T]) -> LIST[T]
           var append = (xs, ys) => {
             return match(xs,{
-              empty: (_) => { // emptyの場合は、終了条件
+              /* emptyの場合は、終了条件 */
+              empty: (_) => { 
                 return ys; // xsが空の場合は、ysを返す
               },
-              cons: (head, tail) => { // consの場合は、再帰的に呼び出す 
-                return list.cons(head,  // xs と ys を連結させる   
+              /* consの場合は、再帰的に呼び出す */
+              cons: (head, tail) => { 
+                /* xsとysを連結させる */
+                return list.cons(head,  
                                  append(tail,ys));
               }
             });

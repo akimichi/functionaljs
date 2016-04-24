@@ -9,11 +9,15 @@ describe('「計算」とは', () => {
       // c.f. http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069
       /* #@range_begin(turing) */
       var machine = (code,tape,initState, endState) => {
-        var position = 0;                          // ヘッドの位置
-        var state = initState;                     // 機械の状態
-        var currentInstruction = undefined;        // 実行する命令
+        /* ヘッドの位置 */
+        var position = 0;                          
+        /* 機械の状態 */
+        var state = initState;                     
+        /* 実行する命令 */
+        var currentInstruction = undefined;        
         /*
-         以下のwhileループにて、現在の状態が最終状態に到達するまで命令を繰り返す
+         以下のwhileループにて、
+         現在の状態が最終状態に到達するまで命令を繰り返す
          */
         while(state != endState) {
           var cell = tape[String(position)];
@@ -24,9 +28,12 @@ describe('「計算」とは', () => {
           if (!currentInstruction) {
             return false;
           } else {
-            tape[String(position)] = currentInstruction.write; // テープに印字する
-            position += currentInstruction.move;                // ヘッドを動かす
-            state = currentInstruction.next;                    // 次の状態に移る
+            /* テープに印字する */
+            tape[String(position)] = currentInstruction.write; 
+            /* ヘッドを動かす */
+            position += currentInstruction.move;                
+            /* 次の状態に移る */
+            state = currentInstruction.next;                    
           }
         }
         return tape;
@@ -210,11 +217,13 @@ describe('「計算」とは', () => {
         var prev = (n) => {
           return n - 1;
         };
-        var add = (x,y) => { // add関数の定義
+        /* add関数の定義 */
+        var add = (x,y) => { 
           if(y < 1){
             return x;
           } else {
-            return add(succ(x), prev(y)); // add関数の再帰呼び出し
+            /* add関数の再帰呼び出し */
+            return add(succ(x), prev(y)); 
           }
         };
         /* #@range_end(add) */
@@ -368,13 +377,15 @@ describe('「計算」とは', () => {
         /* #@range_begin(multiply) */
         var times = (count,fun,arg, memo) => {
           if(count > 1) {
-            return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
+            /* times関数を再帰呼出し */
+            return times(count-1,fun,arg, fun(memo,arg)); 
           } else {
             return fun(memo,arg);
           }
         };
         var multiply = (n,m) => {
-          return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
+          /* 2番目の引数にadd関数を渡している */
+          return times(m, add, n, 0); 
         };
         /* #@range_end(multiply) */
         expect(

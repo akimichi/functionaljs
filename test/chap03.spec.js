@@ -341,9 +341,11 @@ describe('心の準備', () => {
           if(y === 0) {
             return 0;
           } else if(y < 0) {
-            return times(-y, subtract, x, 0); // (0 - (x - (x - ... )))
+            /* (0 - (x - (x - ... ))) */
+            return times(-y, subtract, x, 0); 
           } else {
-            return times(y, add, x, 0);       // (0 + (x + (x + ... )))
+            /* (0 + (x + (x + ... ))) */
+            return times(y, add, x, 0);       
           }
         };
         /* #@range_end(multiply_improved) */

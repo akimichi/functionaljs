@@ -231,63 +231,29 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj2) { mergedObject[attrname] = obj2[attrname]; }
         <span class="hljs-keyword">return</span> mergedObject;
       };
-      <span class="hljs-comment">/* #@range_begin(environment_example) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>空の環境</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> emptyEnv = {};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>環境を拡張する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> extendEnv = (binding, oldEnv) =&gt; {
-        <span class="hljs-keyword">return</span> merge(binding, oldEnv); <span class="hljs-comment">// merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする</span>
-      };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>変数名に対応する値を環境から取りだす</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> lookupEnv = (name, env) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(environment_example) */</span>
+      <span class="hljs-comment">/* 空の環境 */</span>
+      <span class="hljs-keyword">var</span> emptyEnv = {};
+      <span class="hljs-comment">/* 環境を拡張する */</span>
+      <span class="hljs-keyword">var</span> extendEnv = (binding, oldEnv) =&gt; {
+        <span class="hljs-comment">/* merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする */</span>
+        <span class="hljs-keyword">return</span> merge(binding, oldEnv); 
+      };
+      <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
+      <span class="hljs-keyword">var</span> lookupEnv = (name, env) =&gt; {
         <span class="hljs-keyword">return</span> env[name];
       };
       <span class="hljs-comment">/* #@range_end(environment_example) */</span>
       expect(((_) =&gt; {
         <span class="hljs-comment">/* #@range_begin(environment_example_usage) */</span>
-        <span class="hljs-keyword">var</span> initEnv = emptyEnv;                       <span class="hljs-comment">// 空の辞書を作成する</span>
-        <span class="hljs-keyword">var</span> firstEnv = extendEnv({<span class="hljs-string">"a"</span>: <span class="hljs-number">1</span>}, initEnv);  <span class="hljs-comment">// var a = 1 を実行して、辞書を拡張する</span>
-        <span class="hljs-keyword">var</span> secondEnv = extendEnv({<span class="hljs-string">"b"</span>: <span class="hljs-number">3</span>}, firstEnv); <span class="hljs-comment">// var b = 3 を実行して、辞書を拡張する</span>
-        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                 <span class="hljs-comment">// 辞書から b の値を参照する</span>
+        <span class="hljs-comment">/* 空の辞書を作成する */</span>
+        <span class="hljs-keyword">var</span> initEnv = emptyEnv;                       
+        <span class="hljs-comment">/* var a = 1 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> firstEnv = extendEnv({<span class="hljs-string">"a"</span>: <span class="hljs-number">1</span>}, initEnv);  
+        <span class="hljs-comment">/* var b = 3 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> secondEnv = extendEnv({<span class="hljs-string">"b"</span>: <span class="hljs-number">3</span>}, firstEnv); 
+        <span class="hljs-comment">/* 辞書から b の値を参照する */</span>
+        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                 
         <span class="hljs-comment">/* #@range_end(environment_example_usage) */</span>
       })()).to.eql(
         <span class="hljs-number">3</span>
@@ -431,9 +397,11 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
           <span class="hljs-keyword">if</span>(y === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
           } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(y &lt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> times(-y, subtract, x, <span class="hljs-number">0</span>); <span class="hljs-comment">// (0 - (x - (x - ... )))</span>
+            <span class="hljs-comment">/* (0 - (x - (x - ... ))) */</span>
+            <span class="hljs-keyword">return</span> times(-y, subtract, x, <span class="hljs-number">0</span>); 
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> times(y, add, x, <span class="hljs-number">0</span>);       <span class="hljs-comment">// (0 + (x + (x + ... )))</span>
+            <span class="hljs-comment">/* (0 + (x + (x + ... ))) */</span>
+            <span class="hljs-keyword">return</span> times(y, add, x, <span class="hljs-number">0</span>);       
           }
         };
         <span class="hljs-comment">/* #@range_end(multiply_improved) */</span>
@@ -497,11 +465,11 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-7">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>expect(
   add(3,-2)
@@ -683,11 +651,11 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-8">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>-2 * -3 = ((0 - (-2)) - (-2)) - (-2)</p>
 
@@ -702,11 +670,11 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-9">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>2 * -3 = ((0 - 2) - 2) -2</p>
 

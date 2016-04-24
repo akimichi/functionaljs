@@ -7,7 +7,9 @@ var localhost = '127.0.0.1';
 /* tarai関数 */
 var tarai = (x,y,z) => {
   if(x > y) {
-    return tarai(tarai(x - 1, y, z), tarai(y - 1, z, x), tarai(z - 1, x, y));
+    return tarai(tarai(x - 1, y, z), 
+                 tarai(y - 1, z, x), 
+                 tarai(z - 1, x, y));
   } else {
     return y;
   }

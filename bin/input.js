@@ -13,16 +13,21 @@ socket.on('connect', () => {
   process.stdin.on('readable', () => {
     var chunk = process.stdin.read();
     if (chunk !== null) {
-      var maybeInt = parseInt(chunk,10); // 読み込んだ文字列を数値に変換する
+      /* 読み込んだ文字列を数値に変換する */
+      var maybeInt = parseInt(chunk,10); 
       if(isNaN(maybeInt)){ 
-        process.stdout.write(chunk.toUpperCase()); // 数値でない場合、大文字に変換する
+        /* 数値でない場合、大文字に変換する */
+        process.stdout.write(chunk.toUpperCase()); 
       } else { 
-        socket.write(maybeInt + '\r\n'); // 数値の場合、taraiサーバーに計算をリクエストする
+        /* 数値の場合、taraiサーバーに計算をリクエストする */
+        socket.write(maybeInt + '\r\n'); 
       };
     }
   });
 });
-socket.on('data', (chunk) => { // taraiサーバーからの返信イベントハンドラ
+
+/* taraiサーバーからの返信イベントハンドラ */
+socket.on('data', (chunk) => { 
   process.stdout.write(chunk.toString());
 });
 /* #@range_end(input_js) */

@@ -950,8 +950,10 @@ describe('高階関数', () => {
       };
       /* #@range_end(flip) */
       /* #@range_begin(flipped_exponential) */
-      var square = flip(exponential)(2); // flipで引数を逆転させて、2乗を定義する
-      var cube = flip(exponential)(3);   // flipで引数を逆転させて、3乗を定義する
+      /* flipで引数を逆転させて、2乗を定義する */
+      var square = flip(exponential)(2); 
+      /* flipで引数を逆転させて、3乗を定義する */
+      var cube = flip(exponential)(3);   
       /* #@range_end(flipped_exponential) */
       /* #@range_begin(flipped_exponential_test) */
       expect(
@@ -1292,11 +1294,13 @@ describe('高階関数', () => {
         });
         it('マイナスのマイナスはプラス', (next) => {
           /* #@range_begin(composition_example_opposite_twice) */
-          var opposite = (n) => { // 反数の定義
+          /* 反数の定義 */
+          var opposite = (n) => { 
             return - n;
           };
           expect(
-            compose(opposite)(opposite)(2) // 反数同士の合成は成功します
+            /* 反数同士の合成は成功する */
+            compose(opposite)(opposite)(2) 
           ).to.eql(
             2
           );
@@ -1434,7 +1438,10 @@ describe('高階関数', () => {
         };
         /* #@range_end(list_last_recursive) */
         /* #@range_begin(list_last_test) */
-        var numbers = list.cons(1,list.cons(2,list.cons(3,list.empty())));
+        var numbers = list.cons(1,
+                                list.cons(2,
+                                          list.cons(3,
+                                                    list.empty())));
         expect(
           last(numbers)
         ).to.eql(
@@ -1479,7 +1486,10 @@ describe('高階関数', () => {
           return compose(sum)(flip(list.map)(alwaysOne))(alist);
         };
         /****** テスト *******/
-        var alist = list.cons(1,list.cons(2,list.cons(3,list.empty())));
+        var alist = list.cons(1,
+                              list.cons(2,
+                                        list.cons(3,
+                                                  list.empty())));
         expect(
           length(alist)
         ).to.eql(
@@ -1586,8 +1596,10 @@ describe('高階関数', () => {
   describe('クロージャーの仕組み', () => {
     it('環境と変数のバインディング', (next) => {
       /* #@range_begin(variable_binding_in_environment) */
-      var foo = 1; // 変数fooに数値1をバインドする
-      var bar = "a string"; // 変数bar に文字列 "a string" をバインドする
+      /* 変数fooに数値1をバインドする */
+      var foo = 1;
+      /* 変数bar に文字列 "a string" をバインドする */
+      var bar = "a string"; 
       /* #@range_end(variable_binding_in_environment) */
       /* #@range_begin(variable_binding_in_environment_test) */
       expect(
@@ -1625,7 +1637,8 @@ describe('高階関数', () => {
         /* #@range_begin(counter_as_closure) */
         var counter = (init) => {
           var countingNumber =  init - 1;
-          return (_) => {  // countingNumberの環境を持つクロージャーを返す
+          /* countingNumberの環境を持つクロージャーを返す */
+          return (_) => {  
             countingNumber = countingNumber + 1;
             return countingNumber ;
           };
@@ -1681,7 +1694,8 @@ describe('高階関数', () => {
         var application = {
           timeLapse: () => {
             var now = Date.now();
-            return now - startUpTime; // 外側のスコープにある startUpTime変数を捕捉している
+            /* 外側のスコープにある startUpTime変数を捕捉している */
+            return now - startUpTime; 
           }
         };
         /* #@range_end(captures_free_variable_outside_function) */
@@ -2664,7 +2678,8 @@ describe('高階関数', () => {
       describe('streamからジェネレータを作る', () => {
         /* #@range_begin(generator_from_stream) */
         var generate = (astream) => {
-          var _stream = astream; // いったんローカル変数にストリームを格納する
+          /* いったんローカル変数にストリームを格納する */
+          var _stream = astream; 
           /* ジェネレータ関数が返る */
           return () => {
             return stream.match(_stream, {
@@ -2746,7 +2761,8 @@ describe('高階関数', () => {
           };
           /* #@range_begin(prime_generator) */
           var integers = stream.integersFrom(1);
-          var primes = stream.filter(integers)(isPrime); // 素数のストリーム
+          /* 素数のストリーム */
+          var primes = stream.filter(integers)(isPrime); 
           var primeGenerator = generate(primes);
           /******* テスト ********/
           expect(
@@ -2860,11 +2876,13 @@ describe('高階関数', () => {
         };
         /* #@range_begin(call_callback) */
         var setupCallBack = (callback) => {
-          return (arg) => {  // コールバック関数を実行する無名関数を返す
+          /* コールバック関数を実行する無名関数を返す */
+          return (arg) => {  
             return callback(arg);
           };
         };
-        var doCallBack = setupCallBack(succ);  // コールバック関数を設定する
+        /* コールバック関数を設定する */
+        var doCallBack = setupCallBack(succ);  
         expect(
           doCallBack(2) // 設定されたコールバック関数を実行する
         ).to.eql(
@@ -2882,8 +2900,9 @@ describe('高階関数', () => {
               return list.empty();
             },
             cons: (head, tail) => {
-              return list.cons(callback(head),  // コールバック関数を実行する
-                               map(tail,callback)); // map関数の再帰呼び出し
+              /* コールバック関数を実行する */
+              return list.cons(callback(head),  
+                               map(tail,callback)); // 再帰呼び出し
             }
           });
         };
@@ -2892,7 +2911,8 @@ describe('高階関数', () => {
         var numbers = list.cons(1,
                                 list.cons(2,
                                           list.empty()));
-        var doubledList = map(numbers,(n) => { // 要素を2倍する関数を渡す
+        /* 要素を2倍する関数を渡す */
+        var doubledList = map(numbers,(n) => { 
           return n * 2;
         });
         expect(
@@ -2900,9 +2920,11 @@ describe('高階関数', () => {
         ).to.eql(
           [2,4]
         );
-        var squareList = map(numbers,(n) => { // 要素を2乗する関数を渡す
-          return n * n;
-        });
+        
+        var squareList = map(numbers,
+                             (n) => { /* 要素を2乗する関数を渡す */
+                               return n * n;
+                             });
         expect(
           list.toArray(squareList)
         ).to.eql(
@@ -3034,7 +3056,10 @@ describe('高階関数', () => {
               return n + m;
             };
           };
-          var numbers = list.cons(1, list.cons(2,list.cons(3,list.empty())));
+          var numbers = list.cons(1, 
+                                  list.cons(2,
+                                            list.cons(3,
+                                                      list.empty())));
           expect(
             sumWithCallBack(numbers)(0)(add)
           ).to.eql(
@@ -3083,10 +3108,14 @@ describe('高階関数', () => {
           };
           /* #@range_end(list_length_callback) */
           /* #@range_begin(list_length_callback_test) */
-          var succ = (n) => { // lengthWithCallBack関数に渡すコールバック関数
+          /* lengthWithCallBack関数に渡すコールバック関数 */
+          var succ = (n) => { 
             return n + 1;
           };
-          var numbers = list.cons(1, list.cons(2,list.cons(3,list.empty())));
+          var numbers = list.cons(1, 
+                                  list.cons(2,
+                                            list.cons(3,
+                                                      list.empty())));
           expect(
             lengthWithCallBack(numbers)(0)(succ)
           ).to.eql(
@@ -3218,233 +3247,249 @@ describe('高階関数', () => {
         next();
       });
     });
-    describe('畳み込み関数で反復処理を渡す', () => {
-      describe('畳み込み関数foldr', () => {
-        /* #@range_begin(list_foldr) */
-        var foldr = (alist) => {
-          return (accumulator) => {
-            return (callback) => {
-              return match(alist,{
-                empty: (_) => {
-                  return accumulator;
-                },
-                cons: (head, tail) => {
-                  return callback(head)(foldr(tail)(accumulator)(callback));
-                }
-              });
-            };
+    describe('畳み込み関数foldr', () => {
+      /* #@range_begin(list_foldr) */
+      var foldr = (alist) => {
+        return (accumulator) => {
+          return (callback) => {
+            return match(alist,{
+              empty: (_) => {
+                return accumulator;
+              },
+              cons: (head, tail) => {
+                return callback(head)(foldr(tail)(accumulator)(callback));
+              }
+            });
           };
         };
-        /* #@range_end(list_foldr) */
-        it("foldrでsumを作る", (next) => {
-          /* #@range_begin(foldr_sum) */
-          var sum = (alist) => {
-            return foldr(alist)(0)((item) => {
-              return (accumulator) => {
-                return accumulator + item;
-              };
-            });
-          };
-          /* #@range_end(foldr_sum) */
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-          expect(
-            sum(seq)
-          ).to.eql(
-            10  // 1 + 2 + 3 + 4 = 10
-          );
-          next();
-        });
-        it("foldrでlength関数を作る", (next) => {
-          /* #@range_begin(foldr_length) */
-          var length = (alist) => {
-            return foldr(alist)(0)((item) => {
-              return (accumulator) => {
-                return accumulator + 1;
-              };
-            });
-          };
-          /* #@range_end(foldr_length) */
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-          expect(
-            length(seq)
-          ).to.eql(
-            4
-          );
-          next();
-        });
-        it("foldrでproductを作る", (next) => {
-          /* #@range_begin(foldr_product) */
-          var product = (alist) => {
-            return foldr(alist)(1)((item) => {
-              return (accumulator) => {
-                return accumulator * item;
-              };
-            });
-          };
-          /********* テスト **********/
-          // list = [1,2,3]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.empty())));
-          expect(
-            product(seq)
-          ).to.eql(
-            6 // 1 * 2 * 3 = 6
-          );
-          /* #@range_end(foldr_product) */
-          next();
-        });
-        it("foldrで reverse関数を作る", (next) => {
-          // reverse = foldl (flip cons) list.empty()
-            // var accumulator = list.empty();
-            // var callback = (item) => {
-            //   return (accumulator) => {
-            //     return list.append(accumulator)(list.cons(item,list.empty()));
-            //   };
-            // }; 
-          // var reverse = (alist) => {
-          //   var accumulator = list.empty();
-          //   var callback = (item) => {
-          //     return (accumulator) => {
-          //       return list.append(accumulator)(list.cons(item,list.empty()));
-          //     };
-          //   }; 
-          //   return foldr(alist)(accumulator)(callback);
-          // };
-          /* #@range_begin(foldr_reverse) */
-          var reverse = (alist) => {
-            return foldr(alist)(list.empty(0))((item) => {
-              return (accumulator) => {
-                return list.append(accumulator)(list.cons(item,list.empty()));
-              };
-            });
-          };
-          /* #@range_end(foldr_reverse) */
-          // list = [1,2,3,4]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-          expect(
-            list.toArray(reverse(seq))
-          ).to.eql(
-            [ 4, 3, 2, 1]
-          );
-          next();
-        });
-        it("foldrでfind関数を作る", (next) => {
-          var even = (n) => {
-            return (n % 2) === 0;
-          };
-          /* #@range_begin(foldr_find) */
-          var find = (alist) => {
-            return (predicate) => { // 要素を判定する述語関数
-              return foldr(alist)(null)((item) => {
-                return (accumulator) => {
-                  if(predicate(item) === true) { // 要素が見つかった場合
-                    return item;
-                  } else {
-                    return accumulator;
-                  };
-                };
-              });
+      };
+      /* #@range_end(list_foldr) */
+      it("foldrでsumを作る", (next) => {
+        /* #@range_begin(foldr_sum) */
+        var sum = (alist) => {
+          return foldr(alist)(0)((item) => {
+            return (accumulator) => {
+              return accumulator + item;
             };
-          };
-          /******** テスト *********/
-          var numbers = list.cons(1,list.cons(2,list.cons(3,list.empty())));
-          expect(
-            find(numbers)(even) // 最初に登場する偶数の要素を探す
-          ).to.eql(
-            2
-          );
-          /* #@range_end(foldr_find) */
-          next();
-        });
-        it("foldrでall関数を作る", (next) => {
-          /* #@range_begin(foldr_all) */
-          var all = (alist) => {
-            return foldr(alist)(true)((item) => {
-              return (accumulator) => {
-                return accumulator && truthy(item);
-              };
-            });
-          };
-          var seq = list.cons(true,list.cons(1,list.cons(null,list.cons("a",list.empty()))));
-          expect(
-            all(seq)
-          ).to.eql(
-            false
-          );
-          /* #@range_end(foldr_all) */
-          next();
-        });
-        it("foldrでtoArray関数を作る", (next) => {
-          /* #@range_begin(foldr_toarray) */
-          var toArray = (alist) => {
-            return foldr(alist)([])((item) => {
-              return (accumulator) => {
-                return [item].concat(accumulator);
-              };
-            });
-          };
-          var seq = list.cons(true,list.cons(1,list.cons(null,list.cons("a",list.empty()))));
-          expect(
-            toArray(seq)
-          ).to.eql(
-            [ true, 1, null, 'a' ]
-          );
-          /* #@range_end(foldr_toarray) */
-          next();
-        });
-        it("foldrで map関数を作る", (next) => {
-          /* #@range_begin(foldr_map) */
-          var map = (alist) => {
-            return (callback) => { // 個々の要素を変換するコールバック関数
-              return foldr(alist)(list.empty())((item) => {
-                return (accumulator) => {
-                  return list.cons(callback(item), accumulator);
-                };
-              });
-            };
-          };
-          /****** テスト ******/
-          // list = [1,2,3]
-          var seq = list.cons(1,list.cons(2,list.cons(3,list.empty())));
-          expect(
-            list.toArray(map(seq)(double))
-          ).to.eql(
-            [ 2, 4, 6] // 2 * [1,2,3] = [2,4,6]
-          );
-          /* #@range_end(foldr_map) */
-          next();
-        });
-        it("Array#reduceで list#fromArray関数を作る", (next) => {
-          /* #@range_begin(list_fromArray) */
-          var fromArray = (array) => {
-            return array.reduce((accumulator, item) => {
-              return list.append(accumulator)(list.cons(item, list.empty()));
-            }, list.empty());
-          };
-          /******* テスト *******/
-          var theList = fromArray([0,1,2,3]);
-          expect(
-            list.toArray(theList)
-          ).to.eql(
-            [0,1,2,3]
-          );
-          /* #@range_end(list_fromArray) */
-          next();
-        });
+          });
+        };
+        /* #@range_end(foldr_sum) */
+        // list = [1,2,3,4]
+        var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          sum(seq)
+        ).to.eql(
+          10  // 1 + 2 + 3 + 4 = 10
+        );
+        next();
       });
-    }); // 畳み込み関数で反復処理を渡す
+      it("foldrでlength関数を作る", (next) => {
+        /* #@range_begin(foldr_length) */
+        var length = (alist) => {
+          return foldr(alist)(0)((item) => {
+            return (accumulator) => {
+              return accumulator + 1;
+            };
+          });
+        };
+        /* #@range_end(foldr_length) */
+        // list = [1,2,3,4]
+        var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          length(seq)
+        ).to.eql(
+          4
+        );
+        next();
+      });
+      it("foldrでproductを作る", (next) => {
+        /* #@range_begin(foldr_product) */
+        var product = (alist) => {
+          return foldr(alist)(1)((item) => {
+            return (accumulator) => {
+              return accumulator * item;
+            };
+          });
+        };
+        /********* テスト **********/
+        // list = [1,2,3]
+        var seq = list.cons(1,
+                            list.cons(2,
+                                      list.cons(3,
+                                                list.empty())));
+        expect(
+          product(seq)
+        ).to.eql(
+          6 // 1 * 2 * 3 = 6
+        );
+        /* #@range_end(foldr_product) */
+        next();
+      });
+      it("foldrで reverse関数を作る", (next) => {
+        // reverse = foldl (flip cons) list.empty()
+        // var accumulator = list.empty();
+        // var callback = (item) => {
+        //   return (accumulator) => {
+        //     return list.append(accumulator)(list.cons(item,list.empty()));
+        //   };
+        // }; 
+        // var reverse = (alist) => {
+        //   var accumulator = list.empty();
+        //   var callback = (item) => {
+        //     return (accumulator) => {
+        //       return list.append(accumulator)(list.cons(item,list.empty()));
+        //     };
+        //   }; 
+        //   return foldr(alist)(accumulator)(callback);
+        // };
+        /* #@range_begin(foldr_reverse) */
+        var reverse = (alist) => {
+          return foldr(alist)(list.empty(0))((item) => {
+            return (accumulator) => {
+              return list.append(accumulator)(list.cons(item,
+                                                        list.empty()));
+            };
+          });
+        };
+        /* #@range_end(foldr_reverse) */
+        // list = [1,2,3,4]
+        var seq = list.cons(1,
+                            list.cons(2,
+                                      list.cons(3,
+                                                list.cons(4,
+                                                          list.empty()))));
+        expect(
+          list.toArray(reverse(seq))
+        ).to.eql(
+          [ 4, 3, 2, 1]
+        );
+        next();
+      });
+      it("foldrでfind関数を作る", (next) => {
+        var even = (n) => {
+          return (n % 2) === 0;
+        };
+        /* #@range_begin(foldr_find) */
+        var find = (alist) => {
+          return (predicate) => { // 要素を判定する述語関数
+            return foldr(alist)(null)((item) => {
+              return (accumulator) => {
+                /* 要素が見つかった場合、その要素を返す */
+                if(predicate(item) === true) { 
+                  return item;
+                } else {
+                  return accumulator;
+                };
+              };
+            });
+          };
+        };
+        /******** テスト *********/
+        var numbers = list.cons(1,
+                                list.cons(2,
+                                          list.cons(3,
+                                                    list.empty())));
+        expect(
+          find(numbers)(even) // 最初に登場する偶数の要素を探す
+        ).to.eql(
+          2
+        );
+        /* #@range_end(foldr_find) */
+        next();
+      });
+      it("foldrでall関数を作る", (next) => {
+        /* #@range_begin(foldr_all) */
+        var all = (alist) => {
+          return foldr(alist)(true)((item) => {
+            return (accumulator) => {
+              return accumulator && truthy(item);
+            };
+          });
+        };
+        var seq = list.cons(true,list.cons(1,list.cons(null,list.cons("a",list.empty()))));
+        expect(
+          all(seq)
+        ).to.eql(
+          false
+        );
+        /* #@range_end(foldr_all) */
+        next();
+      });
+      it("foldrでtoArray関数を作る", (next) => {
+        /* #@range_begin(foldr_toarray) */
+        var toArray = (alist) => {
+          return foldr(alist)([])((item) => {
+            return (accumulator) => {
+              return [item].concat(accumulator);
+            };
+          });
+        };
+        var seq = list.cons(true,list.cons(1,list.cons(null,list.cons("a",list.empty()))));
+        expect(
+          toArray(seq)
+        ).to.eql(
+          [ true, 1, null, 'a' ]
+        );
+        /* #@range_end(foldr_toarray) */
+        next();
+      });
+      it("foldrで map関数を作る", (next) => {
+        /* #@range_begin(foldr_map) */
+        var map = (alist) => {
+          return (callback) => { // 個々の要素を変換するコールバック関数
+            return foldr(alist)(list.empty())((item) => {
+              return (accumulator) => {
+                return list.cons(callback(item), accumulator);
+              };
+            });
+          };
+        };
+        /****** テスト ******/
+        // list = [1,2,3]
+        var seq = list.cons(1,
+                            list.cons(2,
+                                      list.cons(3,
+                                                list.empty())));
+        expect(
+          list.toArray(map(seq)(double))
+        ).to.eql(
+          [ 2, 4, 6] // 2 * [1,2,3] = [2,4,6]
+        );
+        /* #@range_end(foldr_map) */
+        next();
+      });
+      it("Array#reduceで list#fromArray関数を作る", (next) => {
+        /* #@range_begin(list_fromArray) */
+        var fromArray = (array) => {
+          return array.reduce((accumulator, item) => {
+            return list.append(accumulator)(list.cons(item, list.empty()));
+          }, list.empty());
+        };
+        /******* テスト *******/
+        var theList = fromArray([0,1,2,3]);
+        expect(
+          list.toArray(theList)
+        ).to.eql(
+          [0,1,2,3]
+        );
+        /* #@range_end(list_fromArray) */
+        next();
+      });
+    });
     describe('継続を渡す', () => {
       describe("継続の導入例", () => {
         it("succ関数の継続", (next) => {
           /* #@range_begin(succ_cps) */
-          var succ = (n, continues) => { // continues関数は、succ(n)のあとに続く継続
+          /* continues関数は、succ(n)のあとに続く継続 */
+          var succ = (n, continues) => { 
             return continues(n + 1);
           };
           /* #@range_end(succ_cps) */
           /* #@range_begin(succ_cps_test) */
           expect(
-            succ(1, identity) // identity関数を継続として渡すことで、succ(1)の結果がそのまま返る
+            /* identity関数を継続として渡すことで、
+               succ(1)の結果がそのまま返る */
+            succ(1, identity) 
           ).to.eql(
             2
           );
@@ -3477,13 +3522,16 @@ describe('高階関数', () => {
             return any;
           };
           /* #@range_begin(continuation_in_arithmetic) */
-          var succ = (n, continues) => { // 継続渡しのsucc関数
+          /* 継続渡しのsucc関数 */
+          var succ = (n, continues) => { 
             return continues(n + 1);
           };
-          var add = (n,m, continues) => { // 継続渡しのadd関数
+          /* 継続渡しのadd関数 */
+          var add = (n,m, continues) => { 
             return continues(n + m);
           };
-          // 継続渡しの succ関数と add関数を使って add(2, succ(3)) を計算する
+          /* 継続渡しの succ関数と add関数を使って 
+             add(2, succ(3)) を計算する */
           expect(
             succ(3, (succResult) => {
               return add(2, succResult, identity);
@@ -3573,28 +3621,30 @@ describe('高階関数', () => {
                       predicate, 
                       continuesOnFailure, 
                       continuesOnSuccess) => {
-            return list.match(alist, {
-              empty: () => {
-                /* 成功継続で反復処理を抜ける */
-                return continuesOnSuccess(accumulator); 
-              },
-              cons: (head, tail) => { 
-                /* 目的の要素を見つけた場合 */
-                if(predicate(head) === true) { 
-                  /* 成功継続で反復処理を脱出する */
-                  return continuesOnSuccess(head); 
-                } else { 
-                  /* 
-                     目的の要素を見つけられなった場合、
-                     失敗継続で次の反復処理を続ける 
-                  */
-                  return continuesOnFailure(tail, accumulator, predicate,
-                                            continuesOnFailure,
-                                            continuesOnSuccess);
-                };
-              }
-            });
-          };
+                        return list.match(alist, {
+                          empty: () => {
+                            /* 成功継続で反復処理を抜ける */
+                            return continuesOnSuccess(accumulator); 
+                          },
+                          cons: (head, tail) => { 
+                            /* 目的の要素を見つけた場合 */
+                            if(predicate(head) === true) { 
+                              /* 成功継続で反復処理を脱出する */
+                              return continuesOnSuccess(head); 
+                            } else { 
+                              /* 
+                                 目的の要素を見つけられなった場合、
+                                 失敗継続で次の反復処理を続ける 
+                              */
+                              return continuesOnFailure(tail, 
+                                                        accumulator, 
+                                                        predicate,
+                                                        continuesOnFailure,
+                                                        continuesOnSuccess);
+                            };
+                          }
+                        });
+                      };
           /* #@range_end(list_find_cps) */
           /* #@range_begin(list_find_cps_test) */
           /* 失敗継続では、反復処理を続ける */
@@ -3603,14 +3653,15 @@ describe('高階関数', () => {
                                      predicate, 
                                      continuesOnRecursion, 
                                      escapesFromRecursion) => { 
-            return find( // find関数を再帰的に呼び出す
-              alist, 
-              accumulator, 
-              predicate, 
-              continuesOnRecursion, 
-              escapesFromRecursion
-            );  
-          };
+                                       /* find関数を再帰的に呼び出す */
+                                       return find( 
+                                         alist, 
+                                         accumulator, 
+                                         predicate, 
+                                         continuesOnRecursion, 
+                                         escapesFromRecursion
+                                       );  
+                                     };
           /* 成功継続では、反復処理を脱出する */
           var successContinuation = identity; 
           var numbers = list.cons(1,
@@ -3691,74 +3742,91 @@ describe('高階関数', () => {
           //   };
           // }
         };
-            // mul: (x, y) => {
-            //   return calculate(x, (resultX, alternativeForX) => { // 引数xを評価する
-            //     return calculate(y, (resultY, alternativeForY) => { // 引数yを評価する
-            //       return continuesOnSuccess(resultX * resultY, alternativeForY); // かけ算を計算する
-            //     }, alternativeForX); // y の計算に失敗すれば、xの失敗継続を渡す
-            //   }, continuesOnFailure);
-            // },
+        // mul: (x, y) => {
+        //   return calculate(x, (resultX, alternativeForX) => { // 引数xを評価する
+        //     return calculate(y, (resultY, alternativeForY) => { // 引数yを評価する
+        //       return continuesOnSuccess(resultX * resultY, alternativeForY); // かけ算を計算する
+        //     }, alternativeForX); // y の計算に失敗すれば、xの失敗継続を渡す
+        //   }, continuesOnFailure);
+        // },
         /* #@range_begin(amb_calculate) */
-        var calculate = (anExp, continuesOnSuccess, continuesOnFailure) => {
-          return exp.match(anExp, { // 式に対してパターンマッチを実行する
-            // 数値を評価する
-            num: (n) => {
-              return continuesOnSuccess(n, continuesOnFailure);
-            },
-            /* 足し算を評価する */
-            add: (x, y) => {
-              return calculate(x, (resultX, // 引数xを評価する
-                                   continuesOnFailureX) => { 
-                return calculate(y, // 引数yを評価する
-                                 (resultY, continuesOnFailureY) => { 
-                  return continuesOnSuccess(resultX + resultY, // 足し算を計算する
-                                            continuesOnFailureY); 
-                }, continuesOnFailureX); // y の計算に失敗すれば、xの失敗継続を渡す
-              }, continuesOnFailure);
-            },
-            /* amb式を評価する */
-            amb: (choices) => {
-              var calculateAmb = (choices) => {
-                return list.match(choices, {
-                  /* 
-                     amb(list.empty()) の場合、
-                     すなわち選択肢がなければ、失敗継続を実行する
-                  */
-                  empty: () => {         
-                    return continuesOnFailure();
-                  },
-                  /* 
-                     amb(list.cons(head, tail))の場合、
-                     最初の要素を計算して、殘りは失敗継続に渡す
-                  */
-                  cons: (head, tail) => { 
-                    return calculate(head, 
-                                     continuesOnSuccess, 
-                                     (_) => { // 失敗継続のなかで次の選択肢について計算する
-                                       return calculateAmb(tail, 
-                                                           continuesOnSuccess, 
-                                                           continuesOnFailure);
-                                     });
-                  }
-                });
-              };
-              return calculateAmb(choices, 
-                                  continuesOnSuccess, 
-                                  continuesOnFailure);
-            }
-          });
-        };
+        var calculate = (anExp, 
+                         continuesOnSuccess, 
+                         continuesOnFailure) => {
+                           /* 式に対してパターンマッチを実行する */
+                           return exp.match(anExp, { 
+                             /* 数値を評価する */
+                             num: (n) => {
+                               return continuesOnSuccess(n, continuesOnFailure);
+                             },
+                             /* 足し算を評価する */
+                             add: (x, y) => {
+                               /* 引数xを評価する */
+                               return calculate(x,
+                                                (
+                                                  resultX,/* 引数xの計算結果 */ 
+                                                  continuesOnFailureX
+                                                ) => { 
+                                                  /* 引数yを評価する */
+                                                  return calculate(y, 
+                                                                   (
+                                                                     resultY, /* 引数xの計算結果 */ 
+                                                                     continuesOnFailureY
+                                                                   ) => { 
+                                                                     /* 足し算を計算する */
+                                                                     return continuesOnSuccess(
+                                                                       resultX + resultY, 
+                                                                       continuesOnFailureY); 
+                                                                   }, 
+                                                                   continuesOnFailureX); /* y の計算に失敗すれば、
+                                                                                               xの失敗継続を渡す */
+                                                }, continuesOnFailure);
+                             },
+                             /* amb式を評価する */
+                             amb: (choices) => {
+                               var calculateAmb = (choices) => {
+                                 return list.match(choices, {
+                                   /* 
+                                      amb(list.empty()) の場合、
+                                      すなわち選択肢がなければ、失敗継続を実行する
+                                   */
+                                   empty: () => {         
+                                     return continuesOnFailure();
+                                   },
+                                   /* 
+                                      amb(list.cons(head, tail))の場合、
+                                      最初の要素を計算して、殘りは失敗継続に渡す
+                                   */
+                                   cons: (head, tail) => { 
+                                     return calculate(head, 
+                                                      continuesOnSuccess, 
+                                                      (_) => { /* 失敗継続のなかで
+                                                                  次の選択肢について計算する */
+                                                        return calculateAmb(tail, 
+                                                                            continuesOnSuccess, 
+                                                                            continuesOnFailure);
+                                                      });
+                                   }
+                                 });
+                               };
+                               return calculateAmb(choices, 
+                                                   continuesOnSuccess, 
+                                                   continuesOnFailure);
+                             }
+                           });
+                         };
         /* #@range_end(amb_calculate) */
         /* #@range_begin(amb_driver) */
         var driver = (expression) =>{
           /* 中断された計算を継続として保存する  */
           var suspendedComputation = null; 
           /* 成功継続 */
-          var continuesOnSuccess = (anyValue, continuesOnFailure) => {
-            /* 再開に備えて、失敗継続を保存しておく */
-            suspendedComputation = continuesOnFailure; 
-            return anyValue;
-          };
+          var continuesOnSuccess = (anyValue, 
+                                    continuesOnFailure) => {
+                                      /* 再開に備えて、失敗継続を保存しておく */
+                                      suspendedComputation = continuesOnFailure; 
+                                      return anyValue;
+                                    };
           /* 失敗継続 */
           var continuesOnFailure = () => {
             return null;
@@ -3777,7 +3845,7 @@ describe('高階関数', () => {
         /* #@range_end(amb_driver) */
         it("amb[1,2] + 3  = amb[4, 5]", (next) => {
           var ambExp = exp.add(exp.amb(list.cons(exp.num(1),list.cons(exp.num(2), list.empty()))), 
-                                exp.num(3));
+                               exp.num(3));
           var calculator = driver(ambExp);
           expect(
             calculator()
@@ -3912,8 +3980,8 @@ describe('高階関数', () => {
       var even = multipleOf(2);
       /* #@range_begin(not_combinator) */
       // not :: FUN[NUM => BOOL] => FUN[NUM => BOOL]
-      var not = (predicate) => { // predicate:: FUN[NUM => BOOL]
-        return (arg) => { // FUN[NUM => BOOL]型を返す
+      var not = (predicate) => { // predicate::FUN[NUM=>BOOL]
+        return (arg) => { // FUN[NUM=>BOOL]型を返す
           return ! predicate(arg); // !演算子で論理を反転させる
         };
       };
@@ -4152,8 +4220,8 @@ describe('高階関数', () => {
           ~~~haskell
           factors :: Integer -> [Integer]
           factors n | n < 1 = error "argument not positive"
-                    | n == 1 = []
-                    | otherwise = p : factors (div n p) where p = ld n
+          | n == 1 = []
+          | otherwise = p : factors (div n p) where p = ld n
           ~~~
         */
         var factors = (n) => {
@@ -4633,7 +4701,7 @@ describe('高階関数', () => {
       };
       /* #@range_end(identity_monad) */
       it("恒等モナドのunit関数", (next) => {
-      /* #@range_begin(identity_monad_unit_test) */
+        /* #@range_begin(identity_monad_unit_test) */
         expect(
           ID.unit(1)
         ).to.eql(
@@ -4664,8 +4732,10 @@ describe('高階関数', () => {
         };
         expect(
           ID.flatMap(ID.unit(1))((one) => {    
-            return ID.flatMap(ID.unit(succ(one)))((two) => { // succ関数を適用する
-              return ID.unit(double(two));  // double関数を適用する
+            /* succ関数を適用する */
+            return ID.flatMap(ID.unit(succ(one)))((two) => { 
+              /* double関数を適用する */
+              return ID.unit(double(two));  
             });
           })
         ).to.eql(
@@ -4704,8 +4774,13 @@ describe('高階関数', () => {
         });
         it("flatMap(flatMap(instanceM)(f))(g) == flatMap(instanceM)((x) => flatMap(f(x))(g))", (next) => {
           /* #@range_begin(identity_monad_laws_associative_law) */
-          /* flatMap(flatMap(instanceM)(f))(g) === 
-             flatMap(instanceM)((x) => { return flatMap(f(x))(g); } } */
+          /* 
+             flatMap(flatMap(instanceM)(f))(g) 
+                      === 
+             flatMap(instanceM)((x) => { 
+                 return flatMap(f(x))(g); } 
+             } 
+          */
           var instanceM = ID.unit(1);
           var f = (n) => {
             return ID.unit(n * n);
@@ -4783,14 +4858,16 @@ describe('高階関数', () => {
           unit: (value) => {
             return just(value);
           },
-          // flatMap:: MAYBE[T] => FUN[T => MAYBE[U]] => MAYBE[U]
+          /* flatMap:: MAYBE[T] => FUN[T => MAYBE[U]] => MAYBE[U] */
           flatMap: (instanceM) => {
             return (transform) => {
               return match(instanceM,{
-                just: (value) => { // 正常な値の場合は、transform関数を計算する
+                /* 正常な値の場合は、transform関数を計算する */
+                just: (value) => { 
                   return transform(value);
                 },
-                nothing: (_) => { // エラーの場合は、何もしない
+                /* エラーの場合は、何もしない */
+                nothing: (_) => { 
                   return nothing(_);
                 }
               });
@@ -5304,7 +5381,7 @@ describe('高階関数', () => {
               return true;
             } else {
               return false;
-              }
+            }
           };
           var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
           expect(
@@ -6191,7 +6268,8 @@ describe('高階関数', () => {
           };
         };
         /* #@range_begin(run_println) */
-        var initialWorld = null; // 初期の外界に null をバインドする
+        /* 初期の外界に null をバインドする */
+        var initialWorld = null; 
         expect(
           IO.run(println("this is a test"))(initialWorld)
         ).to.eql(
@@ -6408,4 +6486,4 @@ describe('高階関数', () => {
     //   });
     // });
   }); // モナド
-});
+}); 

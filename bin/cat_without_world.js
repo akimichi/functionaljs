@@ -244,7 +244,8 @@ var IO = {
   /* flatMap:: IO[A] => FUN[A => IO[B]] => IO[B] */
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: A -> IO[B]
-      /* instanceAのIOアクションを実行し、続いて actionABを実行する */
+      /* instanceAのIOアクションを実行し、
+         続いて actionABを実行する */
       return actionAB(IO.run(instanceA)); 
     };
   },
@@ -282,14 +283,15 @@ var IO = {
   },
   /* #@range_end(IO_seq) */
   /* #@range_begin(IO_putStrLn) */
-  // IO.putChar関数は、一文字を出力する 
-  // IO.putChar:: CHAR => IO[]
+  /* IO.putChar:: CHAR => IO[] */
+  /* IO.putChar関数は、一文字を出力する */
   putChar: (character) => {
-    process.stdout.write(character); // 1文字だけ画面に出力する
+    /* 1文字だけ画面に出力する */
+    process.stdout.write(character); 
     return IO.unit(null);
   },
-  // IO.putStr関数は、文字のリストを連続して出力する 
-  // IO.putStr:: LIST[CHAR] => IO[]
+  /* IO.putStr:: LIST[CHAR] => IO[] */
+  /* IO.putStr関数は、文字のリストを連続して出力する  */
   putStr: (alist) => {
     return list.match(alist, {
       empty: () => {
@@ -300,8 +302,8 @@ var IO = {
       }
     });
   },
-  // IO.putStrLn関数は、文字列を出力し、最後に改行を出力する
-  // IO.putStrLn:: LIST[CHAR] => IO[]
+  /* IO.putStrLn:: LIST[CHAR] => IO[] */
+  /* IO.putStrLn関数は、文字列を出力し、最後に改行を出力する */
   putStrLn:(alist) => {
     return IO.seq(IO.putStr(alist))(IO.putChar("\n"));
   }
@@ -327,10 +329,14 @@ IO.run(composed_action); // 合成されたIOアクションを実行する
 // #@range_begin(run_putStrLn)
 var path = process.argv[2];
 
-var cat_action = IO.flatMap(IO.readFile(path))((content) => { // ファイルを読みこむ 
-  var string_as_list = list.fromString(content); // 文字列を文字のリストに変換しておく
-  return IO.flatMap(IO.putStrLn(string_as_list))((_) => { // putStrLnを実行する 
-    return IO.done(_);
+var cat_action = 
+  /* ファイルを読みこむ  */
+  IO.flatMap(IO.readFile(path))((content) => { 
+    /* 文字列を文字のリストに変換しておく */
+    var string_as_list = list.fromString(content); 
+    /* putStrLnを実行する */
+    return IO.flatMap(IO.putStrLn(string_as_list))((_) => { 
+        return IO.done(_);
   });
 });
 

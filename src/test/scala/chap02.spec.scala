@@ -9,14 +9,20 @@ class Chap02Spec extends FunSpec with ShouldMatchers {
   describe("テストが容易である"){
     describe("銀行口座の例"){
       // ##@range_begin(account_class)
-      class Account(amount: Int) {    // 銀行口座のクラス
-        var balance = amount          // 口座の残高を可変な状態として作る
-        def deposit(amount: Int):Int = {  // 口座にお金を預ける
-          balance = balance + amount      // 残高を更新する
+      // 銀行口座のクラス
+      class Account(amount: Int) {
+        // 口座の残高を可変な状態として作る
+        var balance = amount
+        // 口座にお金を預ける関数
+        def deposit(amount: Int):Int = {
+          // 残高を更新する
+          balance = balance + amount
           return balance
         }
-        def withdraw(amount: Int):Int = { // 口座からお金を引き出す
-          balance = balance - amount      // 残高を更新する
+        // 口座からお金を引き出す関数
+        def withdraw(amount: Int):Int = {
+          // 残高を更新する
+          balance = balance - amount
           return balance
         }
       }
@@ -24,10 +30,13 @@ class Chap02Spec extends FunSpec with ShouldMatchers {
       it("取り引きの例"){
         /************* テスト *************/
         // ##@range_begin(account_with_state_test)
-        val theAccount = new Account(1000) // 口座を1000円で開設する
+        // 口座を1000円で開設する
+        val theAccount = new Account(1000) 
         theAccount.balance should equal(1000)
-        theAccount.withdraw(200)           // 口座から200円を引き出す
-        theAccount.balance should equal(800) // 残高は800円となる
+        // 口座から200円を引き出す
+        theAccount.withdraw(200)           
+        // 残高は800円となる
+        theAccount.balance should equal(800) 
         // ##@range_end(account_with_state_test)
       }
       it("貧乏人の例"){

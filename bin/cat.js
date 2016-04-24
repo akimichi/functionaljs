@@ -35,21 +35,23 @@ var IO = {
   },
   /* #@range_end(io_monad_definition_with_world) */
   /* #@range_begin(io_monad_definition_with_world_helper_function) */
-  // done関数
-  // done:: T => IO[T]
+  /* done:: T => IO[T]
+     done関数 */
   done: (any) => {
     return IO.unit();
   },
-  // run:: IO[A] => A
+  /* run:: IO[A] => A */
   run: (instanceM) => {
     return (world) => {
-      return pair.left(instanceM(world)); // IOアクションを現在の外界に適用し、結果のみを返す
+      /* IOアクションを現在の外界に適用し、結果のみを返す */
+      return pair.left(instanceM(world)); 
     };
   },
   /* #@range_end(io_monad_definition_with_world_helper_function) */
   /* #@range_begin(io_actions) */
-  // readFile関数は、pathで指定されたファイルを読み込むIOアクション
-  /* readFile:: STRING => IO[STRING] */
+  /* readFile:: STRING => IO[STRING] 
+     readFile関数は、pathで指定されたファイルを
+     読み込むIOアクション */
   readFile: (path) => {
     return (world) => { // 外界を引数とする 
       var fs = require('fs');
@@ -57,8 +59,9 @@ var IO = {
       return IO.unit(content)(world); // 外界を渡してIOアクションを実行する
     };
   },
-  // println関数は、messageで指定された文字列をコンソール画面に出力するIOアクション
-  /* println:: STRING => IO[] */
+  /* println:: STRING => IO[]
+     println関数は、messageで指定された文字列を
+     コンソール画面に出力するIOアクション */
   println: (message) => {
     return (world) => { // IOモナドを返す
       console.log(message);

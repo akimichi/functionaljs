@@ -513,7 +513,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
             if(y < 1){
               return x;
             } else {
-              return add(x + 1, y - 1); // 新しい引数でadd関数を再帰的に呼び出す
+              /* 新しい引数でadd関数を再帰的に呼び出す */
+              return add(x + 1, y - 1); 
             }
           };
           /* #@range_end(functional_addition) */
@@ -675,7 +676,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_begin(age_sideeffect) */
             var age = (birthYear) => {
               var today = new Date();
-              var thisYear = today.getFullYear(); // getFullYear関数は現時点での西暦を返す
+              /* getFullYear関数は現時点での西暦を返す */
+              var thisYear = today.getFullYear(); 
               return thisYear - birthYear;
             };
             /* #@range_end(age_sideeffect) */
@@ -1258,9 +1260,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
           it('reduceによるsumの定義', (next) => {
             /* #@range_begin(sum_in_array_reduce) */
             var sum = (array) => {
-              return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
-                return accumulator + item;                 // 足し算を実行する
-              },0); // 第2引数には、蓄積変数の初期値として0を渡す 
+              return array.reduce(
+                /* 第1引数に関数を渡す */
+                (accumulator, item) => { 
+                  /* 足し算を実行する */
+                  return accumulator + item;                 
+                },0); // 第2引数には、蓄積変数の初期値として0を渡す 
             };
             /* #@range_end(sum_in_array_reduce)  */
             expect(
@@ -1274,7 +1279,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
             /* #@range_begin(product_in_array_reduce) */
             var product = (array) => {
               return array.reduce((accumulator, item) => {
-                return accumulator * item;               // かけ算を実行する
+                /* かけ算を実行する */
+                return accumulator * item;               
               }, 1); // 第2引数には、蓄積変数の初期値として1を渡す 
             };
             /* #@range_end(product_in_array_reduce)  */
@@ -1292,8 +1298,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
             var all = (array) => {
               return array.reduce((accumulator, item) => {
                 return accumulator && item;
-              }); // 第2引数を指定していない場合は、
-                  // 配列の先頭要素が変数accumulatorの初期値になる
+              }); /* 第2引数を指定していない場合は、
+                     配列の先頭要素が変数accumulatorの初期値になる */
             };
             /* #@range_end(all_in_array_reduce)  */
             expect(
@@ -1846,11 +1852,16 @@ describe('なぜ関数型プログラミングが重要か', () => {
         it('命令型プログラミングによる階乗の計算', (next) => {
           /* #@range_begin(imperative_factorial) */
           var factorial = (n) => {
-            var result = 1;             // result変数に結果が入る
-            var times = 1;              // times変数は反復の回数を数える
-            while(times < n + 1) {      // while文は反復を処理する
-              result = result * times;  // result変数を代入で更新する
-              times = times + 1;        // times変数を代入で更新する
+            /* result変数に結果が入る */
+            var result = 1;             
+            /* times変数は反復の回数を数える */
+            var times = 1;              
+            /* while文は反復を処理する */
+            while(times < n + 1) {      
+              /* result変数を代入で更新する */
+              result = result * times;  
+              /* times変数を代入で更新する */
+              times = times + 1;        
             }
             return result;
           };
@@ -2161,11 +2172,13 @@ describe('なぜ関数型プログラミングが重要か', () => {
       var filter = (predicate) => {
         return (aStream) => {
           var head = aStream[0];
-          if(predicate(head) === true) { // 先頭要素が条件に合致する場合
+          /* 先頭要素が条件に合致する場合 */
+          if(predicate(head) === true) { 
             return [head, (_) => {
               return filter(predicate)(aStream[1]());
             }];
-          } else {                       // 先頭要素が条件に合致しない場合
+          } else {                       
+            /* 先頭要素が条件に合致しない場合 */
             return filter(predicate)(aStream[1]());
           }
         };
@@ -2344,20 +2357,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
           };
           /* #@range_end(stream_take) */
-          // var take = (n) => {
-          //   return (aStream) => {
-          //     var takeHelper = (n, aStream, accumulator) => {
-          //       if(n === 0) {
-          //         return accumulator;
-          //       } else {
-          //         var head = aStream[0];
-          //         var tail = aStream[1]();
-          //         return takeHelper(n - 1, tail, accumulator.concat(head));
-          //       }
-          //     };
-          //     return takeHelper(n, aStream, []);
-          //   };
-          // };
           var even = (n) => {
             return n % 2 === 0;
           };
@@ -2395,12 +2394,16 @@ describe('なぜ関数型プログラミングが重要か', () => {
             false
           );
           /* #@range_begin(eratosthenes_sieve) */
+          /* エラトステネスのふるい */
           var sieve = (aStream) => {
-            var prime = aStream[0];           // 先頭の素数を取り出す
+            /* 先頭の素数を取り出す */
+            var prime = aStream[0];           
             return [prime, (_) => {
-              return sieve(remove((item) => { // その素数の倍数を除去する
-                return multipleOf(item, prime);  
-              })(aStream[1]()));
+              return sieve(remove( /* その素数の倍数を除去する */
+                (item) => { 
+                  return multipleOf(item, prime);  
+                }
+              )(aStream[1]()));
             }]; 
           };
           /* #@range_end(eratosthenes_sieve) */
@@ -2490,23 +2493,25 @@ describe('なぜ関数型プログラミングが重要か', () => {
         it('参照透過性のある銀行口座', (next) => {
           /* #@range_begin(account_with_explicit_state) */
           var account = {
-            // 銀行口座を作る
+            /* 銀行口座を作る関数 */
             init: (balance) => {
               return balance;
             },
-            // 口座にお金を預ける処理           
+            /* 口座にお金を預ける関数 */
             deposit: (amount) => { 
               return (anAccount) => {
-                return account.init(anAccount + amount); // 銀行口座を作り直す
+                /* 銀行口座を作り直す */
+                return account.init(anAccount + amount); 
               };
             },
-            // 口座からお金を引き出す処理
+            /* 口座からお金を引き出す関数 */
             withdraw: (amount) => { 
               return (anAccount) => {
-                return account.init(anAccount - amount); // 銀行口座を作り直す
+                /* 銀行口座を作り直す */
+                return account.init(anAccount - amount); 
               };
             },
-            // 取り引きを実行する 
+            /* 取り引きを実行する関数 */
             commit: (anAccount) => { 
               return (transactions) => {
                 return transactions.reduce((accumulator, transact) => {

@@ -54,11 +54,15 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(turing) */</span>
       <span class="hljs-keyword">var</span> machine = (code,tape,initState, endState) =&gt; {
-        <span class="hljs-keyword">var</span> position = <span class="hljs-number">0</span>;                          <span class="hljs-comment">// ヘッドの位置</span>
-        <span class="hljs-keyword">var</span> state = initState;                     <span class="hljs-comment">// 機械の状態</span>
-        <span class="hljs-keyword">var</span> currentInstruction = <span class="hljs-literal">undefined</span>;        <span class="hljs-comment">// 実行する命令</span>
+        <span class="hljs-comment">/* ヘッドの位置 */</span>
+        <span class="hljs-keyword">var</span> position = <span class="hljs-number">0</span>;                          
+        <span class="hljs-comment">/* 機械の状態 */</span>
+        <span class="hljs-keyword">var</span> state = initState;                     
+        <span class="hljs-comment">/* 実行する命令 */</span>
+        <span class="hljs-keyword">var</span> currentInstruction = <span class="hljs-literal">undefined</span>;        
         <span class="hljs-comment">/*
-         以下のwhileループにて、現在の状態が最終状態に到達するまで命令を繰り返す
+         以下のwhileループにて、
+         現在の状態が最終状態に到達するまで命令を繰り返す
          */</span>
         <span class="hljs-keyword">while</span>(state != endState) {
           <span class="hljs-keyword">var</span> cell = tape[<span class="hljs-built_in">String</span>(position)];
@@ -69,9 +73,12 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
           <span class="hljs-keyword">if</span> (!currentInstruction) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
           } <span class="hljs-keyword">else</span> {
-            tape[<span class="hljs-built_in">String</span>(position)] = currentInstruction.write; <span class="hljs-comment">// テープに印字する</span>
-            position += currentInstruction.move;                <span class="hljs-comment">// ヘッドを動かす</span>
-            state = currentInstruction.next;                    <span class="hljs-comment">// 次の状態に移る</span>
+            <span class="hljs-comment">/* テープに印字する */</span>
+            tape[<span class="hljs-built_in">String</span>(position)] = currentInstruction.write; 
+            <span class="hljs-comment">/* ヘッドを動かす */</span>
+            position += currentInstruction.move;                
+            <span class="hljs-comment">/* 次の状態に移る */</span>
+            state = currentInstruction.next;                    
           }
         }
         <span class="hljs-keyword">return</span> tape;
@@ -255,11 +262,13 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         <span class="hljs-keyword">var</span> prev = (n) =&gt; {
           <span class="hljs-keyword">return</span> n - <span class="hljs-number">1</span>;
         };
-        <span class="hljs-keyword">var</span> add = (x,y) =&gt; { <span class="hljs-comment">// add関数の定義</span>
+        <span class="hljs-comment">/* add関数の定義 */</span>
+        <span class="hljs-keyword">var</span> add = (x,y) =&gt; { 
           <span class="hljs-keyword">if</span>(y &lt; <span class="hljs-number">1</span>){
             <span class="hljs-keyword">return</span> x;
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> add(succ(x), prev(y)); <span class="hljs-comment">// add関数の再帰呼び出し</span>
+            <span class="hljs-comment">/* add関数の再帰呼び出し */</span>
+            <span class="hljs-keyword">return</span> add(succ(x), prev(y)); 
           }
         };
         <span class="hljs-comment">/* #@range_end(add) */</span>
@@ -450,13 +459,15 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         <span class="hljs-comment">/* #@range_begin(multiply) */</span>
         <span class="hljs-keyword">var</span> times = (count,fun,arg, memo) =&gt; {
           <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">return</span> times(count-<span class="hljs-number">1</span>,fun,arg, fun(memo,arg)); <span class="hljs-comment">// times関数を再帰呼出し</span>
+            <span class="hljs-comment">/* times関数を再帰呼出し */</span>
+            <span class="hljs-keyword">return</span> times(count-<span class="hljs-number">1</span>,fun,arg, fun(memo,arg)); 
           } <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">return</span> fun(memo,arg);
           }
         };
         <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
-          <span class="hljs-keyword">return</span> times(m, add, n, <span class="hljs-number">0</span>); <span class="hljs-comment">// 2番目の引数にadd関数を渡している</span>
+          <span class="hljs-comment">/* 2番目の引数にadd関数を渡している */</span>
+          <span class="hljs-keyword">return</span> times(m, add, n, <span class="hljs-number">0</span>); 
         };
         <span class="hljs-comment">/* #@range_end(multiply) */</span>
         expect(

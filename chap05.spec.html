@@ -442,9 +442,11 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
       /* ##@range_begin(even_function_again) */
       var even = (n) =&gt; {
         if((n % 2) === 0) {
-          return true;       // return で even関数を抜けて true を返す
+          /* returnでeven関数を抜けてtrueを返す */
+          return true;       
         } else {
-          return false;      // return で even関数を抜けて false を返す
+          /* returnでeven関数を抜けてfalseを返す */
+          return false;      
         }
       };
       /* ##@range_end(even_function_again) */
@@ -1598,73 +1600,39 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         <span class="hljs-keyword">return</span> data(pattern);
       };
       <span class="hljs-comment">/* #@range_end(match_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-44">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
-              </div>
-              <p>引数 alist に渡されたリストが空のリストかどうかを判定する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> match(alist, { <span class="hljs-comment">// match関数で分岐する</span>
+      <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span>
+      <span class="hljs-comment">/* 引数 alist に渡されたリストが
+         空のリストかどうかを判定する */</span>
+      <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
+        <span class="hljs-comment">/* match関数で分岐する */</span>
+        <span class="hljs-keyword">return</span> match(alist, { 
           empty: (_) =&gt; {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
           },
-          cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
+          <span class="hljs-comment">/* headとtailにそれぞれ先頭要素、末尾要素が入る */</span>
+          cons: (head, tail) =&gt; { 
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
           }
         });
-      };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-45">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
-              </div>
-              <p>引数alistに渡されたリストの先頭の要素を返す</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> head = (alist) =&gt; {
+      };
+      <span class="hljs-comment">/* 引数alistに渡されたリストの先頭の要素を返す */</span>
+      <span class="hljs-keyword">var</span> head = (alist) =&gt; {
         <span class="hljs-keyword">return</span> match(alist, {
+          <span class="hljs-comment">/* 空のリストには先頭要素はありません */</span>
           empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
           },
           cons: (head, tail) =&gt; {
             <span class="hljs-keyword">return</span> head;
           }
         });
-      };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-46">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
-              </div>
-              <p>引数 alist に渡されたリストの末尾のリストを返す</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
+      };
+      <span class="hljs-comment">/* 引数alistに渡されたリストの末尾のリストを返す */</span>
+      <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
         <span class="hljs-keyword">return</span> match(alist, {
+          <span class="hljs-comment">/* 空のリストには末尾要素はありません */</span>
           empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  
           },
           cons: (head, tail) =&gt; {
             <span class="hljs-keyword">return</span> tail;
@@ -1673,23 +1641,27 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
       };
       <span class="hljs-comment">/* #@range_end(list_function_using_algebraic_datatype) */</span>
       <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype_test) */</span>
+      <span class="hljs-comment">/* empty は空のリストではある */</span>
       expect(
-        isEmpty(empty())         <span class="hljs-comment">// empty は空のリストではある</span>
+        isEmpty(empty())         
       ).to.eql(
         <span class="hljs-literal">true</span>
       );
+      <span class="hljs-comment">/* [1] は空のリストではない */</span>
       expect(
-        isEmpty(cons(<span class="hljs-number">1</span>,empty())) <span class="hljs-comment">// [1] は空のリストではない</span>
+        isEmpty(cons(<span class="hljs-number">1</span>,empty())) 
       ).to.eql(
         <span class="hljs-literal">false</span>
       );
+      <span class="hljs-comment">/* [1]の先頭要素は 1 である */</span>
       expect(
-        head(cons(<span class="hljs-number">1</span>,empty()))    <span class="hljs-comment">// [1]の先頭要素は 1 である</span>
+        head(cons(<span class="hljs-number">1</span>,empty()))    
       ).to.be(
         <span class="hljs-number">1</span>
       );
+      <span class="hljs-comment">/* [1,2]の2番目の要素は2である */</span>
       expect(
-        head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty())))) <span class="hljs-comment">// [1,2]の2番目の要素は2である</span>
+        head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty())))) 
       ).to.be(
         <span class="hljs-number">2</span>
       );
@@ -1779,11 +1751,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>var exp = {
   match : (exp, pattern) =&gt; {
@@ -1819,11 +1791,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>calculateを再帰呼び出して足し算を実行する</p>
 
@@ -1835,11 +1807,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-49">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>calculateを再帰呼び出してかけ算を実行する</p>
 
@@ -1855,11 +1827,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>1 + (2 * 3) を計算する</p>
 
@@ -1881,11 +1853,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-51">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <h2 id="-">反復処理の種類と特徴</h2>
 
@@ -1915,11 +1887,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-52">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>#@range_begin(while_length)</p>
 
@@ -1941,11 +1913,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>#@range_end(while_length)</p>
 
@@ -1958,11 +1930,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-54">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>#@range_begin(while_sum)</p>
 
@@ -1984,11 +1956,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-55">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>#@range_end(while_sum)</p>
 
@@ -2054,11 +2026,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-56">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>f(n) = f(n-1) * (1 + r)</p>
 
@@ -2173,7 +2145,8 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
                 <span class="hljs-keyword">return</span> accumulator;
               },
               cons: (head, tail) =&gt; {
-                <span class="hljs-keyword">return</span> sum(tail, accumulator + head); <span class="hljs-comment">// sumの再帰呼び出し</span>
+                <span class="hljs-comment">/* sumの再帰呼び出し */</span>
+                <span class="hljs-keyword">return</span> sum(tail, accumulator + head); 
               }
             });
           };
@@ -2199,7 +2172,8 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         it(<span class="hljs-string">'蓄積変数を持たないsum関数'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(recursive_sum_without_accumulator) */</span>
           <span class="hljs-keyword">var</span> sum = (list) =&gt; {
-            <span class="hljs-keyword">var</span> sumHelper = (list, accumulator) =&gt; { <span class="hljs-comment">// 蓄積変数を持つ補助関数</span>
+            <span class="hljs-comment">/* 蓄積変数を持つ補助関数 */</span>
+            <span class="hljs-keyword">var</span> sumHelper = (list, accumulator) =&gt; { 
               <span class="hljs-keyword">return</span> match(list, {
                 empty: (_) =&gt; {
                   <span class="hljs-keyword">return</span> accumulator;
@@ -2229,10 +2203,12 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
           <span class="hljs-comment">/* #@range_begin(recursive_length_without_accumulator) */</span>
           <span class="hljs-keyword">var</span> length = (list) =&gt; {
             <span class="hljs-keyword">return</span> match(list, {
-              empty: (_) =&gt; {    <span class="hljs-comment">// emptyの場合は、終了条件となる</span>
+              <span class="hljs-comment">/* emptyの場合は、終了条件となる */</span>
+              empty: (_) =&gt; {    
                 <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
               },
-              cons: (head, tail) =&gt; { <span class="hljs-comment">// consの場合は、再帰的に呼び出す</span>
+              <span class="hljs-comment">/* consの場合は、再帰的に呼び出す */</span>
+              cons: (head, tail) =&gt; { 
                 <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + length(tail);
               }
             });
@@ -2327,11 +2303,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-57">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>map :: LIST[T] -&gt; FUN[T -&gt; T] -&gt; LIST[T]</p>
 
@@ -2414,11 +2390,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-58">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>append :: (LIST[T], LIST[T]) -&gt; LIST[T]</p>
 
@@ -2426,11 +2402,14 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
             
             <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
             <span class="hljs-keyword">return</span> match(xs,{
-              empty: (_) =&gt; { <span class="hljs-comment">// emptyの場合は、終了条件</span>
+              <span class="hljs-comment">/* emptyの場合は、終了条件 */</span>
+              empty: (_) =&gt; { 
                 <span class="hljs-keyword">return</span> ys; <span class="hljs-comment">// xsが空の場合は、ysを返す</span>
               },
-              cons: (head, tail) =&gt; { <span class="hljs-comment">// consの場合は、再帰的に呼び出す </span>
-                <span class="hljs-keyword">return</span> list.cons(head,  <span class="hljs-comment">// xs と ys を連結させる   </span>
+              <span class="hljs-comment">/* consの場合は、再帰的に呼び出す */</span>
+              cons: (head, tail) =&gt; { 
+                <span class="hljs-comment">/* xsとysを連結させる */</span>
+                <span class="hljs-keyword">return</span> list.cons(head,  
                                  append(tail,ys));
               }
             });
@@ -2559,11 +2538,11 @@ above(28)(temperture):: EVENT -&gt; BOOL</p>
         </li>
         
         
-        <li id="section-59">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>自然数の総和(一般形)</p>
 

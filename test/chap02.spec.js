@@ -10,7 +10,7 @@ var compose = (f,g) => {
 };
 
 describe('なぜ関数型プログラミングが重要か', () => {
-  describe('関数型言語と関数型プログラミング', () => {
+  describe('関数型プログラミングの特徴', () => {
     describe('関数の評価戦略', () => {
       it('succ関数の定義', function(next) {
         /* #@range_begin(succ_definition) */
@@ -366,28 +366,27 @@ describe('なぜ関数型プログラミングが重要か', () => {
         });
       });
     });
-    describe('副作用の種類', () => {
-      describe('副作用としての代入', () => {
+    describe('参照透過性', () => {
+      describe('参照透過性を破壊するもの', () => {
         it('代入操作は参照透明性を破壊する', (next) => {
           /* #@range_begin(assignment_breaks_referential_transparency) */
-          var add = (x, y) => {
+          var x = 0; //代入で変数を更新する
+          var add = (y) => {
+            x = x + 1; // 代入で変数を更新する
             return x + y;
           };
-          var x = 1;
-          expect(
-            add(x, 2)
-          ).to.eql(
-            3
-          );
-          x = 2; // ここで変数xに2を代入している
-          expect(
-            add(x, 2)
-          ).to.eql(
-            4
-          );
           /* #@range_end(assignment_breaks_referential_transparency)  */
+          expect(
+            add(1)
+          ).to.eql(
+            2
+          );
           next();
         });
+      });
+    });
+    describe('副作用の種類', () => {
+      describe('副作用としての代入', () => {
         it('配列は参照透明性を破壊する', (next) => {
           /* #@range_begin(array_destroys_referential_transparency) */
           var array = [];
@@ -478,12 +477,16 @@ describe('なぜ関数型プログラミングが重要か', () => {
         it('命令型プログラミングによる乗算', (next) => {
           /* #@range_begin(imperative_addition) */
           var add = (x,y) => {
-            var times = 0;          // times変数は反復の回数を数えるための変数
-            var result = x;         // result変数は足し算の結果を保持するための変数
+            /* times変数は反復の回数を数えるための変数 */
+            var times = 0;          
+            /* result変数は足し算の結果を保持するための変数 */
+            var result = x;         
 
-            while(times < y){       // while文は反復を処理する
+            /* while文は反復を処理する */
+            while(times < y){       
               result = result + 1;
-              times = times + 1;    // times変数を代入で更新する
+              /* times変数を代入で更新する */
+              times = times + 1;    
             };
             return result;
           };

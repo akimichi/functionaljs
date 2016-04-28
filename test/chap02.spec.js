@@ -1260,23 +1260,53 @@ describe('なぜ関数型プログラミングが重要か', () => {
           next();
         });
         describe('reduceによる反復処理の汎用化', () => {
-          it('reduceによるsumの定義', (next) => {
-            /* #@range_begin(sum_in_array_reduce) */
-            var sum = (array) => {
-              return array.reduce(
-                /* 第1引数に関数を渡す */
-                (accumulator, item) => { 
-                  /* 足し算を実行する */
-                  return accumulator + item;                 
-                },0); // 第2引数には、蓄積変数の初期値として0を渡す 
-            };
-            /* #@range_end(sum_in_array_reduce)  */
-            expect(
-              sum([1,2,3,4])
-            ).to.eql(
-              10
-            );
-            next();
+          describe('sum関数の比較', () => {
+            it('forEachによるsumの定義', (next) => {
+              /* #@range_begin(sum_in_array_while) */
+              var sum = (array) => {
+                /* 結果を格納する変数 */
+                var result = 0;
+                /* 反復した回数を格納する変数 */
+                var index = 0; 
+                while(index < array.length) {
+                  /* 変数resultを代入で更新する */
+                  result = result + array[index];
+                  /* 反復回数を更新する */
+                  index = index + 1;
+                }
+                return result;
+              };
+              /* #@range_end(sum_in_array_while)  */
+              expect(
+                sum([1,2,3,4])
+              ).to.eql(
+                10
+              );
+              expect(
+                sum([1,2,3,4])
+              ).to.eql(
+                10
+              );
+              next();
+            });
+            it('reduceによるsumの定義', (next) => {
+              /* #@range_begin(sum_in_array_reduce) */
+              var sum = (array) => {
+                return array.reduce(
+                  /* 第1引数に関数を渡す */
+                  (accumulator, item) => { 
+                    /* 足し算を実行する */
+                    return accumulator + item;                 
+                  },0); // 第2引数には、蓄積変数の初期値として0を渡す 
+              };
+              /* #@range_end(sum_in_array_reduce)  */
+              expect(
+                sum([1,2,3,4])
+              ).to.eql(
+                10
+              );
+              next();
+            });
           });
           it('productの定義', (next) => {
             /* #@range_begin(product_in_array_reduce) */
@@ -1385,11 +1415,11 @@ describe('なぜ関数型プログラミングが重要か', () => {
             var alwaysOne = constant(1); 
             expect(
               /* #@range_begin(map_in_array_reduce_test) */
-              map(alwaysOne)([1,2,3])
+              map(succ)([1,3,5])
               /* #@range_end(map_in_array_reduce_test) */
             ).to.eql(
               /* #@range_begin(map_in_array_reduce_test_result) */
-              [1,1,1]
+              [2,4,6]
               /* #@range_end(map_in_array_reduce_test_result) */
             );
             next();

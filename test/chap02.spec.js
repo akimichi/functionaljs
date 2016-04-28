@@ -678,8 +678,9 @@ describe('なぜ関数型プログラミングが重要か', () => {
           it('副作用が分離されていないコード', (next) => {
             /* #@range_begin(age_sideeffect) */
             var age = (birthYear) => {
+              /* todayは現時点の日付データ */
               var today = new Date();
-              /* getFullYear関数は現時点での西暦を返す */
+              /* getFullYear関数は日付データにもとづいて現時点の西暦を返す */
               var thisYear = today.getFullYear(); 
               return thisYear - birthYear;
             };
@@ -2478,50 +2479,71 @@ describe('なぜ関数型プログラミングが重要か', () => {
       describe('参照透過性のないコードはテストが困難である', () => {
         it('状態を持つ銀行口座', (next) => {
           /* #@range_begin(account_with_state) */
-          var mkAccount = (balance) => {
-            var deposit = (amount) => {
-              balance = balance + amount;
-              return dispatch;
-            };
-            var withdraw = (amount) => {
-              balance = balance - amount;
-              return dispatch;
-            };
-            var dispatch = (method) => {
-              switch(method){
-              case "deposit":
-                return deposit;
-              case "withdraw":
-                return withdraw; 
-              case "balance":
+          var Account = (initialDeposit) => {
+            /* 変数balanceは預金残高という可変な状態を表わす  */
+            var balance = initialDeposit;
+            return {
+              /* 預金残高を返す関数 */
+              balance: (_) => {
                 return balance;
-              default:
-                throw {
-                  name: "そのようなメソッドはありません",
-                  message: "unknown: " + method
-                };
+              },
+              /* 預金を預ける関数 */
+              deposit: (amount) => {
+                /* 代入でお金を預ける */
+                balance = balance + amount;
+                return this;
+              },
+              /* 預金を引き出す関数 */
+              withdraw: (amount) => {
+                /* 代入でお金を引き出す */
+                balance = balance - amount;
+                return this;
               }
             };
-            return dispatch;
           };
           /* #@range_end(account_with_state) */
-          var account = mkAccount(10);
+          /* #@range_begin(account_with_state_test) */
+          /* 1000円で口座を開設する */
+          var account = Account(1000);
           expect(
-            account("balance")
+            account.balance()
           ).to.eql(
-            10
+            1000
           );
+          /* 口座から200円を引き出す */
           expect(
-            account("deposit")(20)("balance")
+            account.withdraw(200).balance()
           ).to.eql(
-            30
+            800
           );
-          expect(
-            account("deposit")(20)("balance")
-          ).to.eql(
-            50
-          );
+          /* #@range_end(account_with_state_test) */
           next();
+          // var mkAccount = (balance) => {
+          //   var deposit = (amount) => {
+          //     balance = balance + amount;
+          //     return dispatch;
+          //   };
+          //   var withdraw = (amount) => {
+          //     balance = balance - amount;
+          //     return dispatch;
+          //   };
+          //   var dispatch = (method) => {
+          //     switch(method){
+          //     case "deposit":
+          //       return deposit;
+          //     case "withdraw":
+          //       return withdraw; 
+          //     case "balance":
+          //       return balance;
+          //     default:
+          //       throw {
+          //         name: "そのようなメソッドはありません",
+          //         message: "unknown: " + method
+          //       };
+          //     }
+          //   };
+          //   return dispatch;
+          // };
         });
         it('参照透過性のある銀行口座', (next) => {
           /* #@range_begin(account_with_explicit_state) */

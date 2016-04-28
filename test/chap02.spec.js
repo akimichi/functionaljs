@@ -2578,8 +2578,8 @@ describe('なぜ関数型プログラミングが重要か', () => {
           );
           // お金を引き出すのみ 
           expect(
-            account.commit(theAcount)( 
-              [account.withdraw(10), /* 先ほどの口座を再利用する */
+            account.commit(theAcount)( /* 先ほどの口座を再利用する */
+              [account.withdraw(10), 
                account.withdraw(20), 
                account.withdraw(30)]
             )

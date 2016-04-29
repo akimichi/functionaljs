@@ -2297,7 +2297,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
       describe('ストリーム', () => {
         it('簡単なストリームの例', (next) => {
           /* #@range_begin(stream_example) */
-          var stream = [1, (_) => { // 末尾要素は関数で表現する
+          var stream = [1, (_) => { // 末尾部分は関数定義で表現する
             return 2;
           }];
           /* #@range_end(stream_example) */
@@ -2391,23 +2391,6 @@ describe('なぜ関数型プログラミングが重要か', () => {
             };
           };
           /* #@range_end(stream_take) */
-          var even = (n) => {
-            return n % 2 === 0;
-          };
-          expect(
-            /* #@range_begin(stream_remove_test) */
-            take(5)(remove(even)(enumFrom(1)))
-            /* #@range_end(stream_remove_test) */
-          ).to.eql(
-            /* #@range_begin(stream_remove_test_result) */
-            [1,3,5,7,9]
-            /* #@range_end(stream_remove_test_result) */
-          );
-          expect(
-            take(10000)(remove(even)(enumFrom(1))).length
-          ).to.eql(
-            10000
-          );
           /* #@range_begin(multipleOf) */
           var multipleOf = (n,m) => {
             if((n % m) === 0) {
@@ -2426,6 +2409,32 @@ describe('なぜ関数型プログラミングが重要か', () => {
             multipleOf(5,2)
           ).to.eql(
             false
+          );
+          var even = (n) => {
+            return n % 2 === 0;
+          };
+          expect(((_) => { 
+            /* #@range_begin(stream_remove_test) */
+            var even = (n) => {
+              return multipleOf(n,2);
+            };
+            take(5)(remove(even)(enumFrom(1)));
+            /* #@range_end(stream_remove_test) */
+            return take(5)(remove(even)(enumFrom(1)));
+          })()).to.eql(
+          // expect(
+          //   take(5)(remove((n) => {
+          //     return multipleOf(n,2);
+          //   })(enumFrom(1)))
+          // ).to.eql(
+            /* #@range_begin(stream_remove_test_result) */
+            [1,3,5,7,9]
+            /* #@range_end(stream_remove_test_result) */
+          );
+          expect(
+            take(10000)(remove(even)(enumFrom(1))).length
+          ).to.eql(
+            10000
           );
           /* #@range_begin(eratosthenes_sieve) */
           /* エラトステネスのふるい */

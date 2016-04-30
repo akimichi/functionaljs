@@ -477,15 +477,12 @@ describe('なぜ関数型プログラミングが重要か', () => {
         it('命令型プログラミングによる乗算', (next) => {
           /* #@range_begin(imperative_addition) */
           var add = (x,y) => {
-            /* times変数は反復の回数を数えるための変数 */
             var times = 0;          
-            /* result変数は足し算の結果を保持するための変数 */
             var result = x;         
 
-            /* while文は反復を処理する */
+            /* while文で反復を処理する */
             while(times < y){       
               result = result + 1;
-              /* times変数を代入で更新する */
               times = times + 1;    
             };
             return result;
@@ -1886,15 +1883,15 @@ describe('なぜ関数型プログラミングが重要か', () => {
         it('命令型プログラミングによる階乗の計算', (next) => {
           /* #@range_begin(imperative_factorial) */
           var factorial = (n) => {
-            /* result変数に結果が入る */
+            /* 変数resultに結果が入る */
             var result = 1;             
-            /* times変数は反復の回数を数える */
+            /* 変数timesは反復の回数を数える */
             var times = 1;              
             /* while文は反復を処理する */
             while(times < n + 1) {      
-              /* result変数を代入で更新する */
+              /* 変数resultを代入で更新する */
               result = result * times;  
-              /* times変数を代入で更新する */
+              /* 変数timesを代入で更新する */
               times = times + 1;        
             }
             return result;
@@ -2416,7 +2413,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           expect(((_) => { 
             /* #@range_begin(stream_remove_test) */
             var even = (n) => {
-              return multipleOf(n,2);
+              return multipleOf(n,2); // 偶数は2の倍数
             };
             take(5)(remove(even)(enumFrom(1)));
             /* #@range_end(stream_remove_test) */
@@ -2439,7 +2436,7 @@ describe('なぜ関数型プログラミングが重要か', () => {
           /* #@range_begin(eratosthenes_sieve) */
           /* エラトステネスのふるい */
           var sieve = (aStream) => {
-            /* 先頭の素数を取り出す */
+            /* 変数primeは先頭にある素数 */
             var prime = aStream[0];           
             return [prime, (_) => {
               return sieve(remove( /* その素数の倍数を除去する */

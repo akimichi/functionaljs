@@ -8,7 +8,7 @@ describe('「計算」とは', () => {
     describe('チューリング機械 turing machine', () => {
       // c.f. http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069
       /* #@range_begin(turing) */
-      var machine = (code,tape,initState, endState) => {
+      var machine = (program,tape,initState, endState) => {
         /* ヘッドの位置 */
         var position = 0;                          
         /* 機械の状態 */
@@ -22,9 +22,9 @@ describe('「計算」とは', () => {
         while(state != endState) {
           var cell = tape[String(position)];
           if (cell)
-            currentInstruction = code[state][cell];
+            currentInstruction = program[state][cell];
           else
-            currentInstruction = code[state].B;
+            currentInstruction = program[state].B;
           if (!currentInstruction) {
             return false;
           } else {
@@ -42,7 +42,7 @@ describe('「計算」とは', () => {
       describe('turingをテストする', () => {
         it('入力を複製する', (next) => {
           /* #@range_begin(turing_example) */
-          var code = {
+          var program = {
             'q0': {"1": {"write": "B", "move": 1, "next": 'q1'}},
             'q1': {"1": {"write": "1", "move": 1, "next": 'q1'},
                    "0": {"write": "0", "move": 1, "next": 'q2'},
@@ -60,7 +60,7 @@ describe('「計算」とは', () => {
             '1':'1',
             '2':'1'
           };
-          var result = machine(code,// 命令コード
+          var result = machine(program,     // プログラム
                                tape,        // テープ
                                'q0',        // 初期状態
                                'q5');       // 終了状態
@@ -73,23 +73,23 @@ describe('「計算」とは', () => {
           next();
         });
         it('最下位桁までヘッドを移動する', (next) => {
-          var code = {
+          var program = {
             'q0': {"1": {"write": "1", "move": 1, "next": 'q0'},
                    "0": {"write": "0", "move": 1, "next": 'q0'},
                    "B": {"write": "B", "move": -1, "next": 'q1'}}
           };
           expect(
-            machine(code,// 命令コード
-                    ['0'],        // テープ
-                    'q0',        // 初期状態
+            machine(program,    // プログラム 
+                    ['0'],      // テープ
+                    'q0',       // 初期状態
                     'q1')       // 終了状態
           ).to.eql(
             ['0','B']
           );
           expect(
-            machine(code,// 命令コード
-                    ['1'],        // テープ
-                    'q0',        // 初期状態
+            machine(program,    // プログラム
+                    ['1'],      // テープ
+                    'q0',       // 初期状態
                     'q1')       // 終了状態
           ).to.eql(
             ['1','B']
@@ -102,7 +102,7 @@ describe('「計算」とは', () => {
             '0':'1',
             '1':'0'
           };
-          var code = {
+          var program = {
             'q0': {"1": {"write": "1", "move": 1, "next": 'q0'},
                    "0": {"write": "0", "move": 1, "next": 'q0'},
                    "B": {"write": "B", "move": -1, "next": 'q1'}},
@@ -120,7 +120,7 @@ describe('「計算」とは', () => {
           
           expect(
             /* #@range_begin(turing_example_succ_test) */
-            machine(code,// 命令コード
+            machine(program,// プログラム
                     tape,        // テープ
                     'q0',        // 初期状態
                     'q4')       // 終了状態

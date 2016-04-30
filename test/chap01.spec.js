@@ -98,10 +98,12 @@ describe('「計算」とは', () => {
         });
         it('succ関数を実装する', (next) => {
           /* #@range_begin(turing_example_succ) */
-          var tape = {
+          /* 2進法で10、10進法で2を表わすテープ */
+          var tape = { 
             '0':'1',
             '1':'0'
           };
+          /* チューリング機械に与えるプログラム */
           var program = {
             'q0': {"1": {"write": "1", "move": 1, "next": 'q0'},
                    "0": {"write": "0", "move": 1, "next": 'q0'},
@@ -117,13 +119,12 @@ describe('「計算」とは', () => {
                    "B": {"write": "B", "move": 1, "next": 'q4'}}
           };
           /* #@range_end(turing_example_succ) */
-          
           expect(
             /* #@range_begin(turing_example_succ_test) */
-            machine(program,// プログラム
+            machine(program,     // プログラム
                     tape,        // テープ
                     'q0',        // 初期状態
-                    'q4')       // 終了状態
+                    'q4')        // 終了状態
             /* #@range_end(turing_example_succ_test) */
           ).to.eql(
             /* #@range_begin(turing_example_succ_test_result) */

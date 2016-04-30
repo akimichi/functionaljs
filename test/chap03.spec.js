@@ -197,8 +197,9 @@ describe('心の準備', () => {
         /* var b = 3 を実行して、辞書を拡張する */
         var secondEnv = extendEnv({"b": 3}, firstEnv); 
         /* 辞書から b の値を参照する */
-        return lookupEnv("b",secondEnv);                 
+        lookupEnv("b",secondEnv);                
         /* #@range_end(environment_example_usage) */
+        return lookupEnv("b",secondEnv);                 
       })()).to.eql(
         3
       );

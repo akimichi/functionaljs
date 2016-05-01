@@ -102,6 +102,7 @@ describe('心の準備', () => {
           }
           return result;
         };
+        sum(sequence);
         /* #@range_end(sum_for) */
         expect(
           sum(sequence)
@@ -113,6 +114,7 @@ describe('心の準備', () => {
       it('forEach関数によるsum', (next) => {
         /* #@range_begin(sum_forEach) */
         var sum = (seq) => {
+          /* 結果を格納する変数result */
           var result = 0;
           seq.forEach((item) => {
             result = result + item;
@@ -180,7 +182,8 @@ describe('心の準備', () => {
       var emptyEnv = {};
       /* 環境を拡張する */
       var extendEnv = (binding, oldEnv) => {
-        /* merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする */
+        /* merge(obj1,obj2) は
+           obj1とobj2のオブジェクトをマージする関数のこと */
         return merge(binding, oldEnv); 
       };
       /* 変数名に対応する値を環境から取りだす */

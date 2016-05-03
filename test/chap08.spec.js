@@ -196,10 +196,11 @@ describe('関数型言語を作る', () => {
       expect(((_) => {
         /* 空の辞書を作成する */
         var initEnv = env.empty;                   
-        /* 空の辞書から xEnv環境を作る */
-        var xEnv = env.extend("x", 1, initEnv);    
+        /* 空の辞書から outerEnv環境を作る */
+        var outerEnv = env.extend("x", 1, initEnv);    
+
         /* closureEnv環境を作る */
-        var closureEnv = env.extend("y",2, xEnv);  
+        var closureEnv = env.extend("y",2, outerEnv);  
         /* closureEnv環境を利用してx+yを計算する */
         return env.lookup("x",closureEnv) + env.lookup("y",closureEnv);
       })()).to.eql(
@@ -390,7 +391,6 @@ describe('関数型言語を作る', () => {
         },
         /* λ式の評価  */
         lambda: (variable, body) => {   
-          /* クロージャーを返す */
           return exp.match(variable,{
             variable: (name) => {
               return ID.unit((actualArg) => {
@@ -501,10 +501,11 @@ describe('関数型言語を作る', () => {
     it('ID評価器で関数適用を評価する', (next) => {
       // ((n) => { return n + 1; })(2)
       /* #@range_begin(application_evaluation_test) */
-      var expression = exp.app(exp.lambda(exp.variable("n"),
-                                          exp.add(exp.variable("n"),
-                                                  exp.num(1))),
-                               exp.num(2));
+      var expression = exp.app(         /* 関数適用 */
+        exp.lambda(exp.variable("n"),   /* λ式 */
+                   exp.add(exp.variable("n"),
+                           exp.num(1))),
+        exp.num(2));                    /* 引数の数値2 */
       expect(
         evaluate(expression, env.empty)
       ).to.eql(

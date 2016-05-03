@@ -380,13 +380,16 @@ describe('関数型言語を作る', () => {
     // evaluate:: (EXP, ENV) => ID[VALUE]
     var evaluate = (anExp, environment) => {
       return exp.match(anExp,{
-        num: (value) => {        // 数値の評価
-          return ID.unit(value);
+        /* 数値の評価 */
+        num: (numericValue) => {        
+          return ID.unit(numericValue);
         },
-        variable: (name) => {           // 変数の評価 
+        /* 変数の評価  */
+        variable: (name) => {           
           return ID.unit(env.lookup(name, environment));
         },
-        lambda: (variable, body) => {   // λ式の評価 
+        /* λ式の評価  */
+        lambda: (variable, body) => {   
           /* クロージャーを返す */
           return exp.match(variable,{
             variable: (name) => {
@@ -397,14 +400,16 @@ describe('関数型言語を作る', () => {
             }
           });
         },
-        app: (lambda, arg) => {         // 関数適用の評価
+        /* 関数適用の評価 */
+        app: (lambda, arg) => {         
           return ID.flatMap(evaluate(lambda, environment))((closure) => {
             return ID.flatMap(evaluate(arg, environment))((actualArg) => {
               return closure(actualArg); 
             });
           });
         },
-        add: (expL, expR) => {          // 足し算の評価
+        /* 足し算の評価 */
+        add: (expL, expR) => {          
           return ID.flatMap(evaluate(expL, environment))((valueL) => {
             return ID.flatMap(evaluate(expR, environment))((valueR) => {
               return ID.unit(valueL + valueR); 
@@ -456,9 +461,10 @@ describe('関数型言語を作る', () => {
       /* #@range_begin(variable_evaluation_test) */
       /* 変数xを1に対応させた環境を作る */
       var newEnv = env.extend("x",1, env.empty); 
+      /* 拡張したnewEnv環境を用いて変数xを評価する */
       expect(
         evaluate(exp.variable("x"), newEnv)
-      ).to.be(
+      ).to.eql(
         ID.unit(1)
       );
       /* #@range_end(variable_evaluation_test) */
@@ -467,6 +473,18 @@ describe('関数型言語を作る', () => {
       ).to.be(
         ID.unit(undefined)
       );
+      next();
+    });
+    it('ID評価器でaddを評価する', (next) => {
+      /* add(1,2) */
+      /* #@range_begin(add_evaluation_test) */
+      var addition = exp.add(exp.num(1),exp.num(2));
+      expect(
+        evaluate(addition, env.empty)
+      ).to.eql(
+        ID.unit(3)
+      );
+      /* #@range_end(add_evaluation_test) */
       next();
     });
     it('ID評価器で関数を評価する', (next) => {
@@ -678,12 +696,14 @@ describe('関数型言語を作る', () => {
       flatMap: (instanceM) => {
         return (transform) => {
           return pair.match(instanceM,{
+            /* Pair型に格納されている値の対を取り出す */
             cons: (value, log) => {
               /* 取り出した値で計算する */
               var newInstance = transform(value); 
               /* 
                  計算の結果をPairの左側に格納し、
-                 新しいログを既存のログに追加したものをPairの右側に格納する
+                 新しいログを既存のログに追加したものを
+                 Pairの右側に格納する
               */
               return pair.cons(
                 pair.left(newInstance),
@@ -692,8 +712,8 @@ describe('関数型言語を作る', () => {
           });
         };
       },
-      // 引数 value をログに格納する
       // output:: VALUE => LOG[()] 
+      /* 引数 value をログに格納する */
       output: (value) => {
         return pair.cons(null, list.cons(String(value), list.empty()));
       }

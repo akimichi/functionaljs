@@ -1,0 +1,6 @@
+{
+  "name": "Functionaljs",
+  "tagline": "「関数型プログラミングの基礎知識」サンプルコード",
+  "body": "# 「関数型プログラミングの基礎知識」\r\n\r\n## テストコード\r\n\r\n* [第1章 「計算」とは](chap01.spec.html)\r\n* [第2章 なぜ関数型プログラミングが重要か](chap02.spec.html)\r\n* [第3章 心の準備](chap03.spec.html)\r\n* [第4章 データの種類と特徴](chap04.spec.html)\r\n* [第5章 プログラムをコントロールする仕組み](chap05.spec.html)\r\n* [第6章 関数を利用する](chap06.spec.html)\r\n* [第7章 高階関数を活用する](chap07.spec.html)\r\n* [第8章 関数型言語を作る](chap08.spec.html)\r\n\r\n## 付録\r\n\r\n* [継続渡し評価器](interpreter.spec.html)\r\n* [パーサーコンビネータ](parser.spec.html)\r\n* [モナド](monad.spec.html)\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}

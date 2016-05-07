@@ -37,3 +37,6 @@ target/
 # haskell
 .stack-work
 dist/
+
+# docco
+.publish/

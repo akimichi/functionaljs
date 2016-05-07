@@ -45,7 +45,7 @@ describe('命令型モデル', () => {
       return tape;
     };
     /* #@range_end(turing)  */
-  // ### チューリング機械のテスト
+    // ### チューリング機械のテスト
     describe('チューリング機械をテストする', () => {
       it('入力を複製する', (next) => {
         /* #@range_begin(turing_example) */
@@ -143,6 +143,9 @@ describe('命令型モデル', () => {
           }
           /* #@range_end(turing_example_succ_test_result) */
         );
+        // **チューリング機械の挙動**
+        // 
+        // ![チューリング機械の挙動](images/turing_succ.gif) 
         next();
       });
     });

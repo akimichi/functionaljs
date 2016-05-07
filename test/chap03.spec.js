@@ -1,5 +1,8 @@
 "use strict";
 
+// 心の準備
+// ========
+
 var expect = require('expect.js');
 var util = require('util');
 

@@ -227,6 +227,8 @@ describe('関数型モデル', () => {
       var prev = (n) => {
         return n - 1;
       };
+      // **add関数の簡約**
+      // ![add関数の簡約](images/add_reduction.gif) 
       /* add関数の定義 */
       var add = (x,y) => { 
         if(y < 1){

@@ -53,7 +53,7 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(turing) */</span>
-      <span class="hljs-keyword">var</span> machine = (code,tape,initState, endState) =&gt; {
+      <span class="hljs-keyword">var</span> machine = (program,tape,initState, endState) =&gt; {
         <span class="hljs-comment">/* ヘッドの位置 */</span>
         <span class="hljs-keyword">var</span> position = <span class="hljs-number">0</span>;                          
         <span class="hljs-comment">/* 機械の状態 */</span>
@@ -67,9 +67,9 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         <span class="hljs-keyword">while</span>(state != endState) {
           <span class="hljs-keyword">var</span> cell = tape[<span class="hljs-built_in">String</span>(position)];
           <span class="hljs-keyword">if</span> (cell)
-            currentInstruction = code[state][cell];
+            currentInstruction = program[state][cell];
           <span class="hljs-keyword">else</span>
-            currentInstruction = code[state].B;
+            currentInstruction = program[state].B;
           <span class="hljs-keyword">if</span> (!currentInstruction) {
             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
           } <span class="hljs-keyword">else</span> {
@@ -87,7 +87,7 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
       describe(<span class="hljs-string">'turingをテストする'</span>, () =&gt; {
         it(<span class="hljs-string">'入力を複製する'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(turing_example) */</span>
-          <span class="hljs-keyword">var</span> code = {
+          <span class="hljs-keyword">var</span> program = {
             <span class="hljs-string">'q0'</span>: {<span class="hljs-string">"1"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"B"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q1'</span>}},
             <span class="hljs-string">'q1'</span>: {<span class="hljs-string">"1"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"1"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q1'</span>},
                    <span class="hljs-string">"0"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"0"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q2'</span>},
@@ -105,7 +105,7 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
             <span class="hljs-string">'1'</span>:<span class="hljs-string">'1'</span>,
             <span class="hljs-string">'2'</span>:<span class="hljs-string">'1'</span>
           };
-          <span class="hljs-keyword">var</span> result = machine(code,<span class="hljs-comment">// 命令コード</span>
+          <span class="hljs-keyword">var</span> result = machine(program,     <span class="hljs-comment">// プログラム</span>
                                tape,        <span class="hljs-comment">// テープ</span>
                                <span class="hljs-string">'q0'</span>,        <span class="hljs-comment">// 初期状態</span>
                                <span class="hljs-string">'q5'</span>);       <span class="hljs-comment">// 終了状態</span>
@@ -118,23 +118,23 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
           next();
         });
         it(<span class="hljs-string">'最下位桁までヘッドを移動する'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> code = {
+          <span class="hljs-keyword">var</span> program = {
             <span class="hljs-string">'q0'</span>: {<span class="hljs-string">"1"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"1"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q0'</span>},
                    <span class="hljs-string">"0"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"0"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q0'</span>},
                    <span class="hljs-string">"B"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"B"</span>, <span class="hljs-string">"move"</span>: -<span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q1'</span>}}
           };
           expect(
-            machine(code,<span class="hljs-comment">// 命令コード</span>
-                    [<span class="hljs-string">'0'</span>],        <span class="hljs-comment">// テープ</span>
-                    <span class="hljs-string">'q0'</span>,        <span class="hljs-comment">// 初期状態</span>
+            machine(program,    <span class="hljs-comment">// プログラム </span>
+                    [<span class="hljs-string">'0'</span>],      <span class="hljs-comment">// テープ</span>
+                    <span class="hljs-string">'q0'</span>,       <span class="hljs-comment">// 初期状態</span>
                     <span class="hljs-string">'q1'</span>)       <span class="hljs-comment">// 終了状態</span>
           ).to.eql(
             [<span class="hljs-string">'0'</span>,<span class="hljs-string">'B'</span>]
           );
           expect(
-            machine(code,<span class="hljs-comment">// 命令コード</span>
-                    [<span class="hljs-string">'1'</span>],        <span class="hljs-comment">// テープ</span>
-                    <span class="hljs-string">'q0'</span>,        <span class="hljs-comment">// 初期状態</span>
+            machine(program,    <span class="hljs-comment">// プログラム</span>
+                    [<span class="hljs-string">'1'</span>],      <span class="hljs-comment">// テープ</span>
+                    <span class="hljs-string">'q0'</span>,       <span class="hljs-comment">// 初期状態</span>
                     <span class="hljs-string">'q1'</span>)       <span class="hljs-comment">// 終了状態</span>
           ).to.eql(
             [<span class="hljs-string">'1'</span>,<span class="hljs-string">'B'</span>]
@@ -143,11 +143,13 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
         });
         it(<span class="hljs-string">'succ関数を実装する'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(turing_example_succ) */</span>
-          <span class="hljs-keyword">var</span> tape = {
+          <span class="hljs-comment">/* 2進法で10、10進法で2を表わすテープ */</span>
+          <span class="hljs-keyword">var</span> tape = { 
             <span class="hljs-string">'0'</span>:<span class="hljs-string">'1'</span>,
             <span class="hljs-string">'1'</span>:<span class="hljs-string">'0'</span>
           };
-          <span class="hljs-keyword">var</span> code = {
+          <span class="hljs-comment">/* チューリング機械に与えるプログラム */</span>
+          <span class="hljs-keyword">var</span> program = {
             <span class="hljs-string">'q0'</span>: {<span class="hljs-string">"1"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"1"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q0'</span>},
                    <span class="hljs-string">"0"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"0"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q0'</span>},
                    <span class="hljs-string">"B"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"B"</span>, <span class="hljs-string">"move"</span>: -<span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q1'</span>}},
@@ -162,13 +164,12 @@ describe(<span class="hljs-string">'「計算」とは'</span>, () =&gt; {
                    <span class="hljs-string">"B"</span>: {<span class="hljs-string">"write"</span>: <span class="hljs-string">"B"</span>, <span class="hljs-string">"move"</span>: <span class="hljs-number">1</span>, <span class="hljs-string">"next"</span>: <span class="hljs-string">'q4'</span>}}
           };
           <span class="hljs-comment">/* #@range_end(turing_example_succ) */</span>
-          
           expect(
             <span class="hljs-comment">/* #@range_begin(turing_example_succ_test) */</span>
-            machine(code,<span class="hljs-comment">// 命令コード</span>
+            machine(program,     <span class="hljs-comment">// プログラム</span>
                     tape,        <span class="hljs-comment">// テープ</span>
                     <span class="hljs-string">'q0'</span>,        <span class="hljs-comment">// 初期状態</span>
-                    <span class="hljs-string">'q4'</span>)       <span class="hljs-comment">// 終了状態</span>
+                    <span class="hljs-string">'q4'</span>)        <span class="hljs-comment">// 終了状態</span>
             <span class="hljs-comment">/* #@range_end(turing_example_succ_test) */</span>
           ).to.eql(
             <span class="hljs-comment">/* #@range_begin(turing_example_succ_test_result) */</span>

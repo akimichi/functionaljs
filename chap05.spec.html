@@ -30,8 +30,34 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="-">プログラムをコントロールする仕組み</h1>
 
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
 <span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
 
@@ -83,23 +109,10 @@
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       }
     });
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>list#append
-append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  append: (xs) =&gt; {
+  },
+  <span class="hljs-comment">/* list#append */</span>
+  <span class="hljs-comment">/* append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T] */</span>
+  append: (xs) =&gt; {
     <span class="hljs-keyword">return</span> (ys) =&gt; {
       <span class="hljs-keyword">if</span>(list.isEmpty(xs)){
         <span class="hljs-keyword">return</span> ys;
@@ -124,43 +137,17 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
         });
       }
     });
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>join:: LIST[LIST[T]] -&gt; LIST[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  join: (list_of_list) =&gt; {
+  },
+  <span class="hljs-comment">/* join:: LIST[LIST[T]] -&gt; LIST[T] */</span>
+  join: (list_of_list) =&gt; {
     <span class="hljs-keyword">if</span>(self.isEmpty(list_of_list)){
       <span class="hljs-keyword">return</span> list.empty();
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">return</span> list.append(list.head(list_of_list))(list.join(list.tail(list_of_list)));
     }
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>foldr:: LIST[T] -&gt; T -&gt; FUNC[T -&gt; LIST] -&gt; T</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  foldr: (seq) =&gt; {
+  },
+  <span class="hljs-comment">/* foldr:: LIST[T] -&gt; T -&gt; FUNC[T -&gt; LIST] -&gt; T */</span>
+  foldr: (seq) =&gt; {
     <span class="hljs-keyword">return</span> (accumulator) =&gt; {
       <span class="hljs-keyword">return</span> (glue) =&gt; {
         expect(glue).to.a(<span class="hljs-string">'function'</span>);
@@ -174,22 +161,9 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
         });
       };
     };
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  map: (seq, transform) =&gt; {
+  },
+  <span class="hljs-comment">/* map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T] */</span>
+  map: (seq, transform) =&gt; {
     <span class="hljs-keyword">return</span> match(seq,{
       empty: (_) =&gt; {
         <span class="hljs-keyword">return</span> list.empty();
@@ -213,22 +187,8 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
     };
     <span class="hljs-keyword">return</span> reverseHelper(seq, list.empty());
   },
-  <span class="hljs-comment">/* #@range_end(list_reverse) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <h2 id="list-filter">list.filter</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(list_filter) */</span>
+  <span class="hljs-comment">/* #@range_end(list_reverse) */</span>
+  <span class="hljs-comment">/* #@range_begin(list_filter) */</span>
   filter: (seq) =&gt; {
     <span class="hljs-keyword">return</span> (predicate) =&gt; {
       expect(predicate).to.a(<span class="hljs-string">'function'</span>);
@@ -248,22 +208,9 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
       };
       <span class="hljs-keyword">return</span> filterAux(seq, list.empty());
     };
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>list#length</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  length: (seq) =&gt; {
+  },
+  <span class="hljs-comment">/* list#length */</span>
+  length: (seq) =&gt; {
     <span class="hljs-keyword">return</span> match(seq,{
       empty: (_) =&gt; {
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
@@ -291,22 +238,8 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
             <span class="hljs-keyword">return</span> list.any(tail)(predicate);
           }
         }
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>return compose(self.list.or.bind(self))(self.flip.bind(self)(self.list.map.bind(self))(predicate))(list);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    };
+      });
+    };
   },
   <span class="hljs-comment">/* #@range_end(list_filter) */</span>
   toArray: (seq) =&gt; {
@@ -327,44 +260,32 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h1 id="-">プログラムをコントロールする仕組み</h1>
+              <h2 id="-">条文分岐の種類と特徴</h2>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'条文分岐の種類と特徴'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
         
-        <li id="section-10">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'プログラムをコントロールする仕組み'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <h2 id="-">条文分岐</h2>
+              <h3 id="-if-">条文分岐としてのif文</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'条文分岐'</span>, () =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'条件分岐としてのif文'</span>, () =&gt; {
     it(<span class="hljs-string">'偶数の例'</span>, (next) =&gt; {
       <span class="hljs-comment">/* ##@range_begin(even_function)*/</span>
       <span class="hljs-keyword">var</span> even = (n) =&gt; {
@@ -388,8 +309,1087 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
       next();
     });
     <span class="hljs-comment">/*
-    it('逆数の例', (next) =&gt; {
+      it('逆数の例', (next) =&gt; {
+      var inverse = (n) =&gt; {
+      if(n === 0) {
+      return 0;
+      } else {
+      return 1 / n;
+      }
+      };
+      expect(
+      inverse(2)
+      ).to.be(
+      0.5
+      );
+      expect(
+      inverse(0)
+      ).to.be(
+      0
+      );
+      next();
+      });
+    */</span>
+    it(<span class="hljs-string">'returnで関数を抜ける'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* ##@range_begin(even_function_again) */</span>
+      <span class="hljs-keyword">var</span> even = (n) =&gt; {
+        <span class="hljs-keyword">if</span>((n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>) {
+          <span class="hljs-comment">/* returnでeven関数を抜けてtrueを返す */</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;       
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-comment">/* returnでeven関数を抜けてfalseを返す */</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;      
+        }
+      };
+      <span class="hljs-comment">/* ##@range_end(even_function_again) */</span>
+      next();
+    });
+    it(<span class="hljs-string">"三項演算子"</span>, (next) =&gt; {
+      <span class="hljs-comment">/* ##@range_begin(trinary_if) */</span>
+      <span class="hljs-keyword">var</span> even = (n) =&gt; {
+        <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span> ?  <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
+      };
+      expect(
+        even(<span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      expect(
+        even(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      <span class="hljs-comment">/* ##@range_end(trinary_if) */</span>
+      next();
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="-">再帰呼び出しの条件</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'再帰呼び出しの条件'</span>, () =&gt; {
+    <span class="hljs-comment">/* ##@range_begin(infiniteLoop) */</span>
+    <span class="hljs-keyword">var</span> infiniteLoop = (_) =&gt; {
+      <span class="hljs-keyword">return</span> infiniteLoop(_);
+    };
+    <span class="hljs-comment">/* ##@range_end(infiniteLoop) */</span>
+    it(<span class="hljs-string">'ifの非正格性'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* ##@range_begin(if_nonstrict) */</span>
+      <span class="hljs-keyword">var</span> infiniteLoop = (_) =&gt; {
+        <span class="hljs-keyword">return</span> infiniteLoop(_);     <span class="hljs-comment">/* 同じ関数を実行するので無限ループになります */</span>
+      };
+      <span class="hljs-keyword">var</span> lessThanFive = (n) =&gt; {
+        <span class="hljs-keyword">if</span>(n &lt; <span class="hljs-number">5</span>) {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> infiniteLoop(); <span class="hljs-comment">// ここが実行されると無限ループになります</span>
+        }
+      };
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        lessThanFive(<span class="hljs-number">1</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* このテストは実行されると無限ループになるのでコメントアウトしています
+         expect(
+         lessThanFive(10)
+         ).to.eql(
+         false // 無限ループ
+         );
+      */</span>
+      <span class="hljs-comment">/* ##@range_end(if_nonstrict) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'条件式の実装(不完全)'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(functional_if_strict) */</span>
+      <span class="hljs-keyword">var</span> functionalIf = (predicate, trueClause, falseClause) =&gt; {
+        <span class="hljs-keyword">if</span>(predicate){
+          <span class="hljs-keyword">return</span> trueClause; <span class="hljs-comment">// 判定式が真の場合に実行する</span>
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> falseClause;  <span class="hljs-comment">// 判定式が真の場合に実行する</span>
+        }
+      };
+      <span class="hljs-comment">/* #@range_end(functional_if_strict) */</span>
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        functionalIf((<span class="hljs-number">2</span> &lt; <span class="hljs-number">3</span>), <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      );
+      expect(
+        functionalIf((<span class="hljs-number">2</span> &gt; <span class="hljs-number">3</span>), <span class="hljs-number">2</span>, <span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">3</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'条件式の実装'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(functional_if) */</span>
+      <span class="hljs-keyword">var</span> functionalIf = (predicate, pattern) =&gt; {
+        <span class="hljs-keyword">if</span>(predicate){
+          <span class="hljs-keyword">return</span> pattern.thenClause();  <span class="hljs-comment">// 判定式が真の場合に、pattern.thenClauseの関数を実行する</span>
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> pattern.elseClause();  <span class="hljs-comment">// 判定式が真の場合に、pattern.elseClauseの関数を実行する</span>
+        };
+      };
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        functionalIf((<span class="hljs-number">2</span> &lt; <span class="hljs-number">3</span>), {
+          thenClause: () =&gt; { <span class="hljs-comment">// 関数で包む必要がある</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+          },
+          elseClause: () =&gt; {
+            <span class="hljs-keyword">return</span> infiniteLoop();
+          }
+        })
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* #@range_end(functional_if) */</span>
+      <span class="hljs-comment">/* #@range_begin(functional_if_test) */</span>
+      <span class="hljs-keyword">var</span> even = (n) =&gt; {
+        <span class="hljs-keyword">return</span> functionalIf((n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>,{
+          thenClause: () =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+          },
+          elseClause: () =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          }
+        });
+      };
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        even(<span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* #@range_end(functional_if_test) */</span>
+
+      <span class="hljs-comment">/* #@range_begin(multiplyOf)            */</span>
+      <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+        <span class="hljs-keyword">return</span> (m) =&gt; {
+          <span class="hljs-keyword">return</span> functionalIf(m % n === <span class="hljs-number">0</span>,{
+            thenClause: () =&gt; {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            },
+            elseClause: () =&gt; {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            }
+          });
+        };
+      };
+      <span class="hljs-comment">/* テスト */</span>
+      <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>);
+      expect(
+        threeFold(<span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      expect(
+        threeFold(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* #@range_end(multiplyOf)            */</span>
+      next();
+    });
+  });
+  it(<span class="hljs-string">'関数渡しで反復文を構築する'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+    <span class="hljs-comment">/* #@range_begin(loop)            */</span>
+    <span class="hljs-keyword">var</span> loop = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pred, accumulator, expression</span>)</span>{
+      <span class="hljs-keyword">if</span>(pred(accumulator)){
+        <span class="hljs-keyword">return</span> loop(pred, expression(accumulator), expression);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> accumulator;
+      }
+    };
+    <span class="hljs-keyword">var</span> lessThan = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>)</span>{
+        <span class="hljs-keyword">return</span> x &lt; n;
+      };
+    };
+    <span class="hljs-keyword">var</span> succ = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{
+      <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+    };
+    expect(loop(lessThan(<span class="hljs-number">3</span>), <span class="hljs-number">0</span>, succ)).to.eql(<span class="hljs-number">3</span>);
+    <span class="hljs-comment">/* #@range_end(loop) */</span>
+    next();
+  });
+  describe(<span class="hljs-string">'真理値'</span>, () =&gt; {
+    it(<span class="hljs-string">'チャーチの真理値'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* ##@range_begin(church_truth) */</span>
+      <span class="hljs-keyword">var</span> _true = (x) =&gt; {
+        <span class="hljs-keyword">return</span> (y) =&gt; {
+          <span class="hljs-keyword">return</span> x;
+        };
+      };
+      <span class="hljs-keyword">var</span> _false = (x) =&gt; {
+        <span class="hljs-keyword">return</span> (y) =&gt; {
+          <span class="hljs-keyword">return</span> y;
+        };
+      };
+      <span class="hljs-keyword">var</span> _ifElse = (pred) =&gt; {
+        <span class="hljs-keyword">return</span> (x) =&gt; {
+          <span class="hljs-keyword">return</span> (y) =&gt; {
+            <span class="hljs-keyword">return</span> pred(x)(y);
+          };
+        };
+      };
+      <span class="hljs-keyword">var</span> _not = (x) =&gt; {
+        <span class="hljs-keyword">return</span> (x(_false))(_true);
+      };
+      <span class="hljs-keyword">var</span> _and = (x) =&gt; {
+        <span class="hljs-keyword">return</span> (y) =&gt; {
+          <span class="hljs-keyword">return</span> (x(y))(_false);
+        };
+      };
+      <span class="hljs-keyword">var</span> _or = (x) =&gt; {
+        <span class="hljs-keyword">return</span> (y) =&gt; {
+          <span class="hljs-keyword">return</span> (x(_true))(y);
+        };
+      };
+      <span class="hljs-comment">/* ##@range_end(church_truth) */</span>
+      <span class="hljs-comment">/* ##@range_begin(church_truth_test) */</span>
+      expect(
+        _true(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
+      ).to.be(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        _not(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
+      ).to.be(
+        <span class="hljs-number">0</span>
+      );
+      expect(
+        _and(_true)(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
+      ).to.be(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        _ifElse(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
+      ).to.be(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        _ifElse(_false)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
+      ).to.be(
+        <span class="hljs-number">0</span>
+      );
+      expect(((_) =&gt; {
+        <span class="hljs-keyword">var</span> eq = (x) =&gt; {
+          <span class="hljs-keyword">return</span> (y) =&gt; {
+            <span class="hljs-keyword">if</span>(x === y) {
+              <span class="hljs-keyword">return</span> _true;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> _false;
+            }
+          };
+        };
+        <span class="hljs-keyword">return</span> _ifElse(eq(<span class="hljs-number">0</span>)(<span class="hljs-number">0</span>))(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>);
+      })()).to.be(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        _ifElse(_true)(_false)(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
+      ).to.be(
+        <span class="hljs-number">0</span>
+      );
+
+      <span class="hljs-comment">/* ##@range_end(church_truth_test) */</span>
+      next();
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="-switch-">条件分岐としてのswitch文</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'条件分岐としてのswitch文'</span>, () =&gt; {
+  it(<span class="hljs-string">"信号機の例"</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> forward, stop, watchfulForward;
+    <span class="hljs-comment">/* #@range_begin(signal) */</span>
+    <span class="hljs-keyword">var</span> move;
+    <span class="hljs-keyword">var</span> signal = (light) =&gt; {
+      <span class="hljs-keyword">switch</span>(light){
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"green"</span>:
+        move = forward;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"red"</span>:
+        move = stop;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"yellow"</span>:
+        move = watchfulForward;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">throw</span> {
+          name: <span class="hljs-string">"そのような信号はありません"</span>,
+          message: <span class="hljs-string">"unknown: "</span> + light
+        };
+      }
+    };
+    <span class="hljs-comment">/* #@range_end(signal) */</span>
+    next();
+  });
+  it(<span class="hljs-string">"可変データとのマッチング"</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(switch_for_mutable) */</span>
+    <span class="hljs-keyword">var</span> match_for_mutable = (array) =&gt; {
+      <span class="hljs-keyword">switch</span>(array){
+      <span class="hljs-keyword">case</span> [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]: <span class="hljs-comment">// [1,2,3] とマッチさせたい</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    };
+    <span class="hljs-comment">/* テスト */</span>
+    expect(
+      match_for_mutable([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+    ).to.eql(
+      <span class="hljs-literal">false</span>  <span class="hljs-comment">// case [1,2,3] にはマッチしない</span>
+    );
+    <span class="hljs-comment">/* #@range_end(switch_for_mutable) */</span>
+    next();
+  });
+  it(<span class="hljs-string">"通貨の例"</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(currency) */</span>
+    <span class="hljs-keyword">var</span> move;
+    <span class="hljs-keyword">var</span> signal = (currency) =&gt; {
+      <span class="hljs-keyword">switch</span>(currency){
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"yen"</span>:
+        move = forward;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"dollar"</span>:
+        move = stop;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">"euro"</span>:
+        move = watchfulForward;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">throw</span> {
+          name: <span class="hljs-string">"対応していない通貨です"</span>,
+          message: <span class="hljs-string">"unknown: "</span> + currency
+        };
+      }
+    };
+    <span class="hljs-comment">/* #@range_end(currency) */</span>
+    next();
+  });
+  it(<span class="hljs-string">"compare"</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(compare) */</span>
+    <span class="hljs-keyword">var</span> compare =  <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n,m</span>)</span>{
+      <span class="hljs-keyword">if</span> (n &gt; m) {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span>(n === m) {  <span class="hljs-comment">/* ネストされたif文 */</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
+        }
+      }
+    };
+    <span class="hljs-comment">/* テスト */</span>
+    <span class="hljs-comment">/* 3 は 2 よりも大きい */</span>
+    expect(
+      compare(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>)
+    ).to.eql(
+      <span class="hljs-number">1</span>
+    );
+    <span class="hljs-comment">/* 1 と 1 は等しい */</span>
+    expect(
+      compare(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>)
+    ).to.eql(
+      <span class="hljs-number">0</span>
+    );
+    <span class="hljs-comment">/* 2 は 3 よりも小さい */</span>
+    expect(
+      compare(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.eql(
+        -<span class="hljs-number">1</span>
+    );
+    <span class="hljs-comment">/* #@range_end(compare) */</span>
+    next();
+  });
+  describe(<span class="hljs-string">'コンビネータライブラリー'</span>, () =&gt; {
+    <span class="hljs-keyword">var</span> event = {
+      hour: <span class="hljs-number">13</span>,
+      temperture: <span class="hljs-number">25</span>,
+      heater: <span class="hljs-literal">true</span>
+    };
+    it(<span class="hljs-string">'ifで実装する'</span>, (next) =&gt; {
+      <span class="hljs-comment">/*
+        昼間(12~18)は26~28度
+        夜(19~23)は24~26度
+        深夜(0~6)は21~23度
+        朝(7~11)は24~26度
+      */</span>
+      <span class="hljs-comment">/* thermostat:: (EVENT, BOOL) -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> thermostat = (event) =&gt; {
+        <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">12</span> &amp;&amp; event.hour &lt; <span class="hljs-number">19</span>){
+          <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">28</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">26</span>) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> event.heater;
+            }
+          }
+        }
+        <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">18</span> &amp;&amp; event.hour &lt; <span class="hljs-number">24</span>){
+          <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">26</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">24</span>) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> event.heater;
+            }
+          }
+        }
+        <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">0</span> &amp;&amp; event.hour &lt; <span class="hljs-number">7</span>){
+          <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">23</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">21</span>) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> event.heater;
+            }
+          }
+        }
+        <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">6</span> &amp;&amp; event.hour &lt; <span class="hljs-number">12</span>){
+          <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">26</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">24</span>) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> event.heater;
+            }
+          }
+        }
+      };
+      expect(
+        thermostat({ hour: <span class="hljs-number">22</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      expect(
+        thermostat({ hour: <span class="hljs-number">7</span>, temperture: <span class="hljs-number">22</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'コンビネーターで実装する'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> functionalIf = (predicate, pattern) =&gt; {
+        <span class="hljs-keyword">if</span>(predicate){
+          <span class="hljs-keyword">return</span> pattern.thenClause();
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> pattern.elseClause()
+        };
+      };
+      <span class="hljs-comment">/* expect:: STRING -&gt; OBJECT -&gt; ANY */</span>
+      <span class="hljs-keyword">var</span> extract = (key) =&gt; {
+        <span class="hljs-keyword">return</span> (obj) =&gt; {
+          <span class="hljs-keyword">return</span> obj[key];
+        };
+      };
+      <span class="hljs-comment">/* hour:: EVENT -&gt; NUMBER */</span>
+      <span class="hljs-keyword">var</span> hour = extract(<span class="hljs-string">'hour'</span>);
+      <span class="hljs-comment">/* temperture:: EVENT -&gt; NUMBER */</span>
+      <span class="hljs-keyword">var</span> temperture = extract(<span class="hljs-string">'temperture'</span>);
+      <span class="hljs-comment">/* heater:: EVENT -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> heater = extract(<span class="hljs-string">'heater'</span>);
+      <span class="hljs-comment">/* and:: (ANY -&gt; BOOL,ANY -&gt; BOOL) -&gt; ANY -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> and = (former, latter) =&gt; {
+        expect(former).to.a(<span class="hljs-string">'function'</span>);
+        expect(latter).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> (data) =&gt; {
+          <span class="hljs-keyword">return</span> former(data) &amp;&amp; latter(data);
+        };
+      };
+      <span class="hljs-keyword">var</span> not = (predicate) =&gt; {
+        <span class="hljs-keyword">return</span> (data) =&gt; {
+          <span class="hljs-keyword">return</span> ! predicate(data);
+        };
+      };
+      <span class="hljs-keyword">var</span> or = (former, latter) =&gt; {
+        expect(former).to.a(<span class="hljs-string">'function'</span>);
+        expect(latter).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> (data) =&gt; {
+          <span class="hljs-keyword">return</span> former(data) || latter(data);
+        };
+      };
+      <span class="hljs-comment">/* isMoreThan:: NUMBER -&gt; NUMBER -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> isMoreThan = (n) =&gt; {
+        expect(n).to.a(<span class="hljs-string">'number'</span>);
+        <span class="hljs-keyword">return</span> (m) =&gt; {
+          expect(m).to.a(<span class="hljs-string">'number'</span>);
+          <span class="hljs-keyword">return</span> m &gt; n;
+        };
+      };
+      <span class="hljs-comment">/* negate:: (NUMBER -&gt; NUMBER -&gt; BOOL) -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> negate = (predicate) =&gt; {
+        <span class="hljs-keyword">return</span> (n) =&gt; {
+          <span class="hljs-keyword">return</span> (m) =&gt; {
+            <span class="hljs-keyword">return</span> ! predicate(n)(m);
+          };
+        };
+      };
+      <span class="hljs-keyword">var</span> isLessThan = negate(isMoreThan);
+      expect(
+        isMoreThan(<span class="hljs-number">3</span>)(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      expect(
+        negate(isMoreThan)(<span class="hljs-number">3</span>)(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      expect(
+        isLessThan(<span class="hljs-number">3</span>)(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      <span class="hljs-comment">/* within:: (NUMBER, NUMBER) -&gt; (EVENT -&gt; ANY) -&gt; EVENT -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> within = (lower, upper) =&gt; {
+        <span class="hljs-keyword">return</span> (extractor) =&gt; {
+          expect(extractor).to.a(<span class="hljs-string">'function'</span>);
+          <span class="hljs-keyword">return</span> (event) =&gt; {
+            expect(event).to.an(<span class="hljs-string">'object'</span>);
+            <span class="hljs-keyword">return</span> and(isMoreThan(lower), isLessThan(upper))(extractor(event));
+          };
+        };
+      };
+      expect(
+        within(<span class="hljs-number">12</span>, <span class="hljs-number">18</span>)(hour)({ hour: <span class="hljs-number">16</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      expect(
+        within(<span class="hljs-number">12</span>, <span class="hljs-number">18</span>)(temperture)({ hour: <span class="hljs-number">16</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      <span class="hljs-comment">/* afternoon:: EVENT -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> afternoon = within(<span class="hljs-number">12</span>, <span class="hljs-number">18</span>)(hour);
+      <span class="hljs-keyword">var</span> night = within(<span class="hljs-number">19</span>, <span class="hljs-number">23</span>)(hour);
+      <span class="hljs-keyword">var</span> midnight = within(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)(hour);
+      <span class="hljs-keyword">var</span> morning = within(<span class="hljs-number">7</span>, <span class="hljs-number">12</span>)(hour);
+      expect(
+        afternoon({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      <span class="hljs-comment">/* above:: NUMBER -&gt; (EVENT -&gt; ANY) -&gt; EVENT -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> above = (threshold) =&gt; {
+        <span class="hljs-keyword">return</span> (extractor) =&gt; {
+          expect(extractor).to.a(<span class="hljs-string">'function'</span>);
+          <span class="hljs-keyword">return</span> (event) =&gt; {
+            expect(event).to.an(<span class="hljs-string">'object'</span>);
+            <span class="hljs-keyword">return</span> isMoreThan(threshold)(extractor(event));
+          };
+        };
+      };
+      expect(
+        temperture({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-number">25</span>
+      );
+      expect(
+        above(<span class="hljs-number">20</span>)(temperture)({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* below:: NUMBER -&gt; (EVENT -&gt; ANY) -&gt; EVENT -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> below = (threshold) =&gt; {
+        <span class="hljs-keyword">return</span> (extractor) =&gt; {
+          expect(extractor).to.a(<span class="hljs-string">'function'</span>);
+          <span class="hljs-keyword">return</span> (event) =&gt; {
+            expect(event).to.an(<span class="hljs-string">'object'</span>);
+            <span class="hljs-keyword">return</span> isLessThan(threshold)(extractor(event));
+          };
+        };
+      };
+      expect(
+        below(<span class="hljs-number">20</span>)(temperture)({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+
+      <span class="hljs-comment">/* afternoon:: EVENT -&gt; BOOL */</span>
+      <span class="hljs-comment">/* above(28)(temperture):: EVENT -&gt; BOOL */</span>
+      expect(
+        and(afternoon
+            ,above(<span class="hljs-number">28</span>)(temperture))({ hour: <span class="hljs-number">13</span>, temperture: <span class="hljs-number">29</span>, heater: <span class="hljs-literal">false</span>})
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      thermostat: (timezone, temperaturezone) =&gt; {
+        <span class="hljs-keyword">return</span> (event) =&gt; {
+
+        };
+      };
+      <span class="hljs-comment">/* heaterOn:: (TIMEZONE, TEMPERATUREZONE) -&gt; EVENT -&gt; BOOL */</span>
+
+      next();
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="-">コンビネータによる条件分岐の改善</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'コンビネータによる条件分岐の改善'</span>, () =&gt; {
+    <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
+      <span class="hljs-keyword">return</span> (m) =&gt; {
+        <span class="hljs-keyword">if</span>((m % n) === <span class="hljs-number">0</span>) {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+      };
+    };
+    <span class="hljs-keyword">var</span> twoFold = multiplyOf(<span class="hljs-number">2</span>);
+    <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>);
+    <span class="hljs-keyword">var</span> fiveFold = multiplyOf(<span class="hljs-number">5</span>);
+    it(<span class="hljs-string">'notコンビネータ'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* not:: (NUMBER-&gt;BOOL) -&gt; NUMBER -&gt; BOOL */</span>
+      <span class="hljs-keyword">var</span> not = (predicate) =&gt; {
+        <span class="hljs-keyword">return</span> (data) =&gt; { <span class="hljs-comment">// NUMBER -&gt; BOOL</span>
+          <span class="hljs-keyword">if</span> (predicate(data)) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+          }
+        };
+      };
+      expect(
+        not(not(twoFold))(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'2と3の倍数で 5の倍数ではない'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* ##@range_begin(twoFoldAndThreeFoldButNotFiveFold) */</span>
+      <span class="hljs-keyword">var</span> twoFold = multiplyOf(<span class="hljs-number">2</span>); <span class="hljs-comment">/* 2の倍数を判定する */</span>
+      <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>); <span class="hljs-comment">/* 3の倍数を判定する */</span>
+      <span class="hljs-keyword">var</span> fiveFold = multiplyOf(<span class="hljs-number">5</span>); <span class="hljs-comment">/* 5の倍数を判定する */</span>
+
+      <span class="hljs-keyword">var</span> twoFoldAndThreeFoldButNotFiveFold = (n) =&gt; {
+        <span class="hljs-keyword">if</span>(twoFold(n) &amp;&amp; threeFold(n) &amp;&amp; ! fiveFold(n)) {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+      };
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        twoFoldAndThreeFoldButNotFiveFold(<span class="hljs-number">6</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      expect(
+        twoFoldAndThreeFoldButNotFiveFold(<span class="hljs-number">30</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      <span class="hljs-comment">/* ##@range_end(twoFoldAndThreeFoldButNotFiveFold) */</span>
+      next();
+    });
+    <span class="hljs-comment">/* ##@range_begin(not_combinator) */</span>
+    <span class="hljs-comment">/* 「~ではない」を表す否定  */</span>
+    <span class="hljs-comment">/* not:: (NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
+    <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicate:: NUMBER-&gt;BOOL</span>
+      <span class="hljs-keyword">return</span> (number) =&gt; {     <span class="hljs-comment">// NUMBER-&gt;BOOL型の関数を返す</span>
+        <span class="hljs-keyword">return</span> ! predicate(number); <span class="hljs-comment">// !演算子で論理を反転させる</span>
+      };
+    };
+    <span class="hljs-comment">/* ##@range_end(not_combinator) */</span>
+    <span class="hljs-comment">/* ##@range_begin(logical_combinator) */</span>
+    <span class="hljs-comment">/* 「かつ」を表す論理積  */</span>
+    <span class="hljs-comment">/* and:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
+    <span class="hljs-keyword">var</span> and = (predicateA, predicateB) =&gt; {
+      <span class="hljs-keyword">return</span> (data) =&gt; {
+        <span class="hljs-keyword">return</span> predicateA(data) &amp;&amp; predicateB(data);
+      };
+    };
+    <span class="hljs-comment">/* 「もしくは」を表す論理和  */</span>
+    <span class="hljs-keyword">var</span> or = (predicateA, predicateB) =&gt; {
+      <span class="hljs-keyword">return</span> (data) =&gt; {
+        <span class="hljs-keyword">return</span> predicateA(data) || predicateB(data);
+      };
+    };
+    <span class="hljs-comment">/* ##@range_end(logical_combinator) */</span>
+    it(<span class="hljs-string">'論理コンビネータのテスト'</span>, (next) =&gt; {
+      expect(
+        twoFold(<span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* ##@range_begin(logical_combinator_test) */</span>
+      expect(
+        <span class="hljs-comment">/* 「2の倍数かつ3の倍数で、5の倍数ではない」*/</span>
+        and(and(twoFold,threeFold),not(fiveFold))(<span class="hljs-number">6</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* ##@range_end(logical_combinator_test) */</span>
+      expect(
+        and(twoFold,threeFold)(<span class="hljs-number">6</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      expect(
+        and(twoFold,threeFold)(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      expect(
+        and(and(twoFold,threeFold),not(fiveFold))(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      <span class="hljs-comment">/* 2の倍数もしくは3の倍数で5の倍数でもあるもの */</span>
+      <span class="hljs-comment">/* ##@range_begin(another_logical_combinator_test) */</span>
+      expect(
+        <span class="hljs-comment">/* 「2の倍数もしくは3の倍数、かつ5の倍数でもある」 */</span>
+        and(or(twoFold,threeFold),fiveFold)(<span class="hljs-number">10</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      <span class="hljs-comment">/* ##@range_end(another_logical_combinator_test) */</span>
+      next();
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h2 id="-">代数的データ型</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'代数的データ型'</span>, () =&gt; {
+  it(<span class="hljs-string">'Listを代数的データ型として実装する'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
+    <span class="hljs-comment">/* リストの代数的データ型 */</span>
+    <span class="hljs-keyword">var</span> empty = () =&gt; { <span class="hljs-comment">// 空のリスト</span>
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.empty();
+      };
+    };
+    <span class="hljs-keyword">var</span> cons = (value, list) =&gt; { <span class="hljs-comment">// 空でないリスト</span>
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.cons(value, list);
+      };
+    };
+    <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype) */</span>
+    <span class="hljs-comment">/* #@range_begin(match_in_algebraic_datatype) */</span>
+    <span class="hljs-comment">/* 代数的データ型に対してパターンマッチを実現する関数 */</span>
+    <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
+      <span class="hljs-keyword">return</span> data(pattern);
+    };
+    <span class="hljs-comment">/* #@range_end(match_in_algebraic_datatype) */</span>
+    <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span>
+    <span class="hljs-comment">/* 引数 alist に渡されたリストが
+       空のリストかどうかを判定する */</span>
+    <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
+      <span class="hljs-comment">/* match関数で分岐する */</span>
+      <span class="hljs-keyword">return</span> match(alist, { 
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        },
+        <span class="hljs-comment">/* headとtailにそれぞれ先頭要素、末尾要素が入る */</span>
+        cons: (head, tail) =&gt; { 
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+      });
+    };
+    <span class="hljs-comment">/* 引数alistに渡されたリストの先頭の要素を返す */</span>
+    <span class="hljs-keyword">var</span> head = (alist) =&gt; {
+      <span class="hljs-keyword">return</span> match(alist, {
+        <span class="hljs-comment">/* 空のリストには先頭要素はありません */</span>
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> head;
+        }
+      });
+    };
+    <span class="hljs-comment">/* 引数alistに渡されたリストの末尾のリストを返す */</span>
+    <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
+      <span class="hljs-keyword">return</span> match(alist, {
+        <span class="hljs-comment">/* 空のリストには末尾要素はありません */</span>
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> tail;
+        }
+      });
+    };
+    <span class="hljs-comment">/* #@range_end(list_function_using_algebraic_datatype) */</span>
+    <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype_test) */</span>
+    <span class="hljs-comment">/* empty は空のリストではある */</span>
+    expect(
+      isEmpty(empty())         
+    ).to.eql(
+      <span class="hljs-literal">true</span>
+    );
+    <span class="hljs-comment">/* [1] は空のリストではない */</span>
+    expect(
+      isEmpty(cons(<span class="hljs-number">1</span>,empty())) 
+    ).to.eql(
+      <span class="hljs-literal">false</span>
+    );
+    <span class="hljs-comment">/* [1]の先頭要素は 1 である */</span>
+    expect(
+      head(cons(<span class="hljs-number">1</span>,empty()))    
+    ).to.be(
+      <span class="hljs-number">1</span>
+    );
+    <span class="hljs-comment">/* [1,2]の2番目の要素は2である */</span>
+    expect(
+      head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty())))) 
+    ).to.be(
+      <span class="hljs-number">2</span>
+    );
+    <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype_test) */</span>
+    expect(
+      isEmpty(tail(cons(<span class="hljs-number">1</span>,empty())))     <span class="hljs-comment">// [1]の末尾要素は空のリストである</span>
+    ).to.be(
+      <span class="hljs-literal">true</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">'男女の別をsum型で表現する'</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> BMI = (weight <span class="hljs-comment">/* kg */</span>, height <span class="hljs-comment">/* cm */</span>) =&gt; {
+      <span class="hljs-keyword">var</span> height_in_meter = height / <span class="hljs-number">100.0</span>;
+      <span class="hljs-keyword">return</span> weight / (height_in_meter * height_in_meter);
+    };
+    <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
+      <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
+    };
+    <span class="hljs-keyword">var</span> male = (data) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.male(data);
+      }
+    };
+    <span class="hljs-keyword">var</span> female = (data) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.female(data);
+      };
+    }
+    <span class="hljs-keyword">var</span> evaluate = (person) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> match(person, {
+        male: (data) =&gt; {
+          <span class="hljs-keyword">return</span> {
+            BMI: BMI(data.weight, data.height),
+            <span class="hljs-comment">/* total body water */</span>
+            TBW: data.weight * <span class="hljs-number">0.6</span>,
+            <span class="hljs-comment">/* estimated blood volume */</span>
+            EBV: <span class="hljs-number">0.168</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.050</span> * data.weight + <span class="hljs-number">0.444</span>
+          };
+        },
+        female: (data) =&gt; {
+          <span class="hljs-keyword">return</span> {
+            BMI: BMI(data.weight, data.height),
+            TBW: data.weight * <span class="hljs-number">0.5</span>,
+            <span class="hljs-comment">/* estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662 */</span>
+            EBV: <span class="hljs-number">0.250</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.625</span> * data.weight - <span class="hljs-number">0.662</span>
+          };
+        }
+      });
+    };
+    <span class="hljs-keyword">var</span> man = male({
+      weight: <span class="hljs-number">72</span>,
+      height: <span class="hljs-number">175</span>
+    });
+    <span class="hljs-keyword">var</span> woman = female({
+      weight: <span class="hljs-number">54</span>,
+      height: <span class="hljs-number">160</span>
+    });
+    expect(
+      evaluate(man).BMI
+    ).to.be(<span class="hljs-number">23.510204081632654</span>);
+    expect(
+      evaluate(woman).TBW
+    ).to.be(<span class="hljs-number">27</span>);
+    next();
+  });
+  it(<span class="hljs-string">'数式の例'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype) */</span>
+    <span class="hljs-keyword">var</span> num = (n) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.num(n);
+      };
+    };
+    <span class="hljs-keyword">var</span> add = (exp1, exp2) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.add(exp1, exp2);
+      };
+    };
+    <span class="hljs-keyword">var</span> mul = (exp1, exp2) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.mul(exp1, exp2);
+      };
+    };
+    <span class="hljs-comment">/* #@range_end(expression_algebraic_datatype) */</span>
+    <span class="hljs-comment">/*
+    var exp = {
+      match : (exp, pattern) =&gt; {
+        return exp.call(exp, pattern);
+      },
+      num : (n) =&gt; {
+        return (pattern) =&gt; {
+          return pattern.num(n);
+        };
+      },
+      add : (exp1, exp2) =&gt; {
+        return (pattern) =&gt; {
+          return pattern.add(exp1, exp2);
+        };
+      },
+      mul : (exp1, exp2) =&gt; {
+        return (pattern) =&gt; {
+          return pattern.mul(exp1, exp2);
+        };
+      }
+    };
+    */</span>
+    <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype_recursion) */</span>
+    <span class="hljs-keyword">var</span> calculate = (exp) =&gt; {
+      <span class="hljs-keyword">return</span> match(exp, { <span class="hljs-comment">// パターンマッチを実行する</span>
+        num: (n) =&gt; {
+          <span class="hljs-keyword">return</span> n;
+        },
+        add: (expL, expR) =&gt; {
+          <span class="hljs-comment">/* calculateを再帰呼び出して足し算を実行する */</span>
+          <span class="hljs-keyword">return</span> calculate(expL) + calculate(expR); 
+        },
+        <span class="hljs-comment">/* calculateを再帰呼び出してかけ算を実行する */</span>
+        mul: (expL, expR) =&gt; {
+          <span class="hljs-keyword">return</span> calculate(expL) * calculate(expR); 
+        }
+      });
+    };
+    <span class="hljs-comment">/**** テスト ****/</span>
+    <span class="hljs-comment">/* 1 + (2 * 3) を計算する */</span>
+    <span class="hljs-keyword">var</span> expression = add(num(<span class="hljs-number">1</span>),
+                         mul(num(<span class="hljs-number">2</span>),
+                             num(<span class="hljs-number">3</span>)));
+    expect(
+      calculate(expression)
+    ).to.eql(
+      <span class="hljs-number">7</span>
+    );
+    <span class="hljs-comment">/* #@range_end(expression_algebraic_datatype_recursion) */</span>
+    next();
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h2 id="-">反復処理の種類と特徴</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"反復処理の種類と特徴"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  describe(<span class="hljs-string">"while文"</span>, () =&gt; {
+    it(<span class="hljs-string">"カウント"</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(while_counter) */</span>
+      <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;         <span class="hljs-comment">// 変数の初期化</span>
+      <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {   <span class="hljs-comment">// 反復の条件</span>
+        counter = counter + <span class="hljs-number">1</span>; <span class="hljs-comment">// 変数の更新</span>
+      }
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        counter
+      ).to.eql(
+        <span class="hljs-number">10</span>
+      );
+      <span class="hljs-comment">/* #@range_end(while_counter) */</span>
+      next();
+    });
+    <span class="hljs-comment">/*
+      it("length", (next) =&gt; {
 </span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>#@range_begin(while_length)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
+      <span class="hljs-keyword">var</span> length = (array) =&gt; {
+      <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {
+      counter += <span class="hljs-number">1</span>;
+      }
+      }
+      expect(
+      counter
+      ).to.eql(
+      <span class="hljs-number">10</span>
+      );</pre></div></div>
             
         </li>
         
@@ -400,17 +1400,13 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>##@range_begin(inverse_function)</p>
+              <p>#@range_end(while_length)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> inverse = (n) =&gt; {
-        <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
-          <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> / n;
-        }
-      };</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      next();
+      });
+      it(<span class="hljs-string">"whileによるsum"</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -421,110 +1417,22 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>##@range_end(inverse_function)</p>
+              <p>#@range_begin(while_sum)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      expect(
-        inverse(2)
-      ).to.be(
-        0.5
-      );
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
+      <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+      <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {
+      counter += <span class="hljs-number">1</span>;
+      }
+      }
       expect(
-        inverse(0)
-      ).to.be(
-        0
-      );
-      next();
-    });
-    */
-    it('returnで関数を抜ける', (next) =&gt; {
-      /* ##@range_begin(even_function_again) */
-      var even = (n) =&gt; {
-        if((n % 2) === 0) {
-          /* returnでeven関数を抜けてtrueを返す */
-          return true;       
-        } else {
-          /* returnでeven関数を抜けてfalseを返す */
-          return false;      
-        }
-      };
-      /* ##@range_end(even_function_again) */
-      next();
-    });
-    it("三項演算子", (next) =&gt; {
-      /* ##@range_begin(trinary_if) */
-      var even = (n) =&gt; {
-        return (n % 2) === 0 ?  true : false;
-      };
-      expect(
-        even(2)
+      counter
       ).to.eql(
-        true
-      );
-      expect(
-        even(3)
-      ).to.eql(
-        false
-      );
-      /* ##@range_end(trinary_if) */
-      next();
-    });
-    describe('条件式を実装する', () =&gt; {
-      /* ##@range_begin(infiniteLoop) */
-      var infiniteLoop = (_) =&gt; {
-        return infiniteLoop(_);
-      };
-      /* ##@range_end(infiniteLoop) */
-      it('ifの非正格性', (next) =&gt; {
-        /* ##@range_begin(if_nonstrict) */
-        var infiniteLoop = (_) =&gt; {
-          return infiniteLoop(_);     /* 同じ関数を実行するので無限ループになります */
-        };
-        var lessThanFive = (n) =&gt; {
-          if(n &lt; 5) {
-            return true;
-          } else {
-            return infiniteLoop(); // ここが実行されると無限ループになります
-          }
-        };
-        /* テスト */
-        expect(
-          lessThanFive(1)
-        ).to.eql(
-          true
-        );
-        /* このテストは実行されると無限ループになるのでコメントアウトしています
-          expect(
-            lessThanFive(10)
-          ).to.eql(
-            false // 無限ループ
-          );
-        */
-        /* ##@range_end(if_nonstrict) */
-        next();
-      });
-      it('条件式の実装(不完全)', (next) =&gt; {
-        /* #@range_begin(functional_if_strict) */
-        var functionalIf = (predicate, trueClause, falseClause) =&gt; {
-          if(predicate){
-            return trueClause; // 判定式が真の場合に実行する
-          } else {
-            return falseClause;  // 判定式が真の場合に実行する
-          }
-        };
-        /* #@range_end(functional_if_strict) */
-        /* テスト */
-        expect(
-          functionalIf((2 &lt; 3), 2, 3)
-        ).to.eql(
-          2
-        );
-        expect(
-          functionalIf((2 &gt; 3), 2, 3)
-        ).to.eql(
-          3
-        );</pre></div></div>
+      <span class="hljs-number">10</span>
+      );</pre></div></div>
             
         </li>
         
@@ -535,189 +1443,65 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>expect(conditional(lessThan(3), function(x){ return x;},function(x){ return infiniteLoop(x);})(2)).to.eql(2);</p>
+              <p>#@range_end(while_sum)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        next();
+            <div class="content"><div class='highlight'><pre>      next();
       });
-      it(<span class="hljs-string">'条件式の実装'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(functional_if) */</span>
-        <span class="hljs-keyword">var</span> functionalIf = (predicate, pattern) =&gt; {
-          <span class="hljs-keyword">if</span>(predicate){
-            <span class="hljs-keyword">return</span> pattern.thenClause();  <span class="hljs-comment">// 判定式が真の場合に、pattern.thenClauseの関数を実行する</span>
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> pattern.elseClause();  <span class="hljs-comment">// 判定式が真の場合に、pattern.elseClauseの関数を実行する</span>
-          };
-        };
-        <span class="hljs-comment">/* テスト */</span>
-        expect(
-          functionalIf((<span class="hljs-number">2</span> &lt; <span class="hljs-number">3</span>), {
-            thenClause: () =&gt; { <span class="hljs-comment">// 関数で包む必要がある</span>
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-            },
-            elseClause: () =&gt; {
-              <span class="hljs-keyword">return</span> infiniteLoop();
-            }
-          })
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(functional_if) */</span>
-        <span class="hljs-comment">/* #@range_begin(functional_if_test) */</span>
-        <span class="hljs-keyword">var</span> even = (n) =&gt; {
-          <span class="hljs-keyword">return</span> functionalIf((n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>,{
-            thenClause: () =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-            },
-            elseClause: () =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            }
-          });
-        };
-        <span class="hljs-comment">/* テスト */</span>
-        expect(
-          even(<span class="hljs-number">2</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(functional_if_test) */</span>
-
-        <span class="hljs-comment">/* #@range_begin(multiplyOf)            */</span>
-        <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
-          <span class="hljs-keyword">return</span> (m) =&gt; {
-            <span class="hljs-keyword">return</span> functionalIf(m % n === <span class="hljs-number">0</span>,{
-              thenClause: () =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-              },
-              elseClause: () =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-              }
-            });
-          };
-        };
-        <span class="hljs-comment">/* テスト */</span>
-        <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>);
-        expect(
-          threeFold(<span class="hljs-number">2</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        expect(
-          threeFold(<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(multiplyOf)            */</span>
-        next();
+    */
+  });
+  it("for文", (next) =&gt; {
+    /* #@range_begin(for_example) */
+    for (var counter = 0; counter &lt; 10; counter += 1) {
+      ;
+    }
+    /* テスト */
+    expect(
+      counter
+    ).to.eql(
+      10
+    );
+    /* #@range_end(for_example) */
+    next();
+  });
+  describe('forEach文', () =&gt; {
+    it("forEach文によるsum", (next) =&gt; {
+      /* #@range_begin(forEach_sum) */
+      var array = [1,2,3,4,5];
+      var sum = 0;
+      array.forEach((element) =&gt; {
+        sum += element;
       });
-    });
-    it(<span class="hljs-string">'関数渡しで反復文を構築する'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-      <span class="hljs-comment">/* #@range_begin(loop)            */</span>
-      <span class="hljs-keyword">var</span> loop = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pred, accumulator, expression</span>)</span>{
-        <span class="hljs-keyword">if</span>(pred(accumulator)){
-          <span class="hljs-keyword">return</span> loop(pred, expression(accumulator), expression);
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> accumulator;
-        }
-      };
-      <span class="hljs-keyword">var</span> lessThan = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>)</span>{
-          <span class="hljs-keyword">return</span> x &lt; n;
-        };
-      };
-      <span class="hljs-keyword">var</span> succ = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{
-        <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
-      };
-      expect(loop(lessThan(<span class="hljs-number">3</span>), <span class="hljs-number">0</span>, succ)).to.eql(<span class="hljs-number">3</span>);
-      <span class="hljs-comment">/* #@range_end(loop) */</span>
+      /* テスト */
+      expect(
+        sum
+      ).to.eql(
+        15
+      );
+      /* #@range_end(forEach_sum) */
       next();
     });
-    describe(<span class="hljs-string">'真理値'</span>, () =&gt; {
-      it(<span class="hljs-string">'チャーチの真理値'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* ##@range_begin(church_truth) */</span>
-        <span class="hljs-keyword">var</span> _true = (x) =&gt; {
-          <span class="hljs-keyword">return</span> (y) =&gt; {
-            <span class="hljs-keyword">return</span> x;
-          };
-        };
-        <span class="hljs-keyword">var</span> _false = (x) =&gt; {
-          <span class="hljs-keyword">return</span> (y) =&gt; {
-            <span class="hljs-keyword">return</span> y;
-          };
-        };
-        <span class="hljs-keyword">var</span> _ifElse = (pred) =&gt; {
-          <span class="hljs-keyword">return</span> (x) =&gt; {
-            <span class="hljs-keyword">return</span> (y) =&gt; {
-              <span class="hljs-keyword">return</span> pred(x)(y);
-            };
-          };
-        };
-        <span class="hljs-keyword">var</span> _not = (x) =&gt; {
-          <span class="hljs-keyword">return</span> (x(_false))(_true);
-        };
-        <span class="hljs-keyword">var</span> _and = (x) =&gt; {
-          <span class="hljs-keyword">return</span> (y) =&gt; {
-            <span class="hljs-keyword">return</span> (x(y))(_false);
-          };
-        };
-        <span class="hljs-keyword">var</span> _or = (x) =&gt; {
-          <span class="hljs-keyword">return</span> (y) =&gt; {
-            <span class="hljs-keyword">return</span> (x(_true))(y);
-          };
-        };
-        <span class="hljs-comment">/* ##@range_end(church_truth) */</span>
-        <span class="hljs-comment">/* ##@range_begin(church_truth_test) */</span>
-        expect(
-          _true(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
-        ).to.be(
-          <span class="hljs-number">1</span>
-        );
-        expect(
-          _not(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
-        ).to.be(
-          <span class="hljs-number">0</span>
-        );
-        expect(
-          _and(_true)(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
-        ).to.be(
-          <span class="hljs-number">1</span>
-        );
-        expect(
-          _ifElse(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
-        ).to.be(
-          <span class="hljs-number">1</span>
-        );
-        expect(
-          _ifElse(_false)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
-        ).to.be(
-          <span class="hljs-number">0</span>
-        );
-        expect(((_) =&gt; {
-          <span class="hljs-keyword">var</span> eq = (x) =&gt; {
-            <span class="hljs-keyword">return</span> (y) =&gt; {
-              <span class="hljs-keyword">if</span>(x === y) {
-                <span class="hljs-keyword">return</span> _true;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> _false;
-              }
-            };
-          };
-          <span class="hljs-keyword">return</span> _ifElse(eq(<span class="hljs-number">0</span>)(<span class="hljs-number">0</span>))(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>);
-        })()).to.be(
-          <span class="hljs-number">1</span>
-        );
-        expect(
-          _ifElse(_true)(_false)(_true)(<span class="hljs-number">1</span>)(<span class="hljs-number">0</span>)
-        ).to.be(
-          <span class="hljs-number">0</span>
-        );
-
-        <span class="hljs-comment">/* ##@range_end(church_truth_test) */</span>
-        next();
-      });
+    it("forEach文によるlength", (next) =&gt; {
+      /* #@range_begin(forEach_length) */
+      var length = (array) =&gt; {
+        var result = 0;
+        array.forEach((element) =&gt; {
+          result += 1;
+        });
+        return result;
+      };
+      /* テスト */
+      expect(
+        length([1,2,3,4,5])
+      ).to.eql(
+        5
+      );
+      /* #@range_end(forEach_length) */
+      next();
     });
-  });</pre></div></div>
+  });
+});</pre></div></div>
             
         </li>
         
@@ -728,94 +1512,42 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h2 id="-switch-">条件分岐としてのswitch文</h2>
+              <h2 id="-">再帰による反復処理</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'条件分岐としてのswitch文'</span>, () =&gt; {
-    it(<span class="hljs-string">"信号機の例"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> forward, stop, watchfulForward;
-      <span class="hljs-comment">/* #@range_begin(signal) */</span>
-      <span class="hljs-keyword">var</span> move;
-      <span class="hljs-keyword">var</span> signal = (light) =&gt; {
-        <span class="hljs-keyword">switch</span>(light){
-        <span class="hljs-keyword">case</span> <span class="hljs-string">"green"</span>:
-          move = forward;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-string">"red"</span>:
-          move = stop;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-string">"yellow"</span>:
-          move = watchfulForward;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">default</span>:
-          <span class="hljs-keyword">throw</span> {
-            name: <span class="hljs-string">"そのような信号はありません"</span>,
-            message: <span class="hljs-string">"unknown: "</span> + light
-          };
-        }
-      };
-      <span class="hljs-comment">/* #@range_end(signal) */</span>
-      next();
-    });
-    it(<span class="hljs-string">"可変データとのマッチング"</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(switch_for_mutable) */</span>
-      <span class="hljs-keyword">var</span> match_for_mutable = (array) =&gt; {
-        <span class="hljs-keyword">switch</span>(array){
-        <span class="hljs-keyword">case</span> [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]: <span class="hljs-comment">// [1,2,3] とマッチさせたい</span>
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">default</span>:
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-        }
-      };
-      <span class="hljs-comment">/* テスト */</span>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'再帰による反復処理'</span>, () =&gt; {
+  describe(<span class="hljs-string">'複利法の例'</span>, () =&gt; {
+    <span class="hljs-comment">/* f(n) = f(n-1) * (1 + r) */</span>
+    <span class="hljs-comment">/* #@range_begin(compound_interest) */</span>
+    <span class="hljs-keyword">var</span> compoundInterest = (a, r, n) =&gt; {
+      <span class="hljs-keyword">if</span> (n === <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> a;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">/* compoundInterestの再帰呼び出し */</span>
+        <span class="hljs-keyword">return</span> compoundInterest(a, r, n - <span class="hljs-number">1</span>) * (<span class="hljs-number">1</span> + r); 
+      }
+    };
+    <span class="hljs-comment">/* #@range_end(compound_interest) */</span>
+    it(<span class="hljs-string">"複利の計算"</span>, (next) =&gt; {
       expect(
-        match_for_mutable([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+        compoundInterest(<span class="hljs-number">100000</span>, <span class="hljs-number">0.02</span>, <span class="hljs-number">1</span>)
       ).to.eql(
-        <span class="hljs-literal">false</span>  <span class="hljs-comment">// case [1,2,3] にはマッチしない</span>
+        <span class="hljs-number">102000</span>
       );
-      <span class="hljs-comment">/* #@range_end(switch_for_mutable) */</span>
+      expect(
+        compoundInterest(<span class="hljs-number">100000</span>, <span class="hljs-number">0.02</span>, <span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-number">104040</span>
+      );
+      expect(
+        compoundInterest(<span class="hljs-number">100000</span>, <span class="hljs-number">0.02</span>, <span class="hljs-number">25</span>)
+      ).to.eql(
+        <span class="hljs-number">164060.59944647306</span>
+      );
       next();
     });
-    it(<span class="hljs-string">"通貨の例"</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(currency) */</span>
-      <span class="hljs-keyword">var</span> move;
-      <span class="hljs-keyword">var</span> signal = (currency) =&gt; {
-        <span class="hljs-keyword">switch</span>(currency){
-        <span class="hljs-keyword">case</span> <span class="hljs-string">"yen"</span>:
-          move = forward;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-string">"dollar"</span>:
-          move = stop;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">case</span> <span class="hljs-string">"euro"</span>:
-          move = watchfulForward;
-          <span class="hljs-keyword">break</span>;
-        <span class="hljs-keyword">default</span>:
-          <span class="hljs-keyword">throw</span> {
-            name: <span class="hljs-string">"対応していない通貨です"</span>,
-            message: <span class="hljs-string">"unknown: "</span> + currency
-          };
-        }
-      };
-      <span class="hljs-comment">/* #@range_end(currency) */</span>
-      next();
-    });
-    it(<span class="hljs-string">"compare"</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(compare) */</span>
-      <span class="hljs-keyword">var</span> compare =  <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n,m</span>)</span>{
-        <span class="hljs-keyword">if</span> (n &gt; m) {
-          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">if</span>(n === m) {  <span class="hljs-comment">/* ネストされたif文 */</span>
-            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span>;
-          }
-        }
-      };
-      <span class="hljs-comment">/* テスト */</span></pre></div></div>
+  });</pre></div></div>
             
         </li>
         
@@ -826,15 +1558,472 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>3 は 2 よりも大きい</p>
+              <h2 id="-">再帰処理の利点</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      expect(
-        compare(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>)
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'再帰処理の利点'</span>, () =&gt; {
+    <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
+      <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
+    };
+    <span class="hljs-keyword">var</span> empty = (_) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.empty(_);
+      };
+    };
+    <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.cons(x, xs);
+      };
+    };
+    <span class="hljs-keyword">var</span> isEmpty = (list) =&gt; {
+      <span class="hljs-keyword">return</span> match(list, {
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }
+      });
+    };
+    <span class="hljs-keyword">var</span> head = (list) =&gt; {
+      <span class="hljs-keyword">return</span> match(list, {
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> head;
+        }
+      });
+    };
+    <span class="hljs-keyword">var</span> tail = (list) =&gt; {
+      <span class="hljs-keyword">return</span> match(list, {
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> tail;
+        }
+      });
+    };
+    it(<span class="hljs-string">'蓄積変数を持つlength関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(recursive_length) */</span>
+      <span class="hljs-keyword">var</span> length = (list, accumulator) =&gt; {
+        <span class="hljs-keyword">return</span> match(list, {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> accumulator;
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> length(tail, accumulator + <span class="hljs-number">1</span>); <span class="hljs-comment">// length関数を再帰的に呼び出す</span>
+          }
+        });
+      };
+      <span class="hljs-comment">/************************ テスト ************************/</span>
+      expect(
+        length(empty(), <span class="hljs-number">0</span>)                        <span class="hljs-comment">// []の長さは0</span>
+      ).to.eql(
+        <span class="hljs-number">0</span>
+      );
+      expect(
+        length(cons(<span class="hljs-number">1</span>,empty()), <span class="hljs-number">0</span>)                <span class="hljs-comment">// [1]の長さは1</span>
       ).to.eql(
         <span class="hljs-number">1</span>
-      );</pre></div></div>
+      );
+      expect(
+        length(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))),<span class="hljs-number">0</span>) <span class="hljs-comment">// [1,2,3]の長さは3</span>
+      ).to.eql(
+        <span class="hljs-number">3</span>
+      );
+      <span class="hljs-comment">/* #@range_end(recursive_length) */</span>
+      <span class="hljs-comment">/* #@range_begin(recursive_sum) */</span>
+      <span class="hljs-keyword">var</span> sum = (alist, accumulator) =&gt; {
+        <span class="hljs-keyword">return</span> match(alist, {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> accumulator;
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-comment">/* sumの再帰呼び出し */</span>
+            <span class="hljs-keyword">return</span> sum(tail, accumulator + head); 
+          }
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(recursive_sum) */</span>
+      <span class="hljs-comment">/**** テスト ****/</span>
+      expect(
+        sum(empty(), <span class="hljs-number">0</span>)
+      ).to.eql(
+        <span class="hljs-number">0</span>
+      );
+      expect(
+        sum(cons(<span class="hljs-number">1</span>,empty()), <span class="hljs-number">0</span>)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      expect(
+        sum(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))),<span class="hljs-number">0</span>)
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'蓄積変数を持たないsum関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(recursive_sum_without_accumulator) */</span>
+      <span class="hljs-keyword">var</span> sum = (list) =&gt; {
+        <span class="hljs-comment">/* 蓄積変数を持つ補助関数 */</span>
+        <span class="hljs-keyword">var</span> sumHelper = (list, accumulator) =&gt; { 
+          <span class="hljs-keyword">return</span> match(list, {
+            empty: (_) =&gt; {
+              <span class="hljs-keyword">return</span> accumulator;
+            },
+            cons: (head, tail) =&gt; {
+              <span class="hljs-keyword">return</span> sumHelper(tail, accumulator + head);
+            }
+          });
+        };
+        <span class="hljs-keyword">return</span> sumHelper(list,<span class="hljs-number">0</span>); <span class="hljs-comment">// 補助関数を呼び出す</span>
+      };
+      <span class="hljs-comment">/* #@range_end(recursive_sum_without_accumulator) */</span>
+      <span class="hljs-comment">/**** テスト ****/</span>
+      expect(
+        sum(empty())
+      ).to.eql(
+        <span class="hljs-number">0</span>
+      );
+      expect(
+        sum(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))))
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'蓄積変数を持たないlength関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(recursive_length_without_accumulator) */</span>
+      <span class="hljs-keyword">var</span> length = (list) =&gt; {
+        <span class="hljs-keyword">return</span> match(list, {
+          <span class="hljs-comment">/* emptyの場合は、終了条件となる */</span>
+          empty: (_) =&gt; {    
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+          },
+          <span class="hljs-comment">/* consの場合は、再帰的に呼び出す */</span>
+          cons: (head, tail) =&gt; { 
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + length(tail);
+          }
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(recursive_length_without_accumulator) */</span>
+      <span class="hljs-comment">/************************ テスト ************************/</span>
+      expect(
+        length(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty())))) <span class="hljs-comment">// [1,2,3]の長さは 3</span>
+      ).to.eql(
+        <span class="hljs-number">3</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">'factorialの例'</span>, () =&gt; {
+    it(<span class="hljs-string">'素朴なfactorialの例'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(naive_factorial) */</span>
+      <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+        <span class="hljs-keyword">if</span> (n === <span class="hljs-number">1</span>) {
+          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> n * factorial(n - <span class="hljs-number">1</span>);
+        }
+      };
+      expect(
+        factorial(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      <span class="hljs-comment">/* #@range_end(naive_factorial) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'末尾再帰によるfactorialの例'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(tail_recursive_factorial) */</span>
+      <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+        <span class="hljs-keyword">var</span> factorialRec = (n, accumulator) =&gt; {
+          <span class="hljs-keyword">if</span> (n === <span class="hljs-number">1</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> * accumulator;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> factorialRec(n - <span class="hljs-number">1</span>, n * accumulator);
+          };
+        };
+        <span class="hljs-keyword">return</span> factorialRec(n, <span class="hljs-number">1</span>);
+      };
+      expect(
+        factorial(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      <span class="hljs-comment">/* #@range_end(tail_recursive_factorial) */</span>
+      next();
+    });
+  });
+  describe(<span class="hljs-string">'mapの例'</span>, () =&gt; {
+    <span class="hljs-comment">/* #@range_begin(recursive_map) */</span>
+    <span class="hljs-keyword">var</span> map = (alist, transform) =&gt; {
+      <span class="hljs-keyword">if</span> (list.isEmpty(alist)) {
+        <span class="hljs-keyword">return</span> list.empty;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">var</span> x = list.head(alist);
+        <span class="hljs-keyword">var</span> xs = list.tail(alist);
+        <span class="hljs-keyword">return</span> list.cons(transform(x), map(xs, transform));
+      }
+    };
+    <span class="hljs-comment">/* #@range_end(recursive_map) */</span>
+    <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">1</span>,
+                          list.cons(<span class="hljs-number">2</span>,
+                                    list.cons(<span class="hljs-number">3</span>,
+                                              list.empty)));
+    <span class="hljs-keyword">var</span> double = (n) =&gt; {
+      <span class="hljs-keyword">return</span> n * <span class="hljs-number">2</span>;
+    };
+    <span class="hljs-keyword">var</span> doubledList = map(alist, double);
+    expect(
+      list.head(doubledList)
+    ).to.eql(
+      <span class="hljs-number">2</span>
+    );
+    expect(
+      list.head(list.tail(doubledList))
+    ).to.eql(
+      <span class="hljs-number">4</span>
+    );
+    expect(
+      list.head(list.tail(list.tail(doubledList)))
+    ).to.eql(
+      <span class="hljs-number">6</span>
+    );
+    it(<span class="hljs-string">'リストのmap'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(list_map) */</span>
+      <span class="hljs-comment">/* map :: LIST[T] -&gt; FUN[T -&gt; T] -&gt; LIST[T] */</span>
+      <span class="hljs-keyword">var</span> map = (seq,transform) =&gt; {
+        <span class="hljs-keyword">return</span> match(seq,{
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> list.empty();
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> list.cons(transform(head), 
+                             map(tail,transform));
+          }
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(list_map) */</span>
+      
+      <span class="hljs-comment">/* #@range_begin(list_toArray) */</span>
+      <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
+        <span class="hljs-keyword">var</span> toArrayHelper = (seq,accumulator) =&gt; {
+          <span class="hljs-keyword">return</span> match(seq, {
+            empty: (_) =&gt; {
+              <span class="hljs-keyword">return</span> accumulator;  <span class="hljs-comment">// 空のリストの場合は accumulator を返して終了する</span>
+            },
+            cons: (head, tail) =&gt; { <span class="hljs-comment">// 空のリストでなければ、再帰的に処理する</span>
+              <span class="hljs-keyword">return</span> toArrayHelper(tail, accumulator.concat(head));
+            }
+          });
+        };
+        <span class="hljs-keyword">return</span> toArrayHelper(seq, []);
+      };
+      <span class="hljs-comment">/* #@range_end(list_toArray) */</span>
+      <span class="hljs-comment">/* #@range_begin(list_map_test) */</span>
+      <span class="hljs-keyword">var</span> numberList = list.cons(<span class="hljs-number">1</span>,
+                                 list.cons(<span class="hljs-number">2</span>,
+                                           list.empty()));
+      <span class="hljs-keyword">var</span> double = (number) =&gt; {
+        <span class="hljs-keyword">return</span> number * <span class="hljs-number">2</span>;
+      };
+      <span class="hljs-keyword">var</span> doubledList = map(numberList,double);
+      expect(
+        list.head(doubledList)
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      );
+      expect(
+        toArray(doubledList)
+      ).to.eql(
+        [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>]
+      );
+      <span class="hljs-keyword">var</span> stringList = list.cons(<span class="hljs-string">"a"</span>, list.cons(<span class="hljs-string">"b"</span>,list.empty()));
+      <span class="hljs-keyword">var</span> upper = (string) =&gt; {
+        <span class="hljs-keyword">return</span> string.toUpperCase();
+      };
+      expect(
+        toArray(map(stringList,upper))
+      ).to.eql(
+        [<span class="hljs-string">"A"</span>,<span class="hljs-string">"B"</span>]
+      );
+      <span class="hljs-comment">/* #@range_end(list_map_test) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'リストの連結'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
+        <span class="hljs-keyword">var</span> toArrayAux = (seq,accumulator) =&gt; {
+          <span class="hljs-keyword">return</span> match(seq, {
+            empty: (_) =&gt; {
+              <span class="hljs-keyword">return</span> accumulator;
+            },
+            cons: (head, tail) =&gt; {
+              <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
+            }
+          });
+        };
+        <span class="hljs-keyword">return</span> toArrayAux(seq, []);
+      };
+      <span class="hljs-comment">/* #@range_begin(list_append) */</span>
+      <span class="hljs-comment">/* append :: (LIST[T], LIST[T]) -&gt; LIST[T] */</span>
+      <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
+        <span class="hljs-keyword">return</span> match(xs,{
+          <span class="hljs-comment">/* emptyの場合は、終了条件 */</span>
+          empty: (_) =&gt; { 
+            <span class="hljs-keyword">return</span> ys; <span class="hljs-comment">// xsが空の場合は、ysを返す</span>
+          },
+          <span class="hljs-comment">/* consの場合は、再帰的に呼び出す */</span>
+          cons: (head, tail) =&gt; { 
+            <span class="hljs-comment">/* xsとysを連結させる */</span>
+            <span class="hljs-keyword">return</span> list.cons(head,  
+                             append(tail,ys));
+          }
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(list_append) */</span>
+      
+      <span class="hljs-comment">/* #@range_begin(list_append_test) */</span>
+      <span class="hljs-keyword">var</span> xs = list.cons(<span class="hljs-number">1</span>,
+                         list.cons(<span class="hljs-number">2</span>,
+                                   list.empty()));
+      <span class="hljs-keyword">var</span> ys = list.cons(<span class="hljs-number">3</span>,
+                         list.cons(<span class="hljs-number">4</span>,
+                                   list.empty()));
+      expect(
+        toArray(append(xs,ys)) <span class="hljs-comment">// toArray関数でリストを配列に変換する</span>
+      ).to.eql(
+        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
+      );
+      <span class="hljs-comment">/* #@range_end(list_append_test) */</span>
+      next();
+    });
+  });
+  describe(<span class="hljs-string">'maximumの例'</span>, () =&gt; {
+    <span class="hljs-comment">/* #@range_begin(recursive_maximum) */</span>
+    <span class="hljs-keyword">var</span> maximum = (alist, accumulator) =&gt; {
+      <span class="hljs-keyword">if</span> (list.isEmpty(alist)) {
+        <span class="hljs-keyword">return</span> accumulator;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">var</span> x = list.head(alist);
+        <span class="hljs-keyword">var</span> xs = list.tail(alist);
+        <span class="hljs-keyword">if</span>(x &gt; accumulator) {
+          <span class="hljs-keyword">return</span> maximum(xs, x);
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> maximum(xs, accumulator);
+        }
+      }
+    };
+    <span class="hljs-comment">/* #@range_end(recursive_maximum) */</span>
+    <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">2</span>,
+                          list.cons(<span class="hljs-number">4</span>,
+                                    list.cons(<span class="hljs-number">1</span>,
+                                              list.empty)));
+    expect(
+      maximum(alist, <span class="hljs-number">0</span>)
+    ).to.eql(
+      <span class="hljs-number">4</span>
+    );
+  });
+  describe(<span class="hljs-string">'factorialの例'</span>, () =&gt; {
+    it(<span class="hljs-string">"factorial by recursive process"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+      <span class="hljs-comment">/* #@range_begin(recursive_factorial) */</span>
+      <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+        <span class="hljs-keyword">if</span> (n === <span class="hljs-number">1</span>) {
+          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> n * factorial(n - <span class="hljs-number">1</span>);
+        }
+      };
+      <span class="hljs-comment">/* #@range_end(recursive_factorial) */</span>
+      expect(
+        factorial(<span class="hljs-number">6</span>)
+      ).to.eql(
+        <span class="hljs-number">720</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"factorial by iterative process"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+      <span class="hljs-comment">/* #@range_begin(iterative_factorial) */</span>
+      <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+        <span class="hljs-keyword">return</span> fact_iter(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, n);
+      };
+      <span class="hljs-keyword">var</span> fact_iter = (product, counter, max_count) =&gt; {
+        <span class="hljs-keyword">if</span> (counter &gt; max_count) {
+          <span class="hljs-keyword">return</span> product;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> fact_iter(counter * product, counter + <span class="hljs-number">1</span>, max_count);
+        }
+      };
+      expect(factorial(<span class="hljs-number">6</span>)).to.eql(<span class="hljs-number">720</span>);
+      <span class="hljs-comment">/* #@range_end(iterative_factorial) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'命令的factorial'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
+      <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
+      <span class="hljs-keyword">var</span> factorial = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) </span>{
+        <span class="hljs-keyword">var</span> index, result;
+        result = <span class="hljs-number">1</span>;
+        index = <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span> (index &lt; n + <span class="hljs-number">1</span>) {
+          result = result * index;
+          index = index + <span class="hljs-number">1</span>;
+        }
+        <span class="hljs-keyword">return</span> result;
+      };
+      <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
+      expect(
+        factorial(<span class="hljs-number">5</span>)
+      ).to.eql(
+        <span class="hljs-number">120</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">'自然数の総和'</span>, () =&gt; {
+    it(<span class="hljs-string">'再帰版と一般形'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(triangularRecurrenceForm) */</span>
+      <span class="hljs-keyword">var</span> natural_sum = (n) =&gt; {
+        <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>){
+          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> natural_sum(n-<span class="hljs-number">1</span>) + n;
+        }
+      };
+      expect(
+        natural_sum(<span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-number">3</span>
+      );
+      expect(
+        natural_sum(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      <span class="hljs-comment">/* #@range_end(triangularRecurrenceForm) */</span>
+      <span class="hljs-comment">/* 自然数の総和(一般形) */</span>
+      <span class="hljs-comment">/* #@range_begin(triangularClosedForm) */</span>
+      <span class="hljs-keyword">var</span> closedForm = (n) =&gt; {
+        <span class="hljs-keyword">return</span> (n*(<span class="hljs-number">1</span> + n))/<span class="hljs-number">2</span>;
+      };
+      expect(
+        natural_sum(<span class="hljs-number">2</span>)
+      ).to.eql(
+        closedForm(<span class="hljs-number">2</span>)
+      );
+      expect(
+        natural_sum(<span class="hljs-number">12</span>)
+      ).to.eql(
+        closedForm(<span class="hljs-number">12</span>)
+      );
+      <span class="hljs-comment">/* #@range_end(triangularClosedForm) */</span>
+      next();
+    });
+  });</pre></div></div>
             
         </li>
         
@@ -845,1770 +2034,50 @@ append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>1 と 1 は等しい</p>
+              <h3 id="-">再帰処理と帰納法</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      expect(
-        compare(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>)
-      ).to.eql(
-        <span class="hljs-number">0</span>
-      );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>2 は 3 よりも小さい</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      expect(
-        compare(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-          -<span class="hljs-number">1</span>
-      );
-      <span class="hljs-comment">/* #@range_end(compare) */</span>
-      next();
-    });
-    describe(<span class="hljs-string">'コンビネータライブラリー'</span>, () =&gt; {
-      <span class="hljs-keyword">var</span> event = {
-        hour: <span class="hljs-number">13</span>,
-        temperture: <span class="hljs-number">25</span>,
-        heater: <span class="hljs-literal">true</span>
-      };
-      it(<span class="hljs-string">'ifで実装する'</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>昼間(12~18)は26~28度
-夜(19~23)は24~26度
-深夜(0~6)は21~23度
-朝(7~11)は24~26度
-thermostat:: (EVENT, BOOL) -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> thermostat = (event) =&gt; {
-          <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">12</span> &amp;&amp; event.hour &lt; <span class="hljs-number">19</span>){
-            <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">28</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">26</span>) {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> event.heater;
-              }
-            }
-          }
-          <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">18</span> &amp;&amp; event.hour &lt; <span class="hljs-number">24</span>){
-            <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">26</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">24</span>) {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> event.heater;
-              }
-            }
-          }
-          <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">0</span> &amp;&amp; event.hour &lt; <span class="hljs-number">7</span>){
-            <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">23</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">21</span>) {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> event.heater;
-              }
-            }
-          }
-          <span class="hljs-keyword">if</span>(event.hour &gt; <span class="hljs-number">6</span> &amp;&amp; event.hour &lt; <span class="hljs-number">12</span>){
-            <span class="hljs-keyword">if</span>(event.temperture &gt; <span class="hljs-number">26</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">if</span>(event.temperture &lt; <span class="hljs-number">24</span>) {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> event.heater;
-              }
-            }
-          }
-        };
-        expect(
-          thermostat({ hour: <span class="hljs-number">22</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        expect(
-          thermostat({ hour: <span class="hljs-number">7</span>, temperture: <span class="hljs-number">22</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'コンビネーターで実装する'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> functionalIf = (predicate, pattern) =&gt; {
-          <span class="hljs-keyword">if</span>(predicate){
-            <span class="hljs-keyword">return</span> pattern.thenClause();
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> pattern.elseClause()
-          };
-        };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <p>expect:: STRING -&gt; OBJECT -&gt; ANY</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> extract = (key) =&gt; {
-          <span class="hljs-keyword">return</span> (obj) =&gt; {
-            <span class="hljs-keyword">return</span> obj[key];
-          };
-        };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>hour:: EVENT -&gt; NUMBER</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> hour = extract(<span class="hljs-string">'hour'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-22">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
-              </div>
-              <p>temperture:: EVENT -&gt; NUMBER</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> temperture = extract(<span class="hljs-string">'temperture'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-23">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
-              </div>
-              <p>heater:: EVENT -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> heater = extract(<span class="hljs-string">'heater'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
-              </div>
-              <p>and:: (ANY -&gt; BOOL,ANY -&gt; BOOL) -&gt; ANY -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> and = (former, latter) =&gt; {
-          expect(former).to.a(<span class="hljs-string">'function'</span>);
-          expect(latter).to.a(<span class="hljs-string">'function'</span>);
-          <span class="hljs-keyword">return</span> (data) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <p>expect(event).to.an(‘object’);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">return</span> former(data) &amp;&amp; latter(data);
-          };
-        };
-        <span class="hljs-keyword">var</span> not = (predicate) =&gt; {
-          <span class="hljs-keyword">return</span> (data) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-26">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <p>expect(data).to.an(‘object’);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">return</span> ! predicate(data);
-          };
-        };
-        <span class="hljs-keyword">var</span> or = (former, latter) =&gt; {
-          expect(former).to.a(<span class="hljs-string">'function'</span>);
-          expect(latter).to.a(<span class="hljs-string">'function'</span>);
-          <span class="hljs-keyword">return</span> (data) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>expect(event).to.an(‘object’);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">return</span> former(data) || latter(data);
-          };
-        };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>isMoreThan:: NUMBER -&gt; NUMBER -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> isMoreThan = (n) =&gt; {
-          expect(n).to.a(<span class="hljs-string">'number'</span>);
-          <span class="hljs-keyword">return</span> (m) =&gt; {
-            expect(m).to.a(<span class="hljs-string">'number'</span>);
-            <span class="hljs-keyword">return</span> m &gt; n;
-          };
-        };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>negate:: (NUMBER -&gt; NUMBER -&gt; BOOL) -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> negate = (predicate) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>return ! predicate;</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">return</span> (n) =&gt; {
-            <span class="hljs-keyword">return</span> (m) =&gt; {
-              <span class="hljs-keyword">return</span> ! predicate(n)(m);
-            };
-          };
-        };
-        <span class="hljs-keyword">var</span> isLessThan = negate(isMoreThan);
-        expect(
-          isMoreThan(<span class="hljs-number">3</span>)(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          negate(isMoreThan)(<span class="hljs-number">3</span>)(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        expect(
-          isLessThan(<span class="hljs-number">3</span>)(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              <p>within:: (NUMBER, NUMBER) -&gt; (EVENT -&gt; ANY) -&gt; EVENT -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> within = (lower, upper) =&gt; {
-          <span class="hljs-keyword">return</span> (extractor) =&gt; {
-            expect(extractor).to.a(<span class="hljs-string">'function'</span>);
-            <span class="hljs-keyword">return</span> (event) =&gt; {
-              expect(event).to.an(<span class="hljs-string">'object'</span>);
-              <span class="hljs-keyword">return</span> and(isMoreThan(lower), isLessThan(upper))(extractor(event));
-            };
-          };
-        };
-        expect(
-          within(<span class="hljs-number">12</span>, <span class="hljs-number">18</span>)(hour)({ hour: <span class="hljs-number">16</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          within(<span class="hljs-number">12</span>, <span class="hljs-number">18</span>)(temperture)({ hour: <span class="hljs-number">16</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>afternoon:: EVENT -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> afternoon = within(<span class="hljs-number">12</span>, <span class="hljs-number">18</span>)(hour);
-        <span class="hljs-keyword">var</span> night = within(<span class="hljs-number">19</span>, <span class="hljs-number">23</span>)(hour);
-        <span class="hljs-keyword">var</span> midnight = within(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)(hour);
-        <span class="hljs-keyword">var</span> morning = within(<span class="hljs-number">7</span>, <span class="hljs-number">12</span>)(hour);
-        expect(
-          afternoon({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
-              <p>above:: NUMBER -&gt; (EVENT -&gt; ANY) -&gt; EVENT -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> above = (threshold) =&gt; {
-          <span class="hljs-keyword">return</span> (extractor) =&gt; {
-            expect(extractor).to.a(<span class="hljs-string">'function'</span>);
-            <span class="hljs-keyword">return</span> (event) =&gt; {
-              expect(event).to.an(<span class="hljs-string">'object'</span>);
-              <span class="hljs-keyword">return</span> isMoreThan(threshold)(extractor(event));
-            };
-          };
-        };
-        expect(
-          temperture({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-number">25</span>
-        );
-        expect(
-          above(<span class="hljs-number">20</span>)(temperture)({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
-              <p>below:: NUMBER -&gt; (EVENT -&gt; ANY) -&gt; EVENT -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> below = (threshold) =&gt; {
-          <span class="hljs-keyword">return</span> (extractor) =&gt; {
-            expect(extractor).to.a(<span class="hljs-string">'function'</span>);
-            <span class="hljs-keyword">return</span> (event) =&gt; {
-              expect(event).to.an(<span class="hljs-string">'object'</span>);
-              <span class="hljs-keyword">return</span> isLessThan(threshold)(extractor(event));
-            };
-          };
-        };
-        expect(
-          below(<span class="hljs-number">20</span>)(temperture)({ hour: <span class="hljs-number">8</span>, temperture: <span class="hljs-number">25</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-35">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
-              </div>
-              <p>afternoon:: EVENT -&gt; BOOL
-above(28)(temperture):: EVENT -&gt; BOOL</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        expect(
-          and(afternoon
-              ,above(<span class="hljs-number">28</span>)(temperture))({ hour: <span class="hljs-number">13</span>, temperture: <span class="hljs-number">29</span>, heater: <span class="hljs-literal">false</span>})
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        thermostat: (timezone, temperaturezone) =&gt; {
-          <span class="hljs-keyword">return</span> (event) =&gt; {
-
-          };
-        };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-36">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
-              </div>
-              <p>heaterOn:: (TIMEZONE, TEMPERATUREZONE) -&gt; EVENT -&gt; BOOL</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-37">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
-              </div>
-              <p>var heaterOn = (event) =&gt; {
-  or(
- and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
- and(night,below(24)(temperture))), // 夜(19~23)は24~26度
- // 深夜(0~6)は21~23度
- // 朝(7~11)は24~26度</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-38">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <p>};</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-39">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
-              </div>
-              <p>or(
-  and(afternoon,below(26)(temperture)), // 昼間(12~18)は26~28度
-  and(night,below(24)(temperture)))) // 夜(19~23)は24~26度</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-
-        next();
-      });
-    });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-40">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
-              </div>
-              <h3 id="-">コンビネータによる条件分岐の改善</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'コンビネータによる条件分岐の改善'</span>, () =&gt; {
-      <span class="hljs-keyword">var</span> multiplyOf = (n) =&gt; {
-        <span class="hljs-keyword">return</span> (m) =&gt; {
-          <span class="hljs-keyword">if</span>((m % n) === <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        };
-      };
-      <span class="hljs-keyword">var</span> twoFold = multiplyOf(<span class="hljs-number">2</span>);
-      <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>);
-      <span class="hljs-keyword">var</span> fiveFold = multiplyOf(<span class="hljs-number">5</span>);
-      it(<span class="hljs-string">'notコンビネータ'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* not:: (NUMBER-&gt;BOOL) -&gt; NUMBER -&gt; BOOL */</span>
-        <span class="hljs-keyword">var</span> not = (predicate) =&gt; {
-          <span class="hljs-keyword">return</span> (data) =&gt; { <span class="hljs-comment">// NUMBER -&gt; BOOL</span>
-            <span class="hljs-keyword">if</span> (predicate(data)) {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-            }
-          };
-        };
-        expect(
-          not(not(twoFold))(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        next();
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-41">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
-              </div>
-              <p>it(‘(twoFold &amp;&amp; threeFold) &amp;&amp; (~ fiveFold)’, (next) =&gt; {
-   (twoFold &amp;&amp; threeFold) &amp;&amp; (~ fiveFold)
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'2と3の倍数で 5の倍数ではない'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* ##@range_begin(twoFoldAndThreeFoldButNotFiveFold) */</span>
-        <span class="hljs-keyword">var</span> twoFold = multiplyOf(<span class="hljs-number">2</span>); <span class="hljs-comment">/* 2の倍数を判定する */</span>
-        <span class="hljs-keyword">var</span> threeFold = multiplyOf(<span class="hljs-number">3</span>); <span class="hljs-comment">/* 3の倍数を判定する */</span>
-        <span class="hljs-keyword">var</span> fiveFold = multiplyOf(<span class="hljs-number">5</span>); <span class="hljs-comment">/* 5の倍数を判定する */</span>
-
-        <span class="hljs-keyword">var</span> twoFoldAndThreeFoldButNotFiveFold = (n) =&gt; {
-          <span class="hljs-keyword">if</span>(twoFold(n) &amp;&amp; threeFold(n) &amp;&amp; ! fiveFold(n)) {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-42">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
-              </div>
-              <p>var twoFoldAndThreeFoldButNotFiveFold = (n) =&gt; {
-  if(twoFold(n) &amp;&amp; threeFold(n)) { /<em> 2の倍数かつ3の倍数 </em>/
-    if(fiveFold(n)) { /<em> 5の倍数 </em>/
-      return false;
-    } else { /<em> 2の倍数かつ3の倍数で、5の倍数ではない </em>/
-      return true;
-    }
-  } else {
-    return false;
-  }
-};</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* テスト */</span>
-        expect(
-          twoFoldAndThreeFoldButNotFiveFold(<span class="hljs-number">6</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          twoFoldAndThreeFoldButNotFiveFold(<span class="hljs-number">30</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        <span class="hljs-comment">/* ##@range_end(twoFoldAndThreeFoldButNotFiveFold) */</span>
-        next();
-      });
-      <span class="hljs-comment">/* ##@range_begin(not_combinator) */</span>
-      <span class="hljs-comment">/* 「~ではない」を表す否定  */</span>
-      <span class="hljs-comment">/* not:: (NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
-      <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicate:: NUMBER-&gt;BOOL</span>
-        <span class="hljs-keyword">return</span> (number) =&gt; {     <span class="hljs-comment">// NUMBER-&gt;BOOL型の関数を返す</span>
-          <span class="hljs-keyword">return</span> ! predicate(number); <span class="hljs-comment">// !演算子で論理を反転させる</span>
-        };
-      };
-      <span class="hljs-comment">/* ##@range_end(not_combinator) */</span>
-      <span class="hljs-comment">/* ##@range_begin(logical_combinator) */</span>
-      <span class="hljs-comment">/* 「かつ」を表す論理積  */</span>
-      <span class="hljs-comment">/* and:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
-      <span class="hljs-keyword">var</span> and = (predicateA, predicateB) =&gt; {
-        <span class="hljs-keyword">return</span> (data) =&gt; {
-          <span class="hljs-keyword">return</span> predicateA(data) &amp;&amp; predicateB(data);
-        };
-      };
-      <span class="hljs-comment">/* 「もしくは」を表す論理和  */</span>
-      <span class="hljs-keyword">var</span> or = (predicateA, predicateB) =&gt; {
-        <span class="hljs-keyword">return</span> (data) =&gt; {
-          <span class="hljs-keyword">return</span> predicateA(data) || predicateB(data);
-        };
-      };
-      <span class="hljs-comment">/* ##@range_end(logical_combinator) */</span>
-      it(<span class="hljs-string">'論理コンビネータのテスト'</span>, (next) =&gt; {
-        expect(
-          twoFold(<span class="hljs-number">2</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* ##@range_begin(logical_combinator_test) */</span>
-        expect(
-          <span class="hljs-comment">/* 「2の倍数かつ3の倍数で、5の倍数ではない」*/</span>
-          and(and(twoFold,threeFold),not(fiveFold))(<span class="hljs-number">6</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* ##@range_end(logical_combinator_test) */</span>
-        expect(
-           and(twoFold,threeFold)(<span class="hljs-number">6</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-           and(twoFold,threeFold)(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        expect(
-          and(and(twoFold,threeFold),not(fiveFold))(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        <span class="hljs-comment">/* 2の倍数もしくは3の倍数で5の倍数でもあるもの */</span>
-        <span class="hljs-comment">/* ##@range_begin(another_logical_combinator_test) */</span>
-        expect(
-          <span class="hljs-comment">/* 「2の倍数もしくは3の倍数、かつ5の倍数でもある」 */</span>
-          and(or(twoFold,threeFold),fiveFold)(<span class="hljs-number">10</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* ##@range_end(another_logical_combinator_test) */</span>
-        next();
-      });
-    });
-  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-43">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
-              </div>
-              <h2 id="-">代数的データ型</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'代数的データ型'</span>, () =&gt; {
-    it(<span class="hljs-string">'Listを代数的データ型として実装する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* リストの代数的データ型 */</span>
-      <span class="hljs-keyword">var</span> empty = () =&gt; { <span class="hljs-comment">// 空のリスト</span>
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.empty();
-        };
-      };
-      <span class="hljs-keyword">var</span> cons = (value, list) =&gt; { <span class="hljs-comment">// 空でないリスト</span>
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.cons(value, list);
-        };
-      };
-      <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* #@range_begin(match_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* 代数的データ型に対してパターンマッチを実現する関数 */</span>
-      <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
-        <span class="hljs-keyword">return</span> data(pattern);
-      };
-      <span class="hljs-comment">/* #@range_end(match_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* 引数 alist に渡されたリストが
-         空のリストかどうかを判定する */</span>
-      <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
-        <span class="hljs-comment">/* match関数で分岐する */</span>
-        <span class="hljs-keyword">return</span> match(alist, { 
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          },
-          <span class="hljs-comment">/* headとtailにそれぞれ先頭要素、末尾要素が入る */</span>
-          cons: (head, tail) =&gt; { 
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        });
-      };
-      <span class="hljs-comment">/* 引数alistに渡されたリストの先頭の要素を返す */</span>
-      <span class="hljs-keyword">var</span> head = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> match(alist, {
-          <span class="hljs-comment">/* 空のリストには先頭要素はありません */</span>
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> head;
-          }
-        });
-      };
-      <span class="hljs-comment">/* 引数alistに渡されたリストの末尾のリストを返す */</span>
-      <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> match(alist, {
-          <span class="hljs-comment">/* 空のリストには末尾要素はありません */</span>
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> tail;
-          }
-        });
-      };
-      <span class="hljs-comment">/* #@range_end(list_function_using_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype_test) */</span>
-      <span class="hljs-comment">/* empty は空のリストではある */</span>
-      expect(
-        isEmpty(empty())         
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-comment">/* [1] は空のリストではない */</span>
-      expect(
-        isEmpty(cons(<span class="hljs-number">1</span>,empty())) 
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      <span class="hljs-comment">/* [1]の先頭要素は 1 である */</span>
-      expect(
-        head(cons(<span class="hljs-number">1</span>,empty()))    
-      ).to.be(
-        <span class="hljs-number">1</span>
-      );
-      <span class="hljs-comment">/* [1,2]の2番目の要素は2である */</span>
-      expect(
-        head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty())))) 
-      ).to.be(
-        <span class="hljs-number">2</span>
-      );
-      <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype_test) */</span>
-      expect(
-        isEmpty(tail(cons(<span class="hljs-number">1</span>,empty())))     <span class="hljs-comment">// [1]の末尾要素は空のリストである</span>
-      ).to.be(
-        <span class="hljs-literal">true</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">'男女の別をsum型で表現する'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> BMI = (weight <span class="hljs-comment">/* kg */</span>, height <span class="hljs-comment">/* cm */</span>) =&gt; {
-        <span class="hljs-keyword">var</span> height_in_meter = height / <span class="hljs-number">100.0</span>;
-        <span class="hljs-keyword">return</span> weight / (height_in_meter * height_in_meter);
-      };
-      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
-        <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
-      };
-      <span class="hljs-keyword">var</span> male = (data) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.male(data);
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'再帰処理と帰納法'</span>, () =&gt; {
+    <span class="hljs-keyword">var</span> length = (list) =&gt; {
+      <span class="hljs-keyword">return</span> match(list, {
+        empty: (_) =&gt; {    <span class="hljs-comment">// リストが空のときが終了条件となる</span>
+          <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + length(tail);
         }
-      };
-      <span class="hljs-keyword">var</span> female = (data) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.female(data);
-        };
-      }
-      <span class="hljs-keyword">var</span> evaluate = (person) =&gt; {
-        <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-        <span class="hljs-keyword">return</span> match(person, {
-          male: (data) =&gt; {
-            <span class="hljs-keyword">return</span> {
-              BMI: BMI(data.weight, data.height),
-              <span class="hljs-comment">/* total body water */</span>
-              TBW: data.weight * <span class="hljs-number">0.6</span>,
-              <span class="hljs-comment">/* estimated blood volume */</span>
-              EBV: <span class="hljs-number">0.168</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.050</span> * data.weight + <span class="hljs-number">0.444</span>
-            };
-          },
-          female: (data) =&gt; {
-            <span class="hljs-keyword">return</span> {
-              BMI: BMI(data.weight, data.height),
-              TBW: data.weight * <span class="hljs-number">0.5</span>,
-              <span class="hljs-comment">/* estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662 */</span>
-              EBV: <span class="hljs-number">0.250</span> * <span class="hljs-built_in">Math</span>.pow(data.height,<span class="hljs-number">3</span>) + <span class="hljs-number">0.625</span> * data.weight - <span class="hljs-number">0.662</span>
-            };
-          }
-        });
-      };
-      <span class="hljs-keyword">var</span> man = male({
-        weight: <span class="hljs-number">72</span>,
-        height: <span class="hljs-number">175</span>
       });
-      <span class="hljs-keyword">var</span> woman = female({
-        weight: <span class="hljs-number">54</span>,
-        height: <span class="hljs-number">160</span>
-      });
-      expect(
-        evaluate(man).BMI
-      ).to.be(<span class="hljs-number">23.510204081632654</span>);
-      expect(
-        evaluate(woman).TBW
-      ).to.be(<span class="hljs-number">27</span>);
-      next();
-    });
-    it(<span class="hljs-string">'数式の例'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype) */</span>
-      <span class="hljs-keyword">var</span> num = (n) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.num(n);
-        };
-      };
-      <span class="hljs-keyword">var</span> add = (exp1, exp2) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.add(exp1, exp2);
-        };
-      };
-      <span class="hljs-keyword">var</span> mul = (exp1, exp2) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.mul(exp1, exp2);
-        };
-      };
-      <span class="hljs-comment">/* #@range_end(expression_algebraic_datatype) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-44">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
-              </div>
-              <p>var exp = {
-  match : (exp, pattern) =&gt; {
-    return exp.call(exp, pattern);
-  },
-  num : (n) =&gt; {
-    return (pattern) =&gt; {
-      return pattern.num(n);
     };
-  },
-  add : (exp1, exp2) =&gt; {
-    return (pattern) =&gt; {
-      return pattern.add(exp1, exp2);
+    <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
+      <span class="hljs-keyword">return</span> match(xs,{
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> ys;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> list.cons(head,
+                           append(tail,ys));
+        }
+      });
     };
-  },
-  mul : (exp1, exp2) =&gt; {
-    return (pattern) =&gt; {
-      return pattern.mul(exp1, exp2);
-    };
-  }
-};</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype_recursion) */</span>
-      <span class="hljs-keyword">var</span> calculate = (exp) =&gt; {
-        <span class="hljs-keyword">return</span> match(exp, { <span class="hljs-comment">// パターンマッチを実行する</span>
-          num: (n) =&gt; {
-            <span class="hljs-keyword">return</span> n;
-          },
-          add: (expL, expR) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-45">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
-              </div>
-              <p>calculateを再帰呼び出して足し算を実行する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">return</span> calculate(expL) + calculate(expR); 
-          },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-46">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
-              </div>
-              <p>calculateを再帰呼び出してかけ算を実行する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          mul: (expL, expR) =&gt; {
-            <span class="hljs-keyword">return</span> calculate(expL) * calculate(expR); 
-          }
-        });
-      };
-      <span class="hljs-comment">/**** テスト ****/</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-47">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
-              </div>
-              <p>1 + (2 * 3) を計算する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> expression = add(num(<span class="hljs-number">1</span>),
-                           mul(num(<span class="hljs-number">2</span>),
-                               num(<span class="hljs-number">3</span>)));
+    it(<span class="hljs-string">'リストの長さに関する命題P'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(statement_p_test) */</span>
+      <span class="hljs-keyword">var</span> xs = list.cons(<span class="hljs-number">1</span>,
+                         list.cons(<span class="hljs-number">2</span>,
+                                   list.empty()));
+      <span class="hljs-keyword">var</span> ys = list.cons(<span class="hljs-number">3</span>,
+                         list.cons(<span class="hljs-number">4</span>,
+                                   list.empty()));
       expect(
-        calculate(expression)
+        length(append(xs, ys)) 
       ).to.eql(
-        <span class="hljs-number">7</span>
+        length(xs) + length(ys)
       );
-      <span class="hljs-comment">/* #@range_end(expression_algebraic_datatype_recursion) */</span>
+      <span class="hljs-comment">/* #@range_end(statement_p_test) */</span>
       next();
     });
-  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-48">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
-              </div>
-              <h2 id="-">反復処理の種類と特徴</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"反復処理の種類と特徴"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    describe(<span class="hljs-string">"while文"</span>, () =&gt; {
-      it(<span class="hljs-string">"カウント"</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(while_counter) */</span>
-        <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;         <span class="hljs-comment">// 変数の初期化</span>
-        <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {   <span class="hljs-comment">// 反復の条件</span>
-          counter = counter + <span class="hljs-number">1</span>; <span class="hljs-comment">// 変数の更新</span>
-        }
-        <span class="hljs-comment">/* テスト */</span>
-        expect(
-          counter
-        ).to.eql(
-          <span class="hljs-number">10</span>
-        );
-        <span class="hljs-comment">/* #@range_end(while_counter) */</span>
-        next();
-      });
-      <span class="hljs-comment">/*
-      it("length", (next) =&gt; {
-</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-49">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
-              </div>
-              <p>#@range_begin(while_length)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
-        <span class="hljs-keyword">var</span> length = (array) =&gt; {
-         <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
-         <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {
-            counter += <span class="hljs-number">1</span>;
-         }
-        }
-        expect(
-          counter
-        ).to.eql(
-          <span class="hljs-number">10</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-50">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
-              </div>
-              <p>#@range_end(while_length)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        next();
-      });
-      it(<span class="hljs-string">"whileによるsum"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-51">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
-              </div>
-              <p>#@range_begin(while_sum)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
-        <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-         <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
-         <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {
-            counter += <span class="hljs-number">1</span>;
-         }
-        }
-        expect(
-          counter
-        ).to.eql(
-          <span class="hljs-number">10</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-52">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
-              </div>
-              <p>#@range_end(while_sum)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        next();
-      });
-      */
-    });
-    it("for文", (next) =&gt; {
-      /* #@range_begin(for_example) */
-      for (var counter = 0; counter &lt; 10; counter += 1) {
-        ;
-      }
-      /* テスト */
-      expect(
-        counter
-      ).to.eql(
-        10
-      );
-      /* #@range_end(for_example) */
-      next();
-    });
-    describe('forEach文', () =&gt; {
-      it("forEach文によるsum", (next) =&gt; {
-        /* #@range_begin(forEach_sum) */
-        var array = [1,2,3,4,5];
-        var sum = 0;
-        array.forEach((element) =&gt; {
-          sum += element;
-        });
-        /* テスト */
-        expect(
-          sum
-        ).to.eql(
-          15
-        );
-        /* #@range_end(forEach_sum) */
-        next();
-      });
-      it("forEach文によるlength", (next) =&gt; {
-        /* #@range_begin(forEach_length) */
-        var length = (array) =&gt; {
-          var result = 0;
-          array.forEach((element) =&gt; {
-            result += 1;
-          });
-          return result;
-        };
-        /* テスト */
-        expect(
-          length([1,2,3,4,5])
-        ).to.eql(
-          5
-        );
-        /* #@range_end(forEach_length) */
-        next();
-      });
-    });
-    describe('再帰による反復処理', () =&gt; {
-      describe('複利法の例', () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-53">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
-              </div>
-              <p>f(n) = f(n-1) * (1 + r)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(compound_interest) */</span>
-        <span class="hljs-keyword">var</span> compoundInterest = (a, r, n) =&gt; {
-          <span class="hljs-keyword">if</span> (n === <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> a;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-comment">/* compoundInterestの再帰呼び出し */</span>
-            <span class="hljs-keyword">return</span> compoundInterest(a, r, n - <span class="hljs-number">1</span>) * (<span class="hljs-number">1</span> + r); 
-          }
-        };
-        <span class="hljs-comment">/* #@range_end(compound_interest) */</span>
-        it(<span class="hljs-string">"複利の計算"</span>, (next) =&gt; {
-          expect(
-            compoundInterest(<span class="hljs-number">100000</span>, <span class="hljs-number">0.02</span>, <span class="hljs-number">1</span>)
-          ).to.eql(
-            <span class="hljs-number">102000</span>
-          );
-          expect(
-            compoundInterest(<span class="hljs-number">100000</span>, <span class="hljs-number">0.02</span>, <span class="hljs-number">2</span>)
-          ).to.eql(
-            <span class="hljs-number">104040</span>
-          );
-          expect(
-            compoundInterest(<span class="hljs-number">100000</span>, <span class="hljs-number">0.02</span>, <span class="hljs-number">25</span>)
-          ).to.eql(
-            <span class="hljs-number">164060.59944647306</span>
-          );
-          next();
-        });
-      });
-      describe(<span class="hljs-string">'lengthの例'</span>, () =&gt; {
-        <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
-          <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
-        };
-        <span class="hljs-keyword">var</span> empty = (_) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.empty(_);
-          };
-        };
-        <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.cons(x, xs);
-          };
-        };
-        <span class="hljs-keyword">var</span> isEmpty = (list) =&gt; {
-          <span class="hljs-keyword">return</span> match(list, {
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            }
-          });
-        };
-        <span class="hljs-keyword">var</span> head = (list) =&gt; {
-          <span class="hljs-keyword">return</span> match(list, {
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> head;
-            }
-          });
-        };
-        <span class="hljs-keyword">var</span> tail = (list) =&gt; {
-          <span class="hljs-keyword">return</span> match(list, {
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> tail;
-            }
-          });
-        };
-        it(<span class="hljs-string">'蓄積変数を持つlength関数'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(recursive_length) */</span>
-          <span class="hljs-keyword">var</span> length = (list, accumulator) =&gt; {
-            <span class="hljs-keyword">return</span> match(list, {
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> accumulator;
-              },
-              cons: (head, tail) =&gt; {
-                <span class="hljs-keyword">return</span> length(tail, accumulator + <span class="hljs-number">1</span>); <span class="hljs-comment">// length関数を再帰的に呼び出す</span>
-              }
-            });
-          };
-          <span class="hljs-comment">/************************ テスト ************************/</span>
-          expect(
-            length(empty(), <span class="hljs-number">0</span>)                        <span class="hljs-comment">// []の長さは0</span>
-          ).to.eql(
-            <span class="hljs-number">0</span>
-          );
-          expect(
-            length(cons(<span class="hljs-number">1</span>,empty()), <span class="hljs-number">0</span>)                <span class="hljs-comment">// [1]の長さは1</span>
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect(
-            length(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))),<span class="hljs-number">0</span>) <span class="hljs-comment">// [1,2,3]の長さは3</span>
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          <span class="hljs-comment">/* #@range_end(recursive_length) */</span>
-          <span class="hljs-comment">/* #@range_begin(recursive_sum) */</span>
-          <span class="hljs-keyword">var</span> sum = (alist, accumulator) =&gt; {
-            <span class="hljs-keyword">return</span> match(alist, {
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> accumulator;
-              },
-              cons: (head, tail) =&gt; {
-                <span class="hljs-comment">/* sumの再帰呼び出し */</span>
-                <span class="hljs-keyword">return</span> sum(tail, accumulator + head); 
-              }
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(recursive_sum) */</span>
-          <span class="hljs-comment">/**** テスト ****/</span>
-          expect(
-            sum(empty(), <span class="hljs-number">0</span>)
-          ).to.eql(
-            <span class="hljs-number">0</span>
-          );
-          expect(
-            sum(cons(<span class="hljs-number">1</span>,empty()), <span class="hljs-number">0</span>)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect(
-            sum(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))),<span class="hljs-number">0</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">'蓄積変数を持たないsum関数'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(recursive_sum_without_accumulator) */</span>
-          <span class="hljs-keyword">var</span> sum = (list) =&gt; {
-            <span class="hljs-comment">/* 蓄積変数を持つ補助関数 */</span>
-            <span class="hljs-keyword">var</span> sumHelper = (list, accumulator) =&gt; { 
-              <span class="hljs-keyword">return</span> match(list, {
-                empty: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> accumulator;
-                },
-                cons: (head, tail) =&gt; {
-                  <span class="hljs-keyword">return</span> sumHelper(tail, accumulator + head);
-                }
-              });
-            };
-            <span class="hljs-keyword">return</span> sumHelper(list,<span class="hljs-number">0</span>); <span class="hljs-comment">// 補助関数を呼び出す</span>
-          };
-          <span class="hljs-comment">/* #@range_end(recursive_sum_without_accumulator) */</span>
-          <span class="hljs-comment">/**** テスト ****/</span>
-          expect(
-            sum(empty())
-          ).to.eql(
-            <span class="hljs-number">0</span>
-          );
-          expect(
-            sum(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))))
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">'蓄積変数を持たないlength関数'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(recursive_length_without_accumulator) */</span>
-          <span class="hljs-keyword">var</span> length = (list) =&gt; {
-            <span class="hljs-keyword">return</span> match(list, {
-              <span class="hljs-comment">/* emptyの場合は、終了条件となる */</span>
-              empty: (_) =&gt; {    
-                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-              },
-              <span class="hljs-comment">/* consの場合は、再帰的に呼び出す */</span>
-              cons: (head, tail) =&gt; { 
-                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + length(tail);
-              }
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(recursive_length_without_accumulator) */</span>
-          <span class="hljs-comment">/************************ テスト ************************/</span>
-          expect(
-            length(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty())))) <span class="hljs-comment">// [1,2,3]の長さは 3</span>
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          next();
-        });
-        });
-      describe(<span class="hljs-string">'factorialの例'</span>, () =&gt; {
-        it(<span class="hljs-string">'素朴なfactorialの例'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(naive_factorial) */</span>
-          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-            <span class="hljs-keyword">if</span> (n === <span class="hljs-number">1</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> n * factorial(n - <span class="hljs-number">1</span>);
-            }
-          };
-          expect(
-            factorial(<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          <span class="hljs-comment">/* #@range_end(naive_factorial) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'末尾再帰によるfactorialの例'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(tail_recursive_factorial) */</span>
-          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-            <span class="hljs-keyword">var</span> factorialRec = (n, accumulator) =&gt; {
-              <span class="hljs-keyword">if</span> (n === <span class="hljs-number">1</span>) {
-                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> * accumulator;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> factorialRec(n - <span class="hljs-number">1</span>, n * accumulator);
-              };
-            };
-            <span class="hljs-keyword">return</span> factorialRec(n, <span class="hljs-number">1</span>);
-          };
-          expect(
-            factorial(<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          <span class="hljs-comment">/* #@range_end(tail_recursive_factorial) */</span>
-          next();
-        });
-      });
-      describe(<span class="hljs-string">'mapの例'</span>, () =&gt; {
-        <span class="hljs-comment">/* #@range_begin(recursive_map) */</span>
-        <span class="hljs-keyword">var</span> map = (alist, transform) =&gt; {
-          <span class="hljs-keyword">if</span> (list.isEmpty(alist)) {
-            <span class="hljs-keyword">return</span> list.empty;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">var</span> x = list.head(alist);
-            <span class="hljs-keyword">var</span> xs = list.tail(alist);
-            <span class="hljs-keyword">return</span> list.cons(transform(x), map(xs, transform));
-          }
-        };
-        <span class="hljs-comment">/* #@range_end(recursive_map) */</span>
-        <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">1</span>,
-                              list.cons(<span class="hljs-number">2</span>,
-                                        list.cons(<span class="hljs-number">3</span>,
-                                                  list.empty)));
-        <span class="hljs-keyword">var</span> double = (n) =&gt; {
-          <span class="hljs-keyword">return</span> n * <span class="hljs-number">2</span>;
-        };
-        <span class="hljs-keyword">var</span> doubledList = map(alist, double);
-        expect(
-          list.head(doubledList)
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        expect(
-          list.head(list.tail(doubledList))
-        ).to.eql(
-          <span class="hljs-number">4</span>
-        );
-        expect(
-          list.head(list.tail(list.tail(doubledList)))
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        it(<span class="hljs-string">'リストのmap'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(list_map) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-54">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
-              </div>
-              <p>map :: LIST[T] -&gt; FUN[T -&gt; T] -&gt; LIST[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> map = (seq,transform) =&gt; {
-            <span class="hljs-keyword">return</span> match(seq,{
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> list.empty();
-              },
-              cons: (head, tail) =&gt; {
-                <span class="hljs-keyword">return</span> list.cons(transform(head), 
-                                 map(tail,transform));
-              }
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(list_map) */</span>
-          
-          <span class="hljs-comment">/* #@range_begin(list_toArray) */</span>
-          <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
-            <span class="hljs-keyword">var</span> toArrayHelper = (seq,accumulator) =&gt; {
-              <span class="hljs-keyword">return</span> match(seq, {
-                empty: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> accumulator;  <span class="hljs-comment">// 空のリストの場合は accumulator を返して終了する</span>
-                },
-                cons: (head, tail) =&gt; { <span class="hljs-comment">// 空のリストでなければ、再帰的に処理する</span>
-                  <span class="hljs-keyword">return</span> toArrayHelper(tail, accumulator.concat(head));
-                }
-              });
-            };
-            <span class="hljs-keyword">return</span> toArrayHelper(seq, []);
-          };
-          <span class="hljs-comment">/* #@range_end(list_toArray) */</span>
-          <span class="hljs-comment">/* #@range_begin(list_map_test) */</span>
-          <span class="hljs-keyword">var</span> numberList = list.cons(<span class="hljs-number">1</span>,
-                                     list.cons(<span class="hljs-number">2</span>,
-                                               list.empty()));
-          <span class="hljs-keyword">var</span> double = (number) =&gt; {
-            <span class="hljs-keyword">return</span> number * <span class="hljs-number">2</span>;
-          };
-          <span class="hljs-keyword">var</span> doubledList = map(numberList,double);
-          expect(
-            list.head(doubledList)
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          expect(
-            toArray(doubledList)
-          ).to.eql(
-            [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>]
-          );
-          <span class="hljs-keyword">var</span> stringList = list.cons(<span class="hljs-string">"a"</span>, list.cons(<span class="hljs-string">"b"</span>,list.empty()));
-          <span class="hljs-keyword">var</span> upper = (string) =&gt; {
-            <span class="hljs-keyword">return</span> string.toUpperCase();
-          };
-          expect(
-            toArray(map(stringList,upper))
-          ).to.eql(
-            [<span class="hljs-string">"A"</span>,<span class="hljs-string">"B"</span>]
-          );
-          <span class="hljs-comment">/* #@range_end(list_map_test) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'リストの連結'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
-            <span class="hljs-keyword">var</span> toArrayAux = (seq,accumulator) =&gt; {
-              <span class="hljs-keyword">return</span> match(seq, {
-                empty: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> accumulator;
-                },
-                cons: (head, tail) =&gt; {
-                  <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
-                }
-              });
-            };
-            <span class="hljs-keyword">return</span> toArrayAux(seq, []);
-          };
-          <span class="hljs-comment">/* #@range_begin(list_append) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-55">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
-              </div>
-              <p>append :: (LIST[T], LIST[T]) -&gt; LIST[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
-            <span class="hljs-keyword">return</span> match(xs,{
-              <span class="hljs-comment">/* emptyの場合は、終了条件 */</span>
-              empty: (_) =&gt; { 
-                <span class="hljs-keyword">return</span> ys; <span class="hljs-comment">// xsが空の場合は、ysを返す</span>
-              },
-              <span class="hljs-comment">/* consの場合は、再帰的に呼び出す */</span>
-              cons: (head, tail) =&gt; { 
-                <span class="hljs-comment">/* xsとysを連結させる */</span>
-                <span class="hljs-keyword">return</span> list.cons(head,  
-                                 append(tail,ys));
-              }
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(list_append) */</span>
-          
-          <span class="hljs-comment">/* #@range_begin(list_append_test) */</span>
-          <span class="hljs-keyword">var</span> xs = list.cons(<span class="hljs-number">1</span>,
-                             list.cons(<span class="hljs-number">2</span>,
-                                       list.empty()));
-          <span class="hljs-keyword">var</span> ys = list.cons(<span class="hljs-number">3</span>,
-                             list.cons(<span class="hljs-number">4</span>,
-                                       list.empty()));
-          expect(
-            toArray(append(xs,ys)) <span class="hljs-comment">// toArray関数でリストを配列に変換する</span>
-          ).to.eql(
-            [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-          );
-          <span class="hljs-comment">/* #@range_end(list_append_test) */</span>
-          next();
-        });
-      });
-      describe(<span class="hljs-string">'maximumの例'</span>, () =&gt; {
-        <span class="hljs-comment">/* #@range_begin(recursive_maximum) */</span>
-        <span class="hljs-keyword">var</span> maximum = (alist, accumulator) =&gt; {
-          <span class="hljs-keyword">if</span> (list.isEmpty(alist)) {
-            <span class="hljs-keyword">return</span> accumulator;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">var</span> x = list.head(alist);
-            <span class="hljs-keyword">var</span> xs = list.tail(alist);
-            <span class="hljs-keyword">if</span>(x &gt; accumulator) {
-              <span class="hljs-keyword">return</span> maximum(xs, x);
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> maximum(xs, accumulator);
-            }
-          }
-        };
-        <span class="hljs-comment">/* #@range_end(recursive_maximum) */</span>
-        <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">2</span>,
-                              list.cons(<span class="hljs-number">4</span>,
-                                        list.cons(<span class="hljs-number">1</span>,
-                                                  list.empty)));
-        expect(
-          maximum(alist, <span class="hljs-number">0</span>)
-        ).to.eql(
-          <span class="hljs-number">4</span>
-        );
-      });
-      describe(<span class="hljs-string">'factorialの例'</span>, () =&gt; {
-        it(<span class="hljs-string">"factorial by recursive process"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-          <span class="hljs-comment">/* #@range_begin(recursive_factorial) */</span>
-          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-            <span class="hljs-keyword">if</span> (n === <span class="hljs-number">1</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> n * factorial(n - <span class="hljs-number">1</span>);
-            }
-          };
-          <span class="hljs-comment">/* #@range_end(recursive_factorial) */</span>
-          expect(
-            factorial(<span class="hljs-number">6</span>)
-          ).to.eql(
-            <span class="hljs-number">720</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">"factorial by iterative process"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-          <span class="hljs-comment">/* #@range_begin(iterative_factorial) */</span>
-          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-            <span class="hljs-keyword">return</span> fact_iter(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, n);
-          };
-          <span class="hljs-keyword">var</span> fact_iter = (product, counter, max_count) =&gt; {
-            <span class="hljs-keyword">if</span> (counter &gt; max_count) {
-              <span class="hljs-keyword">return</span> product;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> fact_iter(counter * product, counter + <span class="hljs-number">1</span>, max_count);
-            }
-          };
-          expect(factorial(<span class="hljs-number">6</span>)).to.eql(<span class="hljs-number">720</span>);
-          <span class="hljs-comment">/* #@range_end(iterative_factorial) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'命令的factorial'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-          <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
-          <span class="hljs-keyword">var</span> factorial = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) </span>{
-            <span class="hljs-keyword">var</span> index, result;
-            result = <span class="hljs-number">1</span>;
-            index = <span class="hljs-number">1</span>;
-            <span class="hljs-keyword">while</span> (index &lt; n + <span class="hljs-number">1</span>) {
-              result = result * index;
-              index = index + <span class="hljs-number">1</span>;
-            }
-            <span class="hljs-keyword">return</span> result;
-          };
-          <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
-          expect(
-            factorial(<span class="hljs-number">5</span>)
-          ).to.eql(
-            <span class="hljs-number">120</span>
-          );
-          next();
-        });
-      });
-      describe(<span class="hljs-string">'自然数の総和'</span>, () =&gt; {
-        it(<span class="hljs-string">'再帰版と一般形'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(triangularRecurrenceForm) */</span>
-	      <span class="hljs-keyword">var</span> natural_sum = (n) =&gt; {
-		    <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>){
-		      <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-		    } <span class="hljs-keyword">else</span> {
-		      <span class="hljs-keyword">return</span> natural_sum(n-<span class="hljs-number">1</span>) + n;
-		    }
-	      };
-          expect(
-            natural_sum(<span class="hljs-number">2</span>)
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          expect(
-            natural_sum(<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          <span class="hljs-comment">/* #@range_end(triangularRecurrenceForm) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-56">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
-              </div>
-              <p>自然数の総和(一般形)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(triangularClosedForm) */</span>
-	      <span class="hljs-keyword">var</span> closedForm = (n) =&gt; {
-		    <span class="hljs-keyword">return</span> (n*(<span class="hljs-number">1</span> + n))/<span class="hljs-number">2</span>;
-	      };
-          expect(
-            natural_sum(<span class="hljs-number">2</span>)
-          ).to.eql(
-            closedForm(<span class="hljs-number">2</span>)
-          );
-          expect(
-            natural_sum(<span class="hljs-number">12</span>)
-          ).to.eql(
-            closedForm(<span class="hljs-number">12</span>)
-          );
-          <span class="hljs-comment">/* #@range_end(triangularClosedForm) */</span>
-          next();
-        });
-        
-      });
-      describe(<span class="hljs-string">'帰納法による証明'</span>, () =&gt; {
-        <span class="hljs-keyword">var</span> length = (list) =&gt; {
-          <span class="hljs-keyword">return</span> match(list, {
-            empty: (_) =&gt; {    <span class="hljs-comment">// リストが空のときが終了条件となる</span>
-              <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> + length(tail);
-            }
-          });
-        };
-        <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
-          <span class="hljs-keyword">return</span> match(xs,{
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> ys;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> list.cons(head,
-                               append(tail,ys));
-            }
-          });
-        };
-        it(<span class="hljs-string">'リストの長さに関する命題P'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(statement_p_test) */</span>
-          <span class="hljs-keyword">var</span> xs = list.cons(<span class="hljs-number">1</span>,
-                             list.cons(<span class="hljs-number">2</span>,
-                                       list.empty()));
-          <span class="hljs-keyword">var</span> ys = list.cons(<span class="hljs-number">3</span>,
-                             list.cons(<span class="hljs-number">4</span>,
-                                       list.empty()));
-          expect(
-            length(append(xs, ys)) 
-          ).to.eql(
-            length(xs) + length(ys)
-          );
-          <span class="hljs-comment">/* #@range_end(statement_p_test) */</span>
-          next();
-        });
-      });
-    }); <span class="hljs-comment">// 再帰による反復処理</span>
   });
-});</pre></div></div>
+}); <span class="hljs-comment">// 再帰による反復処理</span></pre></div></div>
             
         </li>
         

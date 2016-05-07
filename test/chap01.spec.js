@@ -12,6 +12,7 @@ describe('命令型モデル', () => {
   // ### チューリング機械
   describe('チューリング機械 turing machine', () => {
     /* c.f. http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069 */
+    // [![IMAGE ALT TEXT](http://img.youtube.com/vi/lf1KZmYOG_g/0.jpg)](https://www.youtube.com/watch?v=lf1KZmYOG_g "チューリングマシンの動画")
     /* #@range_begin(turing) */
     var machine = (program,tape,initState, endState) => {
       /* ヘッドの位置 */

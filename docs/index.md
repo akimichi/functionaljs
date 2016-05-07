@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: slate
 ---
 
 # 「関数型プログラミングの基礎知識」
@@ -20,4 +20,6 @@ layout: default
 * [継続渡し評価器](interpreter.spec.html)
 * [パーサーコンビネータ](parser.spec.html)
 * [モナド](monad.spec.html)
+
+## コンタクト
 

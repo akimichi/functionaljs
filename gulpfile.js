@@ -7,7 +7,6 @@ var tap = require('gulp-tap');
 var docco = require("gulp-docco");
 var ghPages = require('gulp-gh-pages');
 var exec = require('child_process').exec;
-// var runSequence = require('run-sequence');
 
 gulp.task('js-test', function () {
     gulp.src('test/*.js')
@@ -55,8 +54,17 @@ gulp.task('watch', function() {
 
 
 gulp.task('doc', function() {
+  var options = {
+    layout:     'parallel',
+    output:     'docs',
+    template:   null,
+    css:        'css/docco.css',
+    extension:  null,
+    languages:  {},
+    marked:     null
+  };
   return gulp.src("./test/*.js")
-    .pipe(docco())
+    .pipe(docco(options))
     .pipe(gulp.dest('./docs'));
 });
 

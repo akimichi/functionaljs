@@ -19,3 +19,4 @@
 
 ## コンタクト
 
+本サイトについてのご意見、ご質問は、akimichi.tatsukawa@gmail.com までお願いします。

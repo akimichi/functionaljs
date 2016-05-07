@@ -134,6 +134,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
           }
           <span class="hljs-keyword">return</span> result;
         };
+        sum(sequence);
         <span class="hljs-comment">/* #@range_end(sum_for) */</span>
         expect(
           sum(sequence)
@@ -145,6 +146,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
       it(<span class="hljs-string">'forEach関数によるsum'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(sum_forEach) */</span>
         <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
+          <span class="hljs-comment">/* 結果を格納する変数result */</span>
           <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
           seq.forEach((item) =&gt; {
             result = result + item;
@@ -236,7 +238,8 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
       <span class="hljs-keyword">var</span> emptyEnv = {};
       <span class="hljs-comment">/* 環境を拡張する */</span>
       <span class="hljs-keyword">var</span> extendEnv = (binding, oldEnv) =&gt; {
-        <span class="hljs-comment">/* merge(obj1,obj2) はobj1とobj2のオブジェクトとマージする */</span>
+        <span class="hljs-comment">/* merge(obj1,obj2) は
+           obj1とobj2のオブジェクトをマージする関数のこと */</span>
         <span class="hljs-keyword">return</span> merge(binding, oldEnv); 
       };
       <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
@@ -253,8 +256,9 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         <span class="hljs-comment">/* var b = 3 を実行して、辞書を拡張する */</span>
         <span class="hljs-keyword">var</span> secondEnv = extendEnv({<span class="hljs-string">"b"</span>: <span class="hljs-number">3</span>}, firstEnv); 
         <span class="hljs-comment">/* 辞書から b の値を参照する */</span>
-        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                 
+        lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                
         <span class="hljs-comment">/* #@range_end(environment_example_usage) */</span>
+        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                 
       })()).to.eql(
         <span class="hljs-number">3</span>
       );

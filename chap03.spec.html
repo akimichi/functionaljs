@@ -30,152 +30,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
-
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);
-
-describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
-  describe(<span class="hljs-string">'DRY原則'</span>, () =&gt; {
-    <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
-      <span class="hljs-keyword">return</span> x + y;
-    };
-    it(<span class="hljs-string">'冗長なコードの例'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(redundant_code) */</span>
-      <span class="hljs-keyword">var</span> timesForMultiply = (count,arg, memo) =&gt; {
-        <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
-          <span class="hljs-keyword">return</span> timesForMultiply(count-<span class="hljs-number">1</span>,arg, arg + memo);
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> arg + memo;
-        }
-      };
-      <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
-        <span class="hljs-keyword">return</span> timesForMultiply(n, m, <span class="hljs-number">0</span>);
-      };
-      <span class="hljs-keyword">var</span> timesForExponential = (count,arg, memo) =&gt; {
-        <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
-          <span class="hljs-keyword">return</span> timesForExponential(count-<span class="hljs-number">1</span>,arg, arg * memo);
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> arg * memo;
-        }
-      };
-      <span class="hljs-keyword">var</span> exponential = (n,m) =&gt; {
-        <span class="hljs-keyword">return</span> timesForExponential(m, n, <span class="hljs-number">1</span>);
-      };
-      <span class="hljs-comment">/* #@range_end(redundant_code) */</span>
-      expect(
-        multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">6</span>
-      );
-      expect(
-        exponential(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">8</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">'DRYを適用する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(dry_code) */</span>
-      <span class="hljs-keyword">var</span> times = (count,fun,arg, memo) =&gt; {
-        <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
-          <span class="hljs-keyword">return</span> times(count-<span class="hljs-number">1</span>,fun,arg, fun(arg,memo));
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> fun(arg,memo);
-        }
-      };
-      <span class="hljs-keyword">var</span> add = (n, m) =&gt; {
-        <span class="hljs-keyword">return</span> n + m;
-      };
-      <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
-        <span class="hljs-keyword">return</span> times(m, add, n, <span class="hljs-number">0</span>); <span class="hljs-comment">// add関数を渡す</span>
-      };
-      <span class="hljs-keyword">var</span> exponential = (n,m) =&gt; {
-        <span class="hljs-keyword">return</span> times(m, multiply, n, <span class="hljs-number">1</span>); <span class="hljs-comment">// multiply関数を渡す</span>
-      };
-      <span class="hljs-comment">/* #@range_end(dry_code) */</span>
-      expect(
-        multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">6</span>
-      );
-      expect(
-        exponential(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">8</span>
-      );
-      expect(
-        multiply(-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-        -<span class="hljs-number">6</span>
-      );
-      next();
-    });
-  });
-  describe(<span class="hljs-string">'抽象化への指向'</span>, () =&gt; {
-    it(<span class="hljs-string">'関数抽象の例としてのλ式'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(function_abstraction_example) */</span>
-      <span class="hljs-keyword">var</span> succ = (n) =&gt; {
-        <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
-      };
-      <span class="hljs-comment">/* #@range_end(function_abstraction_example) */</span>
-      next();
-    });
-    describe(<span class="hljs-string">'関数抽象の例としての高階関数'</span>, () =&gt; {
-
-      <span class="hljs-keyword">var</span> sequence = [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>];
-      it(<span class="hljs-string">'for文によるsum'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(sum_for) */</span>
-        <span class="hljs-keyword">var</span> sequence = [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>];
-        <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
-          <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
-          <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>; index &lt; seq.length; index++){
-            result = result + seq[index];
-          }
-          <span class="hljs-keyword">return</span> result;
-        };
-        sum(sequence);
-        <span class="hljs-comment">/* #@range_end(sum_for) */</span>
-        expect(
-          sum(sequence)
-        ).to.eql(
-          <span class="hljs-number">41</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'forEach関数によるsum'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(sum_forEach) */</span>
-        <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
-          <span class="hljs-comment">/* 結果を格納する変数result */</span>
-          <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
-          seq.forEach((item) =&gt; {
-            result = result + item;
-          });
-          <span class="hljs-keyword">return</span> result;
-        };
-        <span class="hljs-comment">/* #@range_end(sum_forEach) */</span>
-        expect(
-          sum(sequence)
-        ).to.eql(
-          <span class="hljs-number">41</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'reduce関数によるsum'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(sum_reduce) */</span>
-        <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
-          <span class="hljs-keyword">return</span> seq.reduce((x,y) =&gt; {
-            <span class="hljs-keyword">return</span> x + y;
-          });
-        };
-        <span class="hljs-comment">/* #@range_end(sum_reduce) */</span>
-        expect(
-          sum(sequence)
-        ).to.eql(
-          <span class="hljs-number">41</span>
-        );
-        next();
-      });</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;</pre></div></div>
             
         </li>
         
@@ -186,14 +41,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>it(‘times関数によるsum’, (next) =&gt; {
-  var times = (count,fun,arg, memo) =&gt; {
-    if(count &gt; 1) {
-      return times(count-1,fun,arg, fun(memo,arg));
-    } else {
-      return fun(memo,arg);
-    }
-  };</p>
+              <h1 id="-">心の準備</h1>
 
             </div>
             
@@ -206,84 +54,325 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>  var sum = (seq) =&gt; {
-    var add = (seq) =&gt; {
-      return (index,memo)  =&gt; {
-      return seq[index] + memo;
-    };
-    return times(seq.length, add(seq), 0,0);
-  };
-  expect(
-    sum(sequence)
-  ).to.eql(
-    41
-  );
-  next();
-});</p>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="dry-">DRY原則</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    });
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'DRY原則'</span>, () =&gt; {
+  <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
+    <span class="hljs-keyword">return</span> x + y;
+  };
+  it(<span class="hljs-string">'冗長なコードの例'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(redundant_code) */</span>
+    <span class="hljs-keyword">var</span> timesForMultiply = (count,arg, memo) =&gt; {
+      <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">return</span> timesForMultiply(count-<span class="hljs-number">1</span>,arg, arg + memo);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> arg + memo;
+      }
+    };
+    <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> timesForMultiply(n, m, <span class="hljs-number">0</span>);
+    };
+    <span class="hljs-keyword">var</span> timesForExponential = (count,arg, memo) =&gt; {
+      <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">return</span> timesForExponential(count-<span class="hljs-number">1</span>,arg, arg * memo);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> arg * memo;
+      }
+    };
+    <span class="hljs-keyword">var</span> exponential = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> timesForExponential(m, n, <span class="hljs-number">1</span>);
+    };
+    <span class="hljs-comment">/* #@range_end(redundant_code) */</span>
+    expect(
+      multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.eql(
+      <span class="hljs-number">6</span>
+    );
+    expect(
+      exponential(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.eql(
+      <span class="hljs-number">8</span>
+    );
+    next();
   });
-  describe(<span class="hljs-string">'意味論の存在'</span>, () =&gt; {
-    it(<span class="hljs-string">'環境の例'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> merge = (obj1,obj2) =&gt; {
-        <span class="hljs-keyword">var</span> mergedObject = {};
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj1) { mergedObject[attrname] = obj1[attrname]; }
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj2) { mergedObject[attrname] = obj2[attrname]; }
-        <span class="hljs-keyword">return</span> mergedObject;
+  it(<span class="hljs-string">'DRYを適用する'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(dry_code) */</span>
+    <span class="hljs-keyword">var</span> times = (count,fun,arg, memo) =&gt; {
+      <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">return</span> times(count-<span class="hljs-number">1</span>,fun,arg, fun(arg,memo));
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> fun(arg,memo);
+      }
+    };
+    <span class="hljs-keyword">var</span> add = (n, m) =&gt; {
+      <span class="hljs-keyword">return</span> n + m;
+    };
+    <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> times(m, add, n, <span class="hljs-number">0</span>); <span class="hljs-comment">// add関数を渡す</span>
+    };
+    <span class="hljs-keyword">var</span> exponential = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> times(m, multiply, n, <span class="hljs-number">1</span>); <span class="hljs-comment">// multiply関数を渡す</span>
+    };
+    <span class="hljs-comment">/* #@range_end(dry_code) */</span>
+    expect(
+      multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.eql(
+      <span class="hljs-number">6</span>
+    );
+    expect(
+      exponential(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.eql(
+      <span class="hljs-number">8</span>
+    );
+    expect(
+      multiply(-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.eql(
+        -<span class="hljs-number">6</span>
+    );
+    next();
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="-">抽象化への指向</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'抽象化への指向'</span>, () =&gt; {
+  it(<span class="hljs-string">'関数抽象の例としてのλ式'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(function_abstraction_example) */</span>
+    <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+      <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+    };
+    <span class="hljs-comment">/* #@range_end(function_abstraction_example) */</span>
+    next();
+  });
+  describe(<span class="hljs-string">'関数抽象の例としての高階関数'</span>, () =&gt; {
+
+    <span class="hljs-keyword">var</span> sequence = [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>];
+    it(<span class="hljs-string">'for文によるsum'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(sum_for) */</span>
+      <span class="hljs-keyword">var</span> sequence = [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>];
+      <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
+        <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>; index &lt; seq.length; index++){
+          result = result + seq[index];
+        }
+        <span class="hljs-keyword">return</span> result;
       };
-      <span class="hljs-comment">/* #@range_begin(environment_example) */</span>
-      <span class="hljs-comment">/* 空の環境 */</span>
-      <span class="hljs-keyword">var</span> emptyEnv = {};
-      <span class="hljs-comment">/* 環境を拡張する */</span>
-      <span class="hljs-keyword">var</span> extendEnv = (binding, oldEnv) =&gt; {
-        <span class="hljs-comment">/* merge(obj1,obj2) は
-           obj1とobj2のオブジェクトをマージする関数のこと */</span>
-        <span class="hljs-keyword">return</span> merge(binding, oldEnv); 
-      };
-      <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
-      <span class="hljs-keyword">var</span> lookupEnv = (name, env) =&gt; {
-        <span class="hljs-keyword">return</span> env[name];
-      };
-      <span class="hljs-comment">/* #@range_end(environment_example) */</span>
-      expect(((_) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(environment_example_usage) */</span>
-        <span class="hljs-comment">/* 空の辞書を作成する */</span>
-        <span class="hljs-keyword">var</span> initEnv = emptyEnv;                       
-        <span class="hljs-comment">/* var a = 1 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> firstEnv = extendEnv({<span class="hljs-string">"a"</span>: <span class="hljs-number">1</span>}, initEnv);  
-        <span class="hljs-comment">/* var b = 3 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> secondEnv = extendEnv({<span class="hljs-string">"b"</span>: <span class="hljs-number">3</span>}, firstEnv); 
-        <span class="hljs-comment">/* 辞書から b の値を参照する */</span>
-        lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                
-        <span class="hljs-comment">/* #@range_end(environment_example_usage) */</span>
-        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                 
-      })()).to.eql(
-        <span class="hljs-number">3</span>
+      sum(sequence);
+      <span class="hljs-comment">/* #@range_end(sum_for) */</span>
+      expect(
+        sum(sequence)
+      ).to.eql(
+        <span class="hljs-number">41</span>
       );
       next();
     });
-  });
-  describe(<span class="hljs-string">'テストに親しむ'</span>, () =&gt; {
-    describe(<span class="hljs-string">'アサーション'</span>, () =&gt; {
-      it(<span class="hljs-string">'assertによる表明'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
-        <span class="hljs-comment">/* #@range_begin(assert_assertion) */</span>
-        <span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">"assert"</span>);
-        assert.equal(<span class="hljs-number">1</span> + <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
-        <span class="hljs-comment">/* #@range_end(assert_assertion) */</span>
-      });
-      it(<span class="hljs-string">'expectによる表明'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
-        <span class="hljs-comment">/* #@range_begin(expect_assertion) */</span>
-        <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-        expect(
-          <span class="hljs-number">1</span>+<span class="hljs-number">2</span>
-        ).to.eql(
-          <span class="hljs-number">3</span>
-        );
-        <span class="hljs-comment">/* #@range_end(expect_assertion) */</span>
-      });
+    it(<span class="hljs-string">'forEach関数によるsum'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(sum_forEach) */</span>
+      <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
+        <span class="hljs-comment">/* 結果を格納する変数result */</span>
+        <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
+        seq.forEach((item) =&gt; {
+          result = result + item;
+        });
+        <span class="hljs-keyword">return</span> result;
+      };
+      <span class="hljs-comment">/* #@range_end(sum_forEach) */</span>
+      expect(
+        sum(sequence)
+      ).to.eql(
+        <span class="hljs-number">41</span>
+      );
+      next();
     });
+    it(<span class="hljs-string">'reduce関数によるsum'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(sum_reduce) */</span>
+      <span class="hljs-keyword">var</span> sum = (seq) =&gt; {
+        <span class="hljs-keyword">return</span> seq.reduce((x,y) =&gt; {
+          <span class="hljs-keyword">return</span> x + y;
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(sum_reduce) */</span>
+      expect(
+        sum(sequence)
+      ).to.eql(
+        <span class="hljs-number">41</span>
+      );
+      next();
+    });
+    <span class="hljs-comment">/*
+      it('times関数によるsum', (next) =&gt; {
+      var times = (count,fun,arg, memo) =&gt; {
+      if(count &gt; 1) {
+      return times(count-1,fun,arg, fun(memo,arg));
+      } else {
+      return fun(memo,arg);
+      }
+      };
+
+      var sum = (seq) =&gt; {
+      var add = (seq) =&gt; {
+      return (index,memo)  =&gt; {
+      return seq[index] + memo;
+      };
+      return times(seq.length, add(seq), 0,0);
+      };
+      expect(
+      sum(sequence)
+      ).to.eql(
+      41
+      );
+      next();
+      });
+    */</span>
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="-">セマンティクスを意識する</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'セマンティクスを意識する'</span>, () =&gt; {
+  it(<span class="hljs-string">'環境の例'</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> merge = (obj1,obj2) =&gt; {
+      <span class="hljs-keyword">var</span> mergedObject = {};
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj1) { mergedObject[attrname] = obj1[attrname]; }
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj2) { mergedObject[attrname] = obj2[attrname]; }
+      <span class="hljs-keyword">return</span> mergedObject;
+    };
+    <span class="hljs-comment">/* #@range_begin(environment_example) */</span>
+    <span class="hljs-comment">/* 空の環境 */</span>
+    <span class="hljs-keyword">var</span> emptyEnv = {};
+    <span class="hljs-comment">/* 環境を拡張する */</span>
+    <span class="hljs-keyword">var</span> extendEnv = (binding, oldEnv) =&gt; {
+      <span class="hljs-comment">/* merge(obj1,obj2) は
+         obj1とobj2のオブジェクトをマージする関数のこと */</span>
+      <span class="hljs-keyword">return</span> merge(binding, oldEnv); 
+    };
+    <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
+    <span class="hljs-keyword">var</span> lookupEnv = (name, env) =&gt; {
+      <span class="hljs-keyword">return</span> env[name];
+    };
+    <span class="hljs-comment">/* #@range_end(environment_example) */</span>
+    expect(((_) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(environment_example_usage) */</span>
+      <span class="hljs-comment">/* 空の辞書を作成する */</span>
+      <span class="hljs-keyword">var</span> initEnv = emptyEnv;                       
+      <span class="hljs-comment">/* var a = 1 を実行して、辞書を拡張する */</span>
+      <span class="hljs-keyword">var</span> firstEnv = extendEnv({<span class="hljs-string">"a"</span>: <span class="hljs-number">1</span>}, initEnv);  
+      <span class="hljs-comment">/* var b = 3 を実行して、辞書を拡張する */</span>
+      <span class="hljs-keyword">var</span> secondEnv = extendEnv({<span class="hljs-string">"b"</span>: <span class="hljs-number">3</span>}, firstEnv); 
+      <span class="hljs-comment">/* 辞書から b の値を参照する */</span>
+      lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                
+      <span class="hljs-comment">/* #@range_end(environment_example_usage) */</span>
+      <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);                 
+    })()).to.eql(
+      <span class="hljs-number">3</span>
+    );
+    next();
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="-">テストに親しむ</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'テストに親しむ'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h3 id="-">単体テストの仕組み</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'単体テストの仕組み'</span>, () =&gt; {
+    it(<span class="hljs-string">'assertによる表明'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(assert_assertion) */</span>
+      <span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">"assert"</span>);
+      assert.equal(<span class="hljs-number">1</span> + <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+      <span class="hljs-comment">/* #@range_end(assert_assertion) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'expectによる表明'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(expect_assertion) */</span>
+      <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+      expect(
+        <span class="hljs-number">1</span> + <span class="hljs-number">2</span>
+      ).to.eql(
+        <span class="hljs-number">3</span>
+      );
+      <span class="hljs-comment">/* #@range_end(expect_assertion) */</span>
+      next();
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h3 id="-">単体テストの実践</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'単体テストの実践'</span>, () =&gt; {
     it(<span class="hljs-string">'add,multiply,exponential関数再び'</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
@@ -317,7 +406,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
       expect(
         multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>) <span class="hljs-comment">// テストする式を書く</span>
       ).to.eql(
-        <span class="hljs-number">6</span>        <span class="hljs-comment">// 期待する値を書く</span>
+        <span class="hljs-number">6</span>             <span class="hljs-comment">// 期待する値を書く</span>
       );
       <span class="hljs-comment">/* #@range_end(multiply_test_example) */</span>
       next();
@@ -359,12 +448,12 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         expect(
           multiply(-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
         ).to.not.eql(
-          -<span class="hljs-number">6</span>  <span class="hljs-comment">// -6になるはずが、-6ではない</span>
+            -<span class="hljs-number">6</span>  <span class="hljs-comment">// -6になるはずが、-6ではない</span>
         );
         expect(
           multiply(<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
         ).to.not.eql(
-          -<span class="hljs-number">6</span> <span class="hljs-comment">// -6になるはずが、-6ではない</span>
+            -<span class="hljs-number">6</span> <span class="hljs-comment">// -6になるはずが、-6ではない</span>
         );
         expect(
           multiply(-<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
@@ -428,12 +517,12 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         expect(
           multiply(<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
         ).to.eql(
-          -<span class="hljs-number">6</span>
+            -<span class="hljs-number">6</span>
         );
         expect(
           multiply(-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
         ).to.eql(
-          -<span class="hljs-number">6</span>
+            -<span class="hljs-number">6</span>
         );
         <span class="hljs-comment">/* #@range_end(multiply_improved_test) */</span>
         next();
@@ -464,29 +553,11 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
           add(-<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
         ).to.eql(
           <span class="hljs-number">1</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>expect(
-  add(3,-2)
-).to.eql(
-  1
-);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        expect(
+        );
+        expect(
           add(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>)
         ).to.not.eql(
-          -<span class="hljs-number">1</span> <span class="hljs-comment">// -1 になるべきが、-1ではない</span>
+            -<span class="hljs-number">1</span> <span class="hljs-comment">// -1 になるべきが、-1ではない</span>
         );
         <span class="hljs-comment">/* #@range_end(add_failed_test) */</span>
         next();
@@ -520,23 +591,23 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         expect(
           add(<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>)
         ).to.eql(
-          -<span class="hljs-number">1</span>
+            -<span class="hljs-number">1</span>
         );
         expect(
           add(-<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>)
         ).to.eql(
-          -<span class="hljs-number">3</span>
+            -<span class="hljs-number">3</span>
         );
         <span class="hljs-comment">/* #@range_end(add_improved_test) */</span>
         expect(
           add(<span class="hljs-number">0</span>,-<span class="hljs-number">2</span>)
         ).to.eql(
-          -<span class="hljs-number">2</span>
+            -<span class="hljs-number">2</span>
         );
         expect(
           add(-<span class="hljs-number">2</span>,<span class="hljs-number">0</span>)
         ).to.eql(
-          -<span class="hljs-number">2</span>
+            -<span class="hljs-number">2</span>
         );
         expect(
           add(<span class="hljs-number">0</span>,<span class="hljs-number">2</span>)
@@ -588,7 +659,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         expect(
           multiply(-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
         ).to.eql(
-          -<span class="hljs-number">6</span>
+            -<span class="hljs-number">6</span>
         );
         expect(
           multiply(-<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
@@ -598,7 +669,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         expect(
           multiply(<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
         ).to.not.eql(
-          -<span class="hljs-number">6</span>
+            -<span class="hljs-number">6</span>
         );
         next();
       });
@@ -650,44 +721,18 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
           multiply(<span class="hljs-number">0</span>,<span class="hljs-number">3</span>)
         ).to.eql(
           <span class="hljs-number">0</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>-2 * -3 = ((0 - (-2)) - (-2)) - (-2)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        expect(
+        );
+        <span class="hljs-comment">/* -2 * -3 = ((0 - (-2)) - (-2)) - (-2) */</span>
+        expect(
           multiply(-<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
         ).to.eql(
           <span class="hljs-number">6</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>2 * -3 = ((0 - 2) - 2) -2</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        expect(
+        );
+        <span class="hljs-comment">/* 2 * -3 = ((0 - 2) - 2) -2 */</span>
+        expect(
           multiply(<span class="hljs-number">2</span>,-<span class="hljs-number">3</span>)
         ).to.eql(
-          -<span class="hljs-number">6</span>
+            -<span class="hljs-number">6</span>
         );
         expect(
           multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
@@ -697,7 +742,7 @@ describe(<span class="hljs-string">'心の準備'</span>, () =&gt; {
         expect(
           multiply(-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
         ).to.eql(
-          -<span class="hljs-number">6</span>
+            -<span class="hljs-number">6</span>
         );
         next();
       });

@@ -210,29 +210,8 @@ describe('環境を作る', () => {
     /* #@range_end(environment_extend_test) */
     next();
   });
-  describe('プログラムの構成要素(式と値)を作る', () => {
-    // ## 値の代数的データ構造
-    /* #@range_begin(value_algaraic_datatype) */
-    // var value = {
-    //   num : (numberValue) => {
-    //     expect(numberValue).to.a('number');
-    //     return () => {
-    //       return numberValue;
-    //     };
-    //   },
-    //   closure: (lambdaExpression) => {
-    //     expect(lambdaExpression).to.a('function');
-    //     return () => {
-    //       return lambdaExpression;
-    //     };
-    //   },
-    //   // 補助関数
-    //   match : (data, pattern) => {
-    //     return data.call(value, pattern);
-    //   }
-    // };
-    /* #@range_end(value_algaraic_datatype) */
-    // ## 式の代数的データ構造
+  // ## 式の代数的データ構造
+  describe('式の代数的データ構造', () => {
     var exp = {
       /* #@range_begin(expression_algebraic_datatype) */
       /* 式のパターンマッチ関数 */
@@ -272,25 +251,27 @@ describe('環境を作る', () => {
         };
       }
       /* #@range_end(expression_arithmetic) */
-      // mul : (exp1,exp2) => {        // かけ算の式
-      //   return (pattern) => {
-      //     return pattern.mul(exp1, exp2);
-      //   };
-      // }
-      // div : (exp1,exp2) => {
-      //   return (pattern) => {
-      //     return pattern.div(exp1, exp2);
-      //   };
-      // },
-      // equal: (expL,expR) => {
-      //   return (pattern) => {
-      //     return pattern.equal(expL, expR);
-      //   };
-      // }
+      /*
+      mul : (exp1,exp2) => {        // かけ算の式
+        return (pattern) => {
+          return pattern.mul(exp1, exp2);
+        };
+      }
+      div : (exp1,exp2) => {
+        return (pattern) => {
+          return pattern.div(exp1, exp2);
+        };
+      },
+      equal: (expL,expR) => {
+        return (pattern) => {
+          return pattern.equal(expL, expR);
+        };
+      }
+      */
     };
     describe('式をテストする', () => {
       it("\\x.\\y.x", (next) => {
-        // λx.λy.x
+        /* λx.λy.x */
         exp.match(exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("x"))),{
           lambda: (variable, arg) => {
             expect(
@@ -369,6 +350,7 @@ describe('恒等モナド評価器を作る', () => {
   //                       y <- eval u
   //                       return (x div y)}
   // ~~~
+  // ### 恒等モナド
   /* #@range_begin(identity_monad) */
   var ID = {
     unit: (value) => {
@@ -425,21 +407,22 @@ describe('恒等モナド評価器を作る', () => {
     });
   };
   /* #@range_end(identity_monad_evaluator) */
-  // equal: (expL, expR) => {
-  //   return ID.flatMap(evaluate(expL, environment))((valueR) => {
-  //     return ID.flatMap(evaluate(expR, environment))((valueL) => {
-  //       return ID.unit(valueL === valueR); 
-  //     });
-  //   });
-  // }
-  // /* 割り算の評価 */
-  // div: (expL, expR) => {
-  //   return ID.flatMap(evaluate(expL, environment))((valueR) => {
-  //     return ID.flatMap(evaluate(expR, environment))((valueL) => {
-  //       return ID.unit(valueL / valueR); 
-  //     });
-  //   });
-  // }
+  /*
+  equal: (expL, expR) => {
+    return ID.flatMap(evaluate(expL, environment))((valueR) => {
+      return ID.flatMap(evaluate(expR, environment))((valueL) => {
+        return ID.unit(valueL === valueR); 
+      });
+    });
+  }
+  div: (expL, expR) => {
+    return ID.flatMap(evaluate(expL, environment))((valueR) => {
+      return ID.flatMap(evaluate(expR, environment))((valueL) => {
+        return ID.unit(valueL / valueR); 
+      });
+    });
+  }
+  */
   it('ID評価器で数値を評価する', (next) => {
     /* #@range_begin(number_evaluation_test) */
     expect(
@@ -456,11 +439,6 @@ describe('恒等モナド評価器を作る', () => {
     ).to.be(
       ID.unit(3)
     );
-    // expect(
-    //   evaluate(exp.mul(exp.num(2),exp.num(3)), emptyEnv)
-    // ).to.be(
-    //   ID.unit(6)
-    // );
     next();
   });
   it('ID評価器で変数を評価する', (next) => {
@@ -569,65 +547,57 @@ describe('恒等モナド評価器を作る', () => {
     /* #@range_end(curried_function_evaluation_test) */
     next();
   });
-  // it('Yコンビネータで再帰を実行する', (next) => {
-  //   /* #@range_begin(Y_combinator) */
-  //   // var times = (count,fun,arg, accumulator) => {
-  //   //   if(count > 1) {
-  //   //      return times(count-1,fun,arg, fun(accumulator,arg)); // times 関数を再帰呼出し
-  //   //   } else {
-  //   //      return fun(accumulator,arg);
-  //   //   }
-  //   // };
-  //   // var multiply = (n,m) => {
-  //   //    return times(m, add, n, 0); // 2 番目の引数に add 関数を渡している
-  //   // };
-  //   // var Y = (F) => {
-  //   //   return ((g) => {
-  //   //     return (x) =>  {
-  //   //       return F(g(g))(x);
-  //   //     };
-  //   //   })((g) =>  {
-  //   //     return (x) => {
-  //   //       return F(g(g))(x);
-  //   //     };
-  //   //   });
-  //   // };
-  //   var Y = exp.lambda(exp.variable("F"),
-  //                      exp.app(
-  //                        exp.lambda(exp.variable("g"),
-  //                                   exp.lambda(exp.variable("x"),
-  //                                              exp.app(exp.app(exp.variable("F"), // F(g(g))(x)
-  //                                                      exp.app(exp.variable("g"),exp.variable("g"))),
-  //                                                      exp.variable("x")))),
-  //                        exp.lambda(exp.variable("g"),
-  //                                   exp.lambda(exp.variable("x"),
-  //                                              // F(g(g))(x);
-  //                                              exp.app(exp.app(exp.variable("F"),
-  //                                                      exp.app(exp.variable("g"),exp.variable("g"))),
-  //                                                      exp.variable("x"))))
-  //                      ));
-  //   // var factorial = Y((fact) => {
-  //   //   return (n) => {
-  //   //     if (n == 0) {
-  //   //       return 1;
-  //   //     } else {
-  //   //       return n * fact(n - 1);
-  //   //     }
-  //   //   };
-  //   // });
+  it('Yコンビネータで再帰を実行する', (next) => {
+    // ~~~js
+    // var Y = (F) => {
+    //   return ((g) => {
+    //     return (x) =>  {
+    //       return F(g(g))(x);
+    //     };
+    //   })((g) =>  {
+    //     return (x) => {
+    //       return F(g(g))(x);
+    //     };
+    //   });
+    // };
+    // ~~~
+    /*
+    var Y = exp.lambda(exp.variable("F"),
+                       exp.app(
+                         exp.lambda(exp.variable("g"),
+                                    exp.lambda(exp.variable("x"),
+                                               exp.app(exp.app(exp.variable("F"), // F(g(g))(x)
+                                                       exp.app(exp.variable("g"),exp.variable("g"))),
+                                                       exp.variable("x")))),
+                         exp.lambda(exp.variable("g"),
+                                    exp.lambda(exp.variable("x"),
+                                               // F(g(g))(x);
+                                               exp.app(exp.app(exp.variable("F"),
+                                                       exp.app(exp.variable("g"),exp.variable("g"))),
+                                                       exp.variable("x"))))
+                       ));
+    var factorial = Y((fact) => {
+      return (n) => {
+        if (n == 0) {
+          return 1;
+        } else {
+          return n * fact(n - 1);
+        }
+      };
+    });
 
-  //   var factorial = exp.app(
-  //     exp.app(Y, exp.lambda(exp.variable("fact"),
-  //                           exp.lambda(exp.variable("n"),
+    var factorial = exp.app(
+      exp.app(Y, exp.lambda(exp.variable("fact"),
+                            exp.lambda(exp.variable("n"),
   
-  //   expect(
-  //     evaluate(expression, emptyEnv)
-  //   ).to.be(
-  //     5
-  //   );
-  //   /* #@range_end(Y_combinator) */
-  //   next();
-  // });
+    expect(
+      evaluate(factorial, emptyEnv)
+    ).to.be(
+      5
+    );
+    */
+    next();
+  });
 });
 // ## LOGモナド評価器
 describe('ログ出力用評価器を作る', () => {
@@ -914,463 +884,153 @@ describe('ログ出力用評価器を作る', () => {
     next();
   });
 });
-//     it('ブール型を評価する', (next) => {
-//       /* λx.λy.x */
-//       var trueFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("x")));
-//       /* λx.λy.y */
-//       var falseFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("y")));
-//       var not = exp.lambda(exp.variable("x"),
-//                        exp.app(
-//                          exp.app(
-//                            exp.variable("x"),falseFun),
-//                          trueFun));
-//       var and = exp.lambda(exp.variable("x"),
-//                        exp.lambda(exp.variable("y"),
-//                               exp.app(
-//                                 exp.app(exp.variable("x"),exp.variable("y")),
-//                                 falseFun)));
-//       var or = exp.lambda(exp.variable("x"),
-//                       exp.lambda(exp.variable("y"),
-//                              exp.app(
-//                                exp.app(exp.variable("x"),trueFun),
-//                                exp.variable("y"))));
-//       var cond = exp.lambda(exp.variable("pred"),
-//                         exp.lambda(exp.variable("x"),
-//                                exp.lambda(exp.variable("y"),
-//                                       exp.app(
-//                                         exp.app(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
-//       expect(
-//         evaluate(
-//           exp.app(
-//             exp.app(trueFun,exp.num(1)),
-//             exp.num(0)),
-//           emptyEnv)
-//       ).to.eql(
-//         1
-//       );
-//       expect(
-//         evaluate(
-//           exp.app(
-//             exp.app(
-//               exp.app(not, trueFun), exp.num(1)), exp.num(0)),emptyEnv)
-//       ).to.eql(
-//         0
-//       );
-//       expect(
-//         evaluate(
-//           exp.app(
-//             exp.app(
-//               exp.app(
-//                 exp.app(and,
-//                             trueFun),
-//                 trueFun),
-//               exp.num(1)),
-//             exp.num(0)),emptyEnv)
-//       ).to.be(
-//         1
-//       );
-//       expect(
-//         evaluate(
-//           exp.app(
-//             exp.app(
-//               exp.app(
-//                 exp.app(
-//                   exp.app(cond, trueFun),
-//                   falseFun),
-//                 trueFun),
-//               exp.num(1)),
-//             exp.num(0)),
-//           emptyEnv)
-//       ).to.eql(
-//         0
-//       );
-//       next();
-//     });
-//   });
-//   describe('プリティプリンタを作る', () => {
-//     var prettyPrint = (anExp) => {
-//       return exp.match(anExp,{
-//         /* 数値 */
-//         number: (value) => {
-//           return {
-//             number: value
-//           };
-//         },
-//         /* 変数 */
-//         variable: (name) => {
-//           return {
-//             variable: name
-//           };
-//         },
-//         /* λ式 */
-//         lambda: (variable, bodyExp) => {
-//           return {
-//             lambda: {
-//               variable: variable,
-//               bodyExp: prettyPrint(bodyExp)
-//             }
-//           };
-//         },
-//         /* 関数適用評価 */
-//         app: (variable, arg) => {
-//           return {
-//             app: {
-//               variable: variable,
-//               arg: prettyPrint(arg)
-//             }
-//           };
-//         }
-//       });
-//     };
-//     it('prettyPrintをテストする', (next) => {
-//       expect(
-//         prettyPrint(exp.num(2))
-//       ).to.eql(
-//         {"number" : 2}
-//       );
-//       next();
-//     });
-//     describe('ローダーを作る', () => {
-//       var load = (object) => {
-//         //            return (callback) => {
-//         for (var key in object) {
-//           switch (key){
-//           case "number":
-//             return exp.num(parseInt(object[key],10));
-//             break;
-//           default:
-//             throw new Error();
-//             break;
-//           }
-//         }
-//         //            };
-//       };
-//       it('ローダーをテストする', (next) => {
-//         expect(
-//           evaluate(load({"number" : 2}, emptyEnv))
-//         ).to.eql(
-//           2
-//         );
-//         next();
-//       });
-//   // describe('ファイル操作', () => {
-//   //   it('数値を評価する', (next) => {
-//   //     fs.writeFileSync('/tmp/nodejs-labo-test.json',  JSON.stringify(num(2), null, '    '));
-//   //     expect(
-//   //       JSON.parse(fs.readFileSync('/tmp/nodejs-labo-test.json', 'utf8'))
-//   //     ).to.eql(
-//   //       2
-//   //     );
-//   //     next();
-//   //   });
-//   // });
-// });
-
-// ## 例外捕捉評価器 
-describe('例外捕捉評価器', () => {
-  // 「環境」モジュール
-  var env = {
-    // empty:: STRING => VALUE 
-    empty: (variable) => {                        // 空の環境を作る
-      return undefined;
-    },
-    // lookup:: (STRING, ENV) => VALUE
-    lookup : (name, environment) => {       // 変数名に対応する値を環境から取りだす
-      return environment(name);
-    },
-    // extend:: (STRING, VALUE, ENV) => ENV 
-    extend: (identifier, value, environment) => { // 環境を拡張する
-      return (queryIdentifier) => {
-        if(identifier === queryIdentifier) {
-          return value;
-        } else {
-          return env.lookup(queryIdentifier,environment);
-        }
-      };
-    }
-  };
-  // ### 式の代数的データ構造
-  /* #@range_begin(continuation_passing_interpreter_expression) */
-  var exp = {
-    match : (data, pattern) => {
-      return data.call(exp, pattern);
-    },
-    exception: (message) => {
-      return (pattern) => {
-        return pattern.exception(message);
-      };
-    },
-    raise: (exception) => {
-      return (pattern) => {
-        return pattern.raise(exception);
-      };
-    },
-    tryWith: (anExp, exception, raisedExp) => {
-      return (pattern) => {
-        return pattern.tryWith(anExp, exception, raisedExp);
-      };
-    },
-    /* #@range_end(continuation_passing_interpreter_expression) */
-    num: (value) => {
-      expect(value).to.a('number');
-      return (pattern) => {
-        return pattern.num(value);
-      };
-    },
-    variable: (name) => {
-      expect(name).to.a('string');
-      return (pattern) => {
-        return pattern.variable(name);
-      };
-    },
-    lambda: (variable, body) => {
-      expect(variable).to.a('function');
-      expect(body).to.a('function');
-      return (pattern) => {
-        return pattern.lambda(variable, body);
-      };
-    },
-    app: (variable, arg) => {
-      return (pattern) => {
-        return pattern.app(variable, arg);
-      };
-    }
-  }; // exp
-  // ### 例外捕捉評価器の評価関数
-  /* #@range_begin(continuation_passing_interpreter_evaluate) */
-  // evaluateCPS: (EXP, ENV, FUNC[VALUE -> VALUE]) -> VALUE
-  var evaluateCPS = (anExp, environment, continues, continuesInFailure) => {
-    // c.f. Programming Language Concepts, p.208
-    return exp.match(anExp,{
-      /* 例外の評価 */
-      raise: (exception) => {
-        return continuesInFailure(exception);
-      },
-      tryWith: (anExp, caughtException, failSafeExp) => {
-        var newContinuesInFailure = (thrownException) => {
-          if (thrownException.message === caughtException.message) {
-            return evaluateCPS(failSafeExp, environment, continues, continuesInFailure);
-          } else {
-            return continuesInFailure(thrownException);
-          }
-        };
-        return evaluateCPS(anExp, environment, continues, newContinuesInFailure);
-      },
-      /* 数値の評価 */
-      num: (answer) => {
-        return continues(answer);
-      },
-      /* 変数の評価 */
-      variable: (name) => {
-        var found = env.lookup(name, environment);
-        if(found === undefined){
-          return continuesInFailure(new Error(name + " not found"));
-        } else {
-          return continues(found);
-        }
-      },
-      /* λ式の評価 */
-      lambda: (anExp, bodyExp) => {
-        /* クロージャーを返す */
-        return (actualArg) => {
-          return exp.match(anExp,{
-            variable: (name) => {
-              return continues(evaluateCPS(bodyExp, env.extend(name, actualArg ,environment), continues));
-            },
-            num: (value) => {
-              return continuesInFailure(new Error("lambdaの引数が数値になっています"));
-            },
-            lambda: ($$,$$$) => {
-              return continuesInFailure(new Error("lambdaの引数がlambbaになっています"));
-            }
-          });
-        };
-      },
-      /* 関数適用の評価 */
-      app: (anExp, arg) => {
-        var rator = evaluateCPS(anExp, environment, continues, continuesInFailure);
-        var rand = evaluateCPS(arg, environment, continues, continuesInFailure);
-        return continues(rator(rand));
-      }
-    });
-    /* #@range_end(continuation_passing_interpreter_evaluate) */
-  };
-  describe('例外捕捉評価器をテストする', () => {
-    // 「環境」モジュール
-    var env = {
-      // empty:: STRING => VALUE 
-      empty: (variable) => {                        // 空の環境を作る
-        return undefined;
-      },
-      // lookup:: (STRING, ENV) => VALUE
-      lookup : (name, environment) => {       // 変数名に対応する値を環境から取りだす
-        return environment(name);
-      },
-      // extend:: (STRING, VALUE, ENV) => ENV 
-      extend: (identifier, value, environment) => { // 環境を拡張する
-        return (queryIdentifier) => {
-          if(identifier === queryIdentifier) {
-            return value;
-          } else {
-            return env.lookup(queryIdentifier,environment);
-          }
-        };
-      }
-    };
-    var emptyEnv = env.empty;
-    var continuesNormally = (result) => {
-      return result;
-    };
-    var continuesAbnormally = (exception) => {
-      return exception;
-    };
-    it('数値を評価する', (next) => {
-      expect(
-        evaluateCPS(exp.num(2), emptyEnv, continuesNormally, continuesAbnormally)
-      ).to.eql(2);
-      next();
-    });
-    it('変数を評価する', (next) => {
-      var newEnv = env.extend("x",1, emptyEnv, continuesNormally, continuesAbnormally);
-      expect(
-        evaluateCPS(exp.variable("x"), newEnv, continuesNormally, continuesAbnormally)
-      ).to.eql(
-        1
-      );
-      // 自由変数の場合は、 例外が返る
-      expect(
-        evaluateCPS(exp.variable("y"), newEnv, continuesNormally, continuesAbnormally)
-      ).to.eql(
-        new Error("y not found")
-      );
-      next();
-    });
-    it('constant関数', (next) => {
-      var constant = exp.lambda(exp.variable("x"),exp.num(1));
-      expect(
-        evaluateCPS(constant, emptyEnv, continuesNormally, continuesAbnormally)
-      ).to.a(
-        'function'
-      );
-      // (λx.1)(2)
-      var applied = exp.app(constant, exp.num(2));
-      expect(
-        evaluateCPS(applied, emptyEnv, continuesNormally, continuesAbnormally)
-      ).to.eql(
-        1
-      );
-      next();
-    });
-    it('identity関数をテストする', (next) => {
-      /* λx.x */
-      var identity = exp.lambda(exp.variable("x"),exp.variable("x"));
-      expect(
-        evaluateCPS(identity, emptyEnv, continuesNormally, continuesAbnormally)
-      ).to.a(
-        'function'
-      );
-      // (λx.x)(1) = 1 */
-      var appliedExpression = exp.app(identity, exp.num(1));
-      expect(
-        evaluateCPS(appliedExpression, emptyEnv, continuesNormally, continuesAbnormally)
-      ).to.eql(
-        1
-      );
-      next();
-    });
+/*
     it('ブール型を評価する', (next) => {
-      this.timeout(1000);
-      /* λx.λy.x */
-      var trueFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("x")));
-      /* λx.λy.y */
-      var falseFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("y")));
+      
+      var trueFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("x"))); // λx.λy.x 
+      
+      var falseFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("y"))); // λx.λy.y 
       var not = exp.lambda(exp.variable("x"),
-                           exp.app(
-                             exp.app(
-                               exp.variable("x"),falseFun),
-                             trueFun));
+                       exp.app(
+                         exp.app(
+                           exp.variable("x"),falseFun),
+                         trueFun));
       var and = exp.lambda(exp.variable("x"),
-                           exp.lambda(exp.variable("y"),
-                                      exp.app(
-                                        exp.app(exp.variable("x"),exp.variable("y")),
-                                        falseFun)));
+                       exp.lambda(exp.variable("y"),
+                              exp.app(
+                                exp.app(exp.variable("x"),exp.variable("y")),
+                                falseFun)));
       var or = exp.lambda(exp.variable("x"),
-                          exp.lambda(exp.variable("y"),
-                                     exp.app(
-                                       exp.app(exp.variable("x"),trueFun),
-                                       exp.variable("y"))));
+                      exp.lambda(exp.variable("y"),
+                             exp.app(
+                               exp.app(exp.variable("x"),trueFun),
+                               exp.variable("y"))));
       var cond = exp.lambda(exp.variable("pred"),
-                            exp.lambda(exp.variable("x"),
-                                       exp.lambda(exp.variable("y"),
-                                                  exp.app(
-                                                    exp.app(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
-      // (λx.λy.x)(1)(0) = 1
+                        exp.lambda(exp.variable("x"),
+                               exp.lambda(exp.variable("y"),
+                                      exp.app(
+                                        exp.app(exp.variable("pred"),exp.variable("x")),exp.variable("y")))));
       expect(
-        evaluateCPS(
+        evaluate(
           exp.app(
             exp.app(trueFun,exp.num(1)),
             exp.num(0)),
-          emptyEnv,
-          continuesNormally,
-          continuesAbnormally)
+          emptyEnv)
       ).to.eql(
         1
       );
-      // (λx.λy.x)(1)(z) = 1
       expect(
-        evaluateCPS(
+        evaluate(
           exp.app(
-            exp.app(trueFun,exp.num(1)),
-            exp.variable("z")),
-          emptyEnv,
-          continuesNormally,
-          continuesAbnormally)
+            exp.app(
+              exp.app(not, trueFun), exp.num(1)), exp.num(0)),emptyEnv)
       ).to.eql(
+        0
+      );
+      expect(
+        evaluate(
+          exp.app(
+            exp.app(
+              exp.app(
+                exp.app(and,
+                            trueFun),
+                trueFun),
+              exp.num(1)),
+            exp.num(0)),emptyEnv)
+      ).to.be(
         1
       );
-      // (λx.λy.x)(z)(0) = error
       expect(
-        evaluateCPS(
+        evaluate(
           exp.app(
-            exp.app(trueFun,exp.variable("z")),
+            exp.app(
+              exp.app(
+                exp.app(
+                  exp.app(cond, trueFun),
+                  falseFun),
+                trueFun),
+              exp.num(1)),
             exp.num(0)),
-          emptyEnv,
-          continuesNormally, 
-          continuesAbnormally)
+          emptyEnv)
       ).to.eql(
-        new Error("z not found")
+        0
       );
       next();
     });
-    it('投げられた例外を捕捉する', (next) => {
-      /* #@range_begin(continuation_passing_interpreter_trycatch) */
-      var tryExpression = exp.tryWith(
-        exp.raise(new Error("exception")), // exp
-        new Error("exception"), // caughtException
-        exp.num(1) // failSafeExp
-      );
+  });
+  describe('プリティプリンタを作る', () => {
+    var prettyPrint = (anExp) => {
+      return exp.match(anExp,{
+        number: (value) => {
+          return {
+            number: value
+          };
+        },
+        variable: (name) => {
+          return {
+            variable: name
+          };
+        },
+        lambda: (variable, bodyExp) => {
+          return {
+            lambda: {
+              variable: variable,
+              bodyExp: prettyPrint(bodyExp)
+            }
+          };
+        },
+        app: (variable, arg) => {
+          return {
+            app: {
+              variable: variable,
+              arg: prettyPrint(arg)
+            }
+          };
+        }
+      });
+    };
+    it('prettyPrintをテストする', (next) => {
       expect(
-        evaluateCPS(tryExpression, emptyEnv, continuesNormally, continuesAbnormally)
+        prettyPrint(exp.num(2))
       ).to.eql(
-        1
+        {"number" : 2}
       );
-      // (λx.tryWith(raise, exception , 1))(0) = 1
-      var catchException = exp.app(exp.lambda(exp.variable("x"),
-                                              exp.tryWith(
-                                                exp.raise(new Error("exception")),
-                                                new Error("exception"),
-                                                exp.num(1)
-                                              )),
-                                   exp.num(0));
+      next();
+    });
+    describe('ローダーを作る', () => {
+      var load = (object) => {
+        for (var key in object) {
+          switch (key){
+          case "number":
+            return exp.num(parseInt(object[key],10));
+            break;
+          default:
+            throw new Error();
+            break;
+          }
+        }
+      };
+      it('ローダーをテストする', (next) => {
+        expect(
+          evaluate(load({"number" : 2}, emptyEnv))
+        ).to.eql(
+          2
+        );
+        next();
+      });
+  describe('ファイル操作', () => {
+    it('数値を評価する', (next) => {
+      fs.writeFileSync('/tmp/nodejs-labo-test.json',  JSON.stringify(num(2), null, '    '));
       expect(
-        evaluateCPS(catchException, emptyEnv, continuesNormally, continuesAbnormally)
+        JSON.parse(fs.readFileSync('/tmp/nodejs-labo-test.json', 'utf8'))
       ).to.eql(
-        1
+        2
       );
-      /* #@range_end(continuation_passing_interpreter_trycatch) */
       next();
     });
   });
 });
+*/
+
 
 

@@ -208,22 +208,6 @@ describe('合成型', () => {
           false
         );
         /* #@range_end(object_access) */
-        // var expression = {
-        //   add: {
-        //     x: 1,
-        //     y: {
-        //       multiply: {
-        //         x: 2,
-        //         y: 3
-        //       }
-        //     }
-        //   }
-        // };
-        // expect(
-        //   expression.add.y.multiply.x
-        // ).to.eql(
-        //   2
-        // );
         next();
       });
       it('オブジェクト型によるアドレス帳の表現', (next) => {
@@ -362,26 +346,6 @@ describe('合成型', () => {
         }
       ];
       /* #@range_end(addressbook_example_in_array) */
-      // var addressbook = [ // 配列に要素を格納する
-      //   {
-      //     name: "Alan Turing",
-      //     birthDay: "1912/6/23",
-      //     weight: 62,
-      //     height: 175
-      //   },
-      //   {
-      //     name: "Haskell Curry",
-      //     birthDay: "1900/9/12",
-      //     weight: 62,
-      //     height: 180
-      //   },
-      //   {
-      //     name: "Alonzo Church",
-      //     birthDay: "1903/6/14",
-      //     weight: 75,
-      //     height: 168
-      //   }
-      // ];
       /* #@range_begin(sorting_array) */
       expect(
         addressbook.sort((onePerson,anotherPerson) => {
@@ -652,7 +616,7 @@ describe('合成型', () => {
       );
       expect(((_) => {
         var reversed = reverse(array);
-        return array
+        return array;
       })()).to.eql(
         [1,2,3,4,5] // 元の配列と同じ
       );
@@ -776,6 +740,8 @@ describe('変数とデータの関係', () => {
     });
   });
   describe('環境と値', () => {
+    // #### <a name="environment_demo"> **変数バインディングと環境** </a>
+    // ![変数バインディングと環境](images/environment.gif) 
     it('関数本体でのバインド変数', (next) => {
       /* #@range_begin(bound_variable_in_function) */
       var add = (x,y) => {

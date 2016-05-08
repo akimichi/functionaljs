@@ -57,8 +57,8 @@ gulp.task('doc', function() {
   var options = {
     layout:     'parallel',
     output:     'docs',
-    template:   null,
-    css:        'css/docco.css',
+    template:   'docs/template/docco.jst',
+    css:        'docs/css/docco.css',
     extension:  null,
     languages:  {},
     marked:     null

@@ -297,7 +297,8 @@ describe('関数の基本', () => {
         next();
       });
     });
-    describe('thunkを使う', () => {
+    // #### サンクで無限を表現する
+    describe('サンクで無限を表現する', () => {
       /* #@range_begin(definition_thunk_force) */
       var thunk = (func) => {
         return (arg) => {

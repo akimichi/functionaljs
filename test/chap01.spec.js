@@ -143,7 +143,7 @@ describe('命令型モデル', () => {
           }
           /* #@range_end(turing_example_succ_test_result) */
         );
-        // **チューリング機械の挙動**
+        // #### <a name="turing_demo"> **チューリング機械の挙動** </a>
         // 
         // ![チューリング機械の挙動](images/turing_succ.gif) 
         next();
@@ -230,8 +230,6 @@ describe('関数型モデル', () => {
       var prev = (n) => {
         return n - 1;
       };
-      // **add関数の簡約**
-      // ![add関数の簡約](images/add_reduction.gif) 
       /* add関数の定義 */
       var add = (x,y) => { 
         if(y < 1){
@@ -242,6 +240,8 @@ describe('関数型モデル', () => {
         }
       };
       /* #@range_end(add) */
+      // #### <a name="add_reduction_demo"> **add(3,2)の簡約** </a>
+      // ![add関数の簡約](images/add_reduction.gif) 
       expect(
         add(2,1)
       ).to.eql(
@@ -344,6 +344,8 @@ describe('関数型モデル', () => {
         return times(m, add, n, 0); 
       };
       /* #@range_end(multiply) */
+      // #### <a name="multiply_reduction_demo"> **multiply(2,3)の簡約** </a>
+      // ![multiply関数の簡約](images/multiply_reduction.gif) 
       expect(
         add(2,3)
       ).to.eql(

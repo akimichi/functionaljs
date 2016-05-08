@@ -1079,7 +1079,8 @@ describe('カリー化で関数を渡す', () => {
       next();
     });
   });
-  describe('関数合成', () => {
+  // ### 関数を合成する
+  describe('関数を合成する', () => {
     /* #@range_begin(compose_definition) */
     var compose = (f) => {
       return (g) => {
@@ -2261,786 +2262,1006 @@ describe('クロージャーを使う', () => {
     /* #@range_end(partial_application_with_environment) */
     next();
   });
-});
-describe('クロージャーで状態をカプセル化する', () => {
-  describe('単純なクロージャーの例', (next) => {
-    it('counter関数の例', (next) => {
-      /* #@range_begin(counter_as_closure) */
-      var counter = (init) => {
-        var countingNumber =  init - 1;
-        /* countingNumberの環境を持つクロージャーを返す */
-        return (_) => {  
-          countingNumber = countingNumber + 1;
-          return countingNumber ;
+  // ### クロージャーで状態をカプセル化する
+  describe('クロージャーで状態をカプセル化する', () => {
+    describe('単純なクロージャーの例', (next) => {
+      it('counter関数の例', (next) => {
+        /* #@range_begin(counter_as_closure) */
+        var counter = (init) => {
+          var countingNumber =  init - 1;
+          /* countingNumberの環境を持つクロージャーを返す */
+          return (_) => {  
+            countingNumber = countingNumber + 1;
+            return countingNumber ;
+          };
         };
-      };
-      /* #@range_end(counter_as_closure) */
-      /* #@range_begin(counter_as_closure_test) */
-      var counterFromZero = counter(0);
-      expect(
-        counterFromZero()
-      ).to.eql( 
-        0
-      );
-      expect(
-        counterFromZero()
-      ).to.eql( 
-        1
-      );
-      /* #@range_end(counter_as_closure_test) */
-      /* #@range_begin(another_counter) */
-      var anoterCounterFromZero = counter(0);
-      expect(
-        anoterCounterFromZero()
-      ).to.eql( 
-        0
-      );
-      /* #@range_end(another_counter) */
-      next();
-    });
-    it('counter関数における、外側のスコープからのクロージャーによる自由変数の捕捉', (next) => {
-      var _init = 0;
-      var counter = (_) => {  // クロージャーを返す
-        _init = _init + 1;
-        return _init;
-      };
-      expect(
-        counter()
-      ).to.eql( 
-        1
-      );
-      _init = 100;
-      expect(
-        counter()
-      ).to.eql( 
-        101
-      );
-      next();
-    });
-    it('関数の外側にあるスコープによる自由変数の捕捉', (next) => {
-      var sleep = require('sleep-async')();
-      /* #@range_begin(captures_free_variable_outside_function) */
-      var startUpTime = Date.now();
-      
-      var application = {
-        timeLapse: () => {
-          var now = Date.now();
-          /* 外側のスコープにある startUpTime変数を捕捉している */
-          return now - startUpTime; 
-        }
-      };
-      /* #@range_end(captures_free_variable_outside_function) */
-      sleep.sleep(5000, () => {
+        /* #@range_end(counter_as_closure) */
+        /* #@range_begin(counter_as_closure_test) */
+        var counterFromZero = counter(0);
         expect(
-          application.timeLapse()
-        ).to.be.greaterThan(
+          counterFromZero()
+        ).to.eql( 
+          0
+        );
+        expect(
+          counterFromZero()
+        ).to.eql( 
           1
         );
+        /* #@range_end(counter_as_closure_test) */
+        /* #@range_begin(another_counter) */
+        var anoterCounterFromZero = counter(0);
+        expect(
+          anoterCounterFromZero()
+        ).to.eql( 
+          0
+        );
+        /* #@range_end(another_counter) */
+        next();
       });
-      next();
-    });
-  });
-  describe('関数とデータの類似性', (next) => {
-    it('チャーチ数', (next) => {
-      /* #@range_begin(church_numeral) */
-      var zero = (f) => {
-        return (x) => {
-          return x;
-        };
-      };
-      var one = (f) => {
-        return (x) => {
-          return f(x); // 関数を1回適用する
-        };
-      };
-      var two = (f) => {
-        return (x) => {
-          return f(f(x)); // 関数を2回適用する
-        };
-      };
-      var three = (f) => {
-        return (x) => {
-          return f(f(f(x)));  // 関数を3回適用する
-        };
-      };
-      var add = (m) => {
-        return (n) => {
-          return (f) => {
-            return (x) => {
-              return m(f)(n(f)(x));
-            };
-          };
-        };
-      };
-      /*#@range_end(church_numeral) */
-      var succ = (n) => {
-        return (f) => {
-          return (x) => {
-            return f(n(f)(x));
-          };
-        };
-      };
-      var counter = (init) => {
-        var _init = init;
-        return (dummy) => {
+      it('counter関数における、外側のスコープからのクロージャーによる自由変数の捕捉', (next) => {
+        var _init = 0;
+        var counter = (_) => {  // クロージャーを返す
           _init = _init + 1;
           return _init;
         };
-      };
-      expect(one(counter(0))()).to.eql(1);
-      expect(two(counter(0))()).to.eql(2);
-      expect(three(counter(0))()).to.eql(3);
-      expect(succ(one)(counter(0))()).to.eql(2);
-      expect(succ(two)(counter(0))()).to.eql(3);
-      expect(add(zero)(one)(counter(0))()).to.eql(1);
-      expect(add(one)(one)(counter(0))()).to.eql(2);
-      expect(add(one)(two)(counter(0))()).to.eql(3);
-      expect(add(two)(three)(counter(0))()).to.eql(5);
-      next();
-    });
-    it('関数とリストの類似性', (next) => {
-      var match = (data, pattern) => {
-        return data(pattern);
-      };
-      var empty = (pattern) => {
-        return pattern.empty;
-      };
-      var cons = (value, list) => {
-        return (pattern) => {
-          return pattern.cons(value, list);
-        };
-      };
-      var isEmpty = (list) => {
-        return match(list, { // match関数で分岐する
-          empty: true,
-          cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
-            return false;
-          },
-        });
-      };
-      var head = (list) => {
-        return match(list, {
-          empty: null, // 空のリストには先頭要素はありません
-          cons: (head, tail) => {
-            return head;
-          },
-        });
-      };
-      var tail = (list) => {
-        return match(list, {
-          empty: null,  // 空のリストには末尾要素はありません
-          cons: (head, tail) => {
-            return tail;
-          },
-        });
-      };
-      /*
-        ~~~haskell
-        list2fct :: Eq a => [(a,b)] -> a -> b
-        list2fct [] _ = error "function not total"
-        list2fct ((u,v):uvs) x | x == u = v
-        | otherwise = list2fct uvs x
-        fct2list :: (a -> b) -> [a] -> [(a,b)]
-        fct2list f xs = [ (x, f x) | x <- xs ]
-        ~~~
-      */
-      next();
-    });
-    describe('クロージャーによる「環境」の実装', () => {
-      /* #@range_begin(environment_in_closure) */
-      /* 空の環境  */
-      var emptyEnv = (variable) => {
-        return null;
-      };
-      /* 変数名に対応する値を環境から取りだす */
-      var lookupEnv = (identifier, env) => {
-        return env(identifier);
-      };
-      /* 環境を拡張する */
-      var extendEnv = (identifier, value, env) => {
-        return (queryIdentifier) => {
-          if(identifier === queryIdentifier) {
-            return value;
-          } else {
-            return lookupEnv(queryIdentifier,env);
-          }
-        };
-      };
-      /* #@range_end(environment_in_closure) */
-      it('extendEnvで環境を作り、 lookupEnv で環境を探る', (next) => {
-        /* #@range_begin(environment_in_closure_test) */
         expect(
-          lookupEnv("a", emptyEnv)
-        ).to.be(
-          null
-        );
-        var newEnv = extendEnv('a',1, emptyEnv);
-        expect(
-          lookupEnv("a", newEnv)
-        ).to.be(
+          counter()
+        ).to.eql( 
           1
         );
-        expect(((_) => {
-          /* 空の辞書を作成する */
-          var initEnv = emptyEnv;
-          /* var a = 1 を実行して、辞書を拡張する */
-          var firstEnv = extendEnv("a", 1, initEnv);
-          /* var b = 3 を実行して、辞書を拡張する */
-          var secondEnv = extendEnv("b",3, firstEnv);
-          /* 辞書から b の値を参照する */
-          return lookupEnv("b",secondEnv);
-        })()).to.eql(
-          3
+        _init = 100;
+        expect(
+          counter()
+        ).to.eql( 
+          101
         );
-        expect(((_) => {
-          /* 空の辞書を作成する */
-          var initEnv = emptyEnv;
-          /* var x = 1 を実行して、辞書を拡張する */
-          var xEnv = extendEnv("x", 1, initEnv);
-          /* var z = 2 を実行して、辞書を拡張する */
-          var zEnv = extendEnv("z", 2, xEnv);
-          /* 内部のスコープで var x = 3 を実行して、辞書を拡張する */
-          var xEnvInner = extendEnv("x",3, zEnv);
-          /* 内部のスコープで var y = 4 を実行して、辞書を拡張する */
-          var innerMostEnv = extendEnv("y",4, xEnvInner);
-          /* 一番内側のスコープを利用して x + y + z を計算する */
-          return lookupEnv("x",innerMostEnv) + lookupEnv("y",innerMostEnv) + lookupEnv("z",innerMostEnv) ;
-        })()).to.eql(
-          3 + 4 + 2
-        );
-        /* #@range_end(environment_in_closure_test) */
+        next();
+      });
+      it('関数の外側にあるスコープによる自由変数の捕捉', (next) => {
+        var sleep = require('sleep-async')();
+        /* #@range_begin(captures_free_variable_outside_function) */
+        var startUpTime = Date.now();
+        
+        var application = {
+          timeLapse: () => {
+            var now = Date.now();
+            /* 外側のスコープにある startUpTime変数を捕捉している */
+            return now - startUpTime; 
+          }
+        };
+        /* #@range_end(captures_free_variable_outside_function) */
+        sleep.sleep(5000, () => {
+          expect(
+            application.timeLapse()
+          ).to.be.greaterThan(
+            1
+          );
+        });
         next();
       });
     });
-  });
-  it('クロージャーの変数バインディング', (next) => {
-    /* #@range_begin(free_variable_in_closure) */
-    var outerFunction = (outerArgument) => {
-      var innerFunction = (innerArgument) => {
-        return outerArgument + innerArgument;
-      };
-      return innerFunction;
-    };
-    /* #@range_end(free_variable_in_closure) */
-    next();
-  });
-  describe('クロージャーと参照透過性', () => {
-    it('multipleOf関数は参照透過である', (next) => {
-      var multipleOf = (n) => {
-        return (m) => {
-          if(m % n === 0) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-      };
-      /* #@range_begin(multipleOf_is_transparent) */
-      expect(
-        multipleOf(2)(4)
-      ).to.eql(
-        multipleOf(2)(4)
-      );
-      expect(
-        multipleOf(3)(5)
-      ).to.eql(
-        multipleOf(3)(5)
-      );
-      /* #@range_end(multipleOf_is_transparent) */
-      next();
-    });
-    it('参照透過でないクロジャーの例', (next) => {
-      var counter = (init) => {
-        var _init = init;
-        return (_) => {
-          _init = _init + 1;
-          return _init;
-        };
-      };
-      /* #@range_begin(counter_is_not_transparent) */
-      var counterFromZero = counter(0);
-      expect(
-        counterFromZero()
-      ).not.to.eql( // notで一致しないことをテストしている
-        counterFromZero()
-      );
-      /* #@range_end(counter_is_not_transparent) */
-      next();
-    });
-    it('参照透過でないクロジャーの利用法', (next) => {
-      /* チャーチ数 church numeral */
-      var zero = (f) => {
-        return (x) => {
-          return x;
-        };
-      };
-      var one = (f) => {
-        return (x) => {
-          return f(x);
-        };
-      };
-      var two = (f) => {
-        return (x) => {
-          return f(f(x));
-        };
-      };
-      var three = (f) => {
-        return (x) => {
-          return f(f(f(x)));
-        };
-      };
-      var succ = (n) => {
-        return (f) => {
+    describe('関数とデータの類似性', (next) => {
+      it('チャーチ数', (next) => {
+        /* #@range_begin(church_numeral) */
+        var zero = (f) => {
           return (x) => {
-            return f(n(f)(x));
+            return x;
           };
         };
-      };
-      var add = (m) => {
-        return (n) => {
-          return (f) => {
-            return (x) =>{
-              return m(f)(n(f)(x));
+        var one = (f) => {
+          return (x) => {
+            return f(x); // 関数を1回適用する
+          };
+        };
+        var two = (f) => {
+          return (x) => {
+            return f(f(x)); // 関数を2回適用する
+          };
+        };
+        var three = (f) => {
+          return (x) => {
+            return f(f(f(x)));  // 関数を3回適用する
+          };
+        };
+        var add = (m) => {
+          return (n) => {
+            return (f) => {
+              return (x) => {
+                return m(f)(n(f)(x));
+              };
             };
           };
         };
-      };
-      var counter = (init) => {
-        var _init = init;
-        return (_) => {
-          _init = _init + 1;
-          return _init;
-        };
-      };
-      /* #@range_begin(church_numeral_test) */
-      expect(
-        one(counter(0))()
-      ).to.eql(
-        1
-      );
-      expect(
-        two(counter(0))()
-      ).to.eql(
-        2
-      );
-      expect(
-        add(one)(two)(counter(0))()
-      ).to.eql(
-        3
-      );
-      /* #@range_end(church_numeral_test) */
-      next();
-    });
-  });
-  describe('不変なデータ型を作る', () => {
-    it('オブジェクト型は不変ではない', (next) => {
-      /* #@range_begin(object_is_not_immutable) */
-      var object = {
-        a: 1
-      };
-      expect(
-        object.a
-      ).to.eql(
-        1
-      );
-      object.a = 2;
-      expect(
-        object.a
-      ).to.eql(
-        2 // 1だった値が2に変更されています
-      );
-      /* #@range_end(object_is_not_immutable) */
-      next();
-    });
-    it('不変なオブジェクト型を作る', (next) => {
-      /* #@range_begin(immutable_object_type) */
-      var object = {
-        empty: (_) => {
-          return null;
-        },
-        get: (key, obj) => {
-          return obj(key);
-        },
-        set: (key, value, obj) => {
-          return (key2) => {
-            if(key === key2) {
-              return value;
-            } else {
-              return object.get(key2,obj);
-            }
-          };
-        }
-      };
-      /* #@range_end(immutable_object_type) */
-      /* #@range_begin(immutable_object_type_test) */
-      expect(
-        object.get("R2D2", 
-                   object.set("R2D2", "Star Wars", 
-                              object.set("HAL9000","2001: a space odessay",
-                                         object.empty)))
-      ).to.eql(
-        "Star Wars"
-      );
-      expect(
-        object.get("R2D2", 
-                   object.set("HAL9000","2001: a space odessay",
-                              object.empty))
-      ).to.eql(
-        null
-      );
-      expect(
-        object.get("HAL9000", 
-                   object.set("C3PO", "Star Wars", 
-                              object.set("R2D2", "Star Wars", 
-                                         object.set("HAL9000","2001: a space odessay",
-                                                    object.empty))))
-      ).to.eql(
-        "2001: a space odessay"
-      );
-      /* #@range_end(immutable_object_type_test) */
-      next();
-    });
-    it('カリー化された不変なオブジェクト型', (next) => {
-      /* #@range_begin(immutable_object_type_curried) */
-      var object = {  // objectモジュール
-        empty: (_) => {
-          return null;
-        },
-        set: (key, value) => {
-          return (obj) => {
-            return (queryKey) => {
-              if(key === queryKey) {
-                return value;
-              } else {
-                return object.get(queryKey)(obj);
-              }
+        /*#@range_end(church_numeral) */
+        var succ = (n) => {
+          return (f) => {
+            return (x) => {
+              return f(n(f)(x));
             };
           };
-        },
-        get: (key) => {
-          return (obj) => {
-            return obj(key);
-          };
-        }
-      };
-      /* #@range_end(immutable_object_type_curried) */
-      /* #@range_begin(immutable_object_type_curried_test) */
-      var robots = compose(
-        object.set("C3PO", "Star Wars"),
-        object.set("HAL9000","2001: a space odessay")
-      )(object.empty);
-
-      expect(
-        object.get("HAL9000")(robots)
-      ).to.eql(
-        "2001: a space odessay"
-      );
-      /* #@range_end(immutable_object_type_curried_test) */
-      next();
-    });
-    it('不変なオブジェクト型を作る(改良版)', (next) => {
-      /* #@range_begin(immutable_object_type_improved) */
-      var objects = {
-        empty: (_) => {
-          return null;
-        },
-        get: (key, obj) => {
-          return obj(key);
-        },
-        set: (key, value, obj) => {
-          var self = this;
-          return (key2) => {
-            if(key === key2) {
-              return value;
-            } else {
-              return self.get(key2,obj)
-            }
-          };
-        },
-        fromObject: (obj) => {
-          var self = this;
-          var keys = (o) => {
-            var result = [];
-            for(var prop in o) {
-              if(o.hasOwnProperty(prop))
-                result.push(prop);
-            }
-            return result;
-          };
-          return keys(obj).reduce((accumulator, key) => {
-            return self.set.call(self,key, obj[key], accumulator);
-          }, self.empty);
-        }
-      };
-      /* #@range_end(immutable_object_type_improved) */
-      /* #@range_begin(immutable_object_type_improved_test) */
-      expect(
-        objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
-      ).to.eql(
-        null
-      );
-      expect(
-        objects.get("HAL9000", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
-      ).to.eql(
-        "2001: a space odessay"
-      );
-      expect(
-        objects.get("R2D2", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
-      ).to.eql(
-        "Star Wars"
-      );
-      /* #@range_end(immutable_object_type_improved_test) */
-      next();
-    });
-    it('不変なリスト型', (next) => {
-      // ~~~scheme
-      // (define (cons x y)
-      //   (lambda (m) (m x y)))
-      // (define (car z)
-      //   (z (lambda (p q) p)))
-      // (define (cdr z)
-      //   (z (lambda (p q) q)))
-      // ~~~
-      /* #@range_begin(immutable_list) */
-      var list = {
-        empty: (index) => {
-          return true;
-        },
-        cons: (head,tail) => {
-          return (f) => {
-            return f(head,tail);
-          };
-        },
-        head: (array) => {
-          return array((head,tail) => {
-            return head;
-          });
-        },
-        tail: (array) => {
-          return array((head,tail) => {
-            return tail;
-          });
-        },
-        at: (index,array) => {
-          if(index === 0){
-            return this.head(array);
-          } else {
-            return this.at(index -1, this.tail(array));
-          }
-        }
-      };
-      var theList = list.cons(1,list.cons(2,list.cons(3,list.empty)));
-      expect(
-        list.head(theList)
-      ).to.eql(
-        1
-      );
-      expect(
-        list.head(list.tail(theList))
-      ).to.eql(
-        2
-      )
-      expect(
-        list.at(0,theList)
-      ).to.eql(
-        1
-      )
-      expect(
-        list.at(1,theList)
-      ).to.eql(
-        2
-      )
-      expect(
-        list.at(2,theList)
-      ).to.eql(
-        3
-      );
-      /* #@range_end(immutable_list) */
-      next();
-    });
-    describe('代数的ストリーム型', () => {
-      /* #@range_begin(algebraic_stream) */
-      var empty = (_) => {
-        return (pattern) => {
-          expect(pattern).to.an('object');
-          return pattern.empty(_);
         };
-      };
-      var cons = (head,tailThunk) => {
-        expect(tailThunk).to.a('function');
-        return (pattern) => {
-          expect(pattern).to.an('object');
-          return pattern.cons(head,tailThunk);
+        var counter = (init) => {
+          var _init = init;
+          return (dummy) => {
+            _init = _init + 1;
+            return _init;
+          };
         };
-      };
-      /* head:: STREAM -> MAYBE[STREAM] */
-      var head = (lazyList) => {
-        return match(lazyList,{
-          empty: (_) => {
-            return null;
-          },
-          cons: (value, tailThunk) => {
-            return value;
-          }
-        });
-      };
-      /* tail:: STREAM -> MAYBE[STREAM] */
-      var tail = (lazyList) => {
-        return match(lazyList,{
-          empty: (_) => {
-            return null;
-          },
-          cons: (head, tailThunk) => {
-            return tailThunk();
-          }
-        });
-      };
-      var isEmpty = (lazyList) => {
-        return match(lazyList,{
-          empty: (_) => {
-            return true;
-          },
-          cons: (head1,tailThunk1) => {
-            return false;
-          }
-        });
-      };
-      /* #@range_end(algebraic_stream) */
-      /* #@range_begin(algebraic_stream_helpers) */
-      // ### stream#toArray
-      var toArray = (lazyList) => {
-        return match(lazyList,{
-          empty: (_) => {
-            return [];
-          },
-          cons: (head,tailThunk) => {
-            return match(tailThunk(),{
-              empty: (_) => {
-                return [head];
-              },
-              cons: (head_,tailThunk_) => {
-                return [head].concat(toArray(tailThunk()));
-              }
-            });
-          }
-        });
-      };
-      // ### stream#take
-      /* take:: STREAM -> NUMBER -> STREAM */
-      var take = (lazyList) => {
-        return (number) => {
-          expect(number).to.a('number');
-          expect(number).to.be.greaterThan(-1);
-          return match(lazyList,{
-            empty: (_) => {
-              return empty();
+        expect(one(counter(0))()).to.eql(1);
+        expect(two(counter(0))()).to.eql(2);
+        expect(three(counter(0))()).to.eql(3);
+        expect(succ(one)(counter(0))()).to.eql(2);
+        expect(succ(two)(counter(0))()).to.eql(3);
+        expect(add(zero)(one)(counter(0))()).to.eql(1);
+        expect(add(one)(one)(counter(0))()).to.eql(2);
+        expect(add(one)(two)(counter(0))()).to.eql(3);
+        expect(add(two)(three)(counter(0))()).to.eql(5);
+        next();
+      });
+      it('関数とリストの類似性', (next) => {
+        var match = (data, pattern) => {
+          return data(pattern);
+        };
+        var empty = (pattern) => {
+          return pattern.empty;
+        };
+        var cons = (value, list) => {
+          return (pattern) => {
+            return pattern.cons(value, list);
+          };
+        };
+        var isEmpty = (list) => {
+          return match(list, { // match関数で分岐する
+            empty: true,
+            cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+              return false;
             },
-            cons: (head,tailThunk) => {
-              if(number === 0) {
-                return empty();
-              } else {
-                return cons(head,(_) => {
-                  return take(tailThunk())(number -1);
-                });
-              }
-            }
           });
         };
-      };
-      /* #@range_end(algebraic_stream_helpers) */
-      it("stream#cons", (next) => {
-        var stream = cons(1, (_) => {
-          return cons(2,(_) => {
-            return empty();
+        var head = (list) => {
+          return match(list, {
+            empty: null, // 空のリストには先頭要素はありません
+            cons: (head, tail) => {
+              return head;
+            },
           });
+        };
+        var tail = (list) => {
+          return match(list, {
+            empty: null,  // 空のリストには末尾要素はありません
+            cons: (head, tail) => {
+              return tail;
+            },
+          });
+        };
+        /*
+          ~~~haskell
+          list2fct :: Eq a => [(a,b)] -> a -> b
+          list2fct [] _ = error "function not total"
+          list2fct ((u,v):uvs) x | x == u = v
+          | otherwise = list2fct uvs x
+          fct2list :: (a -> b) -> [a] -> [(a,b)]
+          fct2list f xs = [ (x, f x) | x <- xs ]
+          ~~~
+        */
+        next();
+      });
+      describe('クロージャーによる「環境」の実装', () => {
+        /* #@range_begin(environment_in_closure) */
+        /* 空の環境  */
+        var emptyEnv = (variable) => {
+          return null;
+        };
+        /* 変数名に対応する値を環境から取りだす */
+        var lookupEnv = (identifier, env) => {
+          return env(identifier);
+        };
+        /* 環境を拡張する */
+        var extendEnv = (identifier, value, env) => {
+          return (queryIdentifier) => {
+            if(identifier === queryIdentifier) {
+              return value;
+            } else {
+              return lookupEnv(queryIdentifier,env);
+            }
+          };
+        };
+        /* #@range_end(environment_in_closure) */
+        it('extendEnvで環境を作り、 lookupEnv で環境を探る', (next) => {
+          /* #@range_begin(environment_in_closure_test) */
+          expect(
+            lookupEnv("a", emptyEnv)
+          ).to.be(
+            null
+          );
+          var newEnv = extendEnv('a',1, emptyEnv);
+          expect(
+            lookupEnv("a", newEnv)
+          ).to.be(
+            1
+          );
+          expect(((_) => {
+            /* 空の辞書を作成する */
+            var initEnv = emptyEnv;
+            /* var a = 1 を実行して、辞書を拡張する */
+            var firstEnv = extendEnv("a", 1, initEnv);
+            /* var b = 3 を実行して、辞書を拡張する */
+            var secondEnv = extendEnv("b",3, firstEnv);
+            /* 辞書から b の値を参照する */
+            return lookupEnv("b",secondEnv);
+          })()).to.eql(
+            3
+          );
+          expect(((_) => {
+            /* 空の辞書を作成する */
+            var initEnv = emptyEnv;
+            /* var x = 1 を実行して、辞書を拡張する */
+            var xEnv = extendEnv("x", 1, initEnv);
+            /* var z = 2 を実行して、辞書を拡張する */
+            var zEnv = extendEnv("z", 2, xEnv);
+            /* 内部のスコープで var x = 3 を実行して、辞書を拡張する */
+            var xEnvInner = extendEnv("x",3, zEnv);
+            /* 内部のスコープで var y = 4 を実行して、辞書を拡張する */
+            var innerMostEnv = extendEnv("y",4, xEnvInner);
+            /* 一番内側のスコープを利用して x + y + z を計算する */
+            return lookupEnv("x",innerMostEnv) + lookupEnv("y",innerMostEnv) + lookupEnv("z",innerMostEnv) ;
+          })()).to.eql(
+            3 + 4 + 2
+          );
+          /* #@range_end(environment_in_closure_test) */
+          next();
         });
+      });
+    });
+    it('クロージャーの変数バインディング', (next) => {
+      /* #@range_begin(free_variable_in_closure) */
+      var outerFunction = (outerArgument) => {
+        var innerFunction = (innerArgument) => {
+          return outerArgument + innerArgument;
+        };
+        return innerFunction;
+      };
+      /* #@range_end(free_variable_in_closure) */
+      next();
+    });
+    describe('クロージャーと参照透過性', () => {
+      it('multipleOf関数は参照透過である', (next) => {
+        var multipleOf = (n) => {
+          return (m) => {
+            if(m % n === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          };
+        };
+        /* #@range_begin(multipleOf_is_transparent) */
         expect(
-          head(stream)
+          multipleOf(2)(4)
+        ).to.eql(
+          multipleOf(2)(4)
+        );
+        expect(
+          multipleOf(3)(5)
+        ).to.eql(
+          multipleOf(3)(5)
+        );
+        /* #@range_end(multipleOf_is_transparent) */
+        next();
+      });
+      it('参照透過でないクロジャーの例', (next) => {
+        var counter = (init) => {
+          var _init = init;
+          return (_) => {
+            _init = _init + 1;
+            return _init;
+          };
+        };
+        /* #@range_begin(counter_is_not_transparent) */
+        var counterFromZero = counter(0);
+        expect(
+          counterFromZero()
+        ).not.to.eql( // notで一致しないことをテストしている
+          counterFromZero()
+        );
+        /* #@range_end(counter_is_not_transparent) */
+        next();
+      });
+      it('参照透過でないクロジャーの利用法', (next) => {
+        /* チャーチ数 church numeral */
+        var zero = (f) => {
+          return (x) => {
+            return x;
+          };
+        };
+        var one = (f) => {
+          return (x) => {
+            return f(x);
+          };
+        };
+        var two = (f) => {
+          return (x) => {
+            return f(f(x));
+          };
+        };
+        var three = (f) => {
+          return (x) => {
+            return f(f(f(x)));
+          };
+        };
+        var succ = (n) => {
+          return (f) => {
+            return (x) => {
+              return f(n(f)(x));
+            };
+          };
+        };
+        var add = (m) => {
+          return (n) => {
+            return (f) => {
+              return (x) =>{
+                return m(f)(n(f)(x));
+              };
+            };
+          };
+        };
+        var counter = (init) => {
+          var _init = init;
+          return (_) => {
+            _init = _init + 1;
+            return _init;
+          };
+        };
+        /* #@range_begin(church_numeral_test) */
+        expect(
+          one(counter(0))()
         ).to.eql(
           1
         );
-        next();
-      });
-      it("stream#tail", (next) => {
-        /* stream = [1,2] */
-        var stream = cons(1, (_) => {
-          return cons(2,(_) => {
-            return empty();
-          });
-        });
         expect(
-          tail(stream)
-        ).to.a("function");
-        expect(
-          head(tail(stream))
+          two(counter(0))()
         ).to.eql(
           2
         );
+        expect(
+          add(one)(two)(counter(0))()
+        ).to.eql(
+          3
+        );
+        /* #@range_end(church_numeral_test) */
         next();
       });
-      describe("無限ストリーム", () => {
-        /* #@range_begin(infinite_stream) */
-        /* ones = [1,1,1,1,...] */
-        var ones = cons(1, (_) => {
-          return ones;
-        });
+    });
+    // #### 不変なデータ型を作る
+    describe('不変なデータ型を作る', () => {
+      it('オブジェクト型は不変ではない', (next) => {
+        /* #@range_begin(object_is_not_immutable) */
+        var object = {
+          a: 1
+        };
         expect(
-          head(ones)
+          object.a
+        ).to.eql(
+          1
+        );
+        object.a = 2;
+        expect(
+          object.a
+        ).to.eql(
+          2 // 1だった値が2に変更されています
+        );
+        /* #@range_end(object_is_not_immutable) */
+        next();
+      });
+      it('不変なオブジェクト型を作る', (next) => {
+        /* #@range_begin(immutable_object_type) */
+        var object = {
+          empty: (_) => {
+            return null;
+          },
+          get: (key, obj) => {
+            return obj(key);
+          },
+          set: (key, value, obj) => {
+            return (key2) => {
+              if(key === key2) {
+                return value;
+              } else {
+                return object.get(key2,obj);
+              }
+            };
+          }
+        };
+        /* #@range_end(immutable_object_type) */
+        /* #@range_begin(immutable_object_type_test) */
+        expect(
+          object.get("R2D2", 
+                     object.set("R2D2", "Star Wars", 
+                                object.set("HAL9000","2001: a space odessay",
+                                           object.empty)))
+        ).to.eql(
+          "Star Wars"
+        );
+        expect(
+          object.get("R2D2", 
+                     object.set("HAL9000","2001: a space odessay",
+                                object.empty))
+        ).to.eql(
+          null
+        );
+        expect(
+          object.get("HAL9000", 
+                     object.set("C3PO", "Star Wars", 
+                                object.set("R2D2", "Star Wars", 
+                                           object.set("HAL9000","2001: a space odessay",
+                                                      object.empty))))
+        ).to.eql(
+          "2001: a space odessay"
+        );
+        /* #@range_end(immutable_object_type_test) */
+        next();
+      });
+      it('カリー化された不変なオブジェクト型', (next) => {
+        /* #@range_begin(immutable_object_type_curried) */
+        var object = {  // objectモジュール
+          empty: (_) => {
+            return null;
+          },
+          set: (key, value) => {
+            return (obj) => {
+              return (queryKey) => {
+                if(key === queryKey) {
+                  return value;
+                } else {
+                  return object.get(queryKey)(obj);
+                }
+              };
+            };
+          },
+          get: (key) => {
+            return (obj) => {
+              return obj(key);
+            };
+          }
+        };
+        /* #@range_end(immutable_object_type_curried) */
+        /* #@range_begin(immutable_object_type_curried_test) */
+        var robots = compose(
+          object.set("C3PO", "Star Wars"),
+          object.set("HAL9000","2001: a space odessay")
+        )(object.empty);
+
+        expect(
+          object.get("HAL9000")(robots)
+        ).to.eql(
+          "2001: a space odessay"
+        );
+        /* #@range_end(immutable_object_type_curried_test) */
+        next();
+      });
+      it('不変なオブジェクト型を作る(改良版)', (next) => {
+        /* #@range_begin(immutable_object_type_improved) */
+        var objects = {
+          empty: (_) => {
+            return null;
+          },
+          get: (key, obj) => {
+            return obj(key);
+          },
+          set: (key, value, obj) => {
+            var self = this;
+            return (key2) => {
+              if(key === key2) {
+                return value;
+              } else {
+                return self.get(key2,obj)
+              }
+            };
+          },
+          fromObject: (obj) => {
+            var self = this;
+            var keys = (o) => {
+              var result = [];
+              for(var prop in o) {
+                if(o.hasOwnProperty(prop))
+                  result.push(prop);
+              }
+              return result;
+            };
+            return keys(obj).reduce((accumulator, key) => {
+              return self.set.call(self,key, obj[key], accumulator);
+            }, self.empty);
+          }
+        };
+        /* #@range_end(immutable_object_type_improved) */
+        /* #@range_begin(immutable_object_type_improved_test) */
+        expect(
+          objects.get("R2D2", objects.set("HAL9000","2001: a space odessay",objects.empty))
+        ).to.eql(
+          null
+        );
+        expect(
+          objects.get("HAL9000", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
+        ).to.eql(
+          "2001: a space odessay"
+        );
+        expect(
+          objects.get("R2D2", objects.fromObject.call(objects,{"HAL9000" : "2001: a space odessay", "R2D2": "Star Wars"}))
+        ).to.eql(
+          "Star Wars"
+        );
+        /* #@range_end(immutable_object_type_improved_test) */
+        next();
+      });
+      it('不変なリスト型', (next) => {
+        // ~~~scheme
+        // (define (cons x y)
+        //   (lambda (m) (m x y)))
+        // (define (car z)
+        //   (z (lambda (p q) p)))
+        // (define (cdr z)
+        //   (z (lambda (p q) q)))
+        // ~~~
+        /* #@range_begin(immutable_list) */
+        var list = {
+          empty: (index) => {
+            return true;
+          },
+          cons: (head,tail) => {
+            return (f) => {
+              return f(head,tail);
+            };
+          },
+          head: (array) => {
+            return array((head,tail) => {
+              return head;
+            });
+          },
+          tail: (array) => {
+            return array((head,tail) => {
+              return tail;
+            });
+          },
+          at: (index,array) => {
+            if(index === 0){
+              return this.head(array);
+            } else {
+              return this.at(index -1, this.tail(array));
+            }
+          }
+        };
+        var theList = list.cons(1,list.cons(2,list.cons(3,list.empty)));
+        expect(
+          list.head(theList)
         ).to.eql(
           1
         );
         expect(
-          head(tail(ones))
+          list.head(list.tail(theList))
+        ).to.eql(
+          2
+        )
+        expect(
+          list.at(0,theList)
         ).to.eql(
           1
+        )
+        expect(
+          list.at(1,theList)
+        ).to.eql(
+          2
+        )
+        expect(
+          list.at(2,theList)
+        ).to.eql(
+          3
         );
-        /* #@range_end(infinite_stream) */
-        /* #@range_begin(infinite_integer) */
-        /* ones = [1,2,3,4,...] */
-        var integersFrom = (n) => {
-          return cons(n, (_) => {
-            return integersFrom(n + 1);
+        /* #@range_end(immutable_list) */
+        next();
+      });
+      describe('代数的ストリーム型', () => {
+        /* #@range_begin(algebraic_stream) */
+        var empty = (_) => {
+          return (pattern) => {
+            expect(pattern).to.an('object');
+            return pattern.empty(_);
+          };
+        };
+        var cons = (head,tailThunk) => {
+          expect(tailThunk).to.a('function');
+          return (pattern) => {
+            expect(pattern).to.an('object');
+            return pattern.cons(head,tailThunk);
+          };
+        };
+        /* head:: STREAM -> MAYBE[STREAM] */
+        var head = (lazyList) => {
+          return match(lazyList,{
+            empty: (_) => {
+              return null;
+            },
+            cons: (value, tailThunk) => {
+              return value;
+            }
           });
         };
-        it("無限の整数列をテストする", (next) => {
+        /* tail:: STREAM -> MAYBE[STREAM] */
+        var tail = (lazyList) => {
+          return match(lazyList,{
+            empty: (_) => {
+              return null;
+            },
+            cons: (head, tailThunk) => {
+              return tailThunk();
+            }
+          });
+        };
+        var isEmpty = (lazyList) => {
+          return match(lazyList,{
+            empty: (_) => {
+              return true;
+            },
+            cons: (head1,tailThunk1) => {
+              return false;
+            }
+          });
+        };
+        /* #@range_end(algebraic_stream) */
+        /* #@range_begin(algebraic_stream_helpers) */
+        // ### stream#toArray
+        var toArray = (lazyList) => {
+          return match(lazyList,{
+            empty: (_) => {
+              return [];
+            },
+            cons: (head,tailThunk) => {
+              return match(tailThunk(),{
+                empty: (_) => {
+                  return [head];
+                },
+                cons: (head_,tailThunk_) => {
+                  return [head].concat(toArray(tailThunk()));
+                }
+              });
+            }
+          });
+        };
+        // ### stream#take
+        /* take:: STREAM -> NUMBER -> STREAM */
+        var take = (lazyList) => {
+          return (number) => {
+            expect(number).to.a('number');
+            expect(number).to.be.greaterThan(-1);
+            return match(lazyList,{
+              empty: (_) => {
+                return empty();
+              },
+              cons: (head,tailThunk) => {
+                if(number === 0) {
+                  return empty();
+                } else {
+                  return cons(head,(_) => {
+                    return take(tailThunk())(number -1);
+                  });
+                }
+              }
+            });
+          };
+        };
+        /* #@range_end(algebraic_stream_helpers) */
+        it("stream#cons", (next) => {
+          var stream = cons(1, (_) => {
+            return cons(2,(_) => {
+              return empty();
+            });
+          });
           expect(
-            head(integersFrom(1))
+            head(stream)
+          ).to.eql(
+            1
+          );
+          next();
+        });
+        it("stream#tail", (next) => {
+          /* stream = [1,2] */
+          var stream = cons(1, (_) => {
+            return cons(2,(_) => {
+              return empty();
+            });
+          });
+          expect(
+            tail(stream)
+          ).to.a("function");
+          expect(
+            head(tail(stream))
+          ).to.eql(
+            2
+          );
+          next();
+        });
+        describe("無限ストリーム", () => {
+          /* #@range_begin(infinite_stream) */
+          /* ones = [1,1,1,1,...] */
+          var ones = cons(1, (_) => {
+            return ones;
+          });
+          expect(
+            head(ones)
           ).to.eql(
             1
           );
           expect(
-            head(tail(integersFrom(1)))
+            head(tail(ones))
           ).to.eql(
-            2
+            1
           );
-          expect(
-            toArray(take(integersFrom(1))(10))
-          ).to.eql(
-            [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
-          );
-          /* #@range_end(infinite_integer) */
-          next();
-        });
-        it("filterで無限の偶数列を作る", (next) => {
-          var even = (n) => {
-            return 0 === (n % 2);
+          /* #@range_end(infinite_stream) */
+          /* #@range_begin(infinite_integer) */
+          /* ones = [1,2,3,4,...] */
+          var integersFrom = (n) => {
+            return cons(n, (_) => {
+              return integersFrom(n + 1);
+            });
           };
-          /* #@range_begin(infinite_even_integer) */
-          var evenIntegers = stream.filter(integersFrom(1))(even);
+          it("無限の整数列をテストする", (next) => {
+            expect(
+              head(integersFrom(1))
+            ).to.eql(
+              1
+            );
+            expect(
+              head(tail(integersFrom(1)))
+            ).to.eql(
+              2
+            );
+            expect(
+              toArray(take(integersFrom(1))(10))
+            ).to.eql(
+              [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
+            );
+            /* #@range_end(infinite_integer) */
+            next();
+          });
+          it("filterで無限の偶数列を作る", (next) => {
+            var even = (n) => {
+              return 0 === (n % 2);
+            };
+            /* #@range_begin(infinite_even_integer) */
+            var evenIntegers = stream.filter(integersFrom(1))(even);
+            expect(
+              head(evenIntegers)
+            ).to.eql(
+              2
+            );
+            expect(
+              toArray(stream.take(evenIntegers)(4))
+            ).to.eql(
+              [ 2, 4, 6, 8 ]
+            );
+            /* #@range_end(infinite_even_integer) */
+            next();
+          });
+          it("filterで無限の素数列を作る", (next) => {
+            this.timeout(7000);
+            var multipleOf = (n) => {
+              return (m) => {
+                if(m % n === 0) {
+                  return true;
+                } else {
+                  return false;
+                }
+              };
+            };
+            /* #@range_begin(infinite_primes) */
+            var leastDivisor = (n) => {
+              expect(n).to.a('number');
+              var leastDivisorHelper = (k, n) => {
+                expect(k).to.a('number');
+                expect(n).to.a('number');
+                if(multipleOf(k)(n)) {
+                  return k;
+                } else {
+                  if(n < (k * k)) {
+                    return n;
+                  } else {
+                    return leastDivisorHelper(k+1, n);
+                  }
+                };
+              };
+              return leastDivisorHelper(2,n);
+            };
+            var isPrime = (n) => {
+              if(n < 1) {
+                return new Error("argument not positive");
+              }
+              if(n === 1) {
+                return false;
+              } else {
+                return leastDivisor(n)  === n ;
+              }
+            };
+            
+            var primes = stream.filter(integersFrom(1))(isPrime);
+            expect(
+              toArray(stream.take(primes)(10))
+            ).to.eql(
+              [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
+            );
+            /* #@range_end(infinite_primes) */
+            next();
+          });
+        });
+        it("代数的ストリーム型は不変ではない", (next) => {
+          var stream = cons({key: 1}, (_) => {
+            return cons(2,(_) => {
+              return empty();
+            });
+          });
           expect(
-            head(evenIntegers)
+            head(stream).key
+          ).to.eql(
+            1
+          );
+          var object = head(stream);
+          object.key = 2;
+          expect(
+            head(stream).key
+          ).to.eql(
+            2 // 1が2に変更されている
+          );
+          next();
+        });
+      });
+      describe('不変なストリーム型', () => {
+        /* #@range_begin(immutable_stream) */
+        var empty = (index) => {
+          return true;
+        };
+        var cons = (head,tailThunk) => {
+          return (f) => {
+            return f(head,tailThunk);
+          };
+        };
+        var head = (lazyList) => {
+          return lazyList((head,tailThunk) => {
+            return head;
+          });
+        };
+        var tail = (lazyList) => {
+          return lazyList((head,tailThunk) => {
+            return tailThunk();
+          });
+        };
+        /* #@range_end(immutable_stream) */
+        it("関数的ストリーム型は不変である", (next) => {
+          var stream = cons({key: 1}, (_) => {
+            return cons(2,(_) => {
+              return empty();
+            });
+          });
+          expect(
+            head(stream).key
+          ).to.eql(
+            1
+          );
+          var object = head(stream);
+          object.key = 2;
+          expect(
+            head(stream).key
+          ).to.eql(
+            2 // 1が2に変更されている
+          );
+          next();
+        });
+      });
+    });
+    // #### クロージャーでジェネレーターを作る
+    describe('クロージャーでジェネレーターを作る', () => {
+      it('ECMAScript6 generator', (next) => {
+        /* #@range_begin(es6_generator) */
+        function* genCounter(){
+          yield 1;
+          yield 2;
+          return 3;
+        };
+        var counter = genCounter();
+        expect(
+          counter.next().value
+        ).to.eql(
+          1
+        );
+        expect(
+          counter.next().value
+        ).to.eql(
+          2
+        );
+        /* #@range_end(es6_generator) */
+        next();
+      });
+      it('リスト・ジェレネータ', (next) => {
+        /* #@range_begin(list_generator_test) */
+        var generator = list.generate(list.cons(1, list.cons(2, list.empty())));
+        expect(
+          generator()
+        ).to.eql(
+          1
+        );
+        expect(
+          generator()
+        ).to.eql(
+          2
+        );
+        /* #@range_end(list_generator_test) */
+        next();
+      });
+      it('ストリーム・ジェレネータ', (next) => {
+        /* #@range_begin(stream_generator_test) */
+        var generator = stream.generate(stream.cons(1, (_) => {
+          return stream.cons(2, (_) => {
+            return stream.empty();
+          });
+        }));
+        expect(
+          generator()
+        ).to.eql(
+          1
+        );
+        expect(
+          generator()
+        ).to.eql(
+          2
+        );
+        /* #@range_end(stream_generator_test) */
+        next();
+      });
+      describe('streamからジェネレータを作る', () => {
+        /* #@range_begin(generator_from_stream) */
+        var generate = (astream) => {
+          /* いったんローカル変数にストリームを格納する */
+          var _stream = astream; 
+          /* ジェネレータ関数が返る */
+          return () => {
+            return stream.match(_stream, {
+              empty: () => {
+                return null;
+              },
+              cons: (head, tailThunk) => {
+                _stream = tailThunk();  // ローカル変数を更新する
+                return head;  // ストリームの先頭要素を返す
+              }
+            });
+          };
+        };
+        /* #@range_end(generator_from_stream) */
+        it('整数列のジェネレータ',(next) => {
+          var integersFrom = (from) => {
+            return stream.cons(from, (_) => {
+              return integersFrom(from + 1);
+            });
+          };
+          /* #@range_begin(integer_generator) */
+          var integers = integersFrom(0);
+          var intGenerator = generate(integers);
+          expect(
+            intGenerator()
+          ).to.eql(
+            0
+          );
+          expect(
+            intGenerator()
+          ).to.eql(
+            1
+          );
+          expect(
+            intGenerator()
           ).to.eql(
             2
           );
-          expect(
-            toArray(stream.take(evenIntegers)(4))
-          ).to.eql(
-            [ 2, 4, 6, 8 ]
-          );
-          /* #@range_end(infinite_even_integer) */
+          /* #@range_end(integer_generator) */
           next();
         });
-        it("filterで無限の素数列を作る", (next) => {
+        it('素数のジェネレータ',(next) => {
           this.timeout(7000);
           var multipleOf = (n) => {
             return (m) => {
@@ -3051,7 +3272,6 @@ describe('クロージャーで状態をカプセル化する', () => {
               }
             };
           };
-          /* #@range_begin(infinite_primes) */
           var leastDivisor = (n) => {
             expect(n).to.a('number');
             var leastDivisorHelper = (k, n) => {
@@ -3079,301 +3299,85 @@ describe('クロージャーで状態をカプセル化する', () => {
               return leastDivisor(n)  === n ;
             }
           };
-          
-          var primes = stream.filter(integersFrom(1))(isPrime);
+          /* #@range_begin(prime_generator) */
+          var integers = stream.integersFrom(1);
+          /* 素数のストリーム */
+          var primes = stream.filter(integers)(isPrime); 
+          var primeGenerator = generate(primes);
+          /******* テスト ********/
           expect(
-            toArray(stream.take(primes)(10))
+            primeGenerator()
           ).to.eql(
-            [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
+            2
           );
-          /* #@range_end(infinite_primes) */
+          expect(
+            primeGenerator()
+          ).to.eql(
+            3
+          );
+          expect(
+            primeGenerator()
+          ).to.eql(
+            5
+          );
+          /* #@range_end(prime_generator) */
           next();
         });
       });
-      it("代数的ストリーム型は不変ではない", (next) => {
-        var stream = cons({key: 1}, (_) => {
-          return cons(2,(_) => {
-            return empty();
-          });
-        });
-        expect(
-          head(stream).key
-        ).to.eql(
-          1
-        );
-        var object = head(stream);
-        object.key = 2;
-        expect(
-          head(stream).key
-        ).to.eql(
-          2 // 1が2に変更されている
-        );
-        next();
-      });
-    });
-    describe('不変なストリーム型', () => {
-      /* #@range_begin(immutable_stream) */
-      var empty = (index) => {
-        return true;
-      };
-      var cons = (head,tailThunk) => {
-        return (f) => {
-          return f(head,tailThunk);
-        };
-      };
-      var head = (lazyList) => {
-        return lazyList((head,tailThunk) => {
-          return head;
-        });
-      };
-      var tail = (lazyList) => {
-        return lazyList((head,tailThunk) => {
-          return tailThunk();
-        });
-      };
-      /* #@range_end(immutable_stream) */
-      it("関数的ストリーム型は不変である", (next) => {
-        var stream = cons({key: 1}, (_) => {
-          return cons(2,(_) => {
-            return empty();
-          });
-        });
-        expect(
-          head(stream).key
-        ).to.eql(
-          1
-        );
-        var object = head(stream);
-        object.key = 2;
-        expect(
-          head(stream).key
-        ).to.eql(
-          2 // 1が2に変更されている
-        );
-        next();
-      });
-    });
-  });
-  describe('クロージャーでジェネレーターを作る', () => {
-    it('ECMAScript6 generator', (next) => {
-      /* #@range_begin(es6_generator) */
-      function* genCounter(){
-        yield 1;
-        yield 2;
-        return 3;
-      };
-      var counter = genCounter();
-      expect(
-        counter.next().value
-      ).to.eql(
-        1
-      );
-      expect(
-        counter.next().value
-      ).to.eql(
-        2
-      );
-      /* #@range_end(es6_generator) */
-      next();
-    });
-    it('リスト・ジェレネータ', (next) => {
-      /* #@range_begin(list_generator_test) */
-      var generator = list.generate(list.cons(1, list.cons(2, list.empty())));
-      expect(
-        generator()
-      ).to.eql(
-        1
-      );
-      expect(
-        generator()
-      ).to.eql(
-        2
-      );
-      /* #@range_end(list_generator_test) */
-      next();
-    });
-    it('ストリーム・ジェレネータ', (next) => {
-      /* #@range_begin(stream_generator_test) */
-      var generator = stream.generate(stream.cons(1, (_) => {
-        return stream.cons(2, (_) => {
-          return stream.empty();
-        });
-      }));
-      expect(
-        generator()
-      ).to.eql(
-        1
-      );
-      expect(
-        generator()
-      ).to.eql(
-        2
-      );
-      /* #@range_end(stream_generator_test) */
-      next();
-    });
-    describe('streamからジェネレータを作る', () => {
-      /* #@range_begin(generator_from_stream) */
-      var generate = (astream) => {
-        /* いったんローカル変数にストリームを格納する */
-        var _stream = astream; 
-        /* ジェネレータ関数が返る */
-        return () => {
-          return stream.match(_stream, {
-            empty: () => {
-              return null;
-            },
-            cons: (head, tailThunk) => {
-              _stream = tailThunk();  // ローカル変数を更新する
-              return head;  // ストリームの先頭要素を返す
-            }
-          });
-        };
-      };
-      /* #@range_end(generator_from_stream) */
-      it('整数列のジェネレータ',(next) => {
-        var integersFrom = (from) => {
-          return stream.cons(from, (_) => {
-            return integersFrom(from + 1);
-          });
-        };
-        /* #@range_begin(integer_generator) */
-        var integers = integersFrom(0);
-        var intGenerator = generate(integers);
-        expect(
-          intGenerator()
-        ).to.eql(
-          0
-        );
-        expect(
-          intGenerator()
-        ).to.eql(
-          1
-        );
-        expect(
-          intGenerator()
-        ).to.eql(
-          2
-        );
-        /* #@range_end(integer_generator) */
-        next();
-      });
-      it('素数のジェネレータ',(next) => {
-        this.timeout(7000);
-        var multipleOf = (n) => {
-          return (m) => {
-            if(m % n === 0) {
-              return true;
-            } else {
-              return false;
-            }
-          };
-        };
-        var leastDivisor = (n) => {
-          expect(n).to.a('number');
-          var leastDivisorHelper = (k, n) => {
-            expect(k).to.a('number');
-            expect(n).to.a('number');
-            if(multipleOf(k)(n)) {
-              return k;
-            } else {
-              if(n < (k * k)) {
-                return n;
-              } else {
-                return leastDivisorHelper(k+1, n);
-              }
+      describe('ジェネレータ・コンビネータ', () => {
+        var identity = (any) => { return any; };
+        var succ = (n) => { return n + 1; };
+        /* #@range_begin(generator_in_closure) */
+        var generator = (init) => {
+          return (current) => {
+            return (step) => {
+              return stream.cons(current(init),
+                                 (_) => { 
+                                   return generator(step(init))(current)(step);
+                                 });
             };
           };
-          return leastDivisorHelper(2,n);
         };
-        var isPrime = (n) => {
-          if(n < 1) {
-            return new Error("argument not positive");
-          }
-          if(n === 1) {
-            return false;
-          } else {
-            return leastDivisor(n)  === n ;
-          }
-        };
-        /* #@range_begin(prime_generator) */
-        var integers = stream.integersFrom(1);
-        /* 素数のストリーム */
-        var primes = stream.filter(integers)(isPrime); 
-        var primeGenerator = generate(primes);
-        /******* テスト ********/
-        expect(
-          primeGenerator()
-        ).to.eql(
-          2
-        );
-        expect(
-          primeGenerator()
-        ).to.eql(
-          3
-        );
-        expect(
-          primeGenerator()
-        ).to.eql(
-          5
-        );
-        /* #@range_end(prime_generator) */
-        next();
-      });
-    });
-    describe('ジェネレータ・コンビネータ', () => {
-      var identity = (any) => { return any; };
-      var succ = (n) => { return n + 1; };
-      /* #@range_begin(generator_in_closure) */
-      var generator = (init) => {
-        return (current) => {
-          return (step) => {
-            return stream.cons(current(init),
-                               (_) => { 
-                                 return generator(step(init))(current)(step);
-                               });
-          };
-        };
-      };
-      var integers = generator(0)(identity)(succ);
-      it('integers をテストする', (next) =>{
-        expect(
-          stream.head(integers)
-        ).to.eql(
-          0
-        );
-        expect(
-          stream.head(stream.tail(integers))
-        ).to.eql(
-          1
-        );
-        expect(
-          stream.head(stream.tail(stream.tail(integers)))
-        ).to.eql(
-          2
-        );
-        /* #@range_end(generator_in_closure) */
-        next();
-      });
-      it('ジェレネータによる単体テストの自動生成', (next) => {
-        /* #@range_begin(generate_unit_tests) */
-        var even = (n) => {
-          return 0 === (n % 2);
-        };
-        var evenIntegers = stream.filter(integers)(even);
-        stream.forEach(stream.take(evenIntegers)(10))((n) => {
-          return expect(
-            even(n)
+        var integers = generator(0)(identity)(succ);
+        it('integers をテストする', (next) =>{
+          expect(
+            stream.head(integers)
           ).to.eql(
-            true
+            0
           );
+          expect(
+            stream.head(stream.tail(integers))
+          ).to.eql(
+            1
+          );
+          expect(
+            stream.head(stream.tail(stream.tail(integers)))
+          ).to.eql(
+            2
+          );
+          /* #@range_end(generator_in_closure) */
+          next();
         });
-        /* #@range_end(generate_unit_tests) */
-        next();
+        it('ジェレネータによる単体テストの自動生成', (next) => {
+          /* #@range_begin(generate_unit_tests) */
+          var even = (n) => {
+            return 0 === (n % 2);
+          };
+          var evenIntegers = stream.filter(integers)(even);
+          stream.forEach(stream.take(evenIntegers)(10))((n) => {
+            return expect(
+              even(n)
+            ).to.eql(
+              true
+            );
+          });
+          /* #@range_end(generate_unit_tests) */
+          next();
+        });
       });
     });
-  });
-}); // クロージャーで状態をカプセル化する
+  }); // クロージャーで状態をカプセル化する
+});
 
 // ### 関数を渡す
 describe('関数を渡す', () => {
@@ -3571,7 +3575,7 @@ describe('関数を渡す', () => {
         };
         /* #@range_end(list_sum_callback) */
         /* #@range_begin(list_sum_callback_test) */
-        // add関数は、sumWithCallBack関数に渡すコールバック関数
+        /* add関数は、sumWithCallBack関数に渡すコールバック関数 */
         var add = (n) => {  
           return (m) => {
             return n + m;
@@ -3680,7 +3684,8 @@ describe('関数を渡す', () => {
       next();
     });
   });
-  describe('畳み込み関数foldr', () => {
+  // #### 畳み込み関数に関数を渡す
+  describe('畳み込み関数に関数を渡す', () => {
     /* #@range_begin(list_foldr) */
     var foldr = (alist) => {
       return (accumulator) => {
@@ -3895,7 +3900,8 @@ describe('関数を渡す', () => {
   });
   // ### 継続で未来を渡す
   describe('継続で未来を渡す', () => {
-    describe("継続の導入例", () => {
+    // #### 継続とは何か
+    describe('継続とは何か', () => {
       it("succ関数の継続", (next) => {
         /* #@range_begin(succ_cps) */
         /* continues関数は、succ(n)のあとに続く継続 */
@@ -4111,7 +4117,8 @@ describe('関数を渡す', () => {
         next();
       }); 
     }); 
-    describe("継続による非決定計算", () => {
+    // #### 非決定計算機を作る
+    describe("非決定計算機を作る", () => {
       var exp = {
         match : (anExp, pattern) => {
           return anExp.call(exp, pattern);
@@ -4577,43 +4584,41 @@ describe('モナドを作る', () => {
         next();
       });
       /*
-      it("list(maybe)", (next) => {
-        // #@range_begin(maybe_monad_list_test) 
+        it("list(maybe)", (next) => {
         var add = (maybeA,maybeB) => {
-          return maybe.flatMap(maybeA)((a) => {
-            return maybe.flatMap(maybeB)((b) => {
-              return maybe.unit(a + b);
-            });
-          });
+        return maybe.flatMap(maybeA)((a) => {
+        return maybe.flatMap(maybeB)((b) => {
+        return maybe.unit(a + b);
+        });
+        });
         };
         var sum = (alist) => {
-          var sumHelper = (alist, accumulator) => {
-            return match(list,{
-              empty: () => {
-                return accumulator;
-              },
-              cons: (head, tail) => {
-                return maybe.flatMap(accumulator)((accumulatorValue) => {
-                  return maybe.flatMap(head)((headValue) => {
-                    return sumHelper(tail, maybe.unit(accumulatorValue + headValue));
-                  });
-                });
-              }
-            });
-          };
-          return sumHelper(alist, li
+        var sumHelper = (alist, accumulator) => {
+        return match(list,{
+        empty: () => {
+        return accumulator;
+        },
+        cons: (head, tail) => {
+        return maybe.flatMap(accumulator)((accumulatorValue) => {
+        return maybe.flatMap(head)((headValue) => {
+        return sumHelper(tail, maybe.unit(accumulatorValue + headValue));
+        });
+        });
+        }
+        });
+        };
+        return sumHelper(alist, li
         };
         var justOne = just(1);
         var justTwo = just(2);
         var justThree = just(3);
         expect(
-          maybe.isEqual(add(justOne,justTwo))(justThree)
+        maybe.isEqual(add(justOne,justTwo))(justThree)
         ).to.eql(
-          true
+        true
         );
-        // #@range_end(maybe_monad_list_test) 
         next();
-      });
+        });
       */                          
     });
   });

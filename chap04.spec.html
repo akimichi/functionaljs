@@ -313,37 +313,8 @@
         ).to.eql(
           <span class="hljs-literal">false</span>
         );
-        <span class="hljs-comment">/* #@range_end(object_access) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>var expression = {
-  add: {
-    x: 1,
-    y: {
-      multiply: {
-        x: 2,
-        y: 3
-      }
-    }
-  }
-};
-expect(
-  expression.add.y.multiply.x
-).to.eql(
-  2
-);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        next();
+        <span class="hljs-comment">/* #@range_end(object_access) */</span>
+        next();
       });
       it(<span class="hljs-string">'オブジェクト型によるアドレス帳の表現'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(addressbook_example) */</span>
@@ -409,11 +380,11 @@ expect(
         </li>
         
         
-        <li id="section-9">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h4 id="-">配列型</h4>
 
@@ -493,41 +464,8 @@ expect(
           birthDay: <span class="hljs-string">"1815/12/10"</span>
         }
       ];
-      <span class="hljs-comment">/* #@range_end(addressbook_example_in_array) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>var addressbook = [ // 配列に要素を格納する
-  {
-    name: “Alan Turing”,
-    birthDay: “1912/6/23”,
-    weight: 62,
-    height: 175
-  },
-  {
-    name: “Haskell Curry”,
-    birthDay: “1900/9/12”,
-    weight: 62,
-    height: 180
-  },
-  {
-    name: “Alonzo Church”,
-    birthDay: “1903/6/14”,
-    weight: 75,
-    height: 168
-  }
-];</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(sorting_array) */</span>
+      <span class="hljs-comment">/* #@range_end(addressbook_example_in_array) */</span>
+      <span class="hljs-comment">/* #@range_begin(sorting_array) */</span>
       expect(
         addressbook.sort((onePerson,anotherPerson) =&gt; {
           <span class="hljs-keyword">return</span> onePerson.name&gt; anotherPerson.name;
@@ -564,11 +502,11 @@ expect(
         </li>
         
         
-        <li id="section-11">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <h4 id="-">関数型</h4>
 
@@ -665,11 +603,11 @@ expect(
         </li>
         
         
-        <li id="section-12">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>expect(
   addressbook.BMI(addressbook.turing.weight, addressbook.turing.height)
@@ -685,11 +623,11 @@ expect(
         </li>
         
         
-        <li id="section-13">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <pre><code class="lang-scala"><span class="hljs-class"><span class="hljs-keyword">trait</span> <span class="hljs-title">env</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">terms</span> {</span>
   <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Env</span> {</span>
@@ -746,11 +684,11 @@ expect(
         </li>
         
         
-        <li id="section-14">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h4 id="-">抽象データ型</h4>
 
@@ -807,11 +745,11 @@ expect(
         </li>
         
         
-        <li id="section-15">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <h4 id="javascript-">JavaScriptにおける合成型の可変性</h4>
 
@@ -861,7 +799,7 @@ expect(
       );
       expect(((_) =&gt; {
         <span class="hljs-keyword">var</span> reversed = reverse(array);
-        <span class="hljs-keyword">return</span> array
+        <span class="hljs-keyword">return</span> array;
       })()).to.eql(
         [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>] <span class="hljs-comment">// 元の配列と同じ</span>
       );
@@ -883,11 +821,11 @@ expect(
         </li>
         
         
-        <li id="section-16">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <h2 id="-">変数とデータの関係</h2>
 
@@ -997,8 +935,23 @@ expect(
       next();
     });
   });
-  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {
-    it(<span class="hljs-string">'関数本体でのバインド変数'</span>, (next) =&gt; {
+  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h4 id="-a-name-environment_demo-a-"><a name="environment_demo"> <strong>変数バインディングと環境</strong> </a></h4>
+<p><img src="images/environment.gif" alt="変数バインディングと環境"> </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'関数本体でのバインド変数'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(bound_variable_in_function) */</span>
       <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
         <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// x も y もバインド変数</span>
@@ -1182,11 +1135,11 @@ expect(
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h2 id="-">参照透過性の仕組み</h2>
 
@@ -1197,11 +1150,11 @@ expect(
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h3 id="-">不変なデータの仕組み</h3>
 
@@ -1240,11 +1193,11 @@ expect(
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h3 id="-">可変なデータの仕組み</h3>
 
@@ -1281,11 +1234,11 @@ expect(
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h3 id="-">代入の仕組みと効果</h3>
 
@@ -1304,11 +1257,11 @@ expect(
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>この時点で誕生日を迎えました</p>
 
@@ -1342,11 +1295,11 @@ expect(
         </li>
         
         
-        <li id="section-22">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <h3 id="-">参照透過性を成立させる条件</h3>
 

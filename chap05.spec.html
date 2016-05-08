@@ -1363,7 +1363,88 @@
     });
     <span class="hljs-comment">/*
       it("length", (next) =&gt; {
-</span></pre></div></div>
+      var array = [1,2,3,4,5];
+      var length = (array) =&gt; {
+      var counter = 0;
+      while (counter &lt; 10) {
+      counter += 1;
+      }
+      }
+      expect(
+      counter
+      ).to.eql(
+      10
+      );
+      next();
+      });
+      it("whileによるsum", (next) =&gt; {
+      var array = [1,2,3,4,5];
+      var sum = (array) =&gt; {
+      var counter = 0;
+      while (counter &lt; 10) {
+      counter += 1;
+      }
+      }
+      expect(
+      counter
+      ).to.eql(
+      10
+      );
+      next();
+      });
+    */</span>
+  });
+  it(<span class="hljs-string">"for文"</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(for_example) */</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>; counter &lt; <span class="hljs-number">10</span>; counter += <span class="hljs-number">1</span>) {
+      ;
+    }
+    <span class="hljs-comment">/* テスト */</span>
+    expect(
+      counter
+    ).to.eql(
+      <span class="hljs-number">10</span>
+    );
+    <span class="hljs-comment">/* #@range_end(for_example) */</span>
+    next();
+  });
+  describe(<span class="hljs-string">'forEach文'</span>, () =&gt; {
+    it(<span class="hljs-string">"forEach文によるsum"</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(forEach_sum) */</span>
+      <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
+      <span class="hljs-keyword">var</span> sum = <span class="hljs-number">0</span>;
+      array.forEach((element) =&gt; {
+        sum += element;
+      });
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        sum
+      ).to.eql(
+        <span class="hljs-number">15</span>
+      );
+      <span class="hljs-comment">/* #@range_end(forEach_sum) */</span>
+      next();
+    });
+    it(<span class="hljs-string">"forEach文によるlength"</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(forEach_length) */</span>
+      <span class="hljs-keyword">var</span> length = (array) =&gt; {
+        <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
+        array.forEach((element) =&gt; {
+          result += <span class="hljs-number">1</span>;
+        });
+        <span class="hljs-keyword">return</span> result;
+      };
+      <span class="hljs-comment">/* テスト */</span>
+      expect(
+        length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>])
+      ).to.eql(
+        <span class="hljs-number">5</span>
+      );
+      <span class="hljs-comment">/* #@range_end(forEach_length) */</span>
+      next();
+    });
+  });
+});</pre></div></div>
             
         </li>
         
@@ -1373,144 +1454,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>#@range_begin(while_length)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
-      <span class="hljs-keyword">var</span> length = (array) =&gt; {
-      <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {
-      counter += <span class="hljs-number">1</span>;
-      }
-      }
-      expect(
-      counter
-      ).to.eql(
-      <span class="hljs-number">10</span>
-      );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>#@range_end(while_length)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      next();
-      });
-      it(<span class="hljs-string">"whileによるsum"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>#@range_begin(while_sum)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
-      <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-      <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {
-      counter += <span class="hljs-number">1</span>;
-      }
-      }
-      expect(
-      counter
-      ).to.eql(
-      <span class="hljs-number">10</span>
-      );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>#@range_end(while_sum)</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      next();
-      });
-    */
-  });
-  it("for文", (next) =&gt; {
-    /* #@range_begin(for_example) */
-    for (var counter = 0; counter &lt; 10; counter += 1) {
-      ;
-    }
-    /* テスト */
-    expect(
-      counter
-    ).to.eql(
-      10
-    );
-    /* #@range_end(for_example) */
-    next();
-  });
-  describe('forEach文', () =&gt; {
-    it("forEach文によるsum", (next) =&gt; {
-      /* #@range_begin(forEach_sum) */
-      var array = [1,2,3,4,5];
-      var sum = 0;
-      array.forEach((element) =&gt; {
-        sum += element;
-      });
-      /* テスト */
-      expect(
-        sum
-      ).to.eql(
-        15
-      );
-      /* #@range_end(forEach_sum) */
-      next();
-    });
-    it("forEach文によるlength", (next) =&gt; {
-      /* #@range_begin(forEach_length) */
-      var length = (array) =&gt; {
-        var result = 0;
-        array.forEach((element) =&gt; {
-          result += 1;
-        });
-        return result;
-      };
-      /* テスト */
-      expect(
-        length([1,2,3,4,5])
-      ).to.eql(
-        5
-      );
-      /* #@range_end(forEach_length) */
-      next();
-    });
-  });
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <h2 id="-">再帰による反復処理</h2>
 
@@ -1552,11 +1495,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h2 id="-">再帰処理の利点</h2>
 
@@ -2028,11 +1971,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <h3 id="-">再帰処理と帰納法</h3>
 

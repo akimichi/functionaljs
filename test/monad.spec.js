@@ -37,6 +37,16 @@ var maybe = {
       });
     };
   },
+  get: (maybeInstance) => {
+    return maybe.match(maybeInstance,{
+      just: (value) => {
+        return value;
+      },
+      nothing: (_) => {
+        return null;
+      }
+    });
+  },
   isEqual : (maybeA) => {
     return (maybeB) => {
       return maybe.match(maybeA,{
@@ -1002,6 +1012,150 @@ describe("listモナドを活用する",() => {
     });
   });
 });
+
+// ## Streamモナド
+var stream = {
+  match: (data, pattern) => {
+     return data.call(stream,pattern);
+  },
+  empty: (_) => {
+    return (pattern) => {
+      expect(pattern).to.an('object');
+      return pattern.empty();
+    };
+  },
+  cons: (head,tailThunk) => {
+    expect(tailThunk).to.a('function');
+    return (pattern) => {
+      expect(pattern).to.an('object');
+      return pattern.cons(head,tailThunk);
+    };
+  },
+  /* head:: STREAM -> MAYBE[STREAM] */
+  head: (lazyList) => {
+    return stream.match(lazyList,{
+      empty: (_) => {
+        return maybe.nothing();
+      },
+      cons: (value, tailThunk) => {
+        return maybe.just(value);
+      }
+    });
+  },
+  /* tail:: STREAM -> MAYBE[STREAM] */
+  tail: (lazyList) => {
+    return stream.match(lazyList,{
+      empty: (_) => {
+        return maybe.nothing();
+      },
+      cons: (head, tailThunk) => {
+        return maybe.just(tailThunk());
+      }
+    });
+  },
+  isEmpty: (lazyList) => {
+    return stream.match(lazyList,{
+      empty: (_) => {
+        return true;
+      },
+      cons: (head,tailThunk) => {
+        return false;
+      }
+    });
+  },
+  // ### stream#toArray
+  toArray: (lazyList) => {
+    return stream.match(lazyList,{
+      empty: (_) => {
+        return [];
+      },
+      cons: (head,tailThunk) => {
+        if(stream.isEmpty(tailThunk())){
+          return [head];
+        } else {
+          return [head].concat(stream.toArray(tailThunk()));
+        }
+      }
+    });
+  },
+  // ### stream#unit
+  /* unit:: ANY -> STREAM */
+  unit: (value) => {
+    if(value != null){
+      return stream.cons(value, (_) => {
+        return stream.empty();
+      });
+    } else {
+      return stream.empty();
+    }
+  },
+  // ### stream#map
+  map: (lazyList) => {
+    return (transform) => {
+      return stream.match(lazyList,{
+        empty: (_) => {
+          return stream.empty();
+        },
+        cons: (head,tailThunk) => {
+          return stream.cons(transform(head),(_) => {
+            return stream.map(tailThunk())(transform)});
+        }
+      });
+    };
+  },
+  // ## stream#append
+  append: (xs) => {
+    return (ysThunk) => {
+      return stream.match(xs,{
+        empty: (_) => {
+          return ysThunk();
+        },
+        cons: (head,tailThunk) => {
+          return stream.cons(head,(_) => {
+            return stream.append(tailThunk())(ysThunk);
+          });
+        }
+      });
+    };
+  },
+  // ## stream#concat
+  /* concat:: STREAM[STREAM[T]] -> STREAM[T] */
+  concat: (astream) => {
+    return stream.match(astream,{
+      empty: (_) => {
+        return stream.empty();
+      },
+      cons: (head,tailThunk) => {
+        return stream.append(head,tailThunk());
+      }
+    });
+  },
+  // ## stream#flatten
+  /* flatten :: STREAM[STREAM[T]] => STREAM[T] */
+  flatten: (lazyList) => {
+    return stream.match(lazyList,{
+      empty: (_) => {
+        return stream.empty();
+      },
+      cons: (head,tailThunk) => {
+        return stream.append(head)((_) => {
+          return stream.flatten(tailThunk());
+        });
+      }
+    });
+  },
+  // ### stream#flatMap
+  // ~~~haskell
+  // flatMap xs f = flatten (map f xs)
+  //~~~
+  // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
+  flatMap: (lazyList) => {
+    return (transform) => {
+      return stream.flatten(stream.map(lazyList)(transform));
+    };
+  }
+};
+
 describe("Readerモナドをテストする",() => {
   var READER = {
     unit: (x) => {
@@ -1163,232 +1317,92 @@ describe('Treeモナド', () => {
   };
 });
 describe('Streamモナド', () => {
-  var match = (data, pattern) => {
-    return data(pattern);
-  };
-  var maybe = {
-    just: (value) => {
-      return (pattern) => {
-        return pattern.just(value);
-      };
-    },
-    nothing: (_) => {
-      return (pattern) => {
-        return pattern.nothing(_);
-      };
-    },
-    unit: (value) => {
-      if(value){
-        return self.maybe.just(value);
-      } else {
-        return self.maybe.nothing(null);
-      }
-    },
-    get: (maybe) => {
-      return match(maybe,{
-        just: (value) => {
-          return value;
-        },
-        nothing: (_) => {
-          return null;
-        }
-      });
-    },
-    isEqual: (maybeA) => {
-      return (maybeB) => {
-        return match(maybeA,{
-          just: (valueA) => {
-            return match(maybeB,{
-              just: (valueB) => {
-                return (valueA === valueB);
-              },
-              nothing: (_) => {
-                return false;
-              }
-            });
-          },
-          nothing: (_) => {
-            return match(maybeB,{
-              just: (_) => {
-                return false;
-              },
-              nothing: (_) => {
-                return true;
-              }
-            });
-          }
-        });
-      };
-    },
-    map: (maybe) => {
-      return (transform) => {
-        expect(transform).to.a('function');
-        return match(maybe,{
-          just: (value) => {
-            return unit(transform(value));
-          },
-          nothing: (_) => {
-            return nothing();
-          }
-        });
-      };
-    },
-    flatMap: (maybe) => {
-      return (transform) => {
-        expect(transform).to.a('function');
-        return match(maybe,{
-          just: (value) => {
-            return transform(value);
-          },
-          nothing: (_) => {
-            return nothing();
-          }
-        });
-      };
-    }
-  }; // end of maybe
-  /* #@range_begin(stream_monad_definition) */
-  var stream = {
-    empty: (_) => {
-      return (pattern) => {
-        expect(pattern).to.an('object');
-        return pattern.empty();
-      };
-    },
-    cons: (head,tailThunk) => {
-      expect(tailThunk).to.a('function');
-      return (pattern) => {
-        expect(pattern).to.an('object');
-        return pattern.cons(head,tailThunk);
-      };
-    },
-    /* head:: STREAM -> MAYBE[STREAM] */
-    head: (lazyList) => {
-      return match(lazyList,{
-        empty: (_) => {
-          return maybe.nothing();
-        },
-        cons: (value, tailThunk) => {
-          return maybe.just(value);
-        }
-      });
-    },
-    /* tail:: STREAM -> MAYBE[STREAM] */
-    tail: (lazyList) => {
-      return match(lazyList,{
-        empty: (_) => {
-          return maybe.nothing();
-        },
-        cons: (head, tailThunk) => {
-          return maybe.just(tailThunk());
-        }
-      });
-    },
-    isEmpty: (lazyList) => {
-      return match(lazyList,{
-        empty: (_) => {
-          return true;
-        },
-        cons: (head,tailThunk) => {
-          return false;
-        }
-      });
-    },
-    // ### stream#toArray
-    toArray: (lazyList) => {
-      return match(lazyList,{
-        empty: (_) => {
-          return [];
-        },
-        cons: (head,tailThunk) => {
-          if(stream.isEmpty(tailThunk())){
-            return [head];
-          } else {
-            return [head].concat(stream.toArray(tailThunk()));
-          }
-        }
-      });
-    },
-    // ### stream#unit
-    /* unit:: ANY -> STREAM */
-    unit: (value) => {
-      if(value != null){
-        return stream.cons(value, (_) => {
-          return stream.empty();
-        });
-      } else {
-        return stream.empty();
-      }
-    },
-    // ### stream#map
-    map: (lazyList) => {
-      return (transform) => {
-        return match(lazyList,{
-          empty: (_) => {
-            return stream.empty();
-          },
-          cons: (head,tailThunk) => {
-            return stream.cons(transform(head),(_) => {
-              return stream.map(tailThunk())(transform)});
-          }
-        });
-      };
-    },
-    // ## stream#append
-    append: (xs) => {
-      return (ysThunk) => {
-        return match(xs,{
-          empty: (_) => {
-            return ysThunk();
-          },
-          cons: (head,tailThunk) => {
-            return stream.cons(head,(_) => {
-              return stream.append(tailThunk())(ysThunk);
-            });
-          }
-        });
-      };
-    },
-    // ## stream#concat
-    /* concat:: STREAM[STREAM[T]] -> STREAM[T] */
-    concat: (astream) => {
-      return match(astream,{
-        empty: (_) => {
-          return stream.empty();
-        },
-        cons: (head,tailThunk) => {
-          return stream.append(head,tailThunk());
-        }
-      });
-    },
-    // ## stream#flatten
-    /* flatten :: STREAM[STREAM[T]] => STREAM[T] */
-    flatten: (lazyList) => {
-      return match(lazyList,{
-        empty: (_) => {
-          return stream.empty();
-        },
-        cons: (head,tailThunk) => {
-          return stream.append(head)((_) => {
-            return stream.flatten(tailThunk());
-          });
-        }
-      });
-    },
-    // ### stream#flatMap
-    // ~~~haskell
-    // flatMap xs f = flatten (map f xs)
-    //~~~
-    // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
-    flatMap: (lazyList) => {
-      return (transform) => {
-        return stream.flatten(stream.map(lazyList)(transform));
-      };
-    }
-  };
-  /* #@range_end(stream_monad_definition) */
+  // var match = (data, pattern) => {
+  //   return data(pattern);
+  // };
+  // var maybe = {
+  //   just: (value) => {
+  //     return (pattern) => {
+  //       return pattern.just(value);
+  //     };
+  //   },
+  //   nothing: (_) => {
+  //     return (pattern) => {
+  //       return pattern.nothing(_);
+  //     };
+  //   },
+  //   unit: (value) => {
+  //     if(value){
+  //       return self.maybe.just(value);
+  //     } else {
+  //       return self.maybe.nothing(null);
+  //     }
+  //   },
+  //   get: (maybe) => {
+  //     return match(maybe,{
+  //       just: (value) => {
+  //         return value;
+  //       },
+  //       nothing: (_) => {
+  //         return null;
+  //       }
+  //     });
+  //   },
+  //   isEqual: (maybeA) => {
+  //     return (maybeB) => {
+  //       return match(maybeA,{
+  //         just: (valueA) => {
+  //           return match(maybeB,{
+  //             just: (valueB) => {
+  //               return (valueA === valueB);
+  //             },
+  //             nothing: (_) => {
+  //               return false;
+  //             }
+  //           });
+  //         },
+  //         nothing: (_) => {
+  //           return match(maybeB,{
+  //             just: (_) => {
+  //               return false;
+  //             },
+  //             nothing: (_) => {
+  //               return true;
+  //             }
+  //           });
+  //         }
+  //       });
+  //     };
+  //   },
+  //   map: (maybe) => {
+  //     return (transform) => {
+  //       expect(transform).to.a('function');
+  //       return match(maybe,{
+  //         just: (value) => {
+  //           return unit(transform(value));
+  //         },
+  //         nothing: (_) => {
+  //           return nothing();
+  //         }
+  //       });
+  //     };
+  //   },
+  //   flatMap: (maybe) => {
+  //     return (transform) => {
+  //       expect(transform).to.a('function');
+  //       return match(maybe,{
+  //         just: (value) => {
+  //           return transform(value);
+  //         },
+  //         nothing: (_) => {
+  //           return nothing();
+  //         }
+  //       });
+  //     };
+  //   }
+  // }; // end of maybe
   it("stream#unit", (next) => {
-    match(maybe.nothing(null),{
+    stream.match(maybe.nothing(null),{
       nothing: (_) => {
         return expect(
           _
@@ -1397,7 +1411,7 @@ describe('Streamモナド', () => {
         );
       },
       just: (value) => {
-        return expect().fail()
+        return expect().fail();
       }
     });
     var lazyList = stream.unit(1);
@@ -1442,12 +1456,12 @@ describe('Streamモナド', () => {
       stream.tail(lazyList)
     ).to.a("function");
 
-    match(stream.tail(lazyList),{
+    stream.match(stream.tail(lazyList),{
       nothing: (_) => {
         expect().fail();
       },
       just: (tail) => {
-        match(tail,{
+        stream.match(tail,{
           empty: (_) => {
             expect().fail();
           },
@@ -1509,7 +1523,7 @@ describe('Streamモナド', () => {
     /* outerStream = [[1,2]] */
     var outerStream = stream.unit(innerStream);
     var flattenedStream = stream.flatten(outerStream);
-    match(flattenedStream,{
+    stream.match(flattenedStream,{
       empty: (_) => {
         expect().fail()
       },

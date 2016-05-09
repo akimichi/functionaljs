@@ -37,8 +37,8 @@ var Maybe = {
       });
     };
   },
-  get: (maybeInstance) => {
-    return Maybe.match(maybeInstance,{
+  get: (maybe) => {
+    return Maybe.match(maybe,{
       just: (value) => {
         return value;
       },
@@ -143,9 +143,9 @@ describe("Maybeモナドをテストする",() => {
 });
 
 // ## Listモナド
-var list  = {
+var List  = {
   match: (data, pattern) => {
-    return data.call(list,pattern);
+    return data.call(List,pattern);
   },
   empty: (_) => {
     return (pattern) => {
@@ -158,10 +158,10 @@ var list  = {
     };
   },
   unit: (value) => {
-    return list.cons(value, list.empty());
+    return List.cons(value, List.empty());
   },
   head: (alist) => {
-    return list.match(alist, {
+    return List.match(alist, {
       empty: (_) => {
         return undefined;
       },
@@ -171,7 +171,7 @@ var list  = {
     });
   },
   tail: (alist) => {
-    return list.match(alist, {
+    return List.match(alist, {
       empty: (_) => {
         return undefined;
       },
@@ -181,7 +181,7 @@ var list  = {
     });
   },
   isEmpty: (alist) => {
-    return list.match(alist, {
+    return List.match(alist, {
       empty: (_) => {
         return true;
       },
@@ -195,12 +195,12 @@ var list  = {
   // append (x:xs) ys = x : (xs ++ ys)
   append: (xs) => {
     return (ys) => {
-      return list.match(xs, {
+      return List.match(xs, {
         empty: (_) => {
           return ys;
         },
         cons: (head, tail) => {
-          return list.cons(head,list.append(tail)(ys)); 
+          return List.cons(head,List.append(tail)(ys)); 
         }
       });
     };
@@ -209,27 +209,27 @@ var list  = {
   // concat [] = []
   // concat (xs:xss) = xs ++ concat xss
   concat: (list_of_list) => {
-    return list.foldr(list_of_list)(list.empty())(list.append);
+    return List.foldr(list_of_list)(List.empty())(List.append);
   },
   // ~~~haskell
   // flatten :: [[a]] -> [a]
   // flatten =  foldr (++) []
   // ~~~
   flatten: (instanceMM) => {
-    return list.concat(instanceMM);
+    return List.concat(instanceMM);
   },
   // map:: LIST[T] -> FUN[T->U] -> LIST[U]
   // map [] _ = []
   // map (x:xs) f = f x : map xs f
   map: (instanceM) => {
     return (transform) => {
-      return list.match(instanceM,{
+      return List.match(instanceM,{
         empty: (_) => {
-          return list.empty();
+          return List.empty();
         },
         cons: (head,tail) => {
-          return list.cons(transform(head),
-                           list.map(tail)(transform));
+          return List.cons(transform(head),
+                           List.map(tail)(transform));
         }
       });
     };
@@ -240,13 +240,13 @@ var list  = {
   flatMap: (instanceM) => {
     return (transform) => { // FUN[T->LIST[T]]
       expect(transform).to.a('function');
-      return list.concat(list.map(instanceM)(transform));
+      return List.concat(List.map(instanceM)(transform));
     };
   },
   /* #@range_end(list_monad_definition) */
   // 1段階のリストしか配列に変更できない
   toArray: (alist) => {
-    return list.foldr(alist)([])((item) => {
+    return List.foldr(alist)([])((item) => {
       return (accumulator) => {
         return [item].concat(accumulator);
       };
@@ -259,12 +259,12 @@ var list  = {
     return (accumulator) => { // accumulator:: T
       return (glue) => {      // glue:: FUN[T -> U -> U] 
         expect(glue).to.a('function');
-        return list.match(alist, {
+        return List.match(alist, {
           empty: (_) => {
             return accumulator;
           },
           cons: (head, tail) => {
-            return glue(head)(list.foldr(tail)(accumulator)(glue));;
+            return glue(head)(List.foldr(tail)(accumulator)(glue));;
           }
         });
       };
@@ -273,155 +273,155 @@ var list  = {
 }; // end of list monad
 
 // ### Listモナドのテスト
-describe('Listモナド', () => {
-  var list  = {
-    match: (data, pattern) => {
-      return data.call(list,pattern);
-    },
-    empty: (_) => {
-      return (pattern) => {
-        return pattern.empty();
-      };
-    },
-    cons: (value, alist) => {
-      return (pattern) => {
-        return pattern.cons(value, alist);
-      };
-    },
-    head: (alist) => {
-      return list.match(alist, {
-        empty: (_) => {
-          return null;
-        },
-        cons: (head, tail) => {
-          return head;
-        }
-      });
-    },
-    tail: (alist) => {
-      return list.match(alist, {
-        empty: (_) => {
-          return null;
-        },
-        cons: (head, tail) => {
-          return tail;
-        }
-      });
-    },
-    isEmpty: (alist) => {
-      return list.match(alist, {
-        empty: (_) => {
-          return true;
-        },
-        cons: (head, tail) => {
-          return false;
-        }
-      });
-    },
-    /* #@range_begin(list_monad_definition) */
-    /* ### list#unit */
-    unit: (value) => {
-      return list.cons(value, list.empty());
-    },
-    /* append:: LIST[T] -> LIST[T] -> LIST[T] */
-    /* append [] ys = ys */
-    /* append (x:xs) ys = x : (xs ++ ys) */
-    append: (xs) => {
-      return (ys) => {
-        return list.match(xs, {
-          empty: (_) => {
-            return ys;
-          },
-          cons: (head, tail) => {
-            return list.cons(head,list.append(tail)(ys)); 
-          }
-        });
-      };
-    },
-    /* concat:: LIST[LIST[T]] -> LIST[T] */
-    /* concat [] = [] */
-    /* concat (xs:xss) = xs ++ concat xss */
-    concat: (list_of_list) => {
-      return list.match(list_of_list, {
-        empty: (_) => {
-          return list.empty();
-        },
-        cons: (head, tail) => {
-          return list.append(head)(list.concat(tail));
-        }
-      });
-    },
-    /* map:: LIST[T] -> FUN[T->U] -> LIST[U] */
-    /* map [] _ = [] */
-    /* map (x:xs) f = f x : map xs f */
-    map: (instanceM) => {
-      return (transform) => {
-        return list.match(instanceM,{
-          empty: (_) => {
-            return list.empty();
-          },
-          cons: (head,tail) => {
-            return list.cons(transform(head),
-                             list.map(tail)(transform));
-          }
-        });
-      };
-    },
-    // ~~~haskell
-    // flatten :: [[a]] -> [a]
-    // flatten =  foldr (++) []
-    // ~~~
-    flatten: (instanceMM) => {
-      return list.match(instanceMM,{
-        empty: (_) => {
-          return list.empty();
-        },
-        cons: (head,tail) => {
-          return list.append(head)(list.flatten(tail));
-        }
-      });
-    },
-    // ~~~haskell
-    // xs >>= f = concat (map f xs)
-    // ~~~
-    flatMap: (instanceM) => {
-      return (transform) => { // FUN[T->LIST[T]]
-        expect(transform).to.a('function');
-        return list.concat(list.map(instanceM)(transform));
-      };
-    },
-    /* #@range_end(list_monad_definition) */
-    toArray: (alist) => {
-      return list.foldr(alist)([])((item) => {
-        return (accumulator) => {
-          return [item].concat(accumulator);
-        };
-      });
-    },
-    /* foldr:: LIST[T] -> T -> FUN[T -> U -> U] -> T */
-    /* foldr []     z _ = z */
-    /* foldr (x:xs) z f = f x (foldr xs z f)  */
-    foldr: (alist) => {         // alist:: LIST[T]
-      return (accumulator) => { // accumulator:: T
-        return (glue) => {      // glue:: FUN[T -> U -> U] 
-          expect(glue).to.a('function');
-          return list.match(alist, {
-            empty: (_) => {
-              return accumulator;
-            },
-            cons: (head, tail) => {
-              return glue(head)(list.foldr(tail)(accumulator)(glue));;
-            }
-          });
-        };
-      };
-    },
-    /* #@range_begin(list_monad_map) */
-    /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
-    /* #@range_end(list_monad_map) */
-  }; // end of list
-  it("'list#empty'", (next) => {
-    list.match(list.empty,{
+describe('Listモナドのテスト', () => {
+  // var list  = {
+  //   match: (data, pattern) => {
+  //     return data.call(list,pattern);
+  //   },
+  //   empty: (_) => {
+  //     return (pattern) => {
+  //       return pattern.empty();
+  //     };
+  //   },
+  //   cons: (value, alist) => {
+  //     return (pattern) => {
+  //       return pattern.cons(value, alist);
+  //     };
+  //   },
+  //   head: (alist) => {
+  //     return list.match(alist, {
+  //       empty: (_) => {
+  //         return null;
+  //       },
+  //       cons: (head, tail) => {
+  //         return head;
+  //       }
+  //     });
+  //   },
+  //   tail: (alist) => {
+  //     return list.match(alist, {
+  //       empty: (_) => {
+  //         return null;
+  //       },
+  //       cons: (head, tail) => {
+  //         return tail;
+  //       }
+  //     });
+  //   },
+  //   isEmpty: (alist) => {
+  //     return list.match(alist, {
+  //       empty: (_) => {
+  //         return true;
+  //       },
+  //       cons: (head, tail) => {
+  //         return false;
+  //       }
+  //     });
+  //   },
+  //   /* #@range_begin(list_monad_definition) */
+  //   /* ### list#unit */
+  //   unit: (value) => {
+  //     return list.cons(value, list.empty());
+  //   },
+  //   /* append:: LIST[T] -> LIST[T] -> LIST[T] */
+  //   /* append [] ys = ys */
+  //   /* append (x:xs) ys = x : (xs ++ ys) */
+  //   append: (xs) => {
+  //     return (ys) => {
+  //       return list.match(xs, {
+  //         empty: (_) => {
+  //           return ys;
+  //         },
+  //         cons: (head, tail) => {
+  //           return list.cons(head,list.append(tail)(ys)); 
+  //         }
+  //       });
+  //     };
+  //   },
+  //   /* concat:: LIST[LIST[T]] -> LIST[T] */
+  //   /* concat [] = [] */
+  //   /* concat (xs:xss) = xs ++ concat xss */
+  //   concat: (list_of_list) => {
+  //     return list.match(list_of_list, {
+  //       empty: (_) => {
+  //         return list.empty();
+  //       },
+  //       cons: (head, tail) => {
+  //         return list.append(head)(list.concat(tail));
+  //       }
+  //     });
+  //   },
+  //   /* map:: LIST[T] -> FUN[T->U] -> LIST[U] */
+  //   /* map [] _ = [] */
+  //   /* map (x:xs) f = f x : map xs f */
+  //   map: (instanceM) => {
+  //     return (transform) => {
+  //       return list.match(instanceM,{
+  //         empty: (_) => {
+  //           return list.empty();
+  //         },
+  //         cons: (head,tail) => {
+  //           return list.cons(transform(head),
+  //                            list.map(tail)(transform));
+  //         }
+  //       });
+  //     };
+  //   },
+  //   // ~~~haskell
+  //   // flatten :: [[a]] -> [a]
+  //   // flatten =  foldr (++) []
+  //   // ~~~
+  //   flatten: (instanceMM) => {
+  //     return list.match(instanceMM,{
+  //       empty: (_) => {
+  //         return list.empty();
+  //       },
+  //       cons: (head,tail) => {
+  //         return list.append(head)(list.flatten(tail));
+  //       }
+  //     });
+  //   },
+  //   // ~~~haskell
+  //   // xs >>= f = concat (map f xs)
+  //   // ~~~
+  //   flatMap: (instanceM) => {
+  //     return (transform) => { // FUN[T->LIST[T]]
+  //       expect(transform).to.a('function');
+  //       return list.concat(list.map(instanceM)(transform));
+  //     };
+  //   },
+  //   /* #@range_end(list_monad_definition) */
+  //   toArray: (alist) => {
+  //     return list.foldr(alist)([])((item) => {
+  //       return (accumulator) => {
+  //         return [item].concat(accumulator);
+  //       };
+  //     });
+  //   },
+  //   /* foldr:: LIST[T] -> T -> FUN[T -> U -> U] -> T */
+  //   /* foldr []     z _ = z */
+  //   /* foldr (x:xs) z f = f x (foldr xs z f)  */
+  //   foldr: (alist) => {         // alist:: LIST[T]
+  //     return (accumulator) => { // accumulator:: T
+  //       return (glue) => {      // glue:: FUN[T -> U -> U] 
+  //         expect(glue).to.a('function');
+  //         return list.match(alist, {
+  //           empty: (_) => {
+  //             return accumulator;
+  //           },
+  //           cons: (head, tail) => {
+  //             return glue(head)(list.foldr(tail)(accumulator)(glue));;
+  //           }
+  //         });
+  //       };
+  //     };
+  //   },
+  //   /* #@range_begin(list_monad_map) */
+  //   /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
+  //   /* #@range_end(list_monad_map) */
+  // }; // end of list
+  it("'List#empty'", (next) => {
+    List.match(List.empty,{
       empty: (_) => {
         expect(true).ok();
       },
@@ -431,21 +431,21 @@ describe('Listモナド', () => {
     });
     next();
   });
-  it("'list#isEmpty'", (next) => {
+  it("'List#isEmpty'", (next) => {
     expect(
-      list.isEmpty(list.empty())
+      List.isEmpty(List.empty())
     ).to.eql(
       true
     );
     expect(
-      list.isEmpty(list.cons(1,list.empty()))
+      List.isEmpty(List.cons(1,List.empty()))
     ).to.eql(
       false
     );
     next();
   });
-  it("'list#cons'", (next) => {
-    list.match(list.cons(1,list.empty()),{
+  it("'List#cons'", (next) => {
+    List.match(List.cons(1,List.empty()),{
       empty: (_) => {
         expect().fail()
       },
@@ -455,77 +455,77 @@ describe('Listモナド', () => {
     });
     next();
   });
-  it("'list#head'", (next) => {
+  it("'List#head'", (next) => {
     expect(
-      list.head(list.cons(1,list.empty()))
+      List.head(List.cons(1,List.empty()))
     ).to.eql(
       1
     );
     next();
   });
-  it("'list#tail'", (next) => {
+  it("'List#tail'", (next) => {
     expect(
-      list.head(list.tail(list.cons(1,list.cons(2,list.empty()))))
+      List.head(List.tail(List.cons(1,List.cons(2,List.empty()))))
     ).to.eql(
       2
     );
     next();
   });
-  it("'list#append'", (next) => {
-    var theList = list.append(list.cons(1,list.empty()))(list.cons(2,list.empty()));
+  it("'List#append'", (next) => {
+    var theList = List.append(List.cons(1,List.empty()))(List.cons(2,List.empty()));
     expect(
-      list.head(theList)
+      List.head(theList)
     ).to.eql(
       1
     );
     expect(
-      list.head(list.tail(theList))
+      List.head(List.tail(theList))
     ).to.eql(
       2
     );
     expect(
-      list.isEmpty(list.tail(list.tail(theList)))
+      List.isEmpty(List.tail(List.tail(theList)))
     ).to.eql(
       true
     );
     next();
   });
-  it("'list#concat'", (next) => {
+  it("'List#concat'", (next) => {
     /* list = [[1,2],[3,4]] */
-    var one_two = list.cons(1,list.cons(2,list.empty()));
-    var three_four = list.cons(3,list.cons(4,list.empty()));
+    var one_two = List.cons(1,List.cons(2,List.empty()));
+    var three_four = List.cons(3,List.cons(4,List.empty()));
 
-    var list_of_list = list.cons(one_two,
-                                 list.cons(three_four, list.empty()));
+    var list_of_list = List.cons(one_two,
+                                 List.cons(three_four, List.empty()));
     /* concated_list = [1,2,3,4] */
-    var concated_list = list.concat(list_of_list);
+    var concated_list = List.concat(list_of_list);
     expect(
-      list.toArray(concated_list)
+      List.toArray(concated_list)
     ).to.eql(
       [1,2,3,4]
     );
     expect(
-      list.head(concated_list)
+      List.head(concated_list)
     ).to.eql(
       1
     );
     expect(
-      list.head(list.tail(concated_list))
+      List.head(List.tail(concated_list))
     ).to.eql(
       2
     );
     expect(
-      list.isEmpty(list.tail(list.tail(concated_list)))
+      List.isEmpty(List.tail(List.tail(concated_list)))
     ).to.eql(
       false
     );
     next();
   });
-  it("'list#foldr'", (next) => {
+  it("'List#foldr'", (next) => {
     /* list = [1,2,3,4] */
-    var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)))
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)))
     expect(
-      list.foldr(theList)(0)(function (item){
+      List.foldr(theList)(0)(function (item){
         return (accumulator) => {
           return accumulator + item;
         };
@@ -535,21 +535,21 @@ describe('Listモナド', () => {
     )
     next();
   })
-  it("'list#toArray'", (next) => {
+  it("'List#toArray'", (next) => {
     /* list = [1,2,3,4] */
-    var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)))
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)))
     expect(
-      list.toArray(theList)
+      List.toArray(theList)
     ).to.eql(
       [1,2,3,4]
     );
     next();
   });
-  it("'list#map'", (next) => {
+  it("'List#map'", (next) => {
     /* list = [1,2,3,4] */
-    var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)));
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
-      list.toArray(list.map(theList)(function (item){
+      List.toArray(List.map(theList)(function (item){
         return item * 2;
       }))
     ).to.eql(
@@ -557,33 +557,33 @@ describe('Listモナド', () => {
     );
     next();
   });
-  it("'list#unit'", (next) => {
+  it("'List#unit'", (next) => {
     /* list = [1] */
     expect(
-      list.toArray(list.unit(1))
+      List.toArray(List.unit(1))
     ).to.eql(
       [1]
     );
     expect(
-      list.toArray(list.unit(null))
+      List.toArray(List.unit(null))
     ).to.eql(
       [null]
     );
     next();
   });
-  it("'list#flatMap'", (next) => {
+  it("'List#flatMap'", (next) => {
     /* list = [1,2,3] */
-    var theList = list.cons(1,list.cons(2, list.cons(3, list.empty())));
+    var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
     expect(
-      list.toArray(list.flatMap(theList)((item) => {
-        return list.append(list.unit(item))(list.unit(- item));
+      List.toArray(List.flatMap(theList)((item) => {
+        return List.append(List.unit(item))(List.unit(- item));
       }))
     ).to.eql(
       [1,-1,2,-2,3,-3]
     );
     next();
   });
-  describe("listモナドを活用する",() => {
+  describe("Listモナドを活用する",() => {
     it("フィルターとして使う", (next) => {
       var even = (n) => {
         if(n % 2 === 0) {
@@ -592,13 +592,13 @@ describe('Listモナド', () => {
           return false;
         }
       };
-      var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()))));
       expect(
-        list.toArray(list.flatMap(theList)((item) => {
+        List.toArray(List.flatMap(theList)((item) => {
           if(even(item)) {
-            return list.unit(item);
+            return List.unit(item);
           } else {
-            return list.empty();
+            return List.empty();
           }
         }))
       ).to.eql(
@@ -607,12 +607,12 @@ describe('Listモナド', () => {
       next();
     });
     it("2段階のflatMap", (next) => {
-      var theNumberList = list.cons(1,list.cons(2,list.empty()));
-      var theStringList = list.cons("one",list.cons("two",list.empty()));
+      var theNumberList = List.cons(1,List.cons(2,List.empty()));
+      var theStringList = List.cons("one",List.cons("two",List.empty()));
       expect(
-        list.toArray(list.flatMap(theNumberList)((n) => {
-          return list.flatMap(theStringList)((s) => {
-            return list.unit([n,s]);
+        List.toArray(List.flatMap(theNumberList)((n) => {
+          return List.flatMap(theStringList)((s) => {
+            return List.unit([n,s]);
           });
         }))
       ).to.eql(
@@ -675,30 +675,30 @@ describe('Listモナド', () => {
       //   // }
       // };
       it("[just(1)]", (next) => {
-        var theList = list.cons(Maybe.just(1),
-                                list.empty());
-        var justList = list.flatMap(theList)((maybeItem) => {
+        var theList = List.cons(Maybe.just(1),
+                                List.empty());
+        var justList = List.flatMap(theList)((maybeItem) => {
           return Maybe.flatMap(maybeItem)((value) => {
-            return list.unit(value);
+            return List.unit(value);
           });
         });
         expect(
-          list.toArray(justList)
+          List.toArray(justList)
         ).to.eql(
           [1]
         );
         next();
       });
       it("[just(1),just(2)]", (next) => {
-        var theList = list.cons(Maybe.just(1),
-                                list.cons(Maybe.just(2),list.empty()));
-        var justList = list.flatMap(theList)((listItem) => {
+        var theList = List.cons(Maybe.just(1),
+                                List.cons(Maybe.just(2),List.empty()));
+        var justList = List.flatMap(theList)((listItem) => {
           return Maybe.flatMap(listItem)((value) => {
-            return list.unit(value);
+            return List.unit(value);
           });
         });
         expect(
-          list.toArray(justList)
+          List.toArray(justList)
         ).to.eql(
           [1,2]
         );
@@ -751,9 +751,9 @@ describe('Listモナド', () => {
     });
   });
 });
-describe("listモナドを活用する",() => {
-  it("'list#empty'", (next) => {
-    list.match(list.empty,{
+describe("Listモナドを活用する",() => {
+  it("'List#empty'", (next) => {
+    List.match(List.empty,{
       empty: (_) => {
         expect(true).ok();
       },
@@ -763,21 +763,21 @@ describe("listモナドを活用する",() => {
     });
     next();
   });
-  it("'list#isEmpty'", (next) => {
+  it("'List#isEmpty'", (next) => {
     expect(
-      list.isEmpty(list.empty())
+      List.isEmpty(List.empty())
     ).to.eql(
       true
     );
     expect(
-      list.isEmpty(list.cons(1,list.empty()))
+      List.isEmpty(List.cons(1,List.empty()))
     ).to.eql(
       false
     );
     next();
   });
-  it("'list#cons'", (next) => {
-    list.match(list.cons(1,list.empty()),{
+  it("'List#cons'", (next) => {
+    List.match(List.cons(1,List.empty()),{
       empty: (_) => {
         expect().fail();
       },
@@ -787,77 +787,77 @@ describe("listモナドを活用する",() => {
     });
     next();
   });
-  it("'list#head'", (next) => {
+  it("'List#head'", (next) => {
     expect(
-      list.head(list.cons(1,list.empty()))
+      List.head(List.cons(1,List.empty()))
     ).to.eql(
       1
     );
     next();
   });
-  it("'list#tail'", (next) => {
+  it("'List#tail'", (next) => {
     expect(
-      list.head(list.tail(list.cons(1,list.cons(2,list.empty()))))
+      List.head(List.tail(List.cons(1,List.cons(2,List.empty()))))
     ).to.eql(
       2
     );
     next();
   });
-  it("'list#append'", (next) => {
-    var theList = list.append(list.cons(1,list.empty()))(list.cons(2,list.empty()));
+  it("'List#append'", (next) => {
+    var theList = List.append(List.cons(1,List.empty()))(List.cons(2,List.empty()));
     expect(
-      list.head(theList)
+      List.head(theList)
     ).to.eql(
       1
     );
     expect(
-      list.head(list.tail(theList))
+      List.head(List.tail(theList))
     ).to.eql(
       2
     );
     expect(
-      list.isEmpty(list.tail(list.tail(theList)))
+      List.isEmpty(List.tail(List.tail(theList)))
     ).to.eql(
       true
     );
     next();
   });
-  it("'list#concat'", (next) => {
+  it("'List#concat'", (next) => {
     // list = [[1,2],[3,4]]
-    var one_two = list.cons(1,list.cons(2,list.empty()));
-    var three_four = list.cons(3,list.cons(4,list.empty()));
+    var one_two = List.cons(1,List.cons(2,List.empty()));
+    var three_four = List.cons(3,List.cons(4,List.empty()));
 
-    var list_of_list = list.cons(one_two,
-                                 list.cons(three_four, list.empty()));
+    var list_of_list = List.cons(one_two,
+                                 List.cons(three_four, List.empty()));
     // concated_list = [1,2,3,4]
-    var concated_list = list.concat(list_of_list);
+    var concated_list = List.concat(list_of_list);
     expect(
-      list.toArray(concated_list)
+      List.toArray(concated_list)
     ).to.eql(
       [1,2,3,4]
     );
     expect(
-      list.head(concated_list)
+      List.head(concated_list)
     ).to.eql(
       1
     );
     expect(
-      list.head(list.tail(concated_list))
+      List.head(List.tail(concated_list))
     ).to.eql(
       2
     );
     expect(
-      list.isEmpty(list.tail(list.tail(concated_list)))
+      List.isEmpty(List.tail(List.tail(concated_list)))
     ).to.eql(
       false
     );
     next();
   });
-  it("'list#foldr'", (next) => {
+  it("'List#foldr'", (next) => {
     // list = [1,2,3,4]
-    var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)))
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)))
     expect(
-      list.foldr(theList)(0)(function (item){
+      List.foldr(theList)(0)(function (item){
         return (accumulator) => {
           return accumulator + item;
         };
@@ -867,12 +867,12 @@ describe("listモナドを活用する",() => {
     )
     next();
   });
-  describe("'list#toArray'", () => {
+  describe("'List#toArray'", () => {
     it("1段階のリストを配列に変換する", (next) => {
       // list = [1,2,3,4]
-      var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)));
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
       expect(
-        list.toArray(theList)
+        List.toArray(theList)
       ).to.eql(
         [1,2,3,4]
       );
@@ -880,13 +880,13 @@ describe("listモナドを活用する",() => {
     });
     it("2段階のリストを配列に変換する", (next) => {
       // list = [[1],[2]] 
-      var nestedList = list.cons(list.cons(1,list.empty()),
-                                 list.cons(list.cons(2,list.empty()),
-                                           list.empty()));
+      var nestedList = List.cons(List.cons(1,List.empty()),
+                                 List.cons(List.cons(2,List.empty()),
+                                           List.empty()));
       expect(
-        list.toArray(list.flatMap(nestedList)((alist) => {
-          return list.flatMap(alist)((item) => {
-            return list.unit(item);
+        List.toArray(List.flatMap(nestedList)((alist) => {
+          return List.flatMap(alist)((item) => {
+            return List.unit(item);
           });
         }))
       ).to.eql(
@@ -895,11 +895,11 @@ describe("listモナドを活用する",() => {
       next();
     });
   });
-  it("'list#map'", (next) => {
+  it("'List#map'", (next) => {
     // list = [1,2,3,4]
-    var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()),list.empty)));
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
-      list.toArray(list.map(theList)(function (item){
+      List.toArray(List.map(theList)(function (item){
         return item * 2;
       }))
     ).to.eql(
@@ -907,33 +907,33 @@ describe("listモナドを活用する",() => {
     );
     next();
   });
-  it("'list#unit'", (next) => {
+  it("'List#unit'", (next) => {
     // list = [1]
     expect(
-      list.toArray(list.unit(1))
+      List.toArray(List.unit(1))
     ).to.eql(
       [1]
     );
     expect(
-      list.toArray(list.unit(null))
+      List.toArray(List.unit(null))
     ).to.eql(
       [null]
     );
     next();
   });
-  describe("list#flatMap", () => {
+  describe("List#flatMap", () => {
     it("条件でフィルターする", (next) => {
-      var list1 = list.cons(1, list.cons(2,
-                                         list.empty()));
-      var list2 = list.cons(1, list.cons(2,
-                                         list.empty()));
+      var list1 = List.cons(1, List.cons(2,
+                                         List.empty()));
+      var list2 = List.cons(1, List.cons(2,
+                                         List.empty()));
       expect(
-        list.toArray(list.flatMap(list1)((item1) => {
-          return list.flatMap(list2)((item2) => {
+        List.toArray(List.flatMap(list1)((item1) => {
+          return List.flatMap(list2)((item2) => {
             if(item1 + item2 === 3) {
-              return list.unit([item1, item2]);
+              return List.unit([item1, item2]);
             } else {
-              return list.empty();
+              return List.empty();
             }
           });
         }))
@@ -942,32 +942,32 @@ describe("listモナドを活用する",() => {
       );
       next();
     });
-    it("'list#flatMap'", (next) => {
+    it("'List#flatMap'", (next) => {
       // list = [1]
-      var theList = list.cons(1, list.empty());
+      var theList = List.cons(1, List.empty());
       expect(
-        list.toArray(list.flatMap(theList)((item) => {
-          return list.unit(item * 2); 
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.unit(item * 2); 
         }))
       ).to.eql(
         [2]
       );
-      var emptyList = list.empty();
+      var emptyList = List.empty();
       expect(
-        list.toArray(list.flatMap(emptyList)((item) => {
-          return list.unit(item * 2); 
+        List.toArray(List.flatMap(emptyList)((item) => {
+          return List.unit(item * 2); 
         }))
       ).to.eql(
         []
       );
       next();
     });
-    it("'list#flatMap'", (next) => {
+    it("'List#flatMap'", (next) => {
       // list = [1,2,3]
-      var theList = list.cons(1,list.cons(2, list.cons(3, list.empty())));
+      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
       expect(
-        list.toArray(list.flatMap(theList)((item) => {
-          return list.append(list.unit(item))(list.unit(- item));
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.append(List.unit(item))(List.unit(- item));
         }))
       ).to.eql(
         [1,-1,2,-2,3,-3]
@@ -982,13 +982,13 @@ describe("listモナドを活用する",() => {
           return false;
         }
       };
-      var theList = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()))));
       expect(
-        list.toArray(list.flatMap(theList)((item) => {
+        List.toArray(List.flatMap(theList)((item) => {
           if(even(item)) {
-            return list.unit(item);
+            return List.unit(item);
           } else {
-            return list.empty();
+            return List.empty();
           }
         }))
       ).to.eql(
@@ -997,12 +997,12 @@ describe("listモナドを活用する",() => {
       next();
     });
     it("2段階のflatMap", (next) => {
-      var theNumberList = list.cons(1,list.cons(2,list.empty()));
-      var theStringList = list.cons("one",list.cons("two",list.empty()));
+      var theNumberList = List.cons(1,List.cons(2,List.empty()));
+      var theStringList = List.cons("one",List.cons("two",List.empty()));
       expect(
-        list.toArray(list.flatMap(theNumberList)((n) => {
-          return list.flatMap(theStringList)((s) => {
-            return list.unit([n,s]);
+        List.toArray(List.flatMap(theNumberList)((n) => {
+          return List.flatMap(theStringList)((s) => {
+            return List.unit([n,s]);
           });
         }))
       ).to.eql(
@@ -1232,7 +1232,7 @@ var IO = {
     };
   },
   seqs: (alist) => {
-    return list.foldr(alist)(list.empty())(IO.done());
+    return List.foldr(alist)(List.empty())(IO.done());
   },
   // IO.putc:: CHAR => IO[]
   putc: (character) => {
@@ -1246,7 +1246,7 @@ var IO = {
   // puts list = seqs (map putc list)
   // ~~~
   puts: (alist) => {
-    return list.match(alist, {
+    return List.match(alist, {
       empty: () => {
         return IO.done();
       },
@@ -1733,30 +1733,30 @@ describe('Consoleモナド', () => {
 
 describe("Maybeと一緒に使う", () => {
   it("[just(1),just(2)]", (next) => {
-    var theList = list.cons(Maybe.just(1),
-                            list.cons(Maybe.just(2),list.empty()));
-    var justList = list.flatMap(theList)((listItem) => {
+    var theList = List.cons(Maybe.just(1),
+                            List.cons(Maybe.just(2),List.empty()));
+    var justList = List.flatMap(theList)((listItem) => {
       return Maybe.flatMap(listItem)((value) => {
-        return list.unit(value);
+        return List.unit(value);
       });
     });
     expect(
-      list.toArray(justList)
+      List.toArray(justList)
     ).to.eql(
       [1,2]
     );
     next();
   });
   it("[just(1)]", (next) => {
-    var theList = list.cons(Maybe.just(1),
-                            list.empty());
-    var justList = list.flatMap(theList)((maybeItem) => {
+    var theList = List.cons(Maybe.just(1),
+                            List.empty());
+    var justList = List.flatMap(theList)((maybeItem) => {
       return Maybe.flatMap(maybeItem)((value) => {
-        return list.unit(value);
+        return List.unit(value);
       });
     });
     expect(
-      list.toArray(justList)
+      List.toArray(justList)
     ).to.eql(
       [1]
     );

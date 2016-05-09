@@ -274,152 +274,6 @@ var List  = {
 
 // ### Listモナドのテスト
 describe('Listモナドのテスト', () => {
-  // var list  = {
-  //   match: (data, pattern) => {
-  //     return data.call(list,pattern);
-  //   },
-  //   empty: (_) => {
-  //     return (pattern) => {
-  //       return pattern.empty();
-  //     };
-  //   },
-  //   cons: (value, alist) => {
-  //     return (pattern) => {
-  //       return pattern.cons(value, alist);
-  //     };
-  //   },
-  //   head: (alist) => {
-  //     return list.match(alist, {
-  //       empty: (_) => {
-  //         return null;
-  //       },
-  //       cons: (head, tail) => {
-  //         return head;
-  //       }
-  //     });
-  //   },
-  //   tail: (alist) => {
-  //     return list.match(alist, {
-  //       empty: (_) => {
-  //         return null;
-  //       },
-  //       cons: (head, tail) => {
-  //         return tail;
-  //       }
-  //     });
-  //   },
-  //   isEmpty: (alist) => {
-  //     return list.match(alist, {
-  //       empty: (_) => {
-  //         return true;
-  //       },
-  //       cons: (head, tail) => {
-  //         return false;
-  //       }
-  //     });
-  //   },
-  //   /* #@range_begin(list_monad_definition) */
-  //   /* ### list#unit */
-  //   unit: (value) => {
-  //     return list.cons(value, list.empty());
-  //   },
-  //   /* append:: LIST[T] -> LIST[T] -> LIST[T] */
-  //   /* append [] ys = ys */
-  //   /* append (x:xs) ys = x : (xs ++ ys) */
-  //   append: (xs) => {
-  //     return (ys) => {
-  //       return list.match(xs, {
-  //         empty: (_) => {
-  //           return ys;
-  //         },
-  //         cons: (head, tail) => {
-  //           return list.cons(head,list.append(tail)(ys)); 
-  //         }
-  //       });
-  //     };
-  //   },
-  //   /* concat:: LIST[LIST[T]] -> LIST[T] */
-  //   /* concat [] = [] */
-  //   /* concat (xs:xss) = xs ++ concat xss */
-  //   concat: (list_of_list) => {
-  //     return list.match(list_of_list, {
-  //       empty: (_) => {
-  //         return list.empty();
-  //       },
-  //       cons: (head, tail) => {
-  //         return list.append(head)(list.concat(tail));
-  //       }
-  //     });
-  //   },
-  //   /* map:: LIST[T] -> FUN[T->U] -> LIST[U] */
-  //   /* map [] _ = [] */
-  //   /* map (x:xs) f = f x : map xs f */
-  //   map: (instanceM) => {
-  //     return (transform) => {
-  //       return list.match(instanceM,{
-  //         empty: (_) => {
-  //           return list.empty();
-  //         },
-  //         cons: (head,tail) => {
-  //           return list.cons(transform(head),
-  //                            list.map(tail)(transform));
-  //         }
-  //       });
-  //     };
-  //   },
-  //   // ~~~haskell
-  //   // flatten :: [[a]] -> [a]
-  //   // flatten =  foldr (++) []
-  //   // ~~~
-  //   flatten: (instanceMM) => {
-  //     return list.match(instanceMM,{
-  //       empty: (_) => {
-  //         return list.empty();
-  //       },
-  //       cons: (head,tail) => {
-  //         return list.append(head)(list.flatten(tail));
-  //       }
-  //     });
-  //   },
-  //   // ~~~haskell
-  //   // xs >>= f = concat (map f xs)
-  //   // ~~~
-  //   flatMap: (instanceM) => {
-  //     return (transform) => { // FUN[T->LIST[T]]
-  //       expect(transform).to.a('function');
-  //       return list.concat(list.map(instanceM)(transform));
-  //     };
-  //   },
-  //   /* #@range_end(list_monad_definition) */
-  //   toArray: (alist) => {
-  //     return list.foldr(alist)([])((item) => {
-  //       return (accumulator) => {
-  //         return [item].concat(accumulator);
-  //       };
-  //     });
-  //   },
-  //   /* foldr:: LIST[T] -> T -> FUN[T -> U -> U] -> T */
-  //   /* foldr []     z _ = z */
-  //   /* foldr (x:xs) z f = f x (foldr xs z f)  */
-  //   foldr: (alist) => {         // alist:: LIST[T]
-  //     return (accumulator) => { // accumulator:: T
-  //       return (glue) => {      // glue:: FUN[T -> U -> U] 
-  //         expect(glue).to.a('function');
-  //         return list.match(alist, {
-  //           empty: (_) => {
-  //             return accumulator;
-  //           },
-  //           cons: (head, tail) => {
-  //             return glue(head)(list.foldr(tail)(accumulator)(glue));;
-  //           }
-  //         });
-  //       };
-  //     };
-  //   },
-  //   /* #@range_begin(list_monad_map) */
-  //   /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
-  //   /* #@range_end(list_monad_map) */
-  // }; // end of list
   it("'List#empty'", (next) => {
     List.match(List.empty,{
       empty: (_) => {
@@ -447,10 +301,10 @@ describe('Listモナドのテスト', () => {
   it("'List#cons'", (next) => {
     List.match(List.cons(1,List.empty()),{
       empty: (_) => {
-        expect().fail()
+        expect().fail();
       },
       cons: (x,xs) => {
-        expect(x).to.eql(1)
+        expect(x).to.eql(1);
       }
     });
     next();
@@ -622,58 +476,6 @@ describe('Listモナドのテスト', () => {
     });
     /* #@range_begin(list_maybe) */
     describe("Maybeと一緒に使う", () => {
-      // var maybe = {
-      //   match: (data, pattern) => {
-      //     return data.call(maybe,pattern);
-      //   },
-      //   just : (value) => {
-      //     return (pattern) => {
-      //       return pattern.just(value);
-      //     };
-      //   },
-      //   nothing : (_) => {
-      //     return (pattern) => {
-      //       expect(pattern).not.to.be.a('null');
-      //       // console.log(pattern);
-      //       return pattern.nothing(null);
-      //     };
-      //   },
-      //   unit : (value) => {
-      //     return maybe.just(value);
-      //    // if(value !== false && value != null){
-      //    //    return maybe.just(value);
-      //    //  } else {
-      //    //    return maybe.nothing(null);
-      //    //  }
-      //   },
-      //   flatMap : (maybeInstance) => {
-      //     return (transform) => {
-      //       expect(transform).to.a('function');
-      //       return maybe.match(maybeInstance,{
-      //         just: (value) => {
-      //           return transform(value);
-      //         },
-      //         nothing: (_) => {
-      //           return maybe.nothing(null);
-      //         }
-      //       });
-      //     };
-      //   },
-      //   // map : (maybeInstance) => {
-      //   //   return (transform) => {
-      //   //     expect(transform).to.a('function');
-      //   //     return maybe.match(maybeInstance,{
-      //   //       just: (value) => {
-      //   //         return maybe.unit(transform(value));
-      //   //         // return maybe.unit(transform(value));
-      //   //       },
-      //   //       nothing: (_) => {
-      //   //         return maybe.nothing(null);
-      //   //       }
-      //   //     });
-      //   //   };
-      //   // }
-      // };
       it("[just(1)]", (next) => {
         var theList = List.cons(Maybe.just(1),
                                 List.empty());
@@ -750,273 +552,273 @@ describe('Listモナドのテスト', () => {
       /* #@range_end(list_maybe) */
     });
   });
-});
-describe("Listモナドを活用する",() => {
-  it("'List#empty'", (next) => {
-    List.match(List.empty,{
-      empty: (_) => {
-        expect(true).ok();
-      },
-      cons: (x,xs) => {
-        expect().fail();
-      }
+  describe("Listモナドを活用する",() => {
+    it("'List#empty'", (next) => {
+      List.match(List.empty,{
+        empty: (_) => {
+          expect(true).ok();
+        },
+        cons: (x,xs) => {
+          expect().fail();
+        }
+      });
+      next();
     });
-    next();
-  });
-  it("'List#isEmpty'", (next) => {
-    expect(
-      List.isEmpty(List.empty())
-    ).to.eql(
-      true
-    );
-    expect(
-      List.isEmpty(List.cons(1,List.empty()))
-    ).to.eql(
-      false
-    );
-    next();
-  });
-  it("'List#cons'", (next) => {
-    List.match(List.cons(1,List.empty()),{
-      empty: (_) => {
-        expect().fail();
-      },
-      cons: (x,xs) => {
-        expect(x).to.eql(1);
-      }
-    });
-    next();
-  });
-  it("'List#head'", (next) => {
-    expect(
-      List.head(List.cons(1,List.empty()))
-    ).to.eql(
-      1
-    );
-    next();
-  });
-  it("'List#tail'", (next) => {
-    expect(
-      List.head(List.tail(List.cons(1,List.cons(2,List.empty()))))
-    ).to.eql(
-      2
-    );
-    next();
-  });
-  it("'List#append'", (next) => {
-    var theList = List.append(List.cons(1,List.empty()))(List.cons(2,List.empty()));
-    expect(
-      List.head(theList)
-    ).to.eql(
-      1
-    );
-    expect(
-      List.head(List.tail(theList))
-    ).to.eql(
-      2
-    );
-    expect(
-      List.isEmpty(List.tail(List.tail(theList)))
-    ).to.eql(
-      true
-    );
-    next();
-  });
-  it("'List#concat'", (next) => {
-    // list = [[1,2],[3,4]]
-    var one_two = List.cons(1,List.cons(2,List.empty()));
-    var three_four = List.cons(3,List.cons(4,List.empty()));
-
-    var list_of_list = List.cons(one_two,
-                                 List.cons(three_four, List.empty()));
-    // concated_list = [1,2,3,4]
-    var concated_list = List.concat(list_of_list);
-    expect(
-      List.toArray(concated_list)
-    ).to.eql(
-      [1,2,3,4]
-    );
-    expect(
-      List.head(concated_list)
-    ).to.eql(
-      1
-    );
-    expect(
-      List.head(List.tail(concated_list))
-    ).to.eql(
-      2
-    );
-    expect(
-      List.isEmpty(List.tail(List.tail(concated_list)))
-    ).to.eql(
-      false
-    );
-    next();
-  });
-  it("'List#foldr'", (next) => {
-    // list = [1,2,3,4]
-    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)))
-    expect(
-      List.foldr(theList)(0)(function (item){
-        return (accumulator) => {
-          return accumulator + item;
-        };
-      })
-    ).to.eql(
-      10
-    )
-    next();
-  });
-  describe("'List#toArray'", () => {
-    it("1段階のリストを配列に変換する", (next) => {
-      // list = [1,2,3,4]
-      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
+    it("'List#isEmpty'", (next) => {
       expect(
-        List.toArray(theList)
+        List.isEmpty(List.empty())
+      ).to.eql(
+        true
+      );
+      expect(
+        List.isEmpty(List.cons(1,List.empty()))
+      ).to.eql(
+        false
+      );
+      next();
+    });
+    it("'List#cons'", (next) => {
+      List.match(List.cons(1,List.empty()),{
+        empty: (_) => {
+          expect().fail();
+        },
+        cons: (x,xs) => {
+          expect(x).to.eql(1);
+        }
+      });
+      next();
+    });
+    it("'List#head'", (next) => {
+      expect(
+        List.head(List.cons(1,List.empty()))
+      ).to.eql(
+        1
+      );
+      next();
+    });
+    it("'List#tail'", (next) => {
+      expect(
+        List.head(List.tail(List.cons(1,List.cons(2,List.empty()))))
+      ).to.eql(
+        2
+      );
+      next();
+    });
+    it("'List#append'", (next) => {
+      var theList = List.append(List.cons(1,List.empty()))(List.cons(2,List.empty()));
+      expect(
+        List.head(theList)
+      ).to.eql(
+        1
+      );
+      expect(
+        List.head(List.tail(theList))
+      ).to.eql(
+        2
+      );
+      expect(
+        List.isEmpty(List.tail(List.tail(theList)))
+      ).to.eql(
+        true
+      );
+      next();
+    });
+    it("'List#concat'", (next) => {
+      // list = [[1,2],[3,4]]
+      var one_two = List.cons(1,List.cons(2,List.empty()));
+      var three_four = List.cons(3,List.cons(4,List.empty()));
+
+      var list_of_list = List.cons(one_two,
+                                   List.cons(three_four, List.empty()));
+      // concated_list = [1,2,3,4]
+      var concated_list = List.concat(list_of_list);
+      expect(
+        List.toArray(concated_list)
       ).to.eql(
         [1,2,3,4]
       );
-      next();
-    });
-    it("2段階のリストを配列に変換する", (next) => {
-      // list = [[1],[2]] 
-      var nestedList = List.cons(List.cons(1,List.empty()),
-                                 List.cons(List.cons(2,List.empty()),
-                                           List.empty()));
       expect(
-        List.toArray(List.flatMap(nestedList)((alist) => {
-          return List.flatMap(alist)((item) => {
-            return List.unit(item);
-          });
-        }))
+        List.head(concated_list)
       ).to.eql(
-        [1,2]
+        1
+      );
+      expect(
+        List.head(List.tail(concated_list))
+      ).to.eql(
+        2
+      );
+      expect(
+        List.isEmpty(List.tail(List.tail(concated_list)))
+      ).to.eql(
+        false
       );
       next();
     });
-  });
-  it("'List#map'", (next) => {
-    // list = [1,2,3,4]
-    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-    expect(
-      List.toArray(List.map(theList)(function (item){
-        return item * 2;
-      }))
-    ).to.eql(
-      [2,4,6,8]
-    );
-    next();
-  });
-  it("'List#unit'", (next) => {
-    // list = [1]
-    expect(
-      List.toArray(List.unit(1))
-    ).to.eql(
-      [1]
-    );
-    expect(
-      List.toArray(List.unit(null))
-    ).to.eql(
-      [null]
-    );
-    next();
-  });
-  describe("List#flatMap", () => {
-    it("条件でフィルターする", (next) => {
-      var list1 = List.cons(1, List.cons(2,
-                                         List.empty()));
-      var list2 = List.cons(1, List.cons(2,
-                                         List.empty()));
+    it("'List#foldr'", (next) => {
+      // list = [1,2,3,4]
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
       expect(
-        List.toArray(List.flatMap(list1)((item1) => {
-          return List.flatMap(list2)((item2) => {
-            if(item1 + item2 === 3) {
-              return List.unit([item1, item2]);
+        List.foldr(theList)(0)(function (item){
+          return (accumulator) => {
+            return accumulator + item;
+          };
+        })
+      ).to.eql(
+        10
+      );
+      next();
+    });
+    describe("'List#toArray'", () => {
+      it("1段階のリストを配列に変換する", (next) => {
+        // list = [1,2,3,4]
+        var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
+        expect(
+          List.toArray(theList)
+        ).to.eql(
+          [1,2,3,4]
+        );
+        next();
+      });
+      it("2段階のリストを配列に変換する", (next) => {
+        // list = [[1],[2]] 
+        var nestedList = List.cons(List.cons(1,List.empty()),
+                                   List.cons(List.cons(2,List.empty()),
+                                             List.empty()));
+        expect(
+          List.toArray(List.flatMap(nestedList)((alist) => {
+            return List.flatMap(alist)((item) => {
+              return List.unit(item);
+            });
+          }))
+        ).to.eql(
+          [1,2]
+        );
+        next();
+      });
+    });
+    it("'List#map'", (next) => {
+      // list = [1,2,3,4]
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
+      expect(
+        List.toArray(List.map(theList)(function (item){
+          return item * 2;
+        }))
+      ).to.eql(
+        [2,4,6,8]
+      );
+      next();
+    });
+    it("'List#unit'", (next) => {
+      // list = [1]
+      expect(
+        List.toArray(List.unit(1))
+      ).to.eql(
+        [1]
+      );
+      expect(
+        List.toArray(List.unit(null))
+      ).to.eql(
+        [null]
+      );
+      next();
+    });
+    describe("List#flatMap", () => {
+      it("条件でフィルターする", (next) => {
+        var list1 = List.cons(1, List.cons(2,
+                                           List.empty()));
+        var list2 = List.cons(1, List.cons(2,
+                                           List.empty()));
+        expect(
+          List.toArray(List.flatMap(list1)((item1) => {
+            return List.flatMap(list2)((item2) => {
+              if(item1 + item2 === 3) {
+                return List.unit([item1, item2]);
+              } else {
+                return List.empty();
+              }
+            });
+          }))
+        ).to.eql(
+          [[1,2],[2,1]]
+        );
+        next();
+      });
+      it("'List#flatMap'", (next) => {
+        // list = [1]
+        var theList = List.cons(1, List.empty());
+        expect(
+          List.toArray(List.flatMap(theList)((item) => {
+            return List.unit(item * 2); 
+          }))
+        ).to.eql(
+          [2]
+        );
+        var emptyList = List.empty();
+        expect(
+          List.toArray(List.flatMap(emptyList)((item) => {
+            return List.unit(item * 2); 
+          }))
+        ).to.eql(
+          []
+        );
+        next();
+      });
+      it("'List#flatMap'", (next) => {
+        // list = [1,2,3]
+        var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
+        expect(
+          List.toArray(List.flatMap(theList)((item) => {
+            return List.append(List.unit(item))(List.unit(- item));
+          }))
+        ).to.eql(
+          [1,-1,2,-2,3,-3]
+        );
+        next();
+      });
+      it("フィルターとして使う", (next) => {
+        var even = (n) => {
+          if(n % 2 === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()))));
+        expect(
+          List.toArray(List.flatMap(theList)((item) => {
+            if(even(item)) {
+              return List.unit(item);
             } else {
               return List.empty();
             }
-          });
-        }))
-      ).to.eql(
-        [[1,2],[2,1]]
-      );
-      next();
-    });
-    it("'List#flatMap'", (next) => {
-      // list = [1]
-      var theList = List.cons(1, List.empty());
-      expect(
-        List.toArray(List.flatMap(theList)((item) => {
-          return List.unit(item * 2); 
-        }))
-      ).to.eql(
-        [2]
-      );
-      var emptyList = List.empty();
-      expect(
-        List.toArray(List.flatMap(emptyList)((item) => {
-          return List.unit(item * 2); 
-        }))
-      ).to.eql(
-        []
-      );
-      next();
-    });
-    it("'List#flatMap'", (next) => {
-      // list = [1,2,3]
-      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
-      expect(
-        List.toArray(List.flatMap(theList)((item) => {
-          return List.append(List.unit(item))(List.unit(- item));
-        }))
-      ).to.eql(
-        [1,-1,2,-2,3,-3]
-      );
-      next();
-    });
-    it("フィルターとして使う", (next) => {
-      var even = (n) => {
-        if(n % 2 === 0) {
-          return true;
-        } else {
-          return false;
-        }
-      };
-      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()))));
-      expect(
-        List.toArray(List.flatMap(theList)((item) => {
-          if(even(item)) {
-            return List.unit(item);
-          } else {
-            return List.empty();
-          }
-        }))
-      ).to.eql(
-        [2,4]
-      );
-      next();
-    });
-    it("2段階のflatMap", (next) => {
-      var theNumberList = List.cons(1,List.cons(2,List.empty()));
-      var theStringList = List.cons("one",List.cons("two",List.empty()));
-      expect(
-        List.toArray(List.flatMap(theNumberList)((n) => {
-          return List.flatMap(theStringList)((s) => {
-            return List.unit([n,s]);
-          });
-        }))
-      ).to.eql(
-        [[1,"one"],[1,"two"],[2,"one"],[2,"two"]]
-      );
-      next();
+          }))
+        ).to.eql(
+          [2,4]
+        );
+        next();
+      });
+      it("2段階のflatMap", (next) => {
+        var theNumberList = List.cons(1,List.cons(2,List.empty()));
+        var theStringList = List.cons("one",List.cons("two",List.empty()));
+        expect(
+          List.toArray(List.flatMap(theNumberList)((n) => {
+            return List.flatMap(theStringList)((s) => {
+              return List.unit([n,s]);
+            });
+          }))
+        ).to.eql(
+          [[1,"one"],[1,"two"],[2,"one"],[2,"two"]]
+        );
+        next();
+      });
     });
   });
 });
 
 // ## Streamモナド
-var stream = {
+var Stream = {
   match: (data, pattern) => {
-     return data.call(stream,pattern);
+     return data.call(Stream,pattern);
   },
   empty: (_) => {
     return (pattern) => {
@@ -1033,7 +835,7 @@ var stream = {
   },
   /* head:: STREAM -> MAYBE[STREAM] */
   head: (lazyList) => {
-    return stream.match(lazyList,{
+    return Stream.match(lazyList,{
       empty: (_) => {
         return Maybe.nothing();
       },
@@ -1044,7 +846,7 @@ var stream = {
   },
   /* tail:: STREAM -> MAYBE[STREAM] */
   tail: (lazyList) => {
-    return stream.match(lazyList,{
+    return Stream.match(lazyList,{
       empty: (_) => {
         return Maybe.nothing();
       },
@@ -1054,7 +856,7 @@ var stream = {
     });
   },
   isEmpty: (lazyList) => {
-    return stream.match(lazyList,{
+    return Stream.match(lazyList,{
       empty: (_) => {
         return true;
       },
@@ -1063,114 +865,425 @@ var stream = {
       }
     });
   },
-  // ### stream#toArray
+  // ### Stream#toArray
   toArray: (lazyList) => {
-    return stream.match(lazyList,{
+    return Stream.match(lazyList,{
       empty: (_) => {
         return [];
       },
       cons: (head,tailThunk) => {
-        if(stream.isEmpty(tailThunk())){
+        if(Stream.isEmpty(tailThunk())){
           return [head];
         } else {
-          return [head].concat(stream.toArray(tailThunk()));
+          return [head].concat(Stream.toArray(tailThunk()));
         }
       }
     });
   },
-  // ### stream#unit
+  // ### Stream#unit
   /* unit:: ANY -> STREAM */
   unit: (value) => {
     if(value != null){
-      return stream.cons(value, (_) => {
-        return stream.empty();
+      return Stream.cons(value, (_) => {
+        return Stream.empty();
       });
     } else {
-      return stream.empty();
+      return Stream.empty();
     }
   },
-  // ### stream#map
+  // ### Stream#map
   map: (lazyList) => {
     return (transform) => {
-      return stream.match(lazyList,{
+      return Stream.match(lazyList,{
         empty: (_) => {
-          return stream.empty();
+          return Stream.empty();
         },
         cons: (head,tailThunk) => {
-          return stream.cons(transform(head),(_) => {
-            return stream.map(tailThunk())(transform)});
+          return Stream.cons(transform(head),(_) => {
+            return Stream.map(tailThunk())(transform)});
         }
       });
     };
   },
-  // ## stream#append
+  // ## Stream#append
   append: (xs) => {
     return (ysThunk) => {
-      return stream.match(xs,{
+      return Stream.match(xs,{
         empty: (_) => {
           return ysThunk();
         },
         cons: (head,tailThunk) => {
-          return stream.cons(head,(_) => {
-            return stream.append(tailThunk())(ysThunk);
+          return Stream.cons(head,(_) => {
+            return Stream.append(tailThunk())(ysThunk);
           });
         }
       });
     };
   },
-  // ## stream#concat
+  // ## Stream#concat
   /* concat:: STREAM[STREAM[T]] -> STREAM[T] */
   concat: (astream) => {
-    return stream.match(astream,{
+    return Stream.match(astream,{
       empty: (_) => {
-        return stream.empty();
+        return Stream.empty();
       },
       cons: (head,tailThunk) => {
-        return stream.append(head,tailThunk());
+        return Stream.append(head,tailThunk());
       }
     });
   },
-  // ## stream#flatten
+  // ## Stream#flatten
   /* flatten :: STREAM[STREAM[T]] => STREAM[T] */
   flatten: (lazyList) => {
-    return stream.match(lazyList,{
+    return Stream.match(lazyList,{
       empty: (_) => {
-        return stream.empty();
+        return Stream.empty();
       },
       cons: (head,tailThunk) => {
-        return stream.append(head)((_) => {
-          return stream.flatten(tailThunk());
+        return Stream.append(head)((_) => {
+          return Stream.flatten(tailThunk());
         });
       }
     });
   },
-  // ### stream#flatMap
+  // ### Stream#flatMap
   // ~~~haskell
   // flatMap xs f = flatten (map f xs)
   //~~~
   // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
   flatMap: (lazyList) => {
     return (transform) => {
-      return stream.flatten(stream.map(lazyList)(transform));
+      return Stream.flatten(Stream.map(lazyList)(transform));
     };
   }
 };
 
+// ### Streamモナドのテスト
+describe('Streamモナドのテスト', () => {
+  it("Stream#unit", (next) => {
+    Stream.match(Maybe.nothing(null),{
+      nothing: (_) => {
+        return expect(
+          _
+        ).to.eql(
+          null
+        );
+      },
+      just: (value) => {
+        return expect().fail();
+      }
+    });
+    var lazyList = Stream.unit(1);
+    expect(
+      Maybe.get(Stream.head(lazyList))
+    ).to.eql(
+      1
+    );
+    expect(
+      Maybe.get(Stream.head(Stream.unit(1)))
+    ).to.eql(
+      1
+    );
+    expect(
+      Maybe.get(Stream.head(Stream.unit(0)))
+    ).to.eql(
+      0
+    );
+    next();
+  });
+  it("Stream#cons", (next) => {
+    var lazyList = Stream.cons(1, (_) => {
+      return Stream.cons(2,(_) => {
+        return Stream.empty();
+      });
+    });
+    expect(
+      Maybe.get(Stream.head(lazyList))
+    ).to.eql(
+      1
+    );
+    next();
+  });
+  it("Stream#tail", (next) => {
+    /* lazyList = [1,2] */
+    var lazyList = Stream.cons(1, (_) => {
+      return Stream.cons(2,(_) => {
+        return Stream.empty();
+      });
+    });
+    expect(
+      Stream.tail(lazyList)
+    ).to.a("function");
+
+    Stream.match(Stream.tail(lazyList),{
+      nothing: (_) => {
+        expect().fail();
+      },
+      just: (tail) => {
+        Stream.match(tail,{
+          empty: (_) => {
+            expect().fail();
+          },
+          cons: (head, tailThunk) => {
+            expect(head).to.eql(2);
+          }
+        });
+      }
+    });
+    expect(
+      Maybe.get(Stream.head(Maybe.get(Stream.tail(lazyList))))
+    ).to.eql(
+      2
+    );
+    next();
+  });
+  it("Stream#toArray", (next) => {
+    expect(
+      Stream.toArray(Stream.empty())
+    ).to.eql(
+      []
+    );
+    expect(
+      Stream.toArray(Stream.unit(1))
+    ).to.eql(
+      [1]
+    );
+    next();
+  });
+  it("Stream#append", (next) => {
+    var xs = Stream.cons(1, (_) => {
+      return Stream.empty();
+    });
+    var ysThunk = (_) => {
+      return Stream.cons(2, (_) => {
+        return Stream.empty();
+      });
+    };
+    var theStream = Stream.append(xs)(ysThunk);
+    expect(
+      Maybe.get(Stream.head(theStream))
+    ).to.eql(
+      1
+    );
+    expect(
+      Maybe.get(Stream.head(Maybe.get(Stream.tail(theStream))))
+    ).to.eql(
+      2
+    );
+    next();
+  });
+  it("Stream#flatten", (next) => {
+    /* innerStream = [1,2] */
+    var innerStream = Stream.cons(1, (_) => {
+      return Stream.cons(2,(_) => {
+        return Stream.empty();
+      });
+    });
+    /* outerStream = [[1,2]] */
+    var outerStream = Stream.unit(innerStream);
+    var flattenedStream = Stream.flatten(outerStream);
+    Stream.match(flattenedStream,{
+      empty: (_) => {
+        expect().fail()
+      },
+      cons: (head,tailThunk) => {
+        expect(head).to.eql(1)
+      }
+    });
+    expect(
+      Maybe.get(Stream.head(flattenedStream))
+    ).to.eql(
+      1
+    );
+    expect(
+      Maybe.get(Stream.head(Maybe.get(Stream.tail(flattenedStream))))
+    ).to.eql(
+      2
+    );
+    next();
+  });
+  describe("Stream#map", () => {
+    it("mapで要素を2倍にする", (next) => {
+      /* lazyList = [1,2] */
+      var lazyList = Stream.cons(1, (_) => {
+        return Stream.cons(2,(_) => {
+          return Stream.empty();
+        });
+      });
+      var doubledLazyList = Stream.map(lazyList)((item) => {
+        return item * 2;
+      });
+      expect(
+        Maybe.get(Stream.head(doubledLazyList))
+      ).to.eql(
+        2
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(doubledLazyList))))
+      ).to.eql(
+        4
+      );
+      expect(
+        Stream.toArray(doubledLazyList)
+      ).to.eql(
+        [2,4]
+      );
+      next();
+    });
+    it("無限の整数列を作る", (next) => {
+      /* #@range_begin(ones_infinite_sequence) */
+      var ones = Stream.cons(1, (_) => {
+        return ones;
+      });
+      expect(
+        Maybe.get(Stream.head(ones))
+      ).to.eql(
+        1
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(ones))))
+      ).to.eql(
+        1
+      );
+      /* #@range_end(ones_infinite_sequence) */
+      var twoes = Stream.map(ones)((item) => {
+        return item * 2;
+      });
+      expect(
+        Maybe.get(Stream.head(twoes))
+      ).to.eql(
+        2
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(twoes))))
+      ).to.eql(
+        2
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(Maybe.get(Stream.tail(twoes))))))
+      ).to.eql(
+        2
+      );
+      next();
+    });
+    it("整数列を作る", (next) => {
+      var integersFrom = (from) => {
+        return Stream.cons(from, (_) => {
+          return integersFrom(from + 1);
+        });
+      };
+      expect(
+        Maybe.get(Stream.head(integersFrom(0)))
+      ).to.eql(
+        0
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(integersFrom(0)))))
+      ).to.eql(
+        1
+      );
+      var doubledIntergerMapped = Stream.map(integersFrom(0))((integer) => {
+        return integer * 2;
+      });
+      expect(
+        Maybe.get(Stream.head(doubledIntergerMapped))
+      ).to.eql(
+        0
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(doubledIntergerMapped))))
+      ).to.eql(
+        2
+      );
+      var doubledInterger = Stream.flatMap(integersFrom(0))((integer) => {
+        return Stream.unit(integer * 2);
+      });
+      expect(
+        Maybe.get(Stream.head(doubledInterger))
+      ).to.eql(
+        0
+      );
+      expect(
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(doubledInterger))))
+      ).to.eql(
+        2
+      );
+      next();
+    });
+    it("一段階のflatMap", (next) => {
+      var ones = Stream.cons(1, (_) => {
+        return ones;
+      });
+      var twoes = Stream.flatMap(ones)((one) => {
+        expect(one).to.a('number');
+        return Stream.unit(one * 2);
+      });
+      expect(
+        Maybe.get(Stream.head(twoes))
+      ).to.eql(
+        2
+      );
+      next();
+    });
+    it("二段階のflatMap", (next) => {
+      /*
+        scala> val nestedNumbers = List(List(1, 2), List(3, 4))
+        scala> nestedNumbers.flatMap(x => x.map(_ * 2))
+        res0: List[Int] = List(2, 4, 6, 8)
+      */
+      var innerStream12 = Stream.cons(1, (_) => {
+        return Stream.cons(2,(_) => {
+          return Stream.empty();
+        });
+      });
+      var innerStream34 = Stream.cons(3, (_) => {
+        return Stream.cons(4,(_) => {
+          return Stream.empty();
+        });
+      });
+      /* nestedStream = [[1,2],[3,4]] */
+      var nestedStream = Stream.cons(innerStream12, (_) => {
+        return Stream.cons(innerStream34,(_) => {
+          return Stream.empty();
+        });
+      });
+      var flattenedStream = Stream.flatMap(nestedStream)((innerStream) => {
+        return Stream.flatMap(innerStream)((n) => {
+          expect(n).to.a('number');
+          return Stream.unit(n * 2);
+        });
+      });
+      expect(
+        Maybe.get(Stream.head(flattenedStream))
+      ).to.eql(
+        2
+      );
+      expect(
+        Stream.toArray(flattenedStream)
+      ).to.eql(
+        [2,4,6,8]
+      );
+      next();
+    });
+
+  });
+}); // Streamモナド
+
+var Reader = {
+  unit: (x) => {
+    return (_) => {
+      return x;
+    };
+  },
+  flatMap: (instanceM) => {
+    return (transform) => {
+      return (w) => {
+        return transform(instanceM(w))(w);
+      };
+    };
+  }
+};
 describe("Readerモナドをテストする",() => {
-  var READER = {
-    unit: (x) => {
-      return (_) => {
-        return x;
-      };
-    },
-    flatMap: (instanceM) => {
-      return (transform) => {
-        return (w) => {
-          return transform(instanceM(w))(w);
-        };
-      };
-    }
-  };
 });
 
 // ## IOモナド
@@ -1316,399 +1429,6 @@ describe('Treeモナド', () => {
     }
   };
 });
-describe('Streamモナド', () => {
-  // var match = (data, pattern) => {
-  //   return data(pattern);
-  // };
-  // var maybe = {
-  //   just: (value) => {
-  //     return (pattern) => {
-  //       return pattern.just(value);
-  //     };
-  //   },
-  //   nothing: (_) => {
-  //     return (pattern) => {
-  //       return pattern.nothing(_);
-  //     };
-  //   },
-  //   unit: (value) => {
-  //     if(value){
-  //       return self.maybe.just(value);
-  //     } else {
-  //       return self.maybe.nothing(null);
-  //     }
-  //   },
-  //   get: (maybe) => {
-  //     return match(maybe,{
-  //       just: (value) => {
-  //         return value;
-  //       },
-  //       nothing: (_) => {
-  //         return null;
-  //       }
-  //     });
-  //   },
-  //   isEqual: (maybeA) => {
-  //     return (maybeB) => {
-  //       return match(maybeA,{
-  //         just: (valueA) => {
-  //           return match(maybeB,{
-  //             just: (valueB) => {
-  //               return (valueA === valueB);
-  //             },
-  //             nothing: (_) => {
-  //               return false;
-  //             }
-  //           });
-  //         },
-  //         nothing: (_) => {
-  //           return match(maybeB,{
-  //             just: (_) => {
-  //               return false;
-  //             },
-  //             nothing: (_) => {
-  //               return true;
-  //             }
-  //           });
-  //         }
-  //       });
-  //     };
-  //   },
-  //   map: (maybe) => {
-  //     return (transform) => {
-  //       expect(transform).to.a('function');
-  //       return match(maybe,{
-  //         just: (value) => {
-  //           return unit(transform(value));
-  //         },
-  //         nothing: (_) => {
-  //           return nothing();
-  //         }
-  //       });
-  //     };
-  //   },
-  //   flatMap: (maybe) => {
-  //     return (transform) => {
-  //       expect(transform).to.a('function');
-  //       return match(maybe,{
-  //         just: (value) => {
-  //           return transform(value);
-  //         },
-  //         nothing: (_) => {
-  //           return nothing();
-  //         }
-  //       });
-  //     };
-  //   }
-  // }; // end of maybe
-  it("stream#unit", (next) => {
-    stream.match(Maybe.nothing(null),{
-      nothing: (_) => {
-        return expect(
-          _
-        ).to.eql(
-          null
-        );
-      },
-      just: (value) => {
-        return expect().fail();
-      }
-    });
-    var lazyList = stream.unit(1);
-    expect(
-      Maybe.get(stream.head(lazyList))
-    ).to.eql(
-      1
-    );
-    expect(
-      Maybe.get(stream.head(stream.unit(1)))
-    ).to.eql(
-      1
-    );
-    expect(
-      Maybe.get(stream.head(stream.unit(0)))
-    ).to.eql(
-      0
-    );
-    next();
-  });
-  it("stream#cons", (next) => {
-    var lazyList = stream.cons(1, (_) => {
-      return stream.cons(2,(_) => {
-        return stream.empty();
-      });
-    });
-    expect(
-      Maybe.get(stream.head(lazyList))
-    ).to.eql(
-      1
-    );
-    next();
-  });
-  it("stream#tail", (next) => {
-    /* lazyList = [1,2] */
-    var lazyList = stream.cons(1, (_) => {
-      return stream.cons(2,(_) => {
-        return stream.empty();
-      });
-    });
-    expect(
-      stream.tail(lazyList)
-    ).to.a("function");
-
-    stream.match(stream.tail(lazyList),{
-      nothing: (_) => {
-        expect().fail();
-      },
-      just: (tail) => {
-        stream.match(tail,{
-          empty: (_) => {
-            expect().fail();
-          },
-          cons: (head, tailThunk) => {
-            expect(head).to.eql(2);
-          }
-        });
-      }
-    });
-    expect(
-      Maybe.get(stream.head(Maybe.get(stream.tail(lazyList))))
-    ).to.eql(
-      2
-    );
-    next();
-  });
-  it("stream#toArray", (next) => {
-    expect(
-      stream.toArray(stream.empty())
-    ).to.eql(
-      []
-    );
-    expect(
-      stream.toArray(stream.unit(1))
-    ).to.eql(
-      [1]
-    );
-    next();
-  });
-  it("stream#append", (next) => {
-    var xs = stream.cons(1, (_) => {
-      return stream.empty();
-    });
-    var ysThunk = (_) => {
-      return stream.cons(2, (_) => {
-        return stream.empty();
-      });
-    };
-    var theStream = stream.append(xs)(ysThunk);
-    expect(
-      Maybe.get(stream.head(theStream))
-    ).to.eql(
-      1
-    );
-    expect(
-      Maybe.get(stream.head(Maybe.get(stream.tail(theStream))))
-    ).to.eql(
-      2
-    );
-    next();
-  });
-  it("stream#flatten", (next) => {
-    /* innerStream = [1,2] */
-    var innerStream = stream.cons(1, (_) => {
-      return stream.cons(2,(_) => {
-        return stream.empty();
-      });
-    });
-    /* outerStream = [[1,2]] */
-    var outerStream = stream.unit(innerStream);
-    var flattenedStream = stream.flatten(outerStream);
-    stream.match(flattenedStream,{
-      empty: (_) => {
-        expect().fail()
-      },
-      cons: (head,tailThunk) => {
-        expect(head).to.eql(1)
-      }
-    });
-    expect(
-      Maybe.get(stream.head(flattenedStream))
-    ).to.eql(
-      1
-    );
-    expect(
-      Maybe.get(stream.head(Maybe.get(stream.tail(flattenedStream))))
-    ).to.eql(
-      2
-    );
-    next();
-  });
-  describe("stream#map", () => {
-    it("mapで要素を2倍にする", (next) => {
-      /* lazyList = [1,2] */
-      var lazyList = stream.cons(1, (_) => {
-        return stream.cons(2,(_) => {
-          return stream.empty();
-        });
-      });
-      var doubledLazyList = stream.map(lazyList)((item) => {
-        return item * 2;
-      });
-      expect(
-        Maybe.get(stream.head(doubledLazyList))
-      ).to.eql(
-        2
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(doubledLazyList))))
-      ).to.eql(
-        4
-      );
-      expect(
-        stream.toArray(doubledLazyList)
-      ).to.eql(
-        [2,4]
-      );
-      next();
-    });
-    it("無限の整数列を作る", (next) => {
-      /* #@range_begin(ones_infinite_sequence) */
-      var ones = stream.cons(1, (_) => {
-        return ones;
-      });
-      expect(
-        Maybe.get(stream.head(ones))
-      ).to.eql(
-        1
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(ones))))
-      ).to.eql(
-        1
-      );
-      /* #@range_end(ones_infinite_sequence) */
-      var twoes = stream.map(ones)((item) => {
-        return item * 2;
-      });
-      expect(
-        Maybe.get(stream.head(twoes))
-      ).to.eql(
-        2
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(twoes))))
-      ).to.eql(
-        2
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(Maybe.get(stream.tail(twoes))))))
-      ).to.eql(
-        2
-      );
-      next();
-    });
-    it("整数列を作る", (next) => {
-      var integersFrom = (from) => {
-        return stream.cons(from, (_) => {
-          return integersFrom(from + 1);
-        });
-      };
-      expect(
-        Maybe.get(stream.head(integersFrom(0)))
-      ).to.eql(
-        0
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(integersFrom(0)))))
-      ).to.eql(
-        1
-      );
-      var doubledIntergerMapped = stream.map(integersFrom(0))((integer) => {
-        return integer * 2;
-      });
-      expect(
-        Maybe.get(stream.head(doubledIntergerMapped))
-      ).to.eql(
-        0
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(doubledIntergerMapped))))
-      ).to.eql(
-        2
-      );
-      var doubledInterger = stream.flatMap(integersFrom(0))((integer) => {
-        return stream.unit(integer * 2);
-      });
-      expect(
-        Maybe.get(stream.head(doubledInterger))
-      ).to.eql(
-        0
-      );
-      expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(doubledInterger))))
-      ).to.eql(
-        2
-      );
-      next();
-    });
-    it("一段階のflatMap", (next) => {
-      var ones = stream.cons(1, (_) => {
-        return ones;
-      });
-      var twoes = stream.flatMap(ones)((one) => {
-        expect(one).to.a('number');
-        return stream.unit(one * 2);
-      });
-      expect(
-        Maybe.get(stream.head(twoes))
-      ).to.eql(
-        2
-      );
-      next();
-    });
-    it("二段階のflatMap", (next) => {
-      /*
-        scala> val nestedNumbers = List(List(1, 2), List(3, 4))
-        scala> nestedNumbers.flatMap(x => x.map(_ * 2))
-        res0: List[Int] = List(2, 4, 6, 8)
-      */
-      var innerStream12 = stream.cons(1, (_) => {
-        return stream.cons(2,(_) => {
-          return stream.empty();
-        });
-      });
-      var innerStream34 = stream.cons(3, (_) => {
-        return stream.cons(4,(_) => {
-          return stream.empty();
-        });
-      });
-      /* nestedStream = [[1,2],[3,4]] */
-      var nestedStream = stream.cons(innerStream12, (_) => {
-        return stream.cons(innerStream34,(_) => {
-          return stream.empty();
-        });
-      });
-      var flattenedStream = stream.flatMap(nestedStream)((innerStream) => {
-        return stream.flatMap(innerStream)((n) => {
-          expect(n).to.a('number');
-          return stream.unit(n * 2);
-        });
-      });
-      expect(
-        Maybe.get(stream.head(flattenedStream))
-      ).to.eql(
-        2
-      );
-      expect(
-        stream.toArray(flattenedStream)
-      ).to.eql(
-        [2,4,6,8]
-      );
-      next();
-    });
-
-  });
-}); // streamモナド
 
 describe('Consoleモナド', () => {
   /* unit:: A -> IO A */
@@ -1808,22 +1528,22 @@ describe("Maybeと一緒に使う", () => {
   /* #@range_end(list_maybe) */
 });
 
+var Variant = {
+  unit: (value, key) => {
+    return (pattern) => {
+      return pattern[key](value);
+    };
+  },
+  flatMap: (instance) => {
+    return (transform) => {
+      return instance(transform);
+    };
+  },
+  // match: (instance, pattern) => {
+  //   return flip(Variant.flatMap)(pattern)(instance);
+  // }
+};
 // describe("Variantモナド", () => {
-//   var variant = {
-//     unit: (value, key) => {
-//       return (pattern) => {
-//         return pattern[key](value);
-//       };
-//     },
-//     flatMap: (instance) => {
-//       return (transform) => {
-//         return instance(transform);
-//       };
-//     },
-//     match: (instance, pattern) => {
-//       return flip(variant.flatMap)(pattern)(instance);
-//     }
-//   };
 //   it("Maybe", (next) => {
 //     var just = (value) => {
 //       return variant.unit(value, 'just');

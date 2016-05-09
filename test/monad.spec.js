@@ -7,9 +7,9 @@ var fs = require('fs');
 var expect = require('expect.js');
 
 // ## Maybeモナド
-var maybe = {
+var Maybe = {
   match: (data, pattern) => {
-     return data.call(maybe,pattern);
+     return data.call(Maybe,pattern);
   },
   just : (value) => {
     return (pattern) => {
@@ -22,23 +22,23 @@ var maybe = {
     };
   },
   unit : (value) => {
-    return maybe.just(value);
+    return Maybe.just(value);
   },
   flatMap : (maybeInstance) => {
     return (transform) => {
       expect(transform).to.a('function');
-      return maybe.match(maybeInstance,{
+      return Maybe.match(maybeInstance,{
         just: (value) => {
           return transform(value);
         },
         nothing: (_) => {
-          return maybe.nothing(_);
+          return Maybe.nothing(_);
         }
       });
     };
   },
   get: (maybeInstance) => {
-    return maybe.match(maybeInstance,{
+    return Maybe.match(maybeInstance,{
       just: (value) => {
         return value;
       },
@@ -49,9 +49,9 @@ var maybe = {
   },
   isEqual : (maybeA) => {
     return (maybeB) => {
-      return maybe.match(maybeA,{
+      return Maybe.match(maybeA,{
         just: (valueA) => {
-          return maybe.match(maybeB,{
+          return Maybe.match(maybeB,{
             just: (valueB) => {
               return (valueA === valueB);
             },
@@ -61,7 +61,7 @@ var maybe = {
           });
         },
         nothing: (_) => {
-          return maybe.match(maybeB,{
+          return Maybe.match(maybeB,{
             just: (_) => {
               return false;
             },
@@ -76,12 +76,12 @@ var maybe = {
   map : (maybeInstance) => {
     return (transform) => {
       expect(transform).to.a('function');
-      return maybe.match(maybeInstance,{
+      return Maybe.match(maybeInstance,{
         just: (value) => {
-          return maybe.unit(transform(value));
+          return Maybe.unit(transform(value));
         },
         nothing: (_) => {
-          return maybe.nothing(_);
+          return Maybe.nothing(_);
         }
       });
     };
@@ -89,10 +89,10 @@ var maybe = {
 };
 
 // ### Maybeモナドのテスト
-describe("maybeモナドをテストする",() => {
-  it("maybe#flatMap", (next) => {
-    maybe.match(maybe.flatMap(maybe.just(1))((a) => {
-      return maybe.unit(a);
+describe("Maybeモナドをテストする",() => {
+  it("Maybe#flatMap", (next) => {
+    Maybe.match(Maybe.flatMap(Maybe.just(1))((a) => {
+      return Maybe.unit(a);
     }),{
       just: (value) => {
         expect(
@@ -105,8 +105,8 @@ describe("maybeモナドをテストする",() => {
        expect().fail();
       }
     });
-    maybe.match(maybe.flatMap(maybe.nothing())((a) => {
-      return maybe.unit(a);
+    Maybe.match(Maybe.flatMap(Maybe.nothing())((a) => {
+      return Maybe.unit(a);
     }),{
       just: (value) => {
        expect().fail();
@@ -119,22 +119,22 @@ describe("maybeモナドをテストする",() => {
   });
   it("add(maybe, maybe)", (next) => {
     var add = (maybeA,maybeB) => {
-      return maybe.flatMap(maybeA)((a) => {
-        return maybe.flatMap(maybeB)((b) => {
-          return maybe.unit(a + b);
+      return Maybe.flatMap(maybeA)((a) => {
+        return Maybe.flatMap(maybeB)((b) => {
+          return Maybe.unit(a + b);
         });
       });
     };
-    var justOne = maybe.just(1);
-    var justTwo = maybe.just(2);
-    var justThree = maybe.just(3);
+    var justOne = Maybe.just(1);
+    var justTwo = Maybe.just(2);
+    var justThree = Maybe.just(3);
     expect(
-      maybe.isEqual(add(justOne,justTwo))(justThree)
+      Maybe.isEqual(add(justOne,justTwo))(justThree)
     ).to.eql(
       true
     );
     expect(
-      maybe.isEqual(add(justOne,maybe.nothing()))(maybe.nothing())
+      Maybe.isEqual(add(justOne,Maybe.nothing()))(Maybe.nothing())
     ).to.eql(
       true
     );
@@ -621,7 +621,7 @@ describe('Listモナド', () => {
       next();
     });
     /* #@range_begin(list_maybe) */
-    describe("maybeと一緒に使う", () => {
+    describe("Maybeと一緒に使う", () => {
       // var maybe = {
       //   match: (data, pattern) => {
       //     return data.call(maybe,pattern);
@@ -675,10 +675,10 @@ describe('Listモナド', () => {
       //   // }
       // };
       it("[just(1)]", (next) => {
-        var theList = list.cons(maybe.just(1),
+        var theList = list.cons(Maybe.just(1),
                                 list.empty());
         var justList = list.flatMap(theList)((maybeItem) => {
-          return maybe.flatMap(maybeItem)((value) => {
+          return Maybe.flatMap(maybeItem)((value) => {
             return list.unit(value);
           });
         });
@@ -690,10 +690,10 @@ describe('Listモナド', () => {
         next();
       });
       it("[just(1),just(2)]", (next) => {
-        var theList = list.cons(maybe.just(1),
-                                list.cons(maybe.just(2),list.empty()));
+        var theList = list.cons(Maybe.just(1),
+                                list.cons(Maybe.just(2),list.empty()));
         var justList = list.flatMap(theList)((listItem) => {
-          return maybe.flatMap(listItem)((value) => {
+          return Maybe.flatMap(listItem)((value) => {
             return list.unit(value);
           });
         });
@@ -1035,10 +1035,10 @@ var stream = {
   head: (lazyList) => {
     return stream.match(lazyList,{
       empty: (_) => {
-        return maybe.nothing();
+        return Maybe.nothing();
       },
       cons: (value, tailThunk) => {
-        return maybe.just(value);
+        return Maybe.just(value);
       }
     });
   },
@@ -1046,10 +1046,10 @@ var stream = {
   tail: (lazyList) => {
     return stream.match(lazyList,{
       empty: (_) => {
-        return maybe.nothing();
+        return Maybe.nothing();
       },
       cons: (head, tailThunk) => {
-        return maybe.just(tailThunk());
+        return Maybe.just(tailThunk());
       }
     });
   },
@@ -1402,7 +1402,7 @@ describe('Streamモナド', () => {
   //   }
   // }; // end of maybe
   it("stream#unit", (next) => {
-    stream.match(maybe.nothing(null),{
+    stream.match(Maybe.nothing(null),{
       nothing: (_) => {
         return expect(
           _
@@ -1416,17 +1416,17 @@ describe('Streamモナド', () => {
     });
     var lazyList = stream.unit(1);
     expect(
-      maybe.get(stream.head(lazyList))
+      Maybe.get(stream.head(lazyList))
     ).to.eql(
       1
     );
     expect(
-      maybe.get(stream.head(stream.unit(1)))
+      Maybe.get(stream.head(stream.unit(1)))
     ).to.eql(
       1
     );
     expect(
-      maybe.get(stream.head(stream.unit(0)))
+      Maybe.get(stream.head(stream.unit(0)))
     ).to.eql(
       0
     );
@@ -1439,7 +1439,7 @@ describe('Streamモナド', () => {
       });
     });
     expect(
-      maybe.get(stream.head(lazyList))
+      Maybe.get(stream.head(lazyList))
     ).to.eql(
       1
     );
@@ -1472,7 +1472,7 @@ describe('Streamモナド', () => {
       }
     });
     expect(
-      maybe.get(stream.head(maybe.get(stream.tail(lazyList))))
+      Maybe.get(stream.head(Maybe.get(stream.tail(lazyList))))
     ).to.eql(
       2
     );
@@ -1502,12 +1502,12 @@ describe('Streamモナド', () => {
     };
     var theStream = stream.append(xs)(ysThunk);
     expect(
-      maybe.get(stream.head(theStream))
+      Maybe.get(stream.head(theStream))
     ).to.eql(
       1
     );
     expect(
-      maybe.get(stream.head(maybe.get(stream.tail(theStream))))
+      Maybe.get(stream.head(Maybe.get(stream.tail(theStream))))
     ).to.eql(
       2
     );
@@ -1532,12 +1532,12 @@ describe('Streamモナド', () => {
       }
     });
     expect(
-      maybe.get(stream.head(flattenedStream))
+      Maybe.get(stream.head(flattenedStream))
     ).to.eql(
       1
     );
     expect(
-      maybe.get(stream.head(maybe.get(stream.tail(flattenedStream))))
+      Maybe.get(stream.head(Maybe.get(stream.tail(flattenedStream))))
     ).to.eql(
       2
     );
@@ -1555,12 +1555,12 @@ describe('Streamモナド', () => {
         return item * 2;
       });
       expect(
-        maybe.get(stream.head(doubledLazyList))
+        Maybe.get(stream.head(doubledLazyList))
       ).to.eql(
         2
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(doubledLazyList))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(doubledLazyList))))
       ).to.eql(
         4
       );
@@ -1577,12 +1577,12 @@ describe('Streamモナド', () => {
         return ones;
       });
       expect(
-        maybe.get(stream.head(ones))
+        Maybe.get(stream.head(ones))
       ).to.eql(
         1
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(ones))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(ones))))
       ).to.eql(
         1
       );
@@ -1591,17 +1591,17 @@ describe('Streamモナド', () => {
         return item * 2;
       });
       expect(
-        maybe.get(stream.head(twoes))
+        Maybe.get(stream.head(twoes))
       ).to.eql(
         2
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(twoes))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(twoes))))
       ).to.eql(
         2
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(maybe.get(stream.tail(twoes))))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(Maybe.get(stream.tail(twoes))))))
       ).to.eql(
         2
       );
@@ -1614,12 +1614,12 @@ describe('Streamモナド', () => {
         });
       };
       expect(
-        maybe.get(stream.head(integersFrom(0)))
+        Maybe.get(stream.head(integersFrom(0)))
       ).to.eql(
         0
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(integersFrom(0)))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(integersFrom(0)))))
       ).to.eql(
         1
       );
@@ -1627,12 +1627,12 @@ describe('Streamモナド', () => {
         return integer * 2;
       });
       expect(
-        maybe.get(stream.head(doubledIntergerMapped))
+        Maybe.get(stream.head(doubledIntergerMapped))
       ).to.eql(
         0
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(doubledIntergerMapped))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(doubledIntergerMapped))))
       ).to.eql(
         2
       );
@@ -1640,12 +1640,12 @@ describe('Streamモナド', () => {
         return stream.unit(integer * 2);
       });
       expect(
-        maybe.get(stream.head(doubledInterger))
+        Maybe.get(stream.head(doubledInterger))
       ).to.eql(
         0
       );
       expect(
-        maybe.get(stream.head(maybe.get(stream.tail(doubledInterger))))
+        Maybe.get(stream.head(Maybe.get(stream.tail(doubledInterger))))
       ).to.eql(
         2
       );
@@ -1660,7 +1660,7 @@ describe('Streamモナド', () => {
         return stream.unit(one * 2);
       });
       expect(
-        maybe.get(stream.head(twoes))
+        Maybe.get(stream.head(twoes))
       ).to.eql(
         2
       );
@@ -1695,7 +1695,7 @@ describe('Streamモナド', () => {
         });
       });
       expect(
-        maybe.get(stream.head(flattenedStream))
+        Maybe.get(stream.head(flattenedStream))
       ).to.eql(
         2
       );
@@ -1731,12 +1731,12 @@ describe('Consoleモナド', () => {
   expect(run(unit(1))).to.eql(1);
 });
 
-describe("maybeと一緒に使う", () => {
+describe("Maybeと一緒に使う", () => {
   it("[just(1),just(2)]", (next) => {
-    var theList = list.cons(maybe.just(1),
-                            list.cons(maybe.just(2),list.empty()));
+    var theList = list.cons(Maybe.just(1),
+                            list.cons(Maybe.just(2),list.empty()));
     var justList = list.flatMap(theList)((listItem) => {
-      return maybe.flatMap(listItem)((value) => {
+      return Maybe.flatMap(listItem)((value) => {
         return list.unit(value);
       });
     });
@@ -1748,10 +1748,10 @@ describe("maybeと一緒に使う", () => {
     next();
   });
   it("[just(1)]", (next) => {
-    var theList = list.cons(maybe.just(1),
+    var theList = list.cons(Maybe.just(1),
                             list.empty());
     var justList = list.flatMap(theList)((maybeItem) => {
-      return maybe.flatMap(maybeItem)((value) => {
+      return Maybe.flatMap(maybeItem)((value) => {
         return list.unit(value);
       });
     });

@@ -59,7 +59,33 @@
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+
+
+<span class="hljs-keyword">var</span> pair = {
+  match : (data, pattern) =&gt; {
+    <span class="hljs-keyword">return</span> data.call(pair, pattern);
+  },
+  cons: (left, right) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.cons(left, right);
+    };
+  },
+  right: (tuple) =&gt; {
+    <span class="hljs-keyword">return</span> pair.match(tuple, {
+      cons: (left, right) =&gt; {
+        <span class="hljs-keyword">return</span> right;
+      }
+    });
+  },
+  left: (tuple) =&gt; {
+    <span class="hljs-keyword">return</span> pair.match(tuple, {
+      cons: (left, right) =&gt; {
+        <span class="hljs-keyword">return</span> left;
+      }
+    });
+  }
+};</pre></div></div>
             
         </li>
         
@@ -69,6 +95,32 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="id-">IDモナド</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ID = {
+  <span class="hljs-comment">/* unit:: T =&gt; ID[T] */</span>
+  unit: (value) =&gt; {  <span class="hljs-comment">// 単なる identity関数と同じ</span>
+    <span class="hljs-keyword">return</span> value;
+  },
+  <span class="hljs-comment">/* flatMap:: ID[T] =&gt; FUN[T =&gt; ID[T]] =&gt; ID[T] */</span>
+  flatMap: (instanceM) =&gt; {
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> transform(instanceM); <span class="hljs-comment">// 単なる関数適用と同じ</span>
+    };
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <h2 id="maybe-">Maybeモナド</h2>
 
@@ -105,14 +157,40 @@
     };
   },
   get: (maybe) =&gt; {
-    <span class="hljs-keyword">return</span> Maybe.match(maybe,{
-      just: (value) =&gt; {
-        <span class="hljs-keyword">return</span> value;
-      },
-      nothing: (_) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-      }
-    });
+    <span class="hljs-keyword">return</span> Maybe.getOrElse(maybe)(<span class="hljs-literal">null</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>return Maybe.match(maybe,{
+  just: (value) =&gt; {
+    return value;
+  },
+  nothing: (_) =&gt; {
+    return null;
+  }
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  },
+  getOrElse: (instance) =&gt; {
+    <span class="hljs-keyword">return</span> (alternate) =&gt; {
+      <span class="hljs-keyword">return</span> Maybe.match(instance,{
+        just: (value) =&gt; {
+          <span class="hljs-keyword">return</span> value;
+        },
+        nothing: (_) =&gt; {
+          <span class="hljs-keyword">return</span> alternate;
+        }
+      });
+    };
   },
   isEqual : (maybeA) =&gt; {
     <span class="hljs-keyword">return</span> (maybeB) =&gt; {
@@ -158,11 +236,11 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <h3 id="maybe-">Maybeモナドのテスト</h3>
 
@@ -224,17 +302,23 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="list-">Listモナド</h2>
+<pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> [] <span class="hljs-keyword">where</span></span>
+  xs &gt;&gt;= f = concat (map f xs)
+  return x = [x]
+  fail s   = []
+</code></pre>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> List  = {
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> List  = {
   match: (data, pattern) =&gt; {
     <span class="hljs-keyword">return</span> data.call(List,pattern);
   },
@@ -285,15 +369,16 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]
-append [] ys = ys
-append (x:xs) ys = x : (xs ++ ys)</p>
+              <p>append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]</p>
+<pre><code class="lang-haskell"><span class="hljs-title">append</span> [] ys = ys
+<span class="hljs-title">append</span> (x:xs) ys = x : (xs ++ ys)
+</code></pre>
 
             </div>
             
@@ -313,15 +398,16 @@ append (x:xs) ys = x : (xs ++ ys)</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>concat:: LIST[LIST[T]] -&gt; LIST[T]
-concat [] = []
-concat (xs:xss) = xs ++ concat xss</p>
+              <p>concat:: LIST[LIST[T]] -&gt; LIST[T]</p>
+<pre><code class="lang-haskell"><span class="hljs-title">concat</span> [] = []
+<span class="hljs-title">concat</span> (xs:xss) = xs ++ concat xss
+</code></pre>
 
             </div>
             
@@ -332,11 +418,11 @@ concat (xs:xss) = xs ++ concat xss</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">flatten</span> :: [[a]] -&gt; [a]
 <span class="hljs-title">flatten</span> =  foldr (++) []
@@ -351,15 +437,16 @@ concat (xs:xss) = xs ++ concat xss</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>map:: LIST[T] -&gt; FUN[T-&gt;U] -&gt; LIST[U]
-map [] _ = []
-map (x:xs) f = f x : map xs f</p>
+              <p>map:: LIST[T] -&gt; FUN[T-&gt;U] -&gt; LIST[U]</p>
+<pre><code class="lang-haskell"><span class="hljs-title">map</span> [] _ = []
+<span class="hljs-title">map</span> (x:xs) f = f x : map xs f
+</code></pre>
 
             </div>
             
@@ -380,11 +467,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">xs</span> &gt;&gt;= f = concat (map f xs)
 </code></pre>
@@ -402,11 +489,11 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>1段階のリストしか配列に変更できない</p>
 
@@ -423,15 +510,16 @@ map (x:xs) f = f x : map xs f</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>foldr:: LIST[T] -&gt; T -&gt; FUN[T -&gt; U -&gt; U] -&gt; T
-foldr []     z _ = z
-foldr (x:xs) z f = f x (foldr xs z f) </p>
+              <p>foldr:: LIST[T] -&gt; T -&gt; FUN[T -&gt; U -&gt; U] -&gt; T</p>
+<pre><code class="lang-haskell"><span class="hljs-title">foldr</span> []     z _ = z
+<span class="hljs-title">foldr</span> (x:xs) z f = f x (foldr xs z f)
+</code></pre>
 
             </div>
             
@@ -455,11 +543,11 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h3 id="list-">Listモナドのテスト</h3>
 
@@ -493,10 +581,10 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
   it(<span class="hljs-string">"'List#cons'"</span>, (next) =&gt; {
     List.match(List.cons(<span class="hljs-number">1</span>,List.empty()),{
       empty: (_) =&gt; {
-        expect().fail()
+        expect().fail();
       },
       cons: (x,xs) =&gt; {
-        expect(x).to.eql(<span class="hljs-number">1</span>)
+        expect(x).to.eql(<span class="hljs-number">1</span>);
       }
     });
     next();
@@ -569,21 +657,21 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
   });
   it(<span class="hljs-string">"'List#foldr'"</span>, (next) =&gt; {
     <span class="hljs-comment">/* list = [1,2,3,4] */</span>
-    <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)))
+    <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)));
     expect(
-      List.foldr(theList)(<span class="hljs-number">0</span>)(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item</span>)</span>{
+      List.foldr(theList)(<span class="hljs-number">0</span>)((item) =&gt; {
         <span class="hljs-keyword">return</span> (accumulator) =&gt; {
           <span class="hljs-keyword">return</span> accumulator + item;
         };
       })
     ).to.eql(
       <span class="hljs-number">10</span>
-    )
+    );
     next();
-  })
+  });
   it(<span class="hljs-string">"'List#toArray'"</span>, (next) =&gt; {
     <span class="hljs-comment">/* list = [1,2,3,4] */</span>
-    <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)))
+    <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)));
     expect(
       List.toArray(theList)
     ).to.eql(
@@ -591,17 +679,151 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
     );
     next();
   });
+  describe(<span class="hljs-string">"'List#toArray'"</span>, () =&gt; {
+    it(<span class="hljs-string">"1段階のリストを配列に変換する"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>list = [1,2,3,4]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)));
+      expect(
+        List.toArray(theList)
+      ).to.eql(
+        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
+      );
+      next();
+    });
+    it(<span class="hljs-string">"2段階のリストを配列に変換する"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>list = [[1],[2]] </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> nestedList = List.cons(List.cons(<span class="hljs-number">1</span>,List.empty()),
+                                 List.cons(List.cons(<span class="hljs-number">2</span>,List.empty()),
+                                           List.empty()));
+      expect(
+        List.toArray(List.flatMap(nestedList)((alist) =&gt; {
+          <span class="hljs-keyword">return</span> List.flatMap(alist)((item) =&gt; {
+            <span class="hljs-keyword">return</span> List.unit(item);
+          });
+        }))
+      ).to.eql(
+        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
+      );
+      next();
+    });
+  });
   it(<span class="hljs-string">"'List#map'"</span>, (next) =&gt; {
     <span class="hljs-comment">/* list = [1,2,3,4] */</span>
     <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)));
     expect(
-      List.toArray(List.map(theList)(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item</span>)</span>{
+      List.toArray(List.map(theList)((item) =&gt; {
         <span class="hljs-keyword">return</span> item * <span class="hljs-number">2</span>;
       }))
     ).to.eql(
       [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>,<span class="hljs-number">8</span>]
     );
     next();
+  });
+  describe(<span class="hljs-string">"List#flatMap"</span>, () =&gt; {
+    it(<span class="hljs-string">"条件でフィルターする"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> list1 = List.cons(<span class="hljs-number">1</span>, List.cons(<span class="hljs-number">2</span>,
+                                         List.empty()));
+      <span class="hljs-keyword">var</span> list2 = List.cons(<span class="hljs-number">1</span>, List.cons(<span class="hljs-number">2</span>,
+                                         List.empty()));
+      expect(
+        List.toArray(List.flatMap(list1)((item1) =&gt; {
+          <span class="hljs-keyword">return</span> List.flatMap(list2)((item2) =&gt; {
+            <span class="hljs-keyword">if</span>(item1 + item2 === <span class="hljs-number">3</span>) {
+              <span class="hljs-keyword">return</span> List.unit([item1, item2]);
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> List.empty();
+            }
+          });
+        }))
+      ).to.eql(
+        [[<span class="hljs-number">1</span>,<span class="hljs-number">2</span>],[<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]]
+      );
+      next();
+    });
+    it(<span class="hljs-string">"'List#flatMap'"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>list = [1]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>, List.empty());
+      expect(
+        List.toArray(List.flatMap(theList)((item) =&gt; {
+          <span class="hljs-keyword">return</span> List.unit(item * <span class="hljs-number">2</span>); 
+        }))
+      ).to.eql(
+        [<span class="hljs-number">2</span>]
+      );
+      <span class="hljs-keyword">var</span> emptyList = List.empty();
+      expect(
+        List.toArray(List.flatMap(emptyList)((item) =&gt; {
+          <span class="hljs-keyword">return</span> List.unit(item * <span class="hljs-number">2</span>); 
+        }))
+      ).to.eql(
+        []
+      );
+      next();
+    });
+    it(<span class="hljs-string">"'List#flatMap'"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>list = [1,2,3]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>, List.cons(<span class="hljs-number">3</span>, List.empty())));
+      expect(
+        List.toArray(List.flatMap(theList)((item) =&gt; {
+          <span class="hljs-keyword">return</span> List.append(List.unit(item))(List.unit(- item));
+        }))
+      ).to.eql(
+        [<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,-<span class="hljs-number">3</span>]
+      );
+      next();
+    });
   });
   it(<span class="hljs-string">"'List#unit'"</span>, (next) =&gt; {
     <span class="hljs-comment">/* list = [1] */</span>
@@ -702,11 +924,11 @@ foldr (x:xs) z f = f x (foldr xs z f) </p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>it(“[nothing()]”, (next) =&gt; {
   // var theList = list.unit(maybe.nothing());
@@ -757,241 +979,7 @@ it(“[just(1),nothing()]”, (next) =&gt; {
             <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_end(list_maybe) */</span>
     });
   });
-  describe(<span class="hljs-string">"Listモナドを活用する"</span>,() =&gt; {
-    it(<span class="hljs-string">"'List#empty'"</span>, (next) =&gt; {
-      List.match(List.empty,{
-        empty: (_) =&gt; {
-          expect(<span class="hljs-literal">true</span>).ok();
-        },
-        cons: (x,xs) =&gt; {
-          expect().fail();
-        }
-      });
-      next();
-    });
-    it(<span class="hljs-string">"'List#isEmpty'"</span>, (next) =&gt; {
-      expect(
-        List.isEmpty(List.empty())
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      expect(
-        List.isEmpty(List.cons(<span class="hljs-number">1</span>,List.empty()))
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">"'List#cons'"</span>, (next) =&gt; {
-      List.match(List.cons(<span class="hljs-number">1</span>,List.empty()),{
-        empty: (_) =&gt; {
-          expect().fail();
-        },
-        cons: (x,xs) =&gt; {
-          expect(x).to.eql(<span class="hljs-number">1</span>);
-        }
-      });
-      next();
-    });
-    it(<span class="hljs-string">"'List#head'"</span>, (next) =&gt; {
-      expect(
-        List.head(List.cons(<span class="hljs-number">1</span>,List.empty()))
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">"'List#tail'"</span>, (next) =&gt; {
-      expect(
-        List.head(List.tail(List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty()))))
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">"'List#append'"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> theList = List.append(List.cons(<span class="hljs-number">1</span>,List.empty()))(List.cons(<span class="hljs-number">2</span>,List.empty()));
-      expect(
-        List.head(theList)
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      expect(
-        List.head(List.tail(theList))
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      expect(
-        List.isEmpty(List.tail(List.tail(theList)))
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">"'List#concat'"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>list = [[1,2],[3,4]]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> one_two = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty()));
-      <span class="hljs-keyword">var</span> three_four = List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()));
-
-      <span class="hljs-keyword">var</span> list_of_list = List.cons(one_two,
-                                   List.cons(three_four, List.empty()));</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>concated_list = [1,2,3,4]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> concated_list = List.concat(list_of_list);
-      expect(
-        List.toArray(concated_list)
-      ).to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-      );
-      expect(
-        List.head(concated_list)
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      expect(
-        List.head(List.tail(concated_list))
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      expect(
-        List.isEmpty(List.tail(List.tail(concated_list)))
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">"'List#foldr'"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>list = [1,2,3,4]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)))
-      expect(
-        List.foldr(theList)(<span class="hljs-number">0</span>)(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item</span>)</span>{
-          <span class="hljs-keyword">return</span> (accumulator) =&gt; {
-            <span class="hljs-keyword">return</span> accumulator + item;
-          };
-        })
-      ).to.eql(
-        <span class="hljs-number">10</span>
-      )
-      next();
-    });
-    describe(<span class="hljs-string">"'List#toArray'"</span>, () =&gt; {
-      it(<span class="hljs-string">"1段階のリストを配列に変換する"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>list = [1,2,3,4]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)));
-        expect(
-          List.toArray(theList)
-        ).to.eql(
-          [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-        );
-        next();
-      });
-      it(<span class="hljs-string">"2段階のリストを配列に変換する"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <p>list = [[1],[2]] </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> nestedList = List.cons(List.cons(<span class="hljs-number">1</span>,List.empty()),
-                                   List.cons(List.cons(<span class="hljs-number">2</span>,List.empty()),
-                                             List.empty()));
-        expect(
-          List.toArray(List.flatMap(nestedList)((alist) =&gt; {
-            <span class="hljs-keyword">return</span> List.flatMap(alist)((item) =&gt; {
-              <span class="hljs-keyword">return</span> List.unit(item);
-            });
-          }))
-        ).to.eql(
-          [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
-        );
-        next();
-      });
-    });
-    it(<span class="hljs-string">"'List#map'"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>list = [1,2,3,4]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()),List.empty)));
-      expect(
-        List.toArray(List.map(theList)(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">item</span>)</span>{
-          <span class="hljs-keyword">return</span> item * <span class="hljs-number">2</span>;
-        }))
-      ).to.eql(
-        [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>,<span class="hljs-number">8</span>]
-      );
-      next();
-    });
-    it(<span class="hljs-string">"'List#unit'"</span>, (next) =&gt; {</pre></div></div>
+});</pre></div></div>
             
         </li>
         
@@ -1002,44 +990,14 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>list = [1]</p>
+              <h2 id="stream-">Streamモナド</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      expect(
-        List.toArray(List.unit(<span class="hljs-number">1</span>))
-      ).to.eql(
-        [<span class="hljs-number">1</span>]
-      );
-      expect(
-        List.toArray(List.unit(<span class="hljs-literal">null</span>))
-      ).to.eql(
-        [<span class="hljs-literal">null</span>]
-      );
-      next();
-    });
-    describe(<span class="hljs-string">"List#flatMap"</span>, () =&gt; {
-      it(<span class="hljs-string">"条件でフィルターする"</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> list1 = List.cons(<span class="hljs-number">1</span>, List.cons(<span class="hljs-number">2</span>,
-                                           List.empty()));
-        <span class="hljs-keyword">var</span> list2 = List.cons(<span class="hljs-number">1</span>, List.cons(<span class="hljs-number">2</span>,
-                                           List.empty()));
-        expect(
-          List.toArray(List.flatMap(list1)((item1) =&gt; {
-            <span class="hljs-keyword">return</span> List.flatMap(list2)((item2) =&gt; {
-              <span class="hljs-keyword">if</span>(item1 + item2 === <span class="hljs-number">3</span>) {
-                <span class="hljs-keyword">return</span> List.unit([item1, item2]);
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> List.empty();
-              }
-            });
-          }))
-        ).to.eql(
-          [[<span class="hljs-number">1</span>,<span class="hljs-number">2</span>],[<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]]
-        );
-        next();
-      });
-      it(<span class="hljs-string">"'List#flatMap'"</span>, (next) =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Stream = {
+  match: (data, pattern) =&gt; {
+     <span class="hljs-keyword">return</span> data.call(Stream,pattern);
+  },</pre></div></div>
             
         </li>
         
@@ -1050,109 +1008,19 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>list = [1]</p>
+              <h3 id="stream-unit">Stream#unit</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>, List.empty());
-        expect(
-          List.toArray(List.flatMap(theList)((item) =&gt; {
-            <span class="hljs-keyword">return</span> List.unit(item * <span class="hljs-number">2</span>); 
-          }))
-        ).to.eql(
-          [<span class="hljs-number">2</span>]
-        );
-        <span class="hljs-keyword">var</span> emptyList = List.empty();
-        expect(
-          List.toArray(List.flatMap(emptyList)((item) =&gt; {
-            <span class="hljs-keyword">return</span> List.unit(item * <span class="hljs-number">2</span>); 
-          }))
-        ).to.eql(
-          []
-        );
-        next();
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* unit:: ANY -&gt; STREAM */</span>
+  unit: (value) =&gt; {
+    <span class="hljs-keyword">if</span>(value != <span class="hljs-literal">null</span>){
+      <span class="hljs-keyword">return</span> Stream.cons(value, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
       });
-      it(<span class="hljs-string">"'List#flatMap'"</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
-              </div>
-              <p>list = [1,2,3]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>, List.cons(<span class="hljs-number">3</span>, List.empty())));
-        expect(
-          List.toArray(List.flatMap(theList)((item) =&gt; {
-            <span class="hljs-keyword">return</span> List.append(List.unit(item))(List.unit(- item));
-          }))
-        ).to.eql(
-          [<span class="hljs-number">1</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,-<span class="hljs-number">3</span>]
-        );
-        next();
-      });
-      it(<span class="hljs-string">"フィルターとして使う"</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> even = (n) =&gt; {
-          <span class="hljs-keyword">if</span>(n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        };
-        <span class="hljs-keyword">var</span> theList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.cons(<span class="hljs-number">3</span>,List.cons(<span class="hljs-number">4</span>,List.empty()))));
-        expect(
-          List.toArray(List.flatMap(theList)((item) =&gt; {
-            <span class="hljs-keyword">if</span>(even(item)) {
-              <span class="hljs-keyword">return</span> List.unit(item);
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> List.empty();
-            }
-          }))
-        ).to.eql(
-          [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>]
-        );
-        next();
-      });
-      it(<span class="hljs-string">"2段階のflatMap"</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> theNumberList = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty()));
-        <span class="hljs-keyword">var</span> theStringList = List.cons(<span class="hljs-string">"one"</span>,List.cons(<span class="hljs-string">"two"</span>,List.empty()));
-        expect(
-          List.toArray(List.flatMap(theNumberList)((n) =&gt; {
-            <span class="hljs-keyword">return</span> List.flatMap(theStringList)((s) =&gt; {
-              <span class="hljs-keyword">return</span> List.unit([n,s]);
-            });
-          }))
-        ).to.eql(
-          [[<span class="hljs-number">1</span>,<span class="hljs-string">"one"</span>],[<span class="hljs-number">1</span>,<span class="hljs-string">"two"</span>],[<span class="hljs-number">2</span>,<span class="hljs-string">"one"</span>],[<span class="hljs-number">2</span>,<span class="hljs-string">"two"</span>]]
-        );
-        next();
-      });
-    });
-  });
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <h2 id="stream-">Streamモナド</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> stream = {
-  match: (data, pattern) =&gt; {
-     <span class="hljs-keyword">return</span> data.call(stream,pattern);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> Stream.empty();
+    }
   },
   empty: (_) =&gt; {
     <span class="hljs-keyword">return</span> (pattern) =&gt; {
@@ -1169,7 +1037,7 @@ it(“[just(1),nothing()]”, (next) =&gt; {
   },
   <span class="hljs-comment">/* head:: STREAM -&gt; MAYBE[STREAM] */</span>
   head: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> stream.match(lazyList,{
+    <span class="hljs-keyword">return</span> Stream.match(lazyList,{
       empty: (_) =&gt; {
         <span class="hljs-keyword">return</span> Maybe.nothing();
       },
@@ -1180,7 +1048,7 @@ it(“[just(1),nothing()]”, (next) =&gt; {
   },
   <span class="hljs-comment">/* tail:: STREAM -&gt; MAYBE[STREAM] */</span>
   tail: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> stream.match(lazyList,{
+    <span class="hljs-keyword">return</span> Stream.match(lazyList,{
       empty: (_) =&gt; {
         <span class="hljs-keyword">return</span> Maybe.nothing();
       },
@@ -1190,7 +1058,7 @@ it(“[just(1),nothing()]”, (next) =&gt; {
     });
   },
   isEmpty: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> stream.match(lazyList,{
+    <span class="hljs-keyword">return</span> Stream.match(lazyList,{
       empty: (_) =&gt; {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
       },
@@ -1203,29 +1071,84 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h3 id="stream-toarray">Stream#toArray</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  toArray: (lazyList) =&gt; {
+    <span class="hljs-keyword">return</span> Stream.match(lazyList,{
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> [];
+      },
+      cons: (head,tailThunk) =&gt; {
+        <span class="hljs-keyword">if</span>(Stream.isEmpty(tailThunk())){
+          <span class="hljs-keyword">return</span> [head];
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> [head].concat(Stream.toArray(tailThunk()));
+        }
+      }
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <h3 id="stream-map">Stream#map</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  map: (lazyList) =&gt; {
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.match(lazyList,{
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.empty();
+        },
+        cons: (head,tailThunk) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.cons(transform(head),(_) =&gt; {
+            <span class="hljs-keyword">return</span> Stream.map(tailThunk())(transform)});
+        }
+      });
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <h3 id="stream-toarray">stream#toArray</h3>
+              <h2 id="stream-append">Stream#append</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  toArray: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> stream.match(lazyList,{
-      empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> [];
-      },
-      cons: (head,tailThunk) =&gt; {
-        <span class="hljs-keyword">if</span>(stream.isEmpty(tailThunk())){
-          <span class="hljs-keyword">return</span> [head];
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> [head].concat(stream.toArray(tailThunk()));
+            <div class="content"><div class='highlight'><pre>  append: (xs) =&gt; {
+    <span class="hljs-keyword">return</span> (ysThunk) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.match(xs,{
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> ysThunk();
+        },
+        cons: (head,tailThunk) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.cons(head,(_) =&gt; {
+            <span class="hljs-keyword">return</span> Stream.append(tailThunk())(ysThunk);
+          });
         }
-      }
-    });
+      });
+    };
   },</pre></div></div>
             
         </li>
@@ -1237,19 +1160,20 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <h3 id="stream-unit">stream#unit</h3>
+              <h2 id="stream-concat">Stream#concat</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* unit:: ANY -&gt; STREAM */</span>
-  unit: (value) =&gt; {
-    <span class="hljs-keyword">if</span>(value != <span class="hljs-literal">null</span>){
-      <span class="hljs-keyword">return</span> stream.cons(value, (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
-      });
-    } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">return</span> stream.empty();
-    }
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* concat:: STREAM[STREAM[T]] -&gt; STREAM[T] */</span>
+  concat: (astream) =&gt; {
+    <span class="hljs-keyword">return</span> Stream.match(astream,{
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
+      },
+      cons: (head,tailThunk) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.append(head,tailThunk());
+      }
+    });
   },</pre></div></div>
             
         </li>
@@ -1261,22 +1185,22 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <h3 id="stream-map">stream#map</h3>
+              <h2 id="stream-flatten">Stream#flatten</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  map: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> (transform) =&gt; {
-      <span class="hljs-keyword">return</span> stream.match(lazyList,{
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> stream.empty();
-        },
-        cons: (head,tailThunk) =&gt; {
-          <span class="hljs-keyword">return</span> stream.cons(transform(head),(_) =&gt; {
-            <span class="hljs-keyword">return</span> stream.map(tailThunk())(transform)});
-        }
-      });
-    };
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* flatten :: STREAM[STREAM[T]] =&gt; STREAM[T] */</span>
+  flatten: (lazyList) =&gt; {
+    <span class="hljs-keyword">return</span> Stream.match(lazyList,{
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
+      },
+      cons: (head,tailThunk) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.append(head)((_) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.flatten(tailThunk());
+        });
+      }
+    });
   },</pre></div></div>
             
         </li>
@@ -1288,22 +1212,16 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <h2 id="stream-append">stream#append</h2>
+              <h3 id="stream-flatmap">Stream#flatMap</h3>
+<p>flatMap:: STREAM[T] -&gt; FUNC[T-&gt;STREAM[T]] -&gt; STREAM[T]</p>
+<pre><code class="lang-haskell"><span class="hljs-title">flatMap</span> xs f = flatten (map f xs)
+</code></pre>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  append: (xs) =&gt; {
-    <span class="hljs-keyword">return</span> (ysThunk) =&gt; {
-      <span class="hljs-keyword">return</span> stream.match(xs,{
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> ysThunk();
-        },
-        cons: (head,tailThunk) =&gt; {
-          <span class="hljs-keyword">return</span> stream.cons(head,(_) =&gt; {
-            <span class="hljs-keyword">return</span> stream.append(tailThunk())(ysThunk);
-          });
-        }
-      });
+            <div class="content"><div class='highlight'><pre>  flatMap: (lazyList) =&gt; {
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.flatten(Stream.map(lazyList)(transform));
     };
   },</pre></div></div>
             
@@ -1316,21 +1234,26 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <h2 id="stream-concat">stream#concat</h2>
+              <h3 id="monad-stream-foldr">monad.stream#foldr</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* concat:: STREAM[STREAM[T]] -&gt; STREAM[T] */</span>
-  concat: (astream) =&gt; {
-    <span class="hljs-keyword">return</span> stream.match(astream,{
-      empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
-      },
-      cons: (head,tailThunk) =&gt; {
-        <span class="hljs-keyword">return</span> stream.append(head,tailThunk());
-      }
-    });
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  foldr: (instanceM) =&gt; {
+    <span class="hljs-keyword">return</span> (accumulator) =&gt; {
+      <span class="hljs-keyword">return</span> (glue) =&gt; {
+        expect(glue).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> Stream.match(instanceM,{
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> accumulator;
+          },
+          cons: (head,tailThunk) =&gt; {
+            <span class="hljs-keyword">return</span> glue(head)(Stream.foldr(tailThunk())(accumulator)(glue));
+          }
+        });
+      };
+    };
+  }
+};</pre></div></div>
             
         </li>
         
@@ -1341,63 +1264,13 @@ it(“[just(1),nothing()]”, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <h2 id="stream-flatten">stream#flatten</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* flatten :: STREAM[STREAM[T]] =&gt; STREAM[T] */</span>
-  flatten: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> stream.match(lazyList,{
-      empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
-      },
-      cons: (head,tailThunk) =&gt; {
-        <span class="hljs-keyword">return</span> stream.append(head)((_) =&gt; {
-          <span class="hljs-keyword">return</span> stream.flatten(tailThunk());
-        });
-      }
-    });
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <h3 id="stream-flatmap">stream#flatMap</h3>
-<pre><code class="lang-haskell"><span class="hljs-title">flatMap</span> xs f = flatten (map f xs)
-</code></pre>
-<p>flatMap:: STREAM[T] -&gt; FUNC[T-&gt;STREAM[T]] -&gt; STREAM[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  flatMap: (lazyList) =&gt; {
-    <span class="hljs-keyword">return</span> (transform) =&gt; {
-      <span class="hljs-keyword">return</span> stream.flatten(stream.map(lazyList)(transform));
-    };
-  }
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
               <h3 id="stream-">Streamモナドのテスト</h3>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'Streamモナドのテスト'</span>, () =&gt; {
-  it(<span class="hljs-string">"stream#unit"</span>, (next) =&gt; {
-    stream.match(Maybe.nothing(<span class="hljs-literal">null</span>),{
+  it(<span class="hljs-string">"Stream#unit"</span>, (next) =&gt; {
+    Stream.match(Maybe.nothing(<span class="hljs-literal">null</span>),{
       nothing: (_) =&gt; {
         <span class="hljs-keyword">return</span> expect(
           _
@@ -1409,54 +1282,54 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         <span class="hljs-keyword">return</span> expect().fail();
       }
     });
-    <span class="hljs-keyword">var</span> lazyList = stream.unit(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">var</span> lazyList = Stream.unit(<span class="hljs-number">1</span>);
     expect(
-      Maybe.get(stream.head(lazyList))
+      Maybe.get(Stream.head(lazyList))
     ).to.eql(
       <span class="hljs-number">1</span>
     );
     expect(
-      Maybe.get(stream.head(stream.unit(<span class="hljs-number">1</span>)))
+      Maybe.get(Stream.head(Stream.unit(<span class="hljs-number">1</span>)))
     ).to.eql(
       <span class="hljs-number">1</span>
     );
     expect(
-      Maybe.get(stream.head(stream.unit(<span class="hljs-number">0</span>)))
+      Maybe.get(Stream.head(Stream.unit(<span class="hljs-number">0</span>)))
     ).to.eql(
       <span class="hljs-number">0</span>
     );
     next();
   });
-  it(<span class="hljs-string">"stream#cons"</span>, (next) =&gt; {
-    <span class="hljs-keyword">var</span> lazyList = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
+  it(<span class="hljs-string">"Stream#cons"</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> lazyList = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
       });
     });
     expect(
-      Maybe.get(stream.head(lazyList))
+      Maybe.get(Stream.head(lazyList))
     ).to.eql(
       <span class="hljs-number">1</span>
     );
     next();
   });
-  it(<span class="hljs-string">"stream#tail"</span>, (next) =&gt; {
+  it(<span class="hljs-string">"Stream#tail"</span>, (next) =&gt; {
     <span class="hljs-comment">/* lazyList = [1,2] */</span>
-    <span class="hljs-keyword">var</span> lazyList = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
+    <span class="hljs-keyword">var</span> lazyList = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
       });
     });
     expect(
-      stream.tail(lazyList)
+      Stream.tail(lazyList)
     ).to.a(<span class="hljs-string">"function"</span>);
 
-    stream.match(stream.tail(lazyList),{
+    Stream.match(Stream.tail(lazyList),{
       nothing: (_) =&gt; {
         expect().fail();
       },
       just: (tail) =&gt; {
-        stream.match(tail,{
+        Stream.match(tail,{
           empty: (_) =&gt; {
             expect().fail();
           },
@@ -1467,58 +1340,58 @@ it(“[just(1),nothing()]”, (next) =&gt; {
       }
     });
     expect(
-      Maybe.get(stream.head(Maybe.get(stream.tail(lazyList))))
+      Maybe.get(Stream.head(Maybe.get(Stream.tail(lazyList))))
     ).to.eql(
       <span class="hljs-number">2</span>
     );
     next();
   });
-  it(<span class="hljs-string">"stream#toArray"</span>, (next) =&gt; {
+  it(<span class="hljs-string">"Stream#toArray"</span>, (next) =&gt; {
     expect(
-      stream.toArray(stream.empty())
+      Stream.toArray(Stream.empty())
     ).to.eql(
       []
     );
     expect(
-      stream.toArray(stream.unit(<span class="hljs-number">1</span>))
+      Stream.toArray(Stream.unit(<span class="hljs-number">1</span>))
     ).to.eql(
       [<span class="hljs-number">1</span>]
     );
     next();
   });
-  it(<span class="hljs-string">"stream#append"</span>, (next) =&gt; {
-    <span class="hljs-keyword">var</span> xs = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.empty();
+  it(<span class="hljs-string">"Stream#append"</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> xs = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.empty();
     });
     <span class="hljs-keyword">var</span> ysThunk = (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>, (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
+      <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">2</span>, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
       });
     };
-    <span class="hljs-keyword">var</span> theStream = stream.append(xs)(ysThunk);
+    <span class="hljs-keyword">var</span> theStream = Stream.append(xs)(ysThunk);
     expect(
-      Maybe.get(stream.head(theStream))
+      Maybe.get(Stream.head(theStream))
     ).to.eql(
       <span class="hljs-number">1</span>
     );
     expect(
-      Maybe.get(stream.head(Maybe.get(stream.tail(theStream))))
+      Maybe.get(Stream.head(Maybe.get(Stream.tail(theStream))))
     ).to.eql(
       <span class="hljs-number">2</span>
     );
     next();
   });
-  it(<span class="hljs-string">"stream#flatten"</span>, (next) =&gt; {
+  it(<span class="hljs-string">"Stream#flatten"</span>, (next) =&gt; {
     <span class="hljs-comment">/* innerStream = [1,2] */</span>
-    <span class="hljs-keyword">var</span> innerStream = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
+    <span class="hljs-keyword">var</span> innerStream = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+      <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.empty();
       });
     });
     <span class="hljs-comment">/* outerStream = [[1,2]] */</span>
-    <span class="hljs-keyword">var</span> outerStream = stream.unit(innerStream);
-    <span class="hljs-keyword">var</span> flattenedStream = stream.flatten(outerStream);
-    stream.match(flattenedStream,{
+    <span class="hljs-keyword">var</span> outerStream = Stream.unit(innerStream);
+    <span class="hljs-keyword">var</span> flattenedStream = Stream.flatten(outerStream);
+    Stream.match(flattenedStream,{
       empty: (_) =&gt; {
         expect().fail()
       },
@@ -1527,40 +1400,40 @@ it(“[just(1),nothing()]”, (next) =&gt; {
       }
     });
     expect(
-      Maybe.get(stream.head(flattenedStream))
+      Maybe.get(Stream.head(flattenedStream))
     ).to.eql(
       <span class="hljs-number">1</span>
     );
     expect(
-      Maybe.get(stream.head(Maybe.get(stream.tail(flattenedStream))))
+      Maybe.get(Stream.head(Maybe.get(Stream.tail(flattenedStream))))
     ).to.eql(
       <span class="hljs-number">2</span>
     );
     next();
   });
-  describe(<span class="hljs-string">"stream#map"</span>, () =&gt; {
+  describe(<span class="hljs-string">"Stream#map"</span>, () =&gt; {
     it(<span class="hljs-string">"mapで要素を2倍にする"</span>, (next) =&gt; {
       <span class="hljs-comment">/* lazyList = [1,2] */</span>
-      <span class="hljs-keyword">var</span> lazyList = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
-          <span class="hljs-keyword">return</span> stream.empty();
+      <span class="hljs-keyword">var</span> lazyList = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.empty();
         });
       });
-      <span class="hljs-keyword">var</span> doubledLazyList = stream.map(lazyList)((item) =&gt; {
+      <span class="hljs-keyword">var</span> doubledLazyList = Stream.map(lazyList)((item) =&gt; {
         <span class="hljs-keyword">return</span> item * <span class="hljs-number">2</span>;
       });
       expect(
-        Maybe.get(stream.head(doubledLazyList))
+        Maybe.get(Stream.head(doubledLazyList))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(doubledLazyList))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(doubledLazyList))))
       ).to.eql(
         <span class="hljs-number">4</span>
       );
       expect(
-        stream.toArray(doubledLazyList)
+        Stream.toArray(doubledLazyList)
       ).to.eql(
         [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>]
       );
@@ -1568,35 +1441,35 @@ it(“[just(1),nothing()]”, (next) =&gt; {
     });
     it(<span class="hljs-string">"無限の整数列を作る"</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(ones_infinite_sequence) */</span>
-      <span class="hljs-keyword">var</span> ones = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+      <span class="hljs-keyword">var</span> ones = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
         <span class="hljs-keyword">return</span> ones;
       });
       expect(
-        Maybe.get(stream.head(ones))
+        Maybe.get(Stream.head(ones))
       ).to.eql(
         <span class="hljs-number">1</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(ones))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(ones))))
       ).to.eql(
         <span class="hljs-number">1</span>
       );
       <span class="hljs-comment">/* #@range_end(ones_infinite_sequence) */</span>
-      <span class="hljs-keyword">var</span> twoes = stream.map(ones)((item) =&gt; {
+      <span class="hljs-keyword">var</span> twoes = Stream.map(ones)((item) =&gt; {
         <span class="hljs-keyword">return</span> item * <span class="hljs-number">2</span>;
       });
       expect(
-        Maybe.get(stream.head(twoes))
+        Maybe.get(Stream.head(twoes))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(twoes))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(twoes))))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(Maybe.get(stream.tail(twoes))))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(Maybe.get(Stream.tail(twoes))))))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
@@ -1604,58 +1477,58 @@ it(“[just(1),nothing()]”, (next) =&gt; {
     });
     it(<span class="hljs-string">"整数列を作る"</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> integersFrom = (from) =&gt; {
-        <span class="hljs-keyword">return</span> stream.cons(from, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.cons(from, (_) =&gt; {
           <span class="hljs-keyword">return</span> integersFrom(from + <span class="hljs-number">1</span>);
         });
       };
       expect(
-        Maybe.get(stream.head(integersFrom(<span class="hljs-number">0</span>)))
+        Maybe.get(Stream.head(integersFrom(<span class="hljs-number">0</span>)))
       ).to.eql(
         <span class="hljs-number">0</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(integersFrom(<span class="hljs-number">0</span>)))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(integersFrom(<span class="hljs-number">0</span>)))))
       ).to.eql(
         <span class="hljs-number">1</span>
       );
-      <span class="hljs-keyword">var</span> doubledIntergerMapped = stream.map(integersFrom(<span class="hljs-number">0</span>))((integer) =&gt; {
+      <span class="hljs-keyword">var</span> doubledIntergerMapped = Stream.map(integersFrom(<span class="hljs-number">0</span>))((integer) =&gt; {
         <span class="hljs-keyword">return</span> integer * <span class="hljs-number">2</span>;
       });
       expect(
-        Maybe.get(stream.head(doubledIntergerMapped))
+        Maybe.get(Stream.head(doubledIntergerMapped))
       ).to.eql(
         <span class="hljs-number">0</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(doubledIntergerMapped))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(doubledIntergerMapped))))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
-      <span class="hljs-keyword">var</span> doubledInterger = stream.flatMap(integersFrom(<span class="hljs-number">0</span>))((integer) =&gt; {
-        <span class="hljs-keyword">return</span> stream.unit(integer * <span class="hljs-number">2</span>);
+      <span class="hljs-keyword">var</span> doubledInterger = Stream.flatMap(integersFrom(<span class="hljs-number">0</span>))((integer) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.unit(integer * <span class="hljs-number">2</span>);
       });
       expect(
-        Maybe.get(stream.head(doubledInterger))
+        Maybe.get(Stream.head(doubledInterger))
       ).to.eql(
         <span class="hljs-number">0</span>
       );
       expect(
-        Maybe.get(stream.head(Maybe.get(stream.tail(doubledInterger))))
+        Maybe.get(Stream.head(Maybe.get(Stream.tail(doubledInterger))))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
       next();
     });
     it(<span class="hljs-string">"一段階のflatMap"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> ones = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+      <span class="hljs-keyword">var</span> ones = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
         <span class="hljs-keyword">return</span> ones;
       });
-      <span class="hljs-keyword">var</span> twoes = stream.flatMap(ones)((one) =&gt; {
+      <span class="hljs-keyword">var</span> twoes = Stream.flatMap(ones)((one) =&gt; {
         expect(one).to.a(<span class="hljs-string">'number'</span>);
-        <span class="hljs-keyword">return</span> stream.unit(one * <span class="hljs-number">2</span>);
+        <span class="hljs-keyword">return</span> Stream.unit(one * <span class="hljs-number">2</span>);
       });
       expect(
-        Maybe.get(stream.head(twoes))
+        Maybe.get(Stream.head(twoes))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
@@ -1667,35 +1540,35 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         scala&gt; nestedNumbers.flatMap(x =&gt; x.map(_ * 2))
         res0: List[Int] = List(2, 4, 6, 8)
       */</span>
-      <span class="hljs-keyword">var</span> innerStream12 = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
-          <span class="hljs-keyword">return</span> stream.empty();
+      <span class="hljs-keyword">var</span> innerStream12 = Stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.empty();
         });
       });
-      <span class="hljs-keyword">var</span> innerStream34 = stream.cons(<span class="hljs-number">3</span>, (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">4</span>,(_) =&gt; {
-          <span class="hljs-keyword">return</span> stream.empty();
+      <span class="hljs-keyword">var</span> innerStream34 = Stream.cons(<span class="hljs-number">3</span>, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.cons(<span class="hljs-number">4</span>,(_) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.empty();
         });
       });
       <span class="hljs-comment">/* nestedStream = [[1,2],[3,4]] */</span>
-      <span class="hljs-keyword">var</span> nestedStream = stream.cons(innerStream12, (_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.cons(innerStream34,(_) =&gt; {
-          <span class="hljs-keyword">return</span> stream.empty();
+      <span class="hljs-keyword">var</span> nestedStream = Stream.cons(innerStream12, (_) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.cons(innerStream34,(_) =&gt; {
+          <span class="hljs-keyword">return</span> Stream.empty();
         });
       });
-      <span class="hljs-keyword">var</span> flattenedStream = stream.flatMap(nestedStream)((innerStream) =&gt; {
-        <span class="hljs-keyword">return</span> stream.flatMap(innerStream)((n) =&gt; {
+      <span class="hljs-keyword">var</span> flattenedStream = Stream.flatMap(nestedStream)((innerStream) =&gt; {
+        <span class="hljs-keyword">return</span> Stream.flatMap(innerStream)((n) =&gt; {
           expect(n).to.a(<span class="hljs-string">'number'</span>);
-          <span class="hljs-keyword">return</span> stream.unit(n * <span class="hljs-number">2</span>);
+          <span class="hljs-keyword">return</span> Stream.unit(n * <span class="hljs-number">2</span>);
         });
       });
       expect(
-        Maybe.get(stream.head(flattenedStream))
+        Maybe.get(Stream.head(flattenedStream))
       ).to.eql(
         <span class="hljs-number">2</span>
       );
       expect(
-        stream.toArray(flattenedStream)
+        Stream.toArray(flattenedStream)
       ).to.eql(
         [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>,<span class="hljs-number">8</span>]
       );
@@ -1703,32 +1576,53 @@ it(“[just(1),nothing()]”, (next) =&gt; {
     });
 
   });
-}); <span class="hljs-comment">// streamモナド</span>
+}); <span class="hljs-comment">// Streamモナド</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h2 id="reader-">Readerモナド</h2>
+<pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Reader</span> e a = <span class="hljs-type">Reader</span> <span class="hljs-container">{ <span class="hljs-title">runReader</span> :: <span class="hljs-title">e</span> -&gt; <span class="hljs-title">a</span> }</span></span>
+<span class="hljs-class">
+<span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Reader</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span>
+    return a = <span class="hljs-type">Reader</span> $ \_ -&gt; a
+    m &gt;&gt;= f  = <span class="hljs-type">Reader</span> $ \r -&gt; runReader (f (runReader m r)) r
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Reader = {
+  unit: (x) =&gt; {
+    <span class="hljs-keyword">return</span> (_) =&gt; {
+      <span class="hljs-keyword">return</span> x;
+    };
+  },
+  flatMap: (instanceM) =&gt; {
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> (w) =&gt; {
+        <span class="hljs-keyword">return</span> transform(instanceM(w))(w);
+      };
+    };
+  }
+};
 describe(<span class="hljs-string">"Readerモナドをテストする"</span>,() =&gt; {
-  <span class="hljs-keyword">var</span> READER = {
-    unit: (x) =&gt; {
-      <span class="hljs-keyword">return</span> (_) =&gt; {
-        <span class="hljs-keyword">return</span> x;
-      };
-    },
-    flatMap: (instanceM) =&gt; {
-      <span class="hljs-keyword">return</span> (transform) =&gt; {
-        <span class="hljs-keyword">return</span> (w) =&gt; {
-          <span class="hljs-keyword">return</span> transform(instanceM(w))(w);
-        };
-      };
-    }
-  };
 });</pre></div></div>
             
         </li>
         
         
-        <li id="section-34">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h2 id="io-">IOモナド</h2>
 
@@ -1739,11 +1633,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-35">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>unit:: T =&gt; IO[T]</p>
 
@@ -1764,11 +1658,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-36">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h3 id="io-done-">IO.done関数</h3>
 <p>IOアクションを何も実行しない</p>
@@ -1783,11 +1677,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-37">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h3 id="io-run-">IO.run関数</h3>
 <p>IOアクションを実行する</p>
@@ -1802,11 +1696,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-38">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>readFile:: STRING =&gt; IO[STRING]</p>
 
@@ -1822,11 +1716,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-39">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>println:: STRING =&gt; IO[null]</p>
 
@@ -1850,11 +1744,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-40">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b]</p>
 
@@ -1874,11 +1768,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-41">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>IO.putc:: CHAR =&gt; IO[]</p>
 
@@ -1894,11 +1788,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-42">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>IO.puts:: LIST[CHAR] =&gt; IO[]</p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -1920,11 +1814,11 @@ describe(<span class="hljs-string">"Readerモナドをテストする"</span>,()
         </li>
         
         
-        <li id="section-43">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>IO.getc :: IO[CHAR]</p>
 
@@ -2047,11 +1941,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-44">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>it(“[nothing()]”, (next) =&gt; {
   // var theList = list.unit(maybe.nothing());
@@ -2105,28 +1999,55 @@ it(“[just(1),nothing()]”, (next) =&gt; {
         </li>
         
         
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <h2 id="variant-">Variantモナド</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Variant = {
+  unit: (value, key) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern[key](value);
+    };
+  },
+  flatMap: (instance) =&gt; {
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> instance(transform);
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
+              <p>match: (instance, pattern) =&gt; {
+  return flip(Variant.flatMap)(pattern)(instance);
+}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
               <p>describe(“Variantモナド”, () =&gt; {
-  var variant = {
-    unit: (value, key) =&gt; {
-      return (pattern) =&gt; {
-        return pattern<a href="value">key</a>;
-      };
-    },
-    flatMap: (instance) =&gt; {
-      return (transform) =&gt; {
-        return instance(transform);
-      };
-    },
-    match: (instance, pattern) =&gt; {
-      return flip(variant.flatMap)(pattern)(instance);
-    }
-  };
   it(“Maybe”, (next) =&gt; {
     var just = (value) =&gt; {
       return variant.unit(value, ‘just’);
@@ -2178,6 +2099,199 @@ it(“[just(1),nothing()]”, (next) =&gt; {
     next();
   });
 });</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <h2 id="state-">Stateモナド</h2>
+<p>Stateモナドとは、状態付き計算を包んだモナドである。</p>
+<pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">State</span> <span class="hljs-title">s</span>)</span> <span class="hljs-keyword">where</span></span>                        
+  return x = <span class="hljs-type">State</span> $ \s -&gt; (x, s)
+  (<span class="hljs-type">State</span> h) &gt;&gt;= f = <span class="hljs-type">State</span> $ \s -&gt; <span class="hljs-keyword">let</span> (a, newState) = h s
+    (<span class="hljs-type">State</span> g) = f a 
+      <span class="hljs-keyword">in</span> g newState
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> State = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <h3 id="state-unit">State#unit</h3>
+<p>unit :: a -&gt; State s a
+unit x s = (x,s)</p>
+<pre><code class="lang-scheme">  <span class="hljs-list">(<span class="hljs-keyword">unitM</span> <span class="hljs-list">(<span class="hljs-keyword">x</span>)</span>   <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">(<span class="hljs-keyword">s</span>)</span> <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">values</span></span> x s)</span>)</span>)</span>
+  <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">define</span></span> <span class="hljs-list">(<span class="hljs-keyword">unit</span> value)</span>
+     <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">()</span>
+        value)</span></span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unit: (value) =&gt; {
+    <span class="hljs-keyword">return</span> (state) =&gt; {
+      <span class="hljs-keyword">return</span> pair.cons(value,state);
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <h3 id="state-flatmap">State#flatMap</h3>
+<p>var bind = (operate, transform) =&gt; {
+  return (stack) =&gt; {
+    var newState = operate(stack);
+    return transform(newState.value)(newState.stack);
+  };
+};</p>
+<pre><code class="lang-haskell">  (<span class="hljs-type">State</span> h) &gt;&gt;= f = <span class="hljs-type">State</span> $ \s -&gt; <span class="hljs-keyword">let</span> (a, newState) = h s
+                                      (<span class="hljs-type">State</span> g) = f a
+                                  <span class="hljs-keyword">in</span> g newState
+</code></pre>
+<pre><code class="lang-scheme">  <span class="hljs-list">(<span class="hljs-keyword">bindM</span> <span class="hljs-list">(<span class="hljs-keyword">m</span> f)</span>
+      <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">(<span class="hljs-keyword">s</span>)</span>
+         <span class="hljs-list">(<span class="hljs-keyword">receive</span> <span class="hljs-list">(<span class="hljs-keyword">val</span> s*)</span> <span class="hljs-list">(<span class="hljs-keyword">m</span> s)</span>
+            <span class="hljs-list">(<span class="hljs-list">(<span class="hljs-keyword">f</span> val)</span> s*)</span>)</span>)</span>)</span>
+  <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">define</span></span> <span class="hljs-list">(<span class="hljs-keyword">flatMap</span> m f)</span>
+     <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">()</span>
+        <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">let</span></span> <span class="hljs-list">(<span class="hljs-list">(<span class="hljs-keyword">value</span> <span class="hljs-list">(<span class="hljs-keyword">m</span>)</span>)</span>
+             <span class="hljs-list">(<span class="hljs-list">(<span class="hljs-keyword">f</span> value)</span>)</span>)</span>)</span></span></span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  flatMap: (h) =&gt; {
+    expect(h).to.a(<span class="hljs-string">'function'</span>);
+    <span class="hljs-keyword">return</span> (f) =&gt; {
+      <span class="hljs-keyword">return</span> (state) =&gt; {
+        expect(f).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> pair.match(h(state),{
+          cons:(value, newState) =&gt; {
+            <span class="hljs-keyword">var</span> g = f(value);
+            <span class="hljs-keyword">return</span> g(newState);
+          }
+        });
+      };
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <h3 id="monad-state-mkstate">monad.state#mkState</h3>
+<pre><code class="lang-haskell"><span class="hljs-title">mkState</span> :: (s -&gt; (a,s)) -&gt; <span class="hljs-type">State</span> s a
+<span class="hljs-title">mkState</span> f = <span class="hljs-keyword">do</span> {
+            s &lt;- get;
+            <span class="hljs-keyword">let</span> (a, s') = f s;
+            put s';
+            return a
+          }
+</code></pre>
+<p>mkState: (f) =&gt; {  // f :: (s -&gt; (a,s)) 
+  var self = this;
+  return self.monad.state.flatMap()
+},</p>
+<pre><code class="lang-haskell"><span class="hljs-title">get</span> :: <span class="hljs-type">State</span> s s
+<span class="hljs-title">get</span> s = (s,s)
+</code></pre>
+<pre><code class="lang-scala"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span>[</span><span class="hljs-type">S</span>]: <span class="hljs-type">State</span>[<span class="hljs-type">S</span>,<span class="hljs-type">S</span>] = <span class="hljs-type">State</span>(s =&gt; (s,s))
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get: () =&gt; {
+    <span class="hljs-keyword">return</span> () =&gt; {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>put :: s -&gt; State s ()
+put x s = ((),x)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  put: (value) =&gt; {
+    <span class="hljs-keyword">return</span> () =&gt; {
+      <span class="hljs-keyword">return</span>  <span class="hljs-literal">null</span>;
+    };
+  },
+  run: (instance) =&gt; {
+    expect(instance).to.a(<span class="hljs-string">'function'</span>);
+    <span class="hljs-keyword">return</span> instance();
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <h2 id="st-">STモナド</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <h2 id="cont-">Contモナド</h2>
+<pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Cont</span> r a = <span class="hljs-type">Cont</span> <span class="hljs-container">{ <span class="hljs-title">runCont</span> :: ((<span class="hljs-title">a</span> -&gt; <span class="hljs-title">r</span>) -&gt; <span class="hljs-title">r</span>) }</span> <span class="hljs-comment">-- r は計算全体の最終の型</span></span>
+<span class="hljs-class">
+<span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Cont</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span> 
+    return a       = <span class="hljs-type">Cont</span> $ \k -&gt; k a                       <span class="hljs-comment">-- i.e. return a = \k -&gt; k a </span>
+    (<span class="hljs-type">Cont</span> c) &gt;&gt;= f = <span class="hljs-type">Cont</span> $ \k -&gt; c (\a -&gt; runCont (f a) k) <span class="hljs-comment">-- i.e. c &gt;&gt;= f = \k -&gt; c (\a -&gt; f a k) </span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-container">(<span class="hljs-type">Monad</span> <span class="hljs-title">m</span>)</span> =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span> 
+    callCC :: ((a -&gt; m b) -&gt; m a) -&gt; m a 
+<span class="hljs-class">
+<span class="hljs-keyword">instance</span> <span class="hljs-type">MonadCont</span> <span class="hljs-container">(<span class="hljs-type">Cont</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span> 
+    callCC f = <span class="hljs-type">Cont</span> $ \k -&gt; runCont (f (\a -&gt; <span class="hljs-type">Cont</span> $ \_ -&gt; k a)) k
+</code></pre>
 
             </div>
             

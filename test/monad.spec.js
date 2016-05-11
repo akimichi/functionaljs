@@ -6,6 +6,47 @@
 var fs = require('fs');
 var expect = require('expect.js');
 
+
+var pair = {
+  match : (data, pattern) => {
+    return data.call(pair, pattern);
+  },
+  cons: (left, right) => {
+    return (pattern) => {
+      return pattern.cons(left, right);
+    };
+  },
+  right: (tuple) => {
+    return pair.match(tuple, {
+      cons: (left, right) => {
+        return right;
+      }
+    });
+  },
+  left: (tuple) => {
+    return pair.match(tuple, {
+      cons: (left, right) => {
+        return left;
+      }
+    });
+  }
+};
+
+// ## IDモナド
+var ID = {
+  /* unit:: T => ID[T] */
+  unit: (value) => {  // 単なる identity関数と同じ
+    return value;
+  },
+  /* flatMap:: ID[T] => FUN[T => ID[T]] => ID[T] */
+  flatMap: (instanceM) => {
+    return (transform) => {
+      return transform(instanceM); // 単なる関数適用と同じ
+    };
+  }
+};
+
+
 // ## Maybeモナド
 var Maybe = {
   match: (data, pattern) => {
@@ -38,14 +79,27 @@ var Maybe = {
     };
   },
   get: (maybe) => {
-    return Maybe.match(maybe,{
-      just: (value) => {
-        return value;
-      },
-      nothing: (_) => {
-        return null;
-      }
-    });
+    return Maybe.getOrElse(maybe)(null);
+    // return Maybe.match(maybe,{
+    //   just: (value) => {
+    //     return value;
+    //   },
+    //   nothing: (_) => {
+    //     return null;
+    //   }
+    // });
+  },
+  getOrElse: (instance) => {
+    return (alternate) => {
+      return Maybe.match(instance,{
+        just: (value) => {
+          return value;
+        },
+        nothing: (_) => {
+          return alternate;
+        }
+      });
+    };
   },
   isEqual : (maybeA) => {
     return (maybeB) => {
@@ -143,6 +197,13 @@ describe("Maybeモナドをテストする",() => {
 });
 
 // ## Listモナド
+// ~~~haskell
+// instance Monad [] where
+//   xs >>= f = concat (map f xs)
+//   return x = [x]
+//   fail s   = []
+// ~~~
+
 var List  = {
   match: (data, pattern) => {
     return data.call(List,pattern);
@@ -191,8 +252,10 @@ var List  = {
     });
   },
   // append:: LIST[T] -> LIST[T] -> LIST[T]
+  // ~~~haskell
   // append [] ys = ys
   // append (x:xs) ys = x : (xs ++ ys)
+  // ~~~
   append: (xs) => {
     return (ys) => {
       return List.match(xs, {
@@ -206,8 +269,10 @@ var List  = {
     };
   },
   // concat:: LIST[LIST[T]] -> LIST[T]
+  // ~~~haskell
   // concat [] = []
   // concat (xs:xss) = xs ++ concat xss
+  // ~~~
   concat: (list_of_list) => {
     return List.foldr(list_of_list)(List.empty())(List.append);
   },
@@ -219,8 +284,10 @@ var List  = {
     return List.concat(instanceMM);
   },
   // map:: LIST[T] -> FUN[T->U] -> LIST[U]
+  // ~~~haskell
   // map [] _ = []
   // map (x:xs) f = f x : map xs f
+  // ~~~
   map: (instanceM) => {
     return (transform) => {
       return List.match(instanceM,{
@@ -253,8 +320,10 @@ var List  = {
     });
   },
   // foldr:: LIST[T] -> T -> FUN[T -> U -> U] -> T
+  // ~~~haskell
   // foldr []     z _ = z
   // foldr (x:xs) z f = f x (foldr xs z f) 
+  // ~~~
   foldr: (alist) => {         // alist:: LIST[T]
     return (accumulator) => { // accumulator:: T
       return (glue) => {      // glue:: FUN[T -> U -> U] 
@@ -377,21 +446,21 @@ describe('Listモナドのテスト', () => {
   });
   it("'List#foldr'", (next) => {
     /* list = [1,2,3,4] */
-    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)))
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
-      List.foldr(theList)(0)(function (item){
+      List.foldr(theList)(0)((item) => {
         return (accumulator) => {
           return accumulator + item;
         };
       })
     ).to.eql(
       10
-    )
+    );
     next();
-  })
+  });
   it("'List#toArray'", (next) => {
     /* list = [1,2,3,4] */
-    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)))
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
       List.toArray(theList)
     ).to.eql(
@@ -399,17 +468,99 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
+  describe("'List#toArray'", () => {
+    it("1段階のリストを配列に変換する", (next) => {
+      // list = [1,2,3,4]
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
+      expect(
+        List.toArray(theList)
+      ).to.eql(
+        [1,2,3,4]
+      );
+      next();
+    });
+    it("2段階のリストを配列に変換する", (next) => {
+      // list = [[1],[2]] 
+      var nestedList = List.cons(List.cons(1,List.empty()),
+                                 List.cons(List.cons(2,List.empty()),
+                                           List.empty()));
+      expect(
+        List.toArray(List.flatMap(nestedList)((alist) => {
+          return List.flatMap(alist)((item) => {
+            return List.unit(item);
+          });
+        }))
+      ).to.eql(
+        [1,2]
+      );
+      next();
+    });
+  });
   it("'List#map'", (next) => {
     /* list = [1,2,3,4] */
     var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
-      List.toArray(List.map(theList)(function (item){
+      List.toArray(List.map(theList)((item) => {
         return item * 2;
       }))
     ).to.eql(
       [2,4,6,8]
     );
     next();
+  });
+  describe("List#flatMap", () => {
+    it("条件でフィルターする", (next) => {
+      var list1 = List.cons(1, List.cons(2,
+                                         List.empty()));
+      var list2 = List.cons(1, List.cons(2,
+                                         List.empty()));
+      expect(
+        List.toArray(List.flatMap(list1)((item1) => {
+          return List.flatMap(list2)((item2) => {
+            if(item1 + item2 === 3) {
+              return List.unit([item1, item2]);
+            } else {
+              return List.empty();
+            }
+          });
+        }))
+      ).to.eql(
+        [[1,2],[2,1]]
+      );
+      next();
+    });
+    it("'List#flatMap'", (next) => {
+      // list = [1]
+      var theList = List.cons(1, List.empty());
+      expect(
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.unit(item * 2); 
+        }))
+      ).to.eql(
+        [2]
+      );
+      var emptyList = List.empty();
+      expect(
+        List.toArray(List.flatMap(emptyList)((item) => {
+          return List.unit(item * 2); 
+        }))
+      ).to.eql(
+        []
+      );
+      next();
+    });
+    it("'List#flatMap'", (next) => {
+      // list = [1,2,3]
+      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
+      expect(
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.append(List.unit(item))(List.unit(- item));
+        }))
+      ).to.eql(
+        [1,-1,2,-2,3,-3]
+      );
+      next();
+    });
   });
   it("'List#unit'", (next) => {
     /* list = [1] */
@@ -552,273 +703,23 @@ describe('Listモナドのテスト', () => {
       /* #@range_end(list_maybe) */
     });
   });
-  describe("Listモナドを活用する",() => {
-    it("'List#empty'", (next) => {
-      List.match(List.empty,{
-        empty: (_) => {
-          expect(true).ok();
-        },
-        cons: (x,xs) => {
-          expect().fail();
-        }
-      });
-      next();
-    });
-    it("'List#isEmpty'", (next) => {
-      expect(
-        List.isEmpty(List.empty())
-      ).to.eql(
-        true
-      );
-      expect(
-        List.isEmpty(List.cons(1,List.empty()))
-      ).to.eql(
-        false
-      );
-      next();
-    });
-    it("'List#cons'", (next) => {
-      List.match(List.cons(1,List.empty()),{
-        empty: (_) => {
-          expect().fail();
-        },
-        cons: (x,xs) => {
-          expect(x).to.eql(1);
-        }
-      });
-      next();
-    });
-    it("'List#head'", (next) => {
-      expect(
-        List.head(List.cons(1,List.empty()))
-      ).to.eql(
-        1
-      );
-      next();
-    });
-    it("'List#tail'", (next) => {
-      expect(
-        List.head(List.tail(List.cons(1,List.cons(2,List.empty()))))
-      ).to.eql(
-        2
-      );
-      next();
-    });
-    it("'List#append'", (next) => {
-      var theList = List.append(List.cons(1,List.empty()))(List.cons(2,List.empty()));
-      expect(
-        List.head(theList)
-      ).to.eql(
-        1
-      );
-      expect(
-        List.head(List.tail(theList))
-      ).to.eql(
-        2
-      );
-      expect(
-        List.isEmpty(List.tail(List.tail(theList)))
-      ).to.eql(
-        true
-      );
-      next();
-    });
-    it("'List#concat'", (next) => {
-      // list = [[1,2],[3,4]]
-      var one_two = List.cons(1,List.cons(2,List.empty()));
-      var three_four = List.cons(3,List.cons(4,List.empty()));
-
-      var list_of_list = List.cons(one_two,
-                                   List.cons(three_four, List.empty()));
-      // concated_list = [1,2,3,4]
-      var concated_list = List.concat(list_of_list);
-      expect(
-        List.toArray(concated_list)
-      ).to.eql(
-        [1,2,3,4]
-      );
-      expect(
-        List.head(concated_list)
-      ).to.eql(
-        1
-      );
-      expect(
-        List.head(List.tail(concated_list))
-      ).to.eql(
-        2
-      );
-      expect(
-        List.isEmpty(List.tail(List.tail(concated_list)))
-      ).to.eql(
-        false
-      );
-      next();
-    });
-    it("'List#foldr'", (next) => {
-      // list = [1,2,3,4]
-      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-      expect(
-        List.foldr(theList)(0)(function (item){
-          return (accumulator) => {
-            return accumulator + item;
-          };
-        })
-      ).to.eql(
-        10
-      );
-      next();
-    });
-    describe("'List#toArray'", () => {
-      it("1段階のリストを配列に変換する", (next) => {
-        // list = [1,2,3,4]
-        var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-        expect(
-          List.toArray(theList)
-        ).to.eql(
-          [1,2,3,4]
-        );
-        next();
-      });
-      it("2段階のリストを配列に変換する", (next) => {
-        // list = [[1],[2]] 
-        var nestedList = List.cons(List.cons(1,List.empty()),
-                                   List.cons(List.cons(2,List.empty()),
-                                             List.empty()));
-        expect(
-          List.toArray(List.flatMap(nestedList)((alist) => {
-            return List.flatMap(alist)((item) => {
-              return List.unit(item);
-            });
-          }))
-        ).to.eql(
-          [1,2]
-        );
-        next();
-      });
-    });
-    it("'List#map'", (next) => {
-      // list = [1,2,3,4]
-      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-      expect(
-        List.toArray(List.map(theList)(function (item){
-          return item * 2;
-        }))
-      ).to.eql(
-        [2,4,6,8]
-      );
-      next();
-    });
-    it("'List#unit'", (next) => {
-      // list = [1]
-      expect(
-        List.toArray(List.unit(1))
-      ).to.eql(
-        [1]
-      );
-      expect(
-        List.toArray(List.unit(null))
-      ).to.eql(
-        [null]
-      );
-      next();
-    });
-    describe("List#flatMap", () => {
-      it("条件でフィルターする", (next) => {
-        var list1 = List.cons(1, List.cons(2,
-                                           List.empty()));
-        var list2 = List.cons(1, List.cons(2,
-                                           List.empty()));
-        expect(
-          List.toArray(List.flatMap(list1)((item1) => {
-            return List.flatMap(list2)((item2) => {
-              if(item1 + item2 === 3) {
-                return List.unit([item1, item2]);
-              } else {
-                return List.empty();
-              }
-            });
-          }))
-        ).to.eql(
-          [[1,2],[2,1]]
-        );
-        next();
-      });
-      it("'List#flatMap'", (next) => {
-        // list = [1]
-        var theList = List.cons(1, List.empty());
-        expect(
-          List.toArray(List.flatMap(theList)((item) => {
-            return List.unit(item * 2); 
-          }))
-        ).to.eql(
-          [2]
-        );
-        var emptyList = List.empty();
-        expect(
-          List.toArray(List.flatMap(emptyList)((item) => {
-            return List.unit(item * 2); 
-          }))
-        ).to.eql(
-          []
-        );
-        next();
-      });
-      it("'List#flatMap'", (next) => {
-        // list = [1,2,3]
-        var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
-        expect(
-          List.toArray(List.flatMap(theList)((item) => {
-            return List.append(List.unit(item))(List.unit(- item));
-          }))
-        ).to.eql(
-          [1,-1,2,-2,3,-3]
-        );
-        next();
-      });
-      it("フィルターとして使う", (next) => {
-        var even = (n) => {
-          if(n % 2 === 0) {
-            return true;
-          } else {
-            return false;
-          }
-        };
-        var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()))));
-        expect(
-          List.toArray(List.flatMap(theList)((item) => {
-            if(even(item)) {
-              return List.unit(item);
-            } else {
-              return List.empty();
-            }
-          }))
-        ).to.eql(
-          [2,4]
-        );
-        next();
-      });
-      it("2段階のflatMap", (next) => {
-        var theNumberList = List.cons(1,List.cons(2,List.empty()));
-        var theStringList = List.cons("one",List.cons("two",List.empty()));
-        expect(
-          List.toArray(List.flatMap(theNumberList)((n) => {
-            return List.flatMap(theStringList)((s) => {
-              return List.unit([n,s]);
-            });
-          }))
-        ).to.eql(
-          [[1,"one"],[1,"two"],[2,"one"],[2,"two"]]
-        );
-        next();
-      });
-    });
-  });
 });
 
 // ## Streamモナド
 var Stream = {
   match: (data, pattern) => {
      return data.call(Stream,pattern);
+  },
+  // ### Stream#unit
+  /* unit:: ANY -> STREAM */
+  unit: (value) => {
+    if(value != null){
+      return Stream.cons(value, (_) => {
+        return Stream.empty();
+      });
+    } else {
+      return Stream.empty();
+    }
   },
   empty: (_) => {
     return (pattern) => {
@@ -880,17 +781,6 @@ var Stream = {
       }
     });
   },
-  // ### Stream#unit
-  /* unit:: ANY -> STREAM */
-  unit: (value) => {
-    if(value != null){
-      return Stream.cons(value, (_) => {
-        return Stream.empty();
-      });
-    } else {
-      return Stream.empty();
-    }
-  },
   // ### Stream#map
   map: (lazyList) => {
     return (transform) => {
@@ -947,13 +837,29 @@ var Stream = {
     });
   },
   // ### Stream#flatMap
+  // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
   // ~~~haskell
   // flatMap xs f = flatten (map f xs)
   //~~~
-  // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
   flatMap: (lazyList) => {
     return (transform) => {
       return Stream.flatten(Stream.map(lazyList)(transform));
+    };
+  },
+  // ### monad.stream#foldr
+  foldr: (instanceM) => {
+    return (accumulator) => {
+      return (glue) => {
+        expect(glue).to.a('function');
+        return Stream.match(instanceM,{
+          empty: (_) => {
+            return accumulator;
+          },
+          cons: (head,tailThunk) => {
+            return glue(head)(Stream.foldr(tailThunk())(accumulator)(glue));
+          }
+        });
+      };
     };
   }
 };
@@ -1269,6 +1175,15 @@ describe('Streamモナドのテスト', () => {
   });
 }); // Streamモナド
 
+// ## Readerモナド
+// ~~~haskell
+// newtype Reader e a = Reader { runReader :: e -> a }
+//
+// instance Monad (Reader r) where
+//     return a = Reader $ \_ -> a
+//     m >>= f  = Reader $ \r -> runReader (f (runReader m r)) r
+// ~~~
+
 var Reader = {
   unit: (x) => {
     return (_) => {
@@ -1528,6 +1443,7 @@ describe("Maybeと一緒に使う", () => {
   /* #@range_end(list_maybe) */
 });
 
+// ## Variantモナド
 var Variant = {
   unit: (value, key) => {
     return (pattern) => {
@@ -1595,3 +1511,166 @@ var Variant = {
 //     next();
 //   });
 // });
+
+// ## Stateモナド
+// Stateモナドとは、状態付き計算を包んだモナドである。
+// 
+// ~~~haskell
+// instance Monad (State s) where                        
+//   return x = State $ \s -> (x, s)
+//   (State h) >>= f = State $ \s -> let (a, newState) = h s
+//     (State g) = f a 
+//       in g newState  
+// ~~~
+var State = {
+  // ### State#unit
+  //
+  // unit :: a -> State s a
+  // unit x s = (x,s)
+  // ~~~scheme
+  //   (unitM (x)   (lambda (s) (values x s)))
+  //   (define (unit value)
+  //      (lambda ()
+  //         value)
+  // ~~~
+  unit: (value) => { 
+    return (state) => { // run::STATE => PAIR[VALUE, STATE]
+      return pair.cons(value,state);
+    };
+  },
+  // ### State#evalState
+  /* run:: State[A] => A */
+  // ~~~haskell
+  evalState: (instanceM) => {
+    return (state) => {
+      return pair.match(instanceM(state),{
+        cons:(value, state) => {
+          return value;
+        }
+      });
+    };
+  },
+  // ### State#runState
+  /* runState:: State[A] => A */
+  // ~~~haskell
+  runState: (instanceM) => {
+    return (state) => {
+      return instanceM(state); // Stateモナドのインスタンス(アクション)を現在の状態に適用する
+    };
+  },
+  // ### State#flatMap
+  // flatMap:: State[T,S] => FUNC[S => STATE[T,U]] => STATE[T,U]
+  // ~~~haskell
+  //   (State h) >>= f = State $ \s -> let (a, newState) = h s
+  //                                       (State g) = f a
+  //                                   in g newState
+  // ~~~
+  // ~~~haskell
+  // newtype State s a = State { runState :: s -> (a, s) }
+  //
+  // instance Monad (State s) where
+  //     return a = State $ \s -> (a, s)
+  //     m >>= k  = State $ \s -> let
+  //             (a, s') = runState m s
+  //             in runState (k a) s'
+  // ~~~
+  flatMap: (h) => {
+    expect(h).to.a('function');
+    return (transform) => { // transform:: S => STATE[T,U]
+      return (state) => {
+        expect(transform).to.a('function');
+        return pair.match(State.runState(h)(state),{
+          cons:(value, newstate) => {
+            return State.runState(transform(value))(newstate);
+          }
+        });
+      };
+    };
+  },
+  // ### monad.state#mkState
+  // ~~~haskell
+  // mkState :: (s -> (a,s)) -> State s a
+  // mkState f = do {
+  //             s <- get;
+  //             let (a, s') = f s;
+  //             put s';
+  //             return a
+  //           }
+  // ~~~
+  mkState: (f) => {  // f :: (s -> (a,s)) 
+    return State.flatMap(f);
+  },
+  // get :: State s s
+  // get s = (s,s)
+  // ~~~
+  // ~~~scala
+  // def get[S]: State[S,S] = State(s => (s,s))
+  // ~~~
+  get: (state) => {
+    return pair.cons(state,state);
+  },
+  //
+  // put :: s -> State s ()
+  // put x s = ((),x)
+  put: (value) => {
+    return () => {
+      return  null;
+    };
+  }
+};
+
+// ### Stateモナドのテスト
+describe("Stateモナドをテストする",() => {
+  describe("スタックの例",() => {
+    var Stack = {
+      pop: (alist) => {
+        return List.match(alist, {
+          cons:(head, tail) => {
+            return pair.cons(head, tail);
+          }
+        });
+      },
+      push: (n) => {
+        return (alist) => {
+          return List.match(alist, {
+            cons:(head, tail) => {
+              return pair.cons(null, List.cons(n,tail));
+            }
+          });
+        };
+      }
+    };
+    // it("スタッフの操作",(next) => {
+    //   var stackManipulation = (stack) => {
+    //     return State.flatMap(stack)(Stack.push(3));
+    //   };
+    //   // var stackManipulation = (stack) => {
+    //   //   return State.flatMap(State.flatMap(stack)(Stack.push(3)))((_) => {
+    //   //     return Stack.pop(3);
+    //   //   });
+    //   // };
+    //   expect(
+    //     State.evalState(stackManipulation(List.cons(1,List.cons(2,List.empty()))))
+    //   ).to.eql(
+    //     [0]
+    //   );
+    //   next();
+    // });
+  });
+});
+
+// ## STモナド
+
+// ## Contモナド
+// ~~~haskell
+// newtype Cont r a = Cont { runCont :: ((a -> r) -> r) } -- r は計算全体の最終の型
+//
+// instance Monad (Cont r) where 
+//     return a       = Cont $ \k -> k a                       -- i.e. return a = \k -> k a 
+//     (Cont c) >>= f = Cont $ \k -> c (\a -> runCont (f a) k) -- i.e. c >>= f = \k -> c (\a -> f a k) 
+// class (Monad m) => MonadCont m where 
+//     callCC :: ((a -> m b) -> m a) -> m a 
+//
+// instance MonadCont (Cont r) where 
+//     callCC f = Cont $ \k -> runCont (f (\a -> Cont $ \_ -> k a)) k
+// ~~~

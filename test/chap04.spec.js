@@ -140,8 +140,8 @@ describe('合成型', () => {
         /* #@range_begin(object_instance_example) */
         var addressbook = {
           No1: "Alan Turing",
-          No2: "Jane Austen",
-          No3: "Fyodor Dostoyevsky",
+          No2: "Haskell Curry",
+          No3: "Alonzo Church",
           No4: "Ada Lovelace"
         };
         /* #@range_end(object_instance_example) */
@@ -156,14 +156,14 @@ describe('合成型', () => {
             birthDay: "1912/6/23"
           },
           No2: {
-            name: "Jane Austen",
-            gender: "female",
-            birthDay: "1775/12/16"
+            name: "Haskell Curry",
+            gender: "male",
+            birthDay: "1900/9/12"
           },
           No3: {
-            name: "Fyodor Dostoyevsky",
+            name: "Alonzo Church",
             gender: "male",
-            birthDay: "1821/11/11"
+            birthDay: "1903/6/14"
           },
           No4: {
             name: "Ada Lovelace",
@@ -276,7 +276,7 @@ describe('合成型', () => {
       /* #@range_begin(array_access) */
       var array = [10,11,12];
       expect(
-        array[0]
+        array[0] // 配列は0から始まるインデックスを持つ
       ).to.eql(
         10
       );
@@ -286,7 +286,7 @@ describe('合成型', () => {
         12
       );
       expect(
-        array[100]
+        array[100] // 存在しない要素にアクセスする
       ).to.eql(
         undefined
       );
@@ -330,14 +330,14 @@ describe('合成型', () => {
           birthDay: "1912/6/23"
         },
         {
-          name: "Jane Austen",
-          gender: "female",
-          birthDay: "1775/12/16"
+          name: "Haskell Curry",
+          gender: "male",
+          birthDay: "1900/9/12"
         },
         {
-          name: "Fyodor Dostoyevsky",
+          name: "Alonzo Church",
           gender: "male",
-          birthDay: "1821/11/11"
+          birthDay: "1903/6/14"
         },
         {
           name: "Ada Lovelace",
@@ -364,14 +364,14 @@ describe('合成型', () => {
             birthDay: "1912/6/23"
           },
           {
-            name: "Fyodor Dostoyevsky",
+            name: "Alonzo Church",
             gender: "male",
-            birthDay: "1821/11/11"
+            birthDay: "1903/6/14"
           },
           {
-            name: "Jane Austen",
-            gender: "female",
-            birthDay: "1775/12/16"
+            name: "Haskell Curry",
+            gender: "male",
+            birthDay: "1900/9/12"
           }
         ]
       );
@@ -388,18 +388,18 @@ describe('合成型', () => {
       };
       expect(
         func.length
-      ).to.be(
+      ).to.eql(
         1
       );
       expect(
         func.hasOwnProperty('name')
-      ).to.be(
+      ).to.eql(
         true
       );
       /* #@range_end(function_is_object_type) */
       next();
     });
-    it('引数のない関数', (next) => {
+    it('引数のない関数の適用', (next) => {
       /* #@range_begin(function_without_argument) */
       var three = () => {
         return 3;
@@ -412,6 +412,19 @@ describe('合成型', () => {
       /* #@range_end(function_without_argument) */
       next();
     });
+    // it('関数の適用', (next) => {
+    //   /* #@range_begin(function_application) */
+    //   var func = (any) => {
+    //     return any;
+    //   };
+    //   /* #@range_end(function_application) */
+    //   expect(
+    //     func(1)
+    //   ).to.eql(
+    //     1
+    //   );
+    //   next();
+    // });
     it('関数と変数の類似性', (next) => {
       /* #@range_begin(function_resembles_variable) */
       var three = 3;
@@ -609,18 +622,18 @@ describe('合成型', () => {
         }, []);
       };
       var array = [1,2,3,4,5];
+      expect(((_) => {
+        var reversed = reverse(array);
+        return array; // 逆転前の配列を返す
+      })()).to.eql(
+        [1,2,3,4,5]   // 逆転前の配列と同じ
+      );
+      /* #@range_end(immutable_reverse) */
       expect(
         reverse(array)
       ).to.eql(
         [5,4,3,2,1]
       );
-      expect(((_) => {
-        var reversed = reverse(array);
-        return array;
-      })()).to.eql(
-        [1,2,3,4,5] // 元の配列と同じ
-      );
-      /* #@range_end(immutable_reverse) */
       /* #@range_begin(immutable_reverse_is_not_immutable) */
       var reversed = reverse(array);
       reversed[0] = 0;

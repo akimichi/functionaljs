@@ -197,6 +197,7 @@ describe('合成型', () => {
         ).to.eql(
           "Alan Turing"
         );
+        /* #@range_end(object_access) */
         expect(
           addressbook.hasOwnProperty("No1")
         ).to.eql(
@@ -207,7 +208,6 @@ describe('合成型', () => {
         ).to.eql(
           false
         );
-        /* #@range_end(object_access) */
         next();
       });
       it('オブジェクト型によるアドレス帳の表現', (next) => {
@@ -391,12 +391,12 @@ describe('合成型', () => {
       ).to.eql(
         1
       );
+      /* #@range_end(function_is_object_type) */
       expect(
         func.hasOwnProperty('name')
       ).to.eql(
         true
       );
-      /* #@range_end(function_is_object_type) */
       next();
     });
     it('引数のない関数の適用', (next) => {
@@ -608,8 +608,8 @@ describe('合成型', () => {
       );
       expect(
         array
-      ).to.eql(
-        [5,4,3,2,1] // array変数の中身が変更されている
+      ).not.to.eql(
+        [1,2,3,4,5]  // array変数の中身が[5,4,3,2,1]に変更されている
       );
       /* #@range_end(destructive_reverse) */
       next();
@@ -651,15 +651,15 @@ describe('合成型', () => {
 describe('変数とデータの関係', () => {
   it('変数のバインディング', (next) => {
     /* #@range_begin(variable_binding_value) */
-    var bound = "バインドされた値";
+    var bound = "我思うゆえに我あり";
     expect(
       bound
     ).to.be(
-      "バインドされた値"
+      "我思うゆえに我あり"
     );
     expect(
       (_) => { // 例外をキャッチするにはexpectに関数を渡します
-        unbound // ここで自由変数にアクセスします
+        unbound // 変数unboundは自由変数です
       }
     ).to.throwException((exception)=> {
       expect(exception).to.be.a(
@@ -672,13 +672,13 @@ describe('変数とデータの関係', () => {
   describe('スコープ', () => {
     it('関数はスコープを分ける', (next) => {
       /* #@range_begin(function_creates_scope) */
-      var createScope = (_) =>  {
+      var createScope = (_) =>  { // 局所スコープを作る
         var innerScope = "inner"; 
         return innerScope; // innerScope変数は createScopeの中でのみ有効
       };
       expect(
         (_) => {
-          innerScope // 関数内の局所スコープにある変数にアクセスを試みます
+          innerScope // 局所スコープにある変数innerScopeにアクセスを試みます
         }
       ).to.throwException((e)=> {
         expect(e).to.be.a(
@@ -757,8 +757,8 @@ describe('変数とデータの関係', () => {
     // ![変数バインディングと環境](images/environment.gif) 
     it('関数本体でのバインド変数', (next) => {
       /* #@range_begin(bound_variable_in_function) */
-      var add = (x,y) => {
-        return x + y; // x も y もバインド変数
+      var add = (x,y) => { // xとyは引数
+        return x + y; // それゆえに、xもyもバインド変数
       };
       /* #@range_end(bound_variable_in_function) */
       expect(
@@ -777,14 +777,14 @@ describe('変数とデータの関係', () => {
     });
     it('関数本体での自由変数', (next) => {
       /* #@range_begin(free_variable_in_function) */
-      var add = (x) => {
-        return x + y;  // x はバインド変数だが、y は自由変数
+      var addWithFreeVariable = (x) => {
+        return x + y;  // xはバインド変数だが、yは自由変数
       };
       /* #@range_end(free_variable_in_function) */
       /* #@range_begin(free_variable_in_function_test) */
       expect(
         (_) => {
-          add(1,2)
+          return addWithFreeVariable(1);
         }
       ).to.throwException((exception)=> {
         expect(exception).to.be.a(
@@ -797,10 +797,10 @@ describe('変数とデータの関係', () => {
     it('クロージャーの変数バインディング', (next) => {
       /* #@range_begin(binding_in_closure) */
       var adder = (y) => { // 外側の関数
-        var add = (x) => { // 内側の関数
-          return x + y;
+        var addWithFreeVariable = (x) => { // 内側の関数
+          return x + y; // 変数yはadder関数の引数yを参照できます
         };
-        return add;
+        return addWithFreeVariable;
       };
       /* #@range_end(binding_in_closure) */
       /* #@range_begin(binding_in_closure_test) */
@@ -950,7 +950,7 @@ describe('参照透過性の仕組み', () => {
       var s = "hello";
       expect(
         s
-      ).to.be(
+      ).to.eql(
         "hello"
       );
       /* #@range_end(basic_type_is_value_type) */
@@ -969,31 +969,31 @@ describe('参照透過性の仕組み', () => {
   });
   // ### 可変なデータの仕組み 
   describe('可変なデータの仕組み', () => {
-    it('合成型は参照である', (next) => {
-      /* #@range_begin(complex_type_is_reference) */
-      var array = [0,1,2,3];
-      expect(
-        array
-      ).not.to.be(
-        [0,1,2,3]
-      );
-      var object = { key: 1 };
-      expect(
-        object
-      ).not.to.be(
-        {
-          key: 1
-        }
-      );
-      var func = (_) => { return 1; };
-      expect(
-        func
-      ).not.to.be(
-        ((_) => { return 1; })
-      );
-      /* #@range_end(complex_type_is_reference) */
-      next();
-    });
+    // it('合成型は参照である', (next) => {
+    //   /* #@range_begin(complex_type_is_reference) */
+    //   var array = [0,1,2,3];
+    //   expect(
+    //     array
+    //   ).not.to.eql(
+    //     [0,1,2,3]
+    //   );
+    //   var object = { key: 1 };
+    //   expect(
+    //     object
+    //   ).not.to.eql(
+    //     {
+    //       key: 1
+    //     }
+    //   );
+    //   var func = (_) => { return 1; };
+    //   expect(
+    //     func
+    //   ).not.to.eql(
+    //     ((_) => { return 1; })
+    //   );
+    //   /* #@range_end(complex_type_is_reference) */
+    //   next();
+    // });
   });
   // ### 代入の仕組みと効果
   describe('代入の仕組みと効果', () => {

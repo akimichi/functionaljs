@@ -2230,7 +2230,7 @@ describe('関数型プログラミングの利点', () => {
     describe('ストリーム', () => {
       it('簡単なストリームの例', (next) => {
         /* #@range_begin(stream_example) */
-        var stream = [1, (_) => { // 末尾部分は無名関数で表現する
+        var stream = [1, (_) => { // 後尾は無名関数で表現する
           return 2;
         }];
         /* #@range_end(stream_example) */

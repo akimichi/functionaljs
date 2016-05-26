@@ -589,9 +589,9 @@ describe('条件分岐としてのswitch文', () => {
     /* #@range_end(currency) */
     next();
   });
-  it("compare", (next) => {
+  it("ネストされたif文で3つ以上の条件分岐を表現する", (next) => {
     /* #@range_begin(compare) */
-    var compare =  function(n,m){
+    var compare =  (n,m) => {
       if (n > m) {
         return 1;
       } else {
@@ -622,6 +622,39 @@ describe('条件分岐としてのswitch文', () => {
         -1
     );
     /* #@range_end(compare) */
+    next();
+  });
+  it("elseif文で3つ以上の条件分岐を表現する", (next) => {
+    /* #@range_begin(elseif) */
+    var compare =  (n,m) => {
+      if (n > m) {
+        return 1;
+      } else if (n === m) { // elseにif文を続ける
+        return 0;
+      } else  {
+        return -1;
+      }
+    };
+    /* #@range_end(elseif) */
+    /* テスト */
+    /* 3 は 2 よりも大きい */
+    expect(
+      compare(3,2)
+    ).to.eql(
+      1
+    );
+    /* 1 と 1 は等しい */
+    expect(
+      compare(1,1)
+    ).to.eql(
+      0
+    );
+    /* 2 は 3 よりも小さい */
+    expect(
+      compare(2,3)
+    ).to.eql(
+        -1
+    );
     next();
   });
   describe('コンビネータライブラリー', () => {
@@ -1040,28 +1073,24 @@ describe('代数的データ型', () => {
     };
     /* #@range_end(list_function_using_algebraic_datatype) */
     /* #@range_begin(list_in_algebraic_datatype_test) */
-    /* empty は空のリストではある */
     expect(
-      isEmpty(empty())         
+      isEmpty(empty())                    /* empty は空のリストか */
     ).to.eql(
       true
     );
-    /* [1] は空のリストではない */
     expect(
-      isEmpty(cons(1,empty())) 
+      isEmpty(cons(1,empty()))            /* [1] は空のリストか */
     ).to.eql(
       false
     );
-    /* [1]の先頭要素は 1 である */
     expect(
-      head(cons(1,empty()))    
-    ).to.be(
+      head(cons(1,empty()))               /* [1]の先頭要素は 1 である */
+    ).to.eql(
       1
     );
-    /* [1,2]の2番目の要素は2である */
     expect(
-      head(tail(cons(1,cons(2,empty())))) 
-    ).to.be(
+      head(tail(cons(1,cons(2,empty())))) /* [1,2]の2番目の要素は2である */
+    ).to.eql(
       2
     );
     /* #@range_end(list_in_algebraic_datatype_test) */

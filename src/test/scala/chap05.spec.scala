@@ -31,9 +31,11 @@ class Chap05Spec extends FunSpec with ShouldMatchers {
       def toS(currency:Currency):String = 
         // 通貨の型でマッチさせる
         currency match { 
+          // Yenにマッチする場合
           case Yen(amount) => { // 変数amountには日本円の値が入る
             "%s yen".format(amount) 
           }
+          // Dollarにマッチする場合
           case Dollar(amount) => { // 変数amountにはドルの値が入る
             "%s dollar".format(amount)  
           }

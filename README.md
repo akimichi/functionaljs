@@ -201,6 +201,7 @@ $ gulp scala-test
 haskellのコードをテストする
 
 ~~~
+$ stack build
 $ stack test
 ~~~
 

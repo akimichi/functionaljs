@@ -44,7 +44,9 @@ gulp.task('haskell-test', function (cb) {
   exec('stack test', function (err, stdout, stderr) {
     console.log(stdout);
     // console.log(stderr);
-    cb(err);
+    exec('stack test', function (err, stdout, stderr) {
+      cb(err);
+    });
   });
 });
 // Watch Files For Changes

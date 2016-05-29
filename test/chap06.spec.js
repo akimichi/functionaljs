@@ -160,12 +160,15 @@ describe('関数の基本', () => {
       };
       /* #@range_end(succ_function_definition) */
       /* テスト */
-      /* #@range_begin(succ_function_test) */
       expect(
         succ(0)  // 0 を引数にsucc関数を適用する
       ).to.eql(
         1
       );
+      /* #@range_begin(succ_function_test) */
+      var succ = (n) => {
+        return n + 1;
+      };
       expect(
         succ(1)  // 1 を引数にsucc関数を適用する
       ).to.eql(
@@ -234,19 +237,15 @@ describe('関数の基本', () => {
         var left = (x,y) => {
           return x;
         };
-        expect(
-          left(1, 2)
-        ).to.eql(
-          1
-        );
         var infiniteLoop = (_) => {
           return infiniteLoop(_);
         };
-
         /* このテストは無限ループになるのでコメントアウトしています
          expect(
-         left(1, infiniteLoop())
-         ).to.be.ok()
+           left(1, infiniteLoop())
+         ).to.eql(
+           1
+         )
          */
         /* #@range_end(strict_evaluation_in_javascript) */
         next();
@@ -274,26 +273,29 @@ describe('関数の基本', () => {
         next();
       });
       it('乗算の遅延評価', (next) => {
+        var infiniteLoop = () => {
+          return infiniteLoop();
+        };
         /* #@range_begin(multiply_lazy_evaluation) */
-        var multiply = (x,y) => {
-          /* x()が0の場合は、yは評価しない */
-          if(x() === 0){
-            return 0;
+        var lazyMultiply = (funX,funY) => {
+          if(funX() === 0){
+            return 0;         // funX()が0ならば、funYは評価しない
           } else {
-            return x() * y();
+            return funX() * funY(); // ここで初めてfunYを評価する
           }
         };
+        /* #@range_end(multiply_lazy_evaluation) */
+        /* #@range_begin(multiply_lazy_evaluation_test) */
         expect(
-          /* 引数の値を関数でラッピングする */
-          multiply((_) => {
+          lazyMultiply((_) => { // 引数の値を関数でラッピングする
             return 0;
           }, (_) => {
-            return 3;
+            return infiniteLoop(); // ここが評価されると無限ループに陥いる
           })
         ).to.eql(
           0
         );
-        /* #@range_end(multiply_lazy_evaluation) */
+        /* #@range_end(multiply_lazy_evaluation_test) */
         next();
       });
     });
@@ -361,6 +363,9 @@ describe('関数の基本', () => {
     describe('thunkによるStream型', () => {
       /* #@range_begin(stream_with_thunk) */
       var stream = {
+        match: (data, pattern) => {
+          return data(pattern);
+        },
         empty: (_) => {
           return (pattern) => {
             return pattern.empty();
@@ -374,7 +379,7 @@ describe('関数の基本', () => {
         /* head:: STREAM[T] => T */
         /* ストリーム型headの定義は、リスト型headと同じ */
         head: (astream) => {
-          return match(astream,{
+          return stream.match(astream,{
             empty: (_) => { return null; },
             cons: (value, tailThunk) => { return value; }
           });
@@ -384,8 +389,7 @@ describe('関数の基本', () => {
           return match(astream,{
             empty: (_) => { return null; },
             cons: (head, tailThunk) => {
-              /* ここで初めてサンクを評価する */
-              return tailThunk();
+              return tailThunk(); // ここで初めてサンクを評価する
             }
           });
         },
@@ -398,8 +402,7 @@ describe('関数の基本', () => {
               if(n === 0) {
                 return list.empty();
               } else {
-                /* take関数の再帰呼び出しのなかで、
-                   サンクを評価する */
+                /* take関数の再帰呼び出しのなかで、サンクを評価する */
                 return list.cons(head,
                                  stream.take(tailThunk(),n-1));
               }
@@ -563,21 +566,21 @@ describe('関数の基本', () => {
             },
             /* #@range_begin(list_toArray) */
             toArray: (alist) => {
-              var toArrayAux = (alist,accumulator) => {
+              var toArrayHelper = (alist,accumulator) => {
                 return match(alist, {
                   empty: (_) => {
                     return accumulator;
                   },
                   cons: (head, tail) => {
-                    return toArrayAux(tail,
-                                      accumulator.concat(head));
+                    return toArrayHelper(tail,
+                                         accumulator.concat(head));
                   }
                 });
               };
-              return toArrayAux(alist, []);
+              return toArrayHelper(alist, []);
             }
+            /* #@range_end(list_toArray) */
           };
-          /* #@range_end(list_toArray) */
           var stream = {
             empty: (_) => {
               return (pattern) => {
@@ -1238,15 +1241,15 @@ describe('関数と参照透過性', () => {
       /* #@range_begin(tap_combinator_test_in_fileio) */
       /* あらかじめ文字列をファイルに書きこんでおく */
       fs.writeFileSync('test/resources/file.txt', "This is a test.");
-
       /* ファイルからの読込という副作用を実行する */
-      var fileioSideEffect = (n) => {
+      var fileioSideEffect = (_) => {
         var content = fs.readFileSync("test/resources/file.txt",
                                       'utf8');
         fs.writeFileSync('test/resources/file.txt',
                          "This is another test.");
         return content;
       };
+
       expect(
         tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
             fileioSideEffect)

@@ -170,7 +170,7 @@ describe('関数の基本', () => {
         return n + 1;
       };
       expect(
-        succ(1)  // 1 を引数にsucc関数を適用する
+        succ(1)  // 1 を引数としてsucc関数を適用する
       ).to.eql(
         2
       );
@@ -179,6 +179,7 @@ describe('関数の基本', () => {
     });
     it('複数の引数を持つ関数', (next) => {
       /* #@range_begin(add_function_definition) */
+      // add:: (NUM, NUM) => NUM
       var add = (n, m) => {
         return n + m;
       };
@@ -267,7 +268,7 @@ describe('関数の基本', () => {
         expect(
           conditional(1)
         ).to.eql(
-          true
+          true // 無限ループに陥いることなく計算に成功する
         );
         /* #@range_end(conditional_is_nonstrict) */
         next();
@@ -287,7 +288,7 @@ describe('関数の基本', () => {
         /* #@range_end(multiply_lazy_evaluation) */
         /* #@range_begin(multiply_lazy_evaluation_test) */
         expect(
-          lazyMultiply((_) => { // 引数の値を関数でラッピングする
+          lazyMultiply((_) => { // 値を関数でラッピングする
             return 0;
           }, (_) => {
             return infiniteLoop(); // ここが評価されると無限ループに陥いる
@@ -392,34 +393,18 @@ describe('関数の基本', () => {
               return tailThunk(); // ここで初めてサンクを評価する
             }
           });
-        },
-        take: (astream, n) => {
-          return match(astream,{
-            empty: (_) => {
-              return list.empty();
-            },
-            cons: (head,tailThunk) => {
-              if(n === 0) {
-                return list.empty();
-              } else {
-                /* take関数の再帰呼び出しのなかで、サンクを評価する */
-                return list.cons(head,
-                                 stream.take(tailThunk(),n-1));
-              }
-            }
-          });
         }
       };
       /* #@range_end(stream_with_thunk) */
       it("stream#cons", (next) => {
         /* #@range_begin(stream_with_thunk_test) */
-        var theStream = stream.cons(1, (_) => {
-          return stream.cons(2,(_) => {
+        var theStream = stream.cons(1, (_) => { // 第2引数にサンクを渡す
+          return stream.cons(2,(_) => {     // 第2引数にサンクを渡す
             return stream.empty();
           });
         });
         expect(
-          stream.head(theStream)
+          stream.head(theStream)  // ストリームの先頭要素を取り出す
         ).to.eql(
           1
         );
@@ -471,7 +456,7 @@ describe('関数の基本', () => {
           }
         };
         /* #@range_begin(infinite_ones) */
-        /* ones = [1,1,1,1,...] */
+        /* ones = 1,1,1,1,... */
         var ones = stream.cons(1, (_) => {
           return ones; // onesを再帰的に呼び出す
         });
@@ -610,14 +595,14 @@ describe('関数の基本', () => {
             /* take:: (STREAM[T], NUM) => LIST[T] */
             take: (astream, n) => {
               return match(astream,{
-                empty: (_) => {
+                empty: (_) => {              // ストリームが空のケース
                   return list.empty();
                 },
-                cons: (head,tailThunk) => {
+                cons: (head,tailThunk) => {  // ストリームが空でないケース 
                   if(n === 0) {
                     return list.empty();
                   } else {
-                    return list.cons(head,
+                    return list.cons(head,   // リストを生成する
                                      stream.take(tailThunk(),(n -1)));
                   }
                 }

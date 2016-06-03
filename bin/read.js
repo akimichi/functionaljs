@@ -5,8 +5,8 @@ var fs = require('fs');
 var fstream = fs.createReadStream('/var/log/syslog', {encoding: 'utf-8'});
 
 // データが入ってきたときに実行される
-fstream.on('data', (data) =>  {
-  console.log(data);
+fstream.on('data', (chunk) =>  { // chunkには読み込まれたデータの一部が入る
+  console.log(chunk);
 });
 // それ以上読みこむデータがないときに実行される
 fstream.on('end', () => {

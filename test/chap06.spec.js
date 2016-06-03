@@ -387,7 +387,7 @@ describe('関数の基本', () => {
         },
         /* tail:: STREAM[T] => STREAM[T] */
         tail: (astream) => {
-          return match(astream,{
+          return stream.match(astream,{
             empty: (_) => { return null; },
             cons: (head, tailThunk) => {
               return tailThunk(); // ここで初めてサンクを評価する

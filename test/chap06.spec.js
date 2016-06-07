@@ -1133,6 +1133,128 @@ describe('関数と参照透過性', () => {
   });
   // ### 副作用への対処
   describe('副作用への対処', () => {
+    describe('ストリームによる入出力', () => {
+      var stream = {
+        match: (data, pattern) => {
+          return data(pattern);
+        },
+        empty: (_) => {
+          return (pattern) => {
+            return pattern.empty();
+          };
+        },
+        cons: (headThunk,tailThunk) => {
+          return (pattern) => {
+            return pattern.cons(headThunk,tailThunk);
+          };
+        },
+        head: (astream) => {
+          return stream.match(astream,{
+            empty: (_) => { return null; },
+            cons: (headThunk, tailThunk) => { return headThunk(); }
+          });
+        },
+        tail: (astream) => {
+          return stream.match(astream,{
+            empty: (_) => { return null; },
+            cons: (head, tailThunk) => {
+              return tailThunk(); // ここで初めてサンクを評価する
+            }
+          });
+        },
+        foldr: (astream) => {
+          return (accumulator) => {
+            return (callback) => {
+              return stream.match(astream,{
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (headThunk, tailThunk) => {
+                  return callback(headThunk())(stream.foldr(tailThunk())(accumulator)(callback));
+                }
+              });
+            };
+          };
+        } 
+      };
+      var Req =  {
+        match: (data, pattern) => {
+          return data(pattern);
+        },
+        readFile: (path) => {
+          return (pattern) => {
+            return pattern.readFile(path);
+          };
+        },
+        writeFile: (path, content) => {
+          return (pattern) => {
+            return pattern.writeFile(path, content);
+          };
+        },
+        writeConsole: (content) => {
+          return (pattern) => {
+            return pattern.writeConsole(content);
+          };
+        }
+      };
+      var Res = {
+        match: (data, pattern) => {
+          return data(pattern);
+        },
+        done: (_) => {
+          return (pattern) => {
+            return pattern.done(_);
+          };
+        },
+        success: (content) => {
+          return content;
+          // return (pattern) => {
+          //   return pattern.successRead(content);
+          // };
+        }
+      };
+      var io = {
+        executeRequest: (req) => {
+          var fs = require('fs');
+          return stream.match(req, {
+            readFile: (path) => {
+              return Res.success(fs.readFileSync(path, 'utf8'));
+            },
+            writeConsole: (content) => {
+              console.log(content);
+              return Res.success(undefined);
+            }
+          });
+        },
+        // executeMain:: FUN[STREAM[Res] => STREAM[Req]] => IO()
+        executeMain: (main) => {
+          return stream.foldr(main)(stream.empty())((response) => {
+            return (accumulator) => {
+              return stream.cons((_) => {
+                return response;
+              }, (_) => {
+                return accumulator;
+              });
+            }; 
+          }); 
+        }
+      };
+      var cat  = (path) => {
+        return (responses) => {
+          return stream.cons((_) => { return Req.readFile(path); }, (_) => {
+            return stream.cons((_) => {Req.writeConsole("test");}, (_) => {
+              // return cat(path)(stream.tail(responses));
+              return cat(path)(stream.tail(stream.tail(responses)));
+            });
+          });
+        };
+      };
+      // expect(
+      //   io.executeMain(cat("/var/log/syslog"))
+      // ).to.eql(
+      //   1
+      // );
+    });
     it('kestrelコンビネーター', (next) => {
       /* #@range_begin(kestrel_combinator) */
       var kestrel = (x) => {
@@ -1226,8 +1348,9 @@ describe('関数と参照透過性', () => {
       /* #@range_begin(tap_combinator_test_in_fileio) */
       /* あらかじめ文字列をファイルに書きこんでおく */
       fs.writeFileSync('test/resources/file.txt', "This is a test.");
+
       /* ファイルからの読込という副作用を実行する */
-      var fileioSideEffect = (_) => {
+      var IOSideEffect = (_) => {
         var content = fs.readFileSync("test/resources/file.txt",
                                       'utf8');
         fs.writeFileSync('test/resources/file.txt',
@@ -1237,10 +1360,10 @@ describe('関数と参照透過性', () => {
 
       expect(
         tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
-            fileioSideEffect)
-      ).not.to.eql( /* 両者は等しくない */
+            IOSideEffect)
+      ).not.to.eql( // 同じ引数で適用しているのに両者は等しくない
         tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
-            fileioSideEffect)
+            IOSideEffect)
       );
       /* #@range_end(tap_combinator_test_in_fileio) */
       next();

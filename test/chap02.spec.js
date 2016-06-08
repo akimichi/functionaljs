@@ -6,7 +6,7 @@
 var expect = require('expect.js');
 var util = require('util');
 
-var compose = (f,g) => {
+var compose = (f, g) => {
   return (arg) => {
     return f(g(arg));
   };
@@ -82,12 +82,12 @@ describe('関数型プログラミングの特徴', () => {
     it('関数をオブジェクトに埋めこむ', (next) => {
       /* #@range_begin(function_embedded_in_object) */
       var math = {
-        add: (n,m) => {
+        add: (n, m) => {
           return n + m;
         }
       };
       expect(
-        math.add(1,2)
+        math.add(1, 2)
       ).to.eql(
         3
       );
@@ -98,16 +98,16 @@ describe('関数型プログラミングの特徴', () => {
     describe('高階関数', () => {
       it('Array.forEachによるsumの定義', (next) => {
         /* #@range_begin(sum_forEach) */
-        var sum = (array) => {
-          var result = 0;
-          array.forEach((item) => { // forEachに関数を渡す
-            result = result + item;
-          });
-          return result;
-        };
+var sum = (array) => {
+  var result = 0;
+  array.forEach((item) => { // forEachに関数を渡す
+    result = result + item;
+  });
+  return result;
+};
         /* #@range_end(sum_forEach)  */
         expect(
-          sum([1,2,3,4])
+          sum([1, 2, 3, 4])
         ).to.eql(
           10
         );
@@ -132,25 +132,25 @@ describe('関数型プログラミングの特徴', () => {
         });
         it('reduceを定義する', (next) => {
           /* #@range_begin(reduce_definition) */
-          var reduce = (init,glue) => {
+          var reduce = (init, glue) => {
             return (array) => { // 関数が返る
-              if(array.length === 0){
+              if (array.length === 0) {
                 return init;
               } else {
                 var accumulator = glue(array[0], init);
-                var tail = array.slice(1,array.length);
-                return reduce(accumulator,glue)(tail);
+                var tail = array.slice(1, array.length);
+                return reduce(accumulator, glue)(tail);
               }
             };
           };
           /* #@range_end(reduce_definition) */
           /* #@range_begin(function_returning_function_test) */
-          var adder = (x,y) => {
+          var adder = (x, y) => {
             return x + y;
           };
-          var sum = reduce(0,adder);
+          var sum = reduce(0, adder);
           expect(
-            sum([1,2,3,4])
+            sum([1, 2, 3, 4])
           ).to.eql(
             10
           );
@@ -232,23 +232,23 @@ describe('参照透過性', () => {
         );
         /* #@range_end(square_is_transparent) */
         /* #@range_begin(multiply_definition) */
-        var multiply = (x,y) => {
+        var multiply = (x, y) => {
           return x * y;
         };
         /*  #@range_end(multiply_definition) */
         /* #@range_begin(multiply_is_transparent) */
         expect(
-          multiply(2,3)
+          multiply(2, 3)
         ).to.eql(
           6
         );
         expect(
-          multiply(2,3)
+          multiply(2, 3)
         ).to.eql(
           6
         );
         expect(
-          multiply(2,3) === multiply(2,3)
+          multiply(2, 3) === multiply(2, 3)
         ).to.eql(
           true
         );
@@ -294,11 +294,11 @@ describe('参照透過性', () => {
   describe('参照透過性を破壊するもの', () => {
     it('代入操作は参照透明性を破壊する', (next) => {
       /* #@range_begin(assignment_breaks_referential_transparency) */
-      var x = 0; //代入で変数を更新する
-      var add = (y) => {
-        x = x + 1; // 代入で変数を更新する
-        return x + y;
-      };
+var x = 0;    // 代入で変数を更新する
+var add = (y) => {
+  x = x + 1;  // 代入で変数を更新する
+  return x + y;
+};
       /* #@range_end(assignment_breaks_referential_transparency)  */
       expect(
         add(1)
@@ -369,19 +369,19 @@ describe('参照透過性', () => {
         );
         /* #@range_end(array_destroys_referential_transparency) */
         /*
-        var add = (n,m) => {
+        var add = (n, m) => {
           return n + m;
         };
         var array = [];
         array.push(1);
         expect(
-          add(array.pop(),2)
+          add(array.pop(), 2)
         ).to.eql(
           3
         );
         array.push(2);
         expect(
-          add(array.pop(),2)
+          add(array.pop(), 2)
         ).to.eql(
           4
         );
@@ -390,21 +390,21 @@ describe('参照透過性', () => {
       });
       it('配列の状態を表示する', (next) => {
         /* #@range_begin(array_destroys_referential_transparency_log) */
-        var add = (n,m) => {
+        var add = (n, m) => {
           return n + m;
         };
         var array = [];
         array.push(1);
         console.log(array); // [ 1 ]
         expect(
-          add(array.pop(),2)
+          add(array.pop(), 2)
         ).to.eql(
           3
         );
         array.push(2);
         console.log(array); // [ 2 ]
         expect(
-          add(array.pop(),2)
+          add(array.pop(), 2)
         ).to.eql(
           4
         );
@@ -447,27 +447,27 @@ describe('参照透過性', () => {
     describe('変数の参照透過性を保証する(代入の排除)', () => {
       it('命令型プログラミングによる乗算', (next) => {
         /* #@range_begin(imperative_addition) */
-        var add = (x,y) => {
-          var times = 0;          
-          var result = x;         
+var add = (x, y) => {
+  var times = 0;  
+  var result = x; 
 
-          /* while文で反復を処理する */
-          while(times < y){       
-            result = result + 1;
-            times = times + 1;    
-          };
-          return result;
-        };
+  /* while文で反復を処理する */
+  while (times < y) {       
+    result = result + 1;
+    times = times + 1;    
+  };
+  return result;
+};
         /* #@range_end(imperative_addition) */
         expect(
-          add(2,3)
+          add(2, 3)
         ).to.eql(
           5
         );
         var x = 4;
         var y = 5;
         expect(
-          add(x,y)
+          add(x, y)
         ).to.eql(
           9
         );
@@ -479,20 +479,20 @@ describe('参照透過性', () => {
         next();
       });
       it('関数型プログラミングによる乗算', (next) => {
-        /* #@range_begin(functional_addition) */
-        var add = (x,y) => {
-          if(y < 1){
-            return x;
-          } else {
-            /* 新しい引数でadd関数を再帰的に呼び出す */
-            return add(x + 1, y - 1); 
-          }
-        };
+/* #@range_begin(functional_addition) */
+var add = (x, y) => {
+  if (y < 1) {
+    return x;
+  } else {
+    /* 新しい引数でadd関数を再帰的に呼び出す */
+    return add(x + 1, y - 1); 
+  }
+};
         /* #@range_end(functional_addition) */
-        expect(add(2,1)).to.eql(3);
-        expect(add(2,2)).to.eql(4);
-        expect(add(3,2)).to.eql(5);
-        expect(add(12,5)).to.eql(17);
+        expect(add(2, 1)).to.eql(3);
+        expect(add(2, 2)).to.eql(4);
+        expect(add(3, 2)).to.eql(5);
+        expect(add(12, 5)).to.eql(17);
         next();
       });
     });
@@ -500,21 +500,21 @@ describe('参照透過性', () => {
     describe('不変なデータ', () =>  {
       it('不変なデータ型', (next) => {
         /* #@range_begin(immutable_datatype) */
-        var empty =  (_) => {
-          return null;
-        };
-        var get = (key, obj) => {
-          return obj(key);
-        };
-        var set = (key, value, obj) => {
-          return (key2) => {
-            if(key === key2) {
-              return value;
-            } else {
-              return get(key2,obj);
-            }
-          };
-        };
+var empty = (_) => {
+  return null;
+};
+var get = (key, obj) => {
+  return obj(key);
+};
+var set = (key, value, obj) => {
+  return (key2) => {
+    if (key === key2) {
+      return value;
+    } else {
+      return get(key2, obj);
+    }
+  };
+};
         /* #@range_end(immutable_datatype) */
         next();
       });
@@ -528,10 +528,10 @@ describe('参照透過性', () => {
           },
           set: (key, value, obj) => {
             return (key2) => {
-              if(key === key2) {
+              if (key === key2) {
                 return value;
               } else {
-                return object.get(key2,obj);
+                return object.get(key2, obj);
               }
             };
           }
@@ -597,33 +597,33 @@ describe('参照透過性', () => {
         var pop = (stack) => {
           return {
             value: stack[0],
-            rest: stack.slice(1,stack.length)
+            rest: stack.slice(1, stack.length)
           };
         };
         var empty = [];
         var add = (stack) => {
           var x = stack[0];
           var y = stack[1];
-          var rest = stack.slice(2,stack.length);
-          return push(x+y,rest);
+          var rest = stack.slice(2, stack.length);
+          return push(x+y, rest);
         };
         var subtract = (stack) => {
           var x = stack[0];
           var y = stack[1];
-          var rest = stack.slice(2,stack.length);
-          return push(x-y,rest);
+          var rest = stack.slice(2, stack.length);
+          return push(x-y, rest);
         };
         var multiply = (stack) => {
           var x = stack[0];
           var y = stack[1];
-          var rest = stack.slice(2,stack.length);
-          return push(x*y,rest);
+          var rest = stack.slice(2, stack.length);
+          return push(x*y, rest);
         };
         var divide = (stack) => {
           var x = stack[0];
           var y = stack[1];
-          var rest = stack.slice(2,stack.length);
-          return push(x/y,rest);
+          var rest = stack.slice(2, stack.length);
+          return push(x/y, rest);
         };
         /* #@range_end(functional_stack) */
         it('(2 + 3) * 4', function(next) {
@@ -632,7 +632,7 @@ describe('参照透過性', () => {
           var s1 = push(2, s0);
           var s2 = push(3, s1);
           var s3 = add(s2);
-          var s4 = push(2,s3);
+          var s4 = push(2, s3);
           var s5 = multiply(s4);
           expect(
             pop(s5).value
@@ -648,21 +648,21 @@ describe('参照透過性', () => {
     describe('副作用への対処', () =>  {
       it('副作用が分離されていないコード', (next) => {
         /* #@range_begin(age_sideeffect) */
-        var age = (birthYear) => {
-          /* todayは現時点の日付データ */
-          var today = new Date();
-          /* getFullYear関数は日付データにもとづいて現時点の西暦を返す */
-          var thisYear = today.getFullYear(); 
-          return thisYear - birthYear;
-        };
+var age = (birthYear) => {
+  /* todayは現時点の日付データ */
+  var today = new Date();
+  /* getFullYear関数は日付データにもとづいて現時点の西暦を返す */
+  var thisYear = today.getFullYear(); 
+  return thisYear - birthYear;
+};
         /* #@range_end(age_sideeffect) */
         next();
       });
       it('副作用が分離されているコード', (next) => {
         /* #@range_begin(age_without_sideeffect) */
-        var age = (birthYear, thisYear) => {
-          return thisYear - birthYear;
-        };
+var age = (birthYear, thisYear) => {
+  return thisYear - birthYear;
+};
         /* #@range_end(age_without_sideeffect) */
         next();
       });
@@ -702,13 +702,13 @@ describe('参照透過性', () => {
           return fs.readFileSync(path, 'utf8');
         };
         var write = (path, content) => { // ファイルを書き込む操作を関数で包みこむ
-          return fs.writeFileSync(path,content);
+          return fs.writeFileSync(path, content);
         };
         var reader = (path) => { // ファイルを読み込む操作を関数で包みこむ
           return action(fs.readFileSync(path, 'utf8'));
         };
         var writer = (path, content) => { // ファイルを書き込む操作を関数で包みこむ
-          return action(fs.writeFileSync(path,content));
+          return action(fs.writeFileSync(path, content));
         };
         /* #@range_end(reader_and_writer) */
         /* #@range_begin(fileio_actions) */
@@ -752,7 +752,7 @@ describe('参照透過性', () => {
         };
         var pop = () => {
           return (stack) => {
-            return unit(stack[0])(stack.slice(1,stack.length));
+            return unit(stack[0])(stack.slice(1, stack.length));
           };
         };
         var run = (operate, initState) => {
@@ -762,7 +762,7 @@ describe('参照透過性', () => {
 
         it('状態を明示化する', (next) =>{
           /* #@range_begin(explicit_state) */
-          var push = (n,stack) => {
+          var push = (n, stack) => {
             return {
               value: undefined,
               stack: [n].concat(stack)
@@ -771,7 +771,7 @@ describe('参照透過性', () => {
           var pop = (stack) => {
             return {
               value: stack[0],
-              stack: stack.slice(1,stack.length)
+              stack: stack.slice(1, stack.length)
             };
           };
           var empty = [];
@@ -788,11 +788,11 @@ describe('参照透過性', () => {
           next();
         });
         it('継続を用いる', (next) =>{
-          var push = (n,stack) => {
+          var push = (n, stack) => {
             return unit(undefined)([n].concat(stack));
           };
           var pop = (stack) => {
-            return unit(stack[0])(stack.slice(1,stack.length));
+            return unit(stack[0])(stack.slice(1, stack.length));
           };
 
           /* #@range_begin(bind_defined_by_continuation) */
@@ -800,7 +800,7 @@ describe('参照透過性', () => {
             return continues(state);
           };
           expect(
-            bind(push(2,empty), (state1) => {
+            bind(push(2, empty), (state1) => {
               return bind(push(3, state1.stack), (state2) =>{
                 return bind(pop(state2.stack), (state3) => {
                   return bind(pop(state3.stack), (state4) => {
@@ -841,7 +841,7 @@ describe('参照透過性', () => {
           };
           var pop = () => {
             return (stack) => {
-              return unit(stack[0])(stack.slice(1,stack.length));
+              return unit(stack[0])(stack.slice(1, stack.length));
             };
           };
           expect(
@@ -915,7 +915,7 @@ describe('参照透過性', () => {
             };
           };
           expect(
-            combine(computation1,computation2)(empty)
+            combine(computation1, computation2)(empty)
           ).to.eql(
             {
               value: 3,
@@ -948,7 +948,7 @@ describe('参照透過性', () => {
             });
           });
           expect(
-            add([1,2])
+            add([1, 2])
           ).to.eql(
             {
               value: 3,
@@ -1007,7 +1007,7 @@ describe('関数型プログラミングの利点', () => {
           return anArray[0];
         },
         tail: (anArray) => {
-          return anArray.slice(1,array.length(anArray));
+          return anArray.slice(1, array.length(anArray));
         },
         length: (anArray) => {
           return anArray.length;
@@ -1016,7 +1016,7 @@ describe('関数型プログラミングの利点', () => {
           return array.length(anArray) === 0;
         },
         fromString: (str) => {
-          if(string.isEmpty(str)) {
+          if (string.isEmpty(str)) {
             return array.empty();
           } else {
             return array.cons(string.head(str), 
@@ -1025,12 +1025,12 @@ describe('関数型プログラミングの利点', () => {
         },
         takeWhile: (anArray) => {
           return (predicate) => {
-            if(array.isEmpty(anArray)){
+            if (array.isEmpty(anArray)) {
               return array.empty(); 
             } else {
               var head = array.head(anArray);
               var tail = array.tail(anArray);
-              if(predicate(head) === true) {
+              if (predicate(head) === true) {
                 return array.cons(head,
                                   array.takeWhile(tail)(predicate));
               } else {
@@ -1041,12 +1041,12 @@ describe('関数型プログラミングの利点', () => {
         },
         dropWhile: (anArray) => {
           return (predicate) => {
-            if(array.isEmpty(anArray)){
+            if (array.isEmpty(anArray)) {
               return [];
             } else {
               var head = array.head(anArray);
               var tail = array.tail(anArray);
-              if(predicate(head) === true) {
+              if (predicate(head) === true) {
                 return array.dropWhile(tail)(predicate);
               } else {
                 return anArray;
@@ -1056,7 +1056,7 @@ describe('関数型プログラミングの利点', () => {
         },
         span: (anArray) => {
           return (predicate) => {
-            if(array.isEmpty(anArray)){
+            if (array.isEmpty(anArray)) {
               return [];
             } else {
               var head = array.head(anArray);
@@ -1079,7 +1079,7 @@ describe('関数型プログラミングの利点', () => {
           var ys = apair[0];
           var zs = apair[1];
 
-          if(array.isEmpty(zs)){
+          if (array.isEmpty(zs)) {
             return [ys];
           } else {
             var head = array.head(zs);
@@ -1102,7 +1102,7 @@ describe('関数型プログラミングの利点', () => {
           return strL + strR;
         },
         toArray: (str) => {
-          if(string.isEmpty(str)) {
+          if (string.isEmpty(str)) {
             return [];
           } else {
             return array.cons(string.head(str),
@@ -1122,7 +1122,7 @@ describe('関数型プログラミングの利点', () => {
           var ys = apair[0];
           var zs = apair[1];
 
-          if(array.isEmpty(zs)){
+          if (array.isEmpty(zs)) {
             return [string.fromArray(ys)];
           } else {
             var tail = array.tail(zs);
@@ -1134,7 +1134,7 @@ describe('関数型プログラミングの利点', () => {
       describe('array', () => {
         it('array#head', (next) => {
           expect(
-            array.head([0,1,2])
+            array.head([0, 1, 2])
           ).to.eql(
             0
           );
@@ -1142,17 +1142,17 @@ describe('関数型プログラミングの利点', () => {
         });
         it('array#tail', (next) => {
           expect(
-            array.tail([0,1,2])
+            array.tail([0, 1, 2])
           ).to.eql(
-            [1,2]
+            [1, 2]
           );
           next();
         });
         it('array#cons', (next) => {
           expect(
-            array.cons(0,[1,2])
+            array.cons(0, [1, 2])
           ).to.eql(
-            [0,1,2]
+            [0, 1, 2]
           );
           next();
         });
@@ -1160,12 +1160,12 @@ describe('関数型プログラミングの利点', () => {
           expect(
             array.fromString("123")
           ).to.eql(
-            [1,2,3]
+            [1, 2, 3]
           );
           next();
         });
         it('array#takeWhile', (next) => {
-          var theArray = [1,2,3]; 
+          var theArray = [1, 2, 3]; 
           var even = (n) => {
             return 0 === (n % 2);
           };
@@ -1178,7 +1178,7 @@ describe('関数型プログラミングの利点', () => {
           next();
         });
         it('array#dropWhile', (next) => {
-          var theArray = [1,2,3]; 
+          var theArray = [1, 2, 3]; 
           var even = (n) => {
             return 0 === (n % 2);
           };
@@ -1186,51 +1186,51 @@ describe('関数型プログラミングの利点', () => {
           expect(
             array.dropWhile(theArray)(odd)
           ).to.eql(
-            [2,3]
+            [2, 3]
           );
           next();
         });
         it('array#span', (next) => {
-          var theArray = [1,2,3]; 
+          var theArray = [1, 2, 3]; 
           var even = (n) => {
             return 0 === (n % 2);
           };
           expect(
             array.span(theArray)(even)
           ).to.eql(
-            [[],[1,2,3]]
+            [[], [1, 2, 3]]
           );
           var odd = not(even);
           expect(
             array.span(theArray)(odd)
           ).to.eql(
-            [[1],[2,3]]
+            [[1], [2, 3]]
           );
           next();
         });
         it('array#break', (next) => {
-          var theArray = [1,2,3]; 
+          var theArray = [1, 2, 3]; 
           var even = (n) => {
             return 0 === (n % 2);
           };
           expect(
             array.break(theArray)(even)
           ).to.eql(
-            [[1],[2,3]]
+            [[1], [2, 3]]
           );
           var odd = not(even);
           expect(
             array.break(theArray)(odd)
           ).to.eql(
-            [[],[1,2,3]]
+            [[], [1, 2, 3]]
           );
           var isNewline = (ch) => {
             return ch === '\n';
           };
           expect(
-            array.break(['a','b','c','\n','d','e','f'])(isNewline)
+            array.break(['a', 'b', 'c', '\n', 'd', 'e', 'f'])(isNewline)
           ).to.eql(
-            [['a','b','c'],['\n','d','e','f']]
+            [['a', 'b', 'c'], ['\n', 'd', 'e', 'f']]
           );
           next();
         });
@@ -1263,7 +1263,7 @@ describe('関数型プログラミングの利点', () => {
         });
         it('string#fromArray', (next) => {
           expect(
-            string.fromArray(['a','b','c'])
+            string.fromArray(['a', 'b', 'c'])
           ).to.eql(
             "abc"
           );
@@ -1273,7 +1273,7 @@ describe('関数型プログラミングの利点', () => {
           expect(
             string.toArray("abc")
           ).to.eql(
-            ['a','b','c']
+            ['a', 'b', 'c']
           );
           next();
         });
@@ -1294,9 +1294,9 @@ describe('関数型プログラミングの利点', () => {
         {name: "夢十夜", author: ["夏目漱石"], genre: "文学"},
         {name: "ソクラテスの弁明", author: ["プラトン"], genre: "哲学"},
         {name: "国家", author: ["プラトン"], genre: "哲学"},
-        {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
+        {name: "プログラミング言語C", author: ["カーニハン", "リッチー"], genre: "コンピュータ"},
 
-        {name: "計算機プログラムの構造と解釈", author: ["サスマン","エイベルソン"], genre: "コンピュータ"},
+        {name: "計算機プログラムの構造と解釈", author: ["サスマン", "エイベルソン"], genre: "コンピュータ"},
       ];
       /* #@range_end(books_as_array) */
       var get = (object) => {
@@ -1327,16 +1327,16 @@ describe('関数型プログラミングの利点', () => {
         return multiplier(n)(n);
       };
       expect(
-        mapWith(square)([1,2,3])
+        mapWith(square)([1, 2, 3])
       ).to.eql(
-        [1,4,9]
+        [1, 4, 9]
       );
       expect(
         /* #@range_begin(mapWith_pluck) */
         mapWith(pluck("name"))(books)
         /* #@range_end(mapWith_pluck) */
       ).to.eql(
-        ['こころ','夢十夜','ソクラテスの弁明','国家','プログラミング言語C','計算機プログラムの構造と解釈']
+        ['こころ', '夢十夜', 'ソクラテスの弁明', '国家', 'プログラミング言語C', '計算機プログラムの構造と解釈']
       );
       /* #@range_begin(filterWith) */
       var filterWith = (predicate) => {
@@ -1345,7 +1345,7 @@ describe('関数型プログラミングの利点', () => {
         };
       };
       /* #@range_end(filterWith) */
-      var isEqual = (a,b) => {
+      var isEqual = (a, b) => {
         return a === b;
       };
       expect(
@@ -1379,7 +1379,7 @@ describe('関数型プログラミングの利点', () => {
         return (array) => {
           return array.reduce((accumulator, item) => {
             return accumulator || (item === value);
-          },false);
+          }, false);
         };
       };
       /* #@range_end(doesContain) */
@@ -1387,7 +1387,7 @@ describe('関数型プログラミングの利点', () => {
         return (array) => {
           return array.reduce((accumulator, item) => {
             return accumulator || predicate(item);
-          },false);
+          }, false);
         };
       };
       expect(
@@ -1399,7 +1399,7 @@ describe('関数型プログラミングの利点', () => {
       ).to.eql(
         /* #@range_begin(filterWith_doesContain_result) */
         [
-          {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
+          {name: "プログラミング言語C", author: ["カーニハン", "リッチー"], genre: "コンピュータ"},
         ]
         /* #@range_end(filterWith_doesContain_result) */
       );
@@ -1431,21 +1431,21 @@ describe('関数型プログラミングの利点', () => {
         /* #@range_end(constant) */
         var alwaysOne = constant(1); 
         /* #@range_begin(add_uncurried) */
-        var add = (n,m) => {
+        var add = (n, m) => {
           return n + m;
         };
         /* #@range_end(add_uncurried) */
         expect(
-          add(1,2)
+          add(1, 2)
         ).to.eql(
           3
         );
         /* #@range_begin(add_curried) */
-        var adder = (n) => {
-          return (m) => {
-            return n + m;
-          };
-        };
+var adder = (n) => {
+  return (m) => {
+    return n + m;
+  };
+};
         /* #@range_end(add_curried) */
         expect(
           adder(1)(2)
@@ -1461,12 +1461,12 @@ describe('関数型プログラミングの利点', () => {
           2
         );
         /* #@range_begin(multiply_uncurried) */
-        var multiply = (n,m) => {
+        var multiply = (n, m) => {
           return n * m;
         };
         /* #@range_end(multiply_uncurried) */
         expect(
-          multiply(2,3)
+          multiply(2, 3)
         ).to.eql(
           6
         );
@@ -1478,7 +1478,7 @@ describe('関数型プログラミングの利点', () => {
         };
         /* #@range_end(multiply_curried) */
         var square = (n) => {
-          return multiply(n,n);
+          return multiply(n, n);
         };
         var cube = (n) => {
           return multiplier(n)(square(n));
@@ -1493,27 +1493,27 @@ describe('関数型プログラミングの利点', () => {
       describe('reduceによる反復処理の汎用化', () => {
         it('forEachによるsumの定義', (next) => {
           /* #@range_begin(sum_in_array_while) */
-          var sum = (array) => {
-            /* 結果を格納する変数 */
-            var result = 0;
-            /* 反復した回数を格納する変数 */
-            var index = 0; 
-            while(index < array.length) {
-              /* 変数resultを代入で更新する */
-              result = result + array[index];
-              /* 反復回数を更新する */
-              index = index + 1;
-            }
-            return result;
-          };
+var sum = (array) => {
+  /* 結果を格納する変数 */
+  var result = 0;
+  /* 反復した回数を格納する変数 */
+  var index = 0; 
+  while (index < array.length) {
+    /* 変数resultを代入で更新する */
+    result = result + array[index];
+    /* 反復回数を更新する */
+    index = index + 1;
+  }
+  return result;
+};
           /* #@range_end(sum_in_array_while)  */
           expect(
-            sum([1,2,3,4])
+            sum([1, 2, 3, 4])
           ).to.eql(
             10
           );
           expect(
-            sum([1,2,3,4])
+            sum([1, 2, 3, 4])
           ).to.eql(
             10
           );
@@ -1521,15 +1521,15 @@ describe('関数型プログラミングの利点', () => {
         });
         it('reduceによるsumの定義', (next) => {
           /* #@range_begin(sum_in_array_reduce) */
-          var sum = (array) => {
-            return array.reduce(/* 第1引数に関数を渡す */
-              (accumulator, item) => { 
-                return accumulator + item; /* 足し算を実行する */
-              },0); // 第2引数には、蓄積変数の初期値として0を渡す 
-          };
+var sum = (array) => {
+  return array.reduce( /* 第1引数に関数を渡す */
+    (accumulator, item) => { 
+      return accumulator + item;      /* 足し算を実行する */
+    }, 0);  /* 第2引数には、蓄積変数の初期値として0を渡す */
+};
           /* #@range_end(sum_in_array_reduce)  */
           expect(
-            sum([1,2,3,4])
+            sum([1, 2, 3, 4])
           ).to.eql(
             10
           );
@@ -1537,15 +1537,15 @@ describe('関数型プログラミングの利点', () => {
         });
         it('productの定義', (next) => {
           /* #@range_begin(product_in_array_reduce) */
-          var product = (array) => {
-            return array.reduce((accumulator, item) => {
-              return accumulator * item; /* かけ算を実行する */
-            }, 1); // 第2引数には、蓄積変数の初期値として1を渡す 
-          };
+var product = (array) => {
+  return array.reduce((accumulator, item) => {
+    return accumulator * item;      /* かけ算を実行する */
+  }, 1);  /* 第2引数には、蓄積変数の初期値として1を渡す */
+};
           /* #@range_end(product_in_array_reduce)  */
           /* #@range_begin(product_in_array_reduce_test) */
           expect(
-            product([1,2,3,4])
+            product([1, 2, 3, 4])
           ).to.eql(
             24
           );
@@ -1554,25 +1554,25 @@ describe('関数型プログラミングの利点', () => {
         });
         it('allの定義', (next) => {
           /* #@range_begin(all_in_array_reduce) */
-          var all = (array) => {
-            return array.reduce((accumulator, item) => {
-              return accumulator && item; /* 論理和を実行する */
-            }); /* 第2引数を指定していない場合は、
-                   配列の先頭要素が変数accumulatorの初期値になる */
-          };
+var all = (array) => {
+  return array.reduce((accumulator, item) => {
+    return accumulator && item;     /* 論理和を実行する */
+  });  /* 第2引数を指定していない場合は、
+          配列の先頭要素が変数accumulatorの初期値になる */
+};
           /* #@range_end(all_in_array_reduce)  */
           expect(
-            all([true,true,true])
+            all([true, true, true])
           ).to.eql(
             true
           );
           expect(
             /* #@range_begin(all_in_array_reduce_test) */
-            all([true,false,true])
+all([true, false, true])
             /* #@range_end(all_in_array_reduce_test) */
           ).to.eql(
             /* #@range_begin(all_in_array_reduce_test_result) */
-            false
+false
             /* #@range_end(all_in_array_reduce_test_result) */
           );
           next();
@@ -1580,8 +1580,8 @@ describe('関数型プログラミングの利点', () => {
         it('maxの定義', (next) => {
           /* #@range_begin(max_in_array_reduce) */
           var max = (array) => {
-            var bigger = (n,m) => {
-              if(n > m) {
+            var bigger = (n, m) => {
+              if (n > m) {
                 return n;
               } else {
                 return m;
@@ -1593,12 +1593,12 @@ describe('関数型プログラミングの利点', () => {
           };
           /* #@range_end(max_in_array_reduce)  */
           expect(
-            max([1,2,3,4])
+            max([1, 2, 3, 4])
           ).to.eql(
             4
           );
           expect(
-            max([1,-2,3,-4])
+            max([1, -2, 3, -4])
           ).to.eql(
             3
           );
@@ -1609,9 +1609,9 @@ describe('関数型プログラミングの利点', () => {
           var reverse = (array) => {
             return array.reduce((accumulator, currentValue) => {
               return [currentValue].concat(accumulator);
-            },[]);
+            }, []);
           };
-          expect(reverse([1,2,3,4])).to.eql([4,3,2,1]);
+          expect(reverse([1, 2, 3, 4])).to.eql([4, 3, 2, 1]);
           /* #@range_end(reverse_in_array_reduce)  */
           next();
         });
@@ -1620,18 +1620,18 @@ describe('関数型プログラミングの利点', () => {
             return n + 1;
           };
           /* #@range_begin(map_in_array_reduce) */
-          var map = (transform) => {
-            return (array) => {
-              return array.reduce((accumulator, item) => {
-                return accumulator.concat(transform(item));
-              },[]); // 蓄積変数の初期値として空の配列[]を指定する
-            };
-          };
+var map = (transform) => {
+  return (array) => {
+    return array.reduce((accumulator, item) => {
+      return accumulator.concat(transform(item));
+    }, []);  /* 蓄積変数の初期値として空の配列[]を指定する */
+  };
+};
           /* #@range_end(map_in_array_reduce)  */
           expect(
-            map(succ)([1,2,3])
+            map(succ)([1, 2, 3])
           ).to.eql(
-            [2,3,4]
+            [2, 3, 4]
           );
           var constant = (any) => {
             return (_) => {
@@ -1641,11 +1641,11 @@ describe('関数型プログラミングの利点', () => {
           var alwaysOne = constant(1); 
           expect(
             /* #@range_begin(map_in_array_reduce_test) */
-            map(succ)([1,3,5])
+            map(succ)([1, 3, 5])
             /* #@range_end(map_in_array_reduce_test) */
           ).to.eql(
             /* #@range_begin(map_in_array_reduce_test_result) */
-            [2,4,6]
+            [2, 4, 6]
             /* #@range_end(map_in_array_reduce_test_result) */
           );
           next();
@@ -1658,17 +1658,17 @@ describe('関数型プログラミングの利点', () => {
           var filter = (array) => {
             return (predicate) => {
               return array.reduce((accumulator, item) => {
-                if(predicate(item)) {
+                if (predicate(item)) {
                   return accumulator.concat(item);
                 } else {
                   return accumulator;
                 }
-              },[]); // 蓄積変数の初期値として空の配列[]を指定する
+              }, []); // 蓄積変数の初期値として空の配列[]を指定する
             };
           };
           /* #@range_end(filter_in_array_reduce)  */
           expect(
-            filter([1,2,3])(even)
+            filter([1, 2, 3])(even)
           ).to.eql(
             [2]
           );
@@ -1699,13 +1699,13 @@ describe('関数型プログラミングの利点', () => {
           return (array) => {
             return array.reduce((accumulator, item) => {
               return accumulator.concat(transform(item));
-            },[]); // 蓄積変数の初期値として空の配列[]を指定する
+            }, []); // 蓄積変数の初期値として空の配列[]を指定する
           };
         };
         var sum = (array) => {
           return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
             return accumulator + item;                 // 足し算を実行する
-          },0); // 第2引数には、蓄積変数の初期値として0を渡す 
+          }, 0); // 第2引数には、蓄積変数の初期値として0を渡す 
         };
         var constant = (any) => {
           return (_) => {
@@ -1719,7 +1719,7 @@ describe('関数型プログラミングの利点', () => {
         };
         /* #@range_end(array_length)  */
         expect(
-          length([1,2,3])
+          length([1, 2, 3])
         ).to.eql(
           3
         );
@@ -1727,7 +1727,7 @@ describe('関数型プログラミングの利点', () => {
       });
       describe('関数の合成', () => {
         /* #@range_begin(function_compose) */
-        var compose = (f,g) => {
+        var compose = (f, g) => {
           return (arg) => {
             return f(g(arg));
           };
@@ -1738,13 +1738,13 @@ describe('関数型プログラミングの利点', () => {
             return (array) => {
               return array.reduce((accumulator, item) => {
                 return accumulator.concat(transform(item));
-              },[]); // 蓄積変数の初期値として空の配列[]を指定する
+              }, []); // 蓄積変数の初期値として空の配列[]を指定する
             };
           };
           var sum = (array) => {
             return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
               return accumulator + item;                 // 足し算を実行する
-            },0); // 第2引数には、蓄積変数の初期値として0を渡す 
+            }, 0); // 第2引数には、蓄積変数の初期値として0を渡す 
           };
           var constant = (any) => {
             return (_) => {
@@ -1762,10 +1762,10 @@ describe('関数型プログラミングの利点', () => {
           };
           /* #@range_end(flip_definition) */
           /* #@range_begin(array_length_in_composition_with_point_free_style) */
-          var length = compose(sum,map(alwaysOne));
+          var length = compose(sum, map(alwaysOne));
           /* #@range_end(array_length_in_composition_with_point_free_style)  */
           expect(
-            length([1,2,3])
+            length([1, 2, 3])
           ).to.eql(
             3
           );
@@ -1776,13 +1776,13 @@ describe('関数型プログラミングの利点', () => {
             return (array) => {
               return array.reduce((accumulator, item) => {
                 return accumulator.concat(transform(item));
-              },[]); // 蓄積変数の初期値として空の配列[]を指定する
+              }, []); // 蓄積変数の初期値として空の配列[]を指定する
             };
           };
           var sum = (array) => {
             return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
               return accumulator + item;                 // 足し算を実行する
-            },0); // 第2引数には、蓄積変数の初期値として0を渡す 
+            }, 0); // 第2引数には、蓄積変数の初期値として0を渡す 
           };
           var constant = (any) => {
             return (_) => {
@@ -1799,11 +1799,11 @@ describe('関数型プログラミングの利点', () => {
           };
           /* #@range_begin(array_length_in_composition) */
           var length = (array) => { // 引数が配列であることを明示する
-            return compose(sum,map(alwaysOne))(array);
+            return compose(sum, map(alwaysOne))(array);
           };
           /* #@range_end(array_length_in_composition)  */
           expect(
-            length([1,2,3])
+            length([1, 2, 3])
           ).to.eql(
             3
           );
@@ -1814,20 +1814,20 @@ describe('関数型プログラミングの利点', () => {
     describe('階乗の計算', () => {
       it('命令型プログラミングによる階乗の計算', (next) => {
         /* #@range_begin(imperative_factorial) */
-        var factorial = (n) => {
-          /* 変数resultに結果が入る */
-          var result = 1;             
-          /* 変数timesは反復の回数を数える */
-          var times = 1;              
-          /* while文は反復を処理する */
-          while(times < n + 1) {      
-            /* 変数resultを代入で更新する */
-            result = result * times;  
-            /* 変数timesを代入で更新する */
-            times = times + 1;        
-          }
-          return result;
-        };
+var factorial = (n) => {
+  /* 変数resultに結果が入る */
+  var result = 1;     
+  /* 変数timesは反復の回数を数える */
+  var times = 1;      
+  /* while文は反復を処理する */
+  while (times < n + 1) {      
+    /* 変数resultを代入で更新する */
+    result = result * times;  
+    /* 変数timesを代入で更新する */
+    times = times + 1;
+  }
+  return result;
+};
         /* #@range_end(imperative_factorial) */
         expect(
           factorial(2)
@@ -1851,7 +1851,7 @@ describe('関数型プログラミングの利点', () => {
         var foldr = (aStream) => {
           return (accumulator) => {
             return (glue) => {
-              if(aStream.length === 1) {
+              if (aStream.length === 1) {
                 return accumulator;
               } else {
                 return glue(aStream[0])(foldr(aStream[1]())(accumulator)(glue));
@@ -1860,11 +1860,11 @@ describe('関数型プログラミングの利点', () => {
           };
         };
         */
-        var multiply = (m,n) => {
+        var multiply = (m, n) => {
           return m * n;
         };
         var product = (array) => {
-          return array.reduce(multiply,1);
+          return array.reduce(multiply, 1);
         }; 
         var adder = (m) => {
           return (n) => {
@@ -1881,7 +1881,7 @@ describe('関数型プログラミングの利点', () => {
         };
         var take = (n) => {
           return (aStream) => {
-            if(n === 0) {
+            if (n === 0) {
               return [];
             } else {
               return [aStream[0]].concat(take(n-1)(aStream[1]()));
@@ -1891,7 +1891,7 @@ describe('関数型プログラミングの利点', () => {
         var enumFrom = (from) => {
           return iterate(succ)(from);
         };
-        var compose = (f,g) => {
+        var compose = (f, g) => {
           return (arg) => {
             return f(g(arg));
           };
@@ -1911,13 +1911,13 @@ describe('関数型プログラミングの利点', () => {
           return take(to - from + 1)(enumFrom(from));
         };
         var factorial = (n) => {
-          return product(enumFromTo(1,n));
+          return product(enumFromTo(1, n));
         };
         */
         expect(
           enumFromTo(2)(4)
         ).to.eql(
-          [2,3,4]
+          [2, 3, 4]
         );
         expect(
           factorial(2)
@@ -1939,16 +1939,16 @@ describe('関数型プログラミングの利点', () => {
           return factorial(n) / factorial(n-r);          
         };
         var comb = (n, r) => {
-          return perm(n,r) / factorial(r);
+          return perm(n, r) / factorial(r);
         };
         /* #@range_end(permutation_combination) */
         expect(
-          perm(3,3)
+          perm(3, 3)
         ).to.eql(
           6
         );
         expect(
-          comb(10,4)
+          comb(10, 4)
         ).to.eql(
           210
         );
@@ -1966,22 +1966,22 @@ describe('関数型プログラミングの利点', () => {
             return pattern.empty();
           };
         },
-        cons: (head,tailThunk) => {
+        cons: (head, tailThunk) => {
           return (pattern) => {
-            return pattern.cons(head,tailThunk);
+            return pattern.cons(head, tailThunk);
           };
         },
         /* head:: STREAM[T] => T */
         /* ストリーム型headの定義は、リスト型headと同じ */
         head: (astream) => {
-          return match(astream,{
+          return match(astream, {
             empty: (_) => { return null; },
             cons: (value, tailThunk) => { return value; }
           });
         },
         /* tail:: STREAM[T] => STREAM[T] */
         tail: (astream) => {
-          return match(astream,{
+          return match(astream, {
             empty: (_) => { return null; },
             cons: (head, tailThunk) => {
               return tailThunk();  // ここで初めてサンクを評価する
@@ -1989,15 +1989,15 @@ describe('関数型プログラミングの利点', () => {
           });
         },
         take: (astream, n) => {
-          return match(astream,{
+          return match(astream, {
             empty: (_) => {
               return list.empty();
             },
-            cons: (head,tailThunk) => {
-              if(n === 0) {
+            cons: (head, tailThunk) => {
+              if (n === 0) {
                 return list.empty();
               } else {
-                return list.cons(head,stream.take(tailThunk(),(n -1)));
+                return list.cons(head, stream.take(tailThunk(), (n -1)));
               }
             }
           });
@@ -2039,7 +2039,7 @@ describe('関数型プログラミングの利点', () => {
           });
         },
         toArray: (alist) => {
-          var toArrayAux = (alist,accumulator) => {
+          var toArrayAux = (alist, accumulator) => {
             return match(alist, {
               empty: (_) => {
                 return accumulator;
@@ -2063,8 +2063,8 @@ describe('関数型プログラミングの利点', () => {
         var mark = (astream, k, m) => {
           var head = stream.head(astream);
           var tail = stream.tail(astream);
-          if(k === m) {
-            return stream.cons(0,(_) => {
+          if (k === m) {
+            return stream.cons(0, (_) => {
               return mark(tail, 1, m);
             });
           } else {
@@ -2073,7 +2073,7 @@ describe('関数型プログラミングの利点', () => {
             });
           }
         };
-        if(head === 0) {
+        if (head === 0) {
           return sieve(tail);
         } else {
           return stream.cons(head, (_) => {
@@ -2091,7 +2091,7 @@ describe('関数型プログラミングの利点', () => {
   });
   describe('遅延評価', () => {
     var take = (n, astream) => {
-      if(n === 1) {
+      if (n === 1) {
         return astream[0];
       } else {
         return [astream[0]].concat(take(n-1, astream[1]()));
@@ -2105,13 +2105,13 @@ describe('関数型プログラミングの利点', () => {
     expect(
       take(3, repeat(2))
     ).to.eql(
-      [2,2,2]
+      [2, 2, 2]
     );
     var ones = repeat(1);
     expect(
       take(2, ones)
     ).to.eql(
-      [1,1]
+      [1, 1]
     );
     var replicate = (n, x) => {
       return take(n, repeat(x));
@@ -2119,28 +2119,28 @@ describe('関数型プログラミングの利点', () => {
     expect(
       replicate(4, 3)
     ).to.eql(
-      [3,3,3,3]
+      [3, 3, 3, 3]
     );
     var upto = (m, n) => {
-      if(m > n) {
+      if (m > n) {
         return [];
       } else {
         return [m, (_) => {
-          return upto(m+1,n);
+          return upto(m+1, n);
         }];
       };
     };
     expect(
-      take(3, upto(2,10))
+      take(3, upto(2, 10))
     ).to.eql(
-      [2,3,4]
+      [2, 3, 4]
     );
     /* #@range_begin(stream_filter) */
     var filter = (predicate) => {
       return (aStream) => {
         var head = aStream[0];
         /* 先頭要素が条件に合致する場合 */
-        if(predicate(head) === true) { 
+        if (predicate(head) === true) { 
           return [head, (_) => {
             return filter(predicate)(aStream[1]());
           }];
@@ -2151,11 +2151,11 @@ describe('関数型プログラミングの利点', () => {
       };
     };
     /* #@range_end(stream_filter) */
-    var mod = (n,m) => {
+    var mod = (n, m) => {
       return n % m;
     };
     var even = (n) => {
-      return mod(n,2) === 0;
+      return mod(n, 2) === 0;
     };
     var adder = (m) => {
       return (n) => {
@@ -2176,14 +2176,14 @@ describe('関数型プログラミングの利点', () => {
     };
     /* #@range_end(stream_enumFrom) */
     expect(
-      take(3,filter(even)(enumFrom(2)))
+      take(3, filter(even)(enumFrom(2)))
     ).to.eql(
-      [2,4,6]
+      [2, 4, 6]
     );
     describe('カリー化バージョン', () => {
       var take = (n) => {
         return (aStream) => {
-          if(n === 1) {
+          if (n === 1) {
             return aStream[0];
           } else {
             return [aStream[0]].concat(take(n-1)(aStream[1]()));
@@ -2193,7 +2193,7 @@ describe('関数型プログラミングの利点', () => {
       var filter = (predicate) => {
         return (aStream) => {
           var head = aStream[0];
-          if(predicate(head) === true) {
+          if (predicate(head) === true) {
             return [head, (_) => {
               return filter(predicate)(aStream[1]());
             }];
@@ -2224,7 +2224,7 @@ describe('関数型プログラミングの利点', () => {
       expect(
         compose(take(3), filter(even))(enumFrom(2))
       ).to.eql(
-        [2,4,6]
+        [2, 4, 6]
       );
     });
     describe('ストリーム', () => {
@@ -2273,14 +2273,14 @@ describe('関数型プログラミングの利点', () => {
       };
       var ones = series(identity)(1);
       expect(
-        take(10,ones)
+        take(10, ones)
       ).to.eql(
         [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
       );
       /* #@range_begin(stream_limit) */
       var limit = (predicate) => {
         return (aStream) => {
-          if(predicate(aStream)) {
+          if (predicate(aStream)) {
             return aStream[0];
           } else {
             return limit(predicate)(aStream[1]());
@@ -2292,7 +2292,7 @@ describe('関数型プログラミングの利点', () => {
         var filter = (predicate) => {
           return (aStream) => {
             var head = aStream[0];
-            if(predicate(head) === true) {
+            if (predicate(head) === true) {
               return [head, (_) => {
                 return filter(predicate)(aStream[1]());
               }];
@@ -2307,7 +2307,7 @@ describe('関数型プログラミングの利点', () => {
         };
         var remove = (predicate) => {
           return (aStream) => {
-            return filter(compose(not,predicate))(aStream);
+            return filter(compose(not, predicate))(aStream);
           };
         };
         /* #@range_end(stream_remove) */
@@ -2315,7 +2315,7 @@ describe('関数型プログラミングの利点', () => {
         var take = (n) => {
           return (aStream) => {
             /* 再帰処理の終了条件 */
-            if(n === 1) { 
+            if (n === 1) { 
               return aStream[0];
             } else {
               /* take関数の再帰呼び出し */
@@ -2325,8 +2325,8 @@ describe('関数型プログラミングの利点', () => {
         };
         /* #@range_end(stream_take) */
         /* #@range_begin(multipleOf) */
-        var multipleOf = (n,m) => {
-          if((n % m) === 0) {
+        var multipleOf = (n, m) => {
+          if ((n % m) === 0) {
             return true;
           } else {
             return false;
@@ -2334,12 +2334,12 @@ describe('関数型プログラミングの利点', () => {
         };
         /* #@range_end(multipleOf) */
         expect(
-          multipleOf(4,2)
+          multipleOf(4, 2)
         ).to.eql(
           true
         );
         expect(
-          multipleOf(5,2)
+          multipleOf(5, 2)
         ).to.eql(
           false
         );
@@ -2349,14 +2349,14 @@ describe('関数型プログラミングの利点', () => {
         expect(((_) => { 
           /* #@range_begin(stream_remove_test) */
           var even = (n) => {
-            return multipleOf(n,2); // 偶数は2の倍数
+            return multipleOf(n, 2); // 偶数は2の倍数
           };
           take(5)(remove(even)(enumFrom(1)));
           /* #@range_end(stream_remove_test) */
           return take(5)(remove(even)(enumFrom(1)));
         })()).to.eql(
           /* #@range_begin(stream_remove_test_result) */
-          [1,3,5,7,9]
+          [1, 3, 5, 7, 9]
           /* #@range_end(stream_remove_test_result) */
         );
         expect(
@@ -2469,7 +2469,7 @@ describe('関数型プログラミングの利点', () => {
             return dispatch;
           };
           var dispatch = (method) => {
-            switch(method){
+            switch(method) {
             case "deposit":
               return deposit;
             case "withdraw":
@@ -2513,7 +2513,7 @@ describe('関数型プログラミングの利点', () => {
             return (transactions) => {
               return transactions.reduce((accumulator, transact) => {
                 return transact(accumulator);
-              },anAccount);
+              }, anAccount);
             };
           }
         };
@@ -2557,9 +2557,9 @@ describe('関数型プログラミングの利点', () => {
         it("参照透過性のないコードのテスト", (next) => {
           /* #@range_begin(winner_with_sideeffect) */
           var winner = (playerL, playerR) => {
-            if(playerR.score > playerL.score) {
+            if (playerR.score > playerL.score) {
               console.log(playerR.name + "が勝者です");
-            } else if(playerR.score < playerL.score) {
+            } else if (playerR.score < playerL.score) {
               console.log(playerL.name + "が勝者です");
             } else {
               console.log("引き分けです");
@@ -2580,9 +2580,9 @@ describe('関数型プログラミングの利点', () => {
           /* #@range_begin(winner_without_sideeffect) */
           /* 勝者を判定する */
           var judge = (playerL, playerR) => {
-            if(playerL.score > playerR.score) {
+            if (playerL.score > playerR.score) {
               return playerL;
-            } else if(playerL.score < playerR.score) {
+            } else if (playerL.score < playerR.score) {
               return playerR;
             } else {
               return null;
@@ -2590,7 +2590,7 @@ describe('関数型プログラミングの利点', () => {
           }; 
           /* 勝者を告げる文字列を生成する */
           var announce = (winner) => {
-            if(winner) {
+            if (winner) {
               return winner.name + "が勝者です";
             } else {
               return "引き分けです";
@@ -2652,7 +2652,7 @@ describe('関数型プログラミングの利点', () => {
           return (array) => {
             return array.reduce((accumulator, item) => {
               return accumulator || (item === value);
-            },false);
+            }, false);
           };
         };
         /* #@range_begin(authenticate_test) */
@@ -2676,7 +2676,7 @@ describe('関数型プログラミングの利点', () => {
         };
         /* #@range_end(authenticate_test) */
         expect(
-          authenticate("夏目漱石","12345")
+          authenticate("夏目漱石", "12345")
         ).to.eql(
           true
         );
@@ -2701,14 +2701,14 @@ describe('関数型プログラミングの利点', () => {
           return (array) => {
             return array.reduce((accumulator, item) => {
               return accumulator || (item === value);
-            },false);
+            }, false);
           };
         };
         var doesMatch = (predicate) => {
           return (array) => {
             return array.reduce((accumulator, item) => {
               return accumulator || predicate(item);
-            },false);
+            }, false);
           };
         };
         var database = [
@@ -2729,7 +2729,7 @@ describe('関数型プログラミングの利点', () => {
           })(database)) === 1;
         };
         expect(
-          authenticate("夏目漱石","12345")
+          authenticate("夏目漱石", "12345")
         ).to.eql(
           true
         );
@@ -2757,7 +2757,7 @@ describe('関数型プログラミングの利点', () => {
       };
       var take = (n) => {
         return (aStream) => {
-          if(n === 0) {
+          if (n === 0) {
             return [];
           } else {
             return [aStream[0]].concat(take(n-1)(aStream[1]()));
@@ -2770,7 +2770,7 @@ describe('関数型プログラミングの利点', () => {
       var filter = (predicate) => {
         return (aStream) => {
           var head = aStream[0];
-          if(predicate(head) === true) {
+          if (predicate(head) === true) {
             return [head, (_) => {
               return filter(predicate)(aStream[1]());
             }];
@@ -2784,7 +2784,7 @@ describe('関数型プログラミングの利点', () => {
         var all = (array) => {
           return array.reduce((accumulator, item) => {
             return accumulator && item;
-          },true);
+          }, true);
         };
         /* #@range_begin(succ_property_test) */
         /* ストリームのmap関数 */

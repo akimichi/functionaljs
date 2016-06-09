@@ -10,19 +10,19 @@ var util = require('util');
 describe('型とは何か', () => {
   it('整数の構成', (next) => {
     /* #@range_begin(integer_construction) */
-    var succ = (n) => {
-      return n + 1;
-    };
-    expect(
-      succ(0)
-    ).to.eql(
-      1
-    );
-    expect(
-      succ(succ(0))
-    ).to.eql(
-      2
-    );
+        var succ = (n) => {
+          return n + 1;
+        };
+        expect(
+          succ(0)
+        ).to.eql(
+          1
+        );
+        expect(
+          succ(succ(0))
+        ).to.eql(
+          2
+        );
     /* #@range_end(integer_construction) */
     next();
   });
@@ -47,12 +47,12 @@ describe('型とは何か', () => {
 describe('基本型', () => {
   it('未定義の変数', (next) => {
     /* #@range_begin(undefined_variable) */
-    var variable; // 宣言されているが値と結びついていない変数
-    expect(
-      variable
-    ).to.eql(
-      undefined
-    );
+        var variable; // 宣言されているが値と結びついていない変数
+        expect(
+          variable
+        ).to.eql(
+          undefined
+        );
     /* #@range_end(undefined_variable) */
     next();
   });
@@ -188,7 +188,7 @@ describe('合成型', () => {
         /* hasOwnPropertyでプロパティの有無を調べる */
         /* #@range_begin(object_access) */
         expect(
-          addressbook.No1.name     // オブジェクト.キー記法
+          addressbook.No1.name        // オブジェクト.キー記法
         ).to.eql(
           "Alan Turing"
         );
@@ -246,7 +246,7 @@ describe('合成型', () => {
           addressbook.BMI(
             addressbook.No1.weight,
             addressbook.No1.height)
-        ).to.be.within(20.0,21.0); // within(A,B) は値が AとBのあいだにはいっていることをチェックする
+        ).to.be.within(20.0, 21.0); // within(A, B) は値が AとBのあいだにはいっていることをチェックする
         /* #@range_end(addressbook_example) */
         next();
       });
@@ -264,7 +264,7 @@ describe('合成型', () => {
       expect(
         results
       ).to.eql(
-        [1,2]
+        [1, 2]
       );
       /* ##@range_end(for_in_object)     */
       next();
@@ -274,28 +274,28 @@ describe('合成型', () => {
   describe('配列型', () => {
     it("配列の基本操作", (next) => {
       /* #@range_begin(array_access) */
-      var array = [10,11,12];
-      expect(
-        array[0] // 配列は0から始まるインデックスを持つ
-      ).to.eql(
-        10
-      );
-      expect(
-        array[2]
-      ).to.eql(
-        12
-      );
-      expect(
-        array[100] // 存在しない要素にアクセスする
-      ).to.eql(
-        undefined
-      );
+        var array = [10, 11, 12];
+        expect(
+          array[0]   // 配列は0から始まるインデックスを持つ
+        ).to.eql(
+          10
+        );
+        expect(
+          array[2]
+        ).to.eql(
+          12
+        );
+        expect(
+          array[100] // 存在しない要素にアクセスした場合
+        ).to.eql(
+          undefined
+        );
       /* #@range_end(array_access) */
       next();
     });
     it("Array.forEach文", (next) => {
       /* #@range_begin(forEach_in_array) */
-      var array = [1,2,3,4,5];
+      var array = [1, 2, 3, 4, 5];
       var sum = 0;
       array.forEach((element) => {
         sum += element;
@@ -310,58 +310,29 @@ describe('合成型', () => {
     });
     it("Array.sort文", (next) => {
       /* #@range_begin(sort_in_array) */
-      var array = [5,3,4,1,2];
-      expect(
-        array.sort((n,m) => {
-          return n > m;
-        })
-      ).to.eql(
-        [1,2,3,4,5]
-      );
+        var array = [5, 3, 4, 1, 2];
+        expect(
+          array.sort((n, m) => {
+            return n > m;
+          })
+        ).to.eql(
+          [1, 2, 3, 4, 5]
+        );
       /* #@range_end(sort_in_array) */
       next();
     });
     it("アドレス帳の配列表現", (next) => {
       /* #@range_begin(addressbook_example_in_array) */
-      var addressbook = [ // 配列に要素を格納する
-        {
-          name: "Alan Turing",
-          gender: "male",
-          birthDay: "1912/6/23"
-        },
-        {
-          name: "Haskell Curry",
-          gender: "male",
-          birthDay: "1900/9/12"
-        },
-        {
-          name: "Alonzo Church",
-          gender: "male",
-          birthDay: "1903/6/14"
-        },
-        {
-          name: "Ada Lovelace",
-          gender: "female",
-          birthDay: "1815/12/10"
-        }
-      ];
-      /* #@range_end(addressbook_example_in_array) */
-      /* #@range_begin(sorting_array) */
-      expect(
-        addressbook.sort((onePerson,anotherPerson) => {
-          return onePerson.name> anotherPerson.name;
-        })
-      ).to.eql(
-        [
-          {
-            name: "Ada Lovelace",
-            gender: "female",
-            birthDay: "1815/12/10"
-          },
+        var addressbook = [ // 配列に要素を格納する
           {
             name: "Alan Turing",
             gender: "male",
             birthDay: "1912/6/23"
+          },
+          {
+            name: "Haskell Curry",
+            gender: "male",
+            birthDay: "1900/9/12"
           },
           {
             name: "Alonzo Church",
@@ -369,12 +340,41 @@ describe('合成型', () => {
             birthDay: "1903/6/14"
           },
           {
-            name: "Haskell Curry",
-            gender: "male",
-            birthDay: "1900/9/12"
+            name: "Ada Lovelace",
+            gender: "female",
+            birthDay: "1815/12/10"
           }
-        ]
-      );
+        ];
+      /* #@range_end(addressbook_example_in_array) */
+      /* #@range_begin(sorting_array) */
+        expect(
+          addressbook.sort((onePerson, anotherPerson) => {
+            return onePerson.name> anotherPerson.name;
+          })
+        ).to.eql(
+          [
+            {
+              name: "Ada Lovelace",
+              gender: "female",
+              birthDay: "1815/12/10"
+            },
+            {
+              name: "Alan Turing",
+              gender: "male",
+              birthDay: "1912/6/23"
+            },
+            {
+              name: "Alonzo Church",
+              gender: "male",
+              birthDay: "1903/6/14"
+            },
+            {
+              name: "Haskell Curry",
+              gender: "male",
+              birthDay: "1900/9/12"
+            }
+          ]
+        );
       /* #@range_end(sorting_array) */
       next();
     });
@@ -383,14 +383,14 @@ describe('合成型', () => {
   describe('関数型', () => {
     it('関数はオブジェクト型である', (next) => {
       /* #@range_begin(function_is_object_type) */
-      var func = (n) => {
-        return n;
-      };
-      expect(
-        func.length
-      ).to.eql(
-        1
-      );
+        var func = (n) => {
+          return n;
+        };
+        expect(
+          func.length
+        ).to.eql(
+          1
+        );
       /* #@range_end(function_is_object_type) */
       expect(
         func.hasOwnProperty('name')
@@ -401,14 +401,14 @@ describe('合成型', () => {
     });
     it('引数のない関数の適用', (next) => {
       /* #@range_begin(function_without_argument) */
-      var three = () => {
-        return 3;
-      };
-      expect(
-        three()
-      ).to.eql(
-        3
-      );
+        var three = () => {
+          return 3;
+        };
+        expect(
+          three()
+        ).to.eql(
+          3
+        );
       /* #@range_end(function_without_argument) */
       next();
     });
@@ -427,12 +427,12 @@ describe('合成型', () => {
     // });
     it('関数と変数の類似性', (next) => {
       /* #@range_begin(function_resembles_variable) */
-      var three = 3;
-      expect(
-        three
-      ).to.eql(
-        3
-      );
+        var three = 3;
+        expect(
+          three
+        ).to.eql(
+          3
+        );
       /* #@range_end(function_resembles_variable) */
       var id = (any) => {
         return any;
@@ -482,7 +482,7 @@ describe('合成型', () => {
       /* ##@range_begin(embeded_function_invocation) */
       // expect(
       //   addressbook.BMI(addressbook.turing.weight, addressbook.turing.height)
-      // ).to.within(21.0,22,0);
+      // ).to.within(21.0, 22, 0);
       /* ##@range_end(embeded_function_invocation) */
       next();
     });
@@ -510,25 +510,25 @@ describe('合成型', () => {
       };
       var set = (key, value, obj) => {
         return (key2) => {
-          if(key === key2) {
+          if (key === key2) {
             return value;
           } else {
-            return get(key2,obj)
+            return get(key2, obj)
           }
         };
       };
       expect(
-        get(1,set(1,"one",empty)) // {1: "one"}[1] => "one"
+        get(1, set(1, "one", empty)) // {1: "one"}[1] => "one"
       ).to.eql(
         "one"
       );
       expect(
-        get(2,set(2,"two",set(1,"one",empty)))  // {1: "one", 2: "two"}[2] => "two"
+        get(2, set(2, "two", set(1, "one", empty)))  // {1: "one", 2: "two"}[2] => "two"
       ).to.eql(
         "two"
       );
       expect(
-        get(1,set(2,"two",set(1,"one",empty)))  // {1: "one", 2: "two"}[1] => "one"
+        get(1, set(2, "two", set(1, "one", empty)))  // {1: "one", 2: "two"}[1] => "one"
       ).to.eql(
         "one"
       );
@@ -546,7 +546,7 @@ describe('合成型', () => {
         return list[0];
       };
       var tail = (list) => {
-        return list.slice(1,list.length);
+        return list.slice(1, list.length);
       };
       var empty = (_) => {
         return [];
@@ -555,11 +555,11 @@ describe('合成型', () => {
         return list.length === 0;
       };
       /* #@range_begin(list_as_abstract_type) */
-      expect(
-        head(tail(cons(1,cons(2,empty()))))
-      ).to.eql(
-        2
-      );
+        expect(
+          head(tail(cons(1, cons(2, empty()))))
+        ).to.eql(
+          2
+        );
       /* #@range_end(list_as_abstract_type) */
       next();
     });
@@ -571,12 +571,12 @@ describe('合成型', () => {
         return stack[0];
       };
       var pop = (stack) => {
-        return stack.slice(1,stack.length);
+        return stack.slice(1, stack.length);
       };
       var empty = [];
       /* #@range_begin(stack_as_abstract_type) */
       expect(
-        top(pop(pop(push(3,push(2,push(1,empty))))))
+        top(pop(pop(push(3, push(2, push(1, empty))))))
       ).to.eql(
         1
       );
@@ -588,60 +588,60 @@ describe('合成型', () => {
   describe('合成型の可変性', () => {
     it('配列は可変である', (next) => {
       /* #@range_begin(array_is_mutable) */
-      var array = [0,1,2,3];
-      array[0] = 7; // 配列の一部を書きかえている
-      expect(
-        array
-      ).not.to.eql(
-        [0,1,2,3] // [7,1,2,3]に変更されている
-      );
+        var array = [0, 1, 2, 3];
+        array[0] = 7;   // 配列の一部を書きかえている
+        expect(
+          array
+        ).not.to.eql(
+          [0, 1, 2, 3]  // [7, 1, 2, 3]に変更されている
+        );
       /* #@range_end(array_is_mutable) */
       next();
     });
     it('Array.reverseは破壊的操作である', (next) => {
       /* #@range_begin(destructive_reverse) */
-      var array = [1,2,3,4,5];
-      expect(
-        array.reverse()
-      ).to.eql(
-        [5,4,3,2,1]
-      );
-      expect(
-        array
-      ).not.to.eql(
-        [1,2,3,4,5]  // array変数の中身が[5,4,3,2,1]に変更されている
-      );
+        var array = [1, 2, 3, 4, 5];
+        expect(
+          array.reverse()
+        ).to.eql(
+          [5, 4, 3, 2, 1]
+        );
+        expect(
+          array
+        ).not.to.eql(
+          [1, 2, 3, 4, 5]  // 変数arrayの中身が[5, 4, 3, 2, 1]に変更されている
+        );
       /* #@range_end(destructive_reverse) */
       next();
     });
     it('非破壊的なreverse関数', (next) => {
       /* #@range_begin(immutable_reverse) */
-      var reverse = (array) => {
-        return array.reduce((accumulator, item) => {
-          return [item].concat(accumulator);
-        }, []);
-      };
-      var array = [1,2,3,4,5];
-      expect(((_) => {
-        var reversed = reverse(array);
-        return array; // 逆転前の配列を返す
-      })()).to.eql(
-        [1,2,3,4,5]   // 逆転前の配列と同じ
-      );
+        var reverse = (array) => {
+          return array.reduce((accumulator, item) => {
+            return [item].concat(accumulator);
+          }, []);
+        };
+        var array = [1, 2, 3, 4, 5];
+        expect(((_) => {
+          var reversed = reverse(array);
+          return array;     // 逆転前の配列を返す
+        })()).to.eql(
+          [1, 2, 3, 4, 5]   // 逆転前の配列と同じ
+        );
       /* #@range_end(immutable_reverse) */
       expect(
         reverse(array)
       ).to.eql(
-        [5,4,3,2,1]
+        [5, 4, 3, 2, 1]
       );
       /* #@range_begin(immutable_reverse_is_not_immutable) */
-      var reversed = reverse(array);
-      reversed[0] = 0;
-      expect(
-        reversed
-      ).to.eql(
-        [0,4,3,2,1]
-      );
+        var reversed = reverse(array);
+        reversed[0] = 0;
+        expect(
+          reversed
+        ).to.eql(
+          [0, 4, 3, 2, 1]
+        );
       /* #@range_end(immutable_reverse_is_not_immutable) */
       next();
     });
@@ -651,40 +651,40 @@ describe('合成型', () => {
 describe('変数とデータの関係', () => {
   it('変数のバインディング', (next) => {
     /* #@range_begin(variable_binding_value) */
-    var bound = "我思うゆえに我あり";
-    expect(
-      bound
-    ).to.be(
-      "我思うゆえに我あり"
-    );
-    expect(
-      (_) => { // 例外をキャッチするにはexpectに関数を渡します
-        unbound // 変数unboundは自由変数です
-      }
-    ).to.throwException((exception)=> {
-      expect(exception).to.be.a(
-        ReferenceError
-      );
-    });
+        var bound = "我思うゆえに我あり";
+        expect(
+          bound
+        ).to.be(
+          "我思うゆえに我あり"
+        );
+        expect(
+          (_) => {  // 例外をキャッチするにはexpectに関数を渡す
+            unbound // 変数unboundは自由変数
+          }
+        ).to.throwException((exception) => {
+          expect(exception).to.be.a(
+            ReferenceError
+          );
+        });
     /* #@range_end(variable_binding_value) */
     next();
   });
   describe('スコープ', () => {
     it('関数はスコープを分ける', (next) => {
       /* #@range_begin(function_creates_scope) */
-      var createScope = (_) =>  { // 局所スコープを作る
-        var innerScope = "inner"; 
-        return innerScope; // innerScope変数は createScopeの中でのみ有効
-      };
-      expect(
-        (_) => {
-          innerScope // 局所スコープにある変数innerScopeにアクセスを試みます
-        }
-      ).to.throwException((e)=> {
-        expect(e).to.be.a(
-          ReferenceError // 参照先が見つからないという例外エラーとなる
-        );
-      });
+        var createScope = (_) =>  { // 局所スコープを作る
+          var innerScope = "inner"; 
+          return innerScope; // 変数innerScopeはcreateScopeの中でのみ有効
+        };
+        expect(
+          (_) => {
+            innerScope // 局所スコープにある変数innerScopeにアクセスを試みる
+          }
+        ).to.throwException((e) => {
+          expect(e).to.be.a(
+            ReferenceError   // 参照先が見つからないという例外が発生する
+          );
+        });
       /* #@range_end(function_creates_scope) */
       expect(
         createScope()
@@ -698,7 +698,7 @@ describe('変数とデータの関係', () => {
       var outerScope = 1;
       var createScope = (_) =>  {
         var innerScope = 2;
-        return innerScope + outerScope; // 内側のスコープから外側のスコープにある outerScope変数にアクセスしています
+        return innerScope + outerScope; // 内側のスコープから外側のスコープにある変数outerScopeにアクセスしている
       };
       /* #@range_end(nested_scope) */
       expect(
@@ -757,58 +757,58 @@ describe('変数とデータの関係', () => {
     // ![変数バインディングと環境](images/environment.gif) 
     it('関数本体でのバインド変数', (next) => {
       /* #@range_begin(bound_variable_in_function) */
-      var add = (x,y) => { // xとyは引数
-        return x + y; // それゆえに、xもyもバインド変数
-      };
+        var add = (x, y) => { // xとyは引数
+          return x + y;  // それゆえに、xもyはバインド変数
+        };
       /* #@range_end(bound_variable_in_function) */
       expect(
-        add(2,3)
+        add(2, 3)
       ).to.be(
         5
       );
       expect(
-        add(2,3)
+        add(2, 3)
       ).to.be(
-        ((x,y) => {
+        ((x, y) => {
           return x + y;
-        })(2,3)
+        })(2, 3)
       );
       next();
     });
     it('関数本体での自由変数', (next) => {
       /* #@range_begin(free_variable_in_function) */
-      var addWithFreeVariable = (x) => {
-        return x + y;  // xはバインド変数だが、yは自由変数
-      };
+        var addWithFreeVariable = (x) => {
+          return x + y;  // xはバインド変数だが、yは自由変数
+        };
       /* #@range_end(free_variable_in_function) */
       /* #@range_begin(free_variable_in_function_test) */
-      expect(
-        (_) => {
-          return addWithFreeVariable(1);
-        }
-      ).to.throwException((exception)=> {
-        expect(exception).to.be.a(
-          ReferenceError
-        );
-      });
+        expect(
+          (_) => {
+            return addWithFreeVariable(1);
+          }
+        ).to.throwException((exception) => {
+          expect(exception).to.be.a(
+            ReferenceError
+          );
+        });
       /* #@range_end(free_variable_in_function_test) */
       next();
     });
     it('クロージャーの変数バインディング', (next) => {
       /* #@range_begin(binding_in_closure) */
-      var adder = (y) => { // 外側の関数
-        var addWithFreeVariable = (x) => { // 内側の関数
-          return x + y; // 変数yはadder関数の引数yを参照できます
+        var adder = (y) => { // 外側の関数
+          var addWithFreeVariable = (x) => { // 内側の関数
+            return x + y; // 変数yはadder関数の引数yを参照できる
+          };
+          return addWithFreeVariable;
         };
-        return addWithFreeVariable;
-      };
       /* #@range_end(binding_in_closure) */
       /* #@range_begin(binding_in_closure_test) */
-      expect(
-        adder(2)(3)
-      ).to.eql(
-        5
-      );
+        expect(
+          adder(2)(3)
+        ).to.eql(
+          5
+        );
       /* #@range_end(binding_in_closure_test) */
       next();
     });
@@ -825,10 +825,10 @@ describe('変数とデータの関係', () => {
       /* 環境を拡張する */
       var extendEnv = (variable, value, env) => {
         return (queryVariable) => {
-          if(variable === queryVariable) {
+          if (variable === queryVariable) {
             return value;
           } else {
-            return lookupEnv(queryVariable,env);
+            return lookupEnv(queryVariable, env);
           }
         };
       };
@@ -840,9 +840,9 @@ describe('変数とデータの関係', () => {
         /* var a = 1 を実行して、辞書を拡張する */
         var firstEnv = extendEnv("a", 1, initEnv);
         /* var b = 3 を実行して、辞書を拡張する */
-        var secondEnv = extendEnv("b",3, firstEnv);
+        var secondEnv = extendEnv("b", 3, firstEnv);
         /* 辞書から b の値を参照する */
-        return lookupEnv("b",secondEnv);
+        return lookupEnv("b", secondEnv);
       })()).to.eql(
         3
       );
@@ -856,11 +856,11 @@ describe('変数とデータの関係', () => {
         /* var z = 2 を実行して、辞書を拡張する */
         var zEnv = extendEnv("z", 2, xEnv);
         /* 内部のスコープで var x = 3 を実行して、辞書を拡張する */
-        var xEnvInner = extendEnv("x",3, zEnv);
+        var xEnvInner = extendEnv("x", 3, zEnv);
         /* 内部のスコープで var y = 4 を実行して、辞書を拡張する */
-        var innerMostEnv = extendEnv("y",4, xEnvInner);
+        var innerMostEnv = extendEnv("y", 4, xEnvInner);
         /* 一番内側のスコープを利用して x + y + z を計算する */
-        return lookupEnv("x",innerMostEnv) + lookupEnv("y",innerMostEnv) + lookupEnv("z",innerMostEnv) ;
+        return lookupEnv("x", innerMostEnv) + lookupEnv("y", innerMostEnv) + lookupEnv("z", innerMostEnv) ;
       })()).to.eql(
         3 + 4 + 2
       );
@@ -888,7 +888,7 @@ describe('変数とデータの関係', () => {
         1
       );
       expect((() => {
-        var x = [0,1,2,3];
+        var x = [0, 1, 2, 3];
         var y = x;
         return x === y;
       })()).to.be(
@@ -941,18 +941,18 @@ describe('参照透過性の仕組み', () => {
   describe('不変なデータの仕組み', () => {
     it('基本型は値である', (next) => {
       /* #@range_begin(basic_type_is_value_type) */
-      var n = 1;
-      expect(
-        n
-      ).to.eql(
-        1
-      );
-      var s = "hello";
-      expect(
-        s
-      ).to.eql(
-        "hello"
-      );
+        var n = 1;
+        expect(
+          n
+        ).to.eql(
+          1
+        );
+        var s = "hello";
+        expect(
+          s
+        ).to.eql(
+          "hello"
+        );
       /* #@range_end(basic_type_is_value_type) */
       expect(
         n
@@ -971,11 +971,11 @@ describe('参照透過性の仕組み', () => {
   describe('可変なデータの仕組み', () => {
     // it('合成型は参照である', (next) => {
     //   /* #@range_begin(complex_type_is_reference) */
-    //   var array = [0,1,2,3];
+    //   var array = [0, 1, 2, 3];
     //   expect(
     //     array
     //   ).not.to.eql(
-    //     [0,1,2,3]
+    //     [0, 1, 2, 3]
     //   );
     //   var object = { key: 1 };
     //   expect(
@@ -999,19 +999,19 @@ describe('参照透過性の仕組み', () => {
   describe('代入の仕組みと効果', () => {
     it('変数への代入', (next) => {
       /* #@range_begin(assign_to_variable) */
-      var age = 29;
-      expect(
-        age
-      ).to.eql(
-        29
-      );
-      // この時点で誕生日を迎えました
-      age = 30;
-      expect(
-        age
-      ).to.eql(
-        30
-      );
+        var age = 29;
+        expect(
+          age
+        ).to.eql(
+          29
+        );
+        // この時点で誕生日を迎えた
+        age = 30;
+        expect(
+          age
+        ).to.eql(
+          30
+        );
       /* #@range_end(assign_to_variable) */
       next();
     });
@@ -1049,11 +1049,11 @@ describe('参照透過性の仕組み', () => {
       /* #@range_begin(referential_transparency_counterexample_mutable) */
       var x = 1;
       var y = 2;
-      var z = [x,y];
+      var z = [x, y];
       expect(
-        [x,y]
+        [x, y]
       ).not.to.be( // notを使っている
-        z // [x,y] を z に置きかえた
+        z // [x, y] を z に置きかえた
       );
       /* #@range_end(referential_transparency_counterexample_mutable) */
       next();

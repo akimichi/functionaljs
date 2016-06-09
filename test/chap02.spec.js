@@ -294,9 +294,9 @@ describe('参照透過性', () => {
   describe('参照透過性を破壊するもの', () => {
     it('代入操作は参照透明性を破壊する', (next) => {
       /* #@range_begin(assignment_breaks_referential_transparency) */
-var x = 0;    // 代入で変数を更新する
+var x = 0;   // 代入で変数を更新する
 var add = (y) => {
-  x = x + 1;  // 代入で変数を更新する
+  x = x + 1; // 代入で変数を更新する
   return x + y;
 };
       /* #@range_end(assignment_breaks_referential_transparency)  */
@@ -1423,11 +1423,11 @@ describe('関数型プログラミングの利点', () => {
     describe('部品の汎用性', () => {
       it('単純なインターフェイス', (next) => {
         /* #@range_begin(constant) */
-        var constant = (any) => {
-          return (_) => {
-            return any;
-          };
-        };
+var constant = (any) => {
+  return (_) => {
+    return any;
+  };
+};
         /* #@range_end(constant) */
         var alwaysOne = constant(1); 
         /* #@range_begin(add_uncurried) */
@@ -1524,8 +1524,8 @@ var sum = (array) => {
 var sum = (array) => {
   return array.reduce( /* 第1引数に関数を渡す */
     (accumulator, item) => { 
-      return accumulator + item;      /* 足し算を実行する */
-    }, 0);  /* 第2引数には、蓄積変数の初期値として0を渡す */
+      return accumulator + item;     /* 足し算を実行する */
+    }, 0); /* 第2引数には、蓄積変数の初期値として0を渡す */
 };
           /* #@range_end(sum_in_array_reduce)  */
           expect(
@@ -1539,8 +1539,8 @@ var sum = (array) => {
           /* #@range_begin(product_in_array_reduce) */
 var product = (array) => {
   return array.reduce((accumulator, item) => {
-    return accumulator * item;      /* かけ算を実行する */
-  }, 1);  /* 第2引数には、蓄積変数の初期値として1を渡す */
+    return accumulator * item;     /* かけ算を実行する */
+  }, 1); /* 第2引数には、蓄積変数の初期値として1を渡す */
 };
           /* #@range_end(product_in_array_reduce)  */
           /* #@range_begin(product_in_array_reduce_test) */
@@ -1556,9 +1556,9 @@ var product = (array) => {
           /* #@range_begin(all_in_array_reduce) */
 var all = (array) => {
   return array.reduce((accumulator, item) => {
-    return accumulator && item;     /* 論理和を実行する */
-  });  /* 第2引数を指定していない場合は、
-          配列の先頭要素が変数accumulatorの初期値になる */
+    return accumulator && item;    /* 論理和を実行する */
+  }); /* 第2引数を指定していない場合は、
+         配列の先頭要素が変数accumulatorの初期値になる */
 };
           /* #@range_end(all_in_array_reduce)  */
           expect(
@@ -1624,7 +1624,7 @@ var map = (transform) => {
   return (array) => {
     return array.reduce((accumulator, item) => {
       return accumulator.concat(transform(item));
-    }, []);  /* 蓄積変数の初期値として空の配列[]を指定する */
+    }, []); // 蓄積変数の初期値として空の配列[]を指定する
   };
 };
           /* #@range_end(map_in_array_reduce)  */
@@ -1641,11 +1641,11 @@ var map = (transform) => {
           var alwaysOne = constant(1); 
           expect(
             /* #@range_begin(map_in_array_reduce_test) */
-            map(succ)([1, 3, 5])
+map(succ)([1, 3, 5])
             /* #@range_end(map_in_array_reduce_test) */
           ).to.eql(
             /* #@range_begin(map_in_array_reduce_test_result) */
-            [2, 4, 6]
+[2, 4, 6]
             /* #@range_end(map_in_array_reduce_test_result) */
           );
           next();
@@ -1714,9 +1714,9 @@ var map = (transform) => {
         };
         var alwaysOne = constant(1); 
         /* #@range_begin(array_length) */
-        var length = (array) => {
-          return sum(map(alwaysOne)(array));
-        };
+var length = (array) => {
+  return sum(map(alwaysOne)(array));
+};
         /* #@range_end(array_length)  */
         expect(
           length([1, 2, 3])
@@ -1727,11 +1727,11 @@ var map = (transform) => {
       });
       describe('関数の合成', () => {
         /* #@range_begin(function_compose) */
-        var compose = (f, g) => {
-          return (arg) => {
-            return f(g(arg));
-          };
-        };
+var compose = (f, g) => {
+  return (arg) => {
+    return f(g(arg));
+  };
+};
         /* #@range_end(function_compose)  */
         it('関数合成でlength関数を作る(ポイントフリー版)', (next) => {
           var map = (transform) => {
@@ -1762,7 +1762,7 @@ var map = (transform) => {
           };
           /* #@range_end(flip_definition) */
           /* #@range_begin(array_length_in_composition_with_point_free_style) */
-          var length = compose(sum, map(alwaysOne));
+var length = compose(sum, map(alwaysOne));
           /* #@range_end(array_length_in_composition_with_point_free_style)  */
           expect(
             length([1, 2, 3])
@@ -1798,9 +1798,9 @@ var map = (transform) => {
             };
           };
           /* #@range_begin(array_length_in_composition) */
-          var length = (array) => { // 引数が配列であることを明示する
-            return compose(sum, map(alwaysOne))(array);
-          };
+var length = (array) => { // 引数が配列であることを明示する
+  return compose(sum, map(alwaysOne))(array);
+};
           /* #@range_end(array_length_in_composition)  */
           expect(
             length([1, 2, 3])
@@ -2136,20 +2136,20 @@ var factorial = (n) => {
       [2, 3, 4]
     );
     /* #@range_begin(stream_filter) */
-    var filter = (predicate) => {
-      return (aStream) => {
-        var head = aStream[0];
-        /* 先頭要素が条件に合致する場合 */
-        if (predicate(head) === true) { 
-          return [head, (_) => {
-            return filter(predicate)(aStream[1]());
-          }];
-        } else {                       
-          /* 先頭要素が条件に合致しない場合 */
-          return filter(predicate)(aStream[1]());
-        }
-      };
-    };
+var filter = (predicate) => {
+  return (aStream) => {
+    var head = aStream[0];
+    /* 先頭要素が条件に合致する場合 */
+    if (predicate(head) === true) { 
+      return [head, (_) => {
+        return filter(predicate)(aStream[1]());
+      }];
+    } else {   
+      /* 先頭要素が条件に合致しない場合 */
+      return filter(predicate)(aStream[1]());
+    }
+  };
+};
     /* #@range_end(stream_filter) */
     var mod = (n, m) => {
       return n % m;
@@ -2164,16 +2164,16 @@ var factorial = (n) => {
     };
     var succ = adder(1);
     /* #@range_begin(stream_enumFrom) */
-    var iterate = (step) => {  // 次の値との差を計算する関数を渡す
-      return (init) => {       // 先頭の値を渡す
-        return [init, (_) => { // ストリーム型を返す
-          return iterate(step)(step(init));
-        }];
-      };
-    };
-    var enumFrom = (n) => {
-      return iterate(succ)(n);
-    };
+var iterate = (step) => {  // 次の値との差を計算する関数を渡す
+  return (init) => {       // 先頭の値を渡す
+    return [init, (_) => { // ストリーム型を返す
+      return iterate(step)(step(init));
+    }];
+  };
+};
+var enumFrom = (n) => {
+  return iterate(succ)(n);
+};
     /* #@range_end(stream_enumFrom) */
     expect(
       take(3, filter(even)(enumFrom(2)))
@@ -2230,9 +2230,9 @@ var factorial = (n) => {
     describe('ストリーム', () => {
       it('簡単なストリームの例', (next) => {
         /* #@range_begin(stream_example) */
-        var stream = [1, (_) => { // 後尾は無名関数で表現する
-          return 2;
-        }];
+var stream = [1, (_) => { // 後尾は無名関数で表現する
+  return 2;
+}];
         /* #@range_end(stream_example) */
         expect(
           stream[0]
@@ -2302,36 +2302,36 @@ var factorial = (n) => {
           };
         };
         /* #@range_begin(stream_remove) */
-        var not = (arg) => {
-          return ! arg;
-        };
-        var remove = (predicate) => {
-          return (aStream) => {
-            return filter(compose(not, predicate))(aStream);
-          };
-        };
+var not = (arg) => {
+  return ! arg;
+};
+var remove = (predicate) => {
+  return (aStream) => {
+    return filter(compose(not, predicate))(aStream);
+  };
+};
         /* #@range_end(stream_remove) */
         /* #@range_begin(stream_take) */
-        var take = (n) => {
-          return (aStream) => {
-            /* 再帰処理の終了条件 */
-            if (n === 1) { 
-              return aStream[0];
-            } else {
-              /* take関数の再帰呼び出し */
-              return [aStream[0]].concat(take(n-1)(aStream[1]())); 
-            }
-          };
-        };
+var take = (n) => {
+  return (aStream) => {
+    /* 再帰処理の終了条件 */
+    if (n === 1) { 
+      return aStream[0];
+    } else {
+      /* take関数の再帰呼び出し */
+      return [aStream[0]].concat(take(n-1)(aStream[1]())); 
+    }
+  };
+};
         /* #@range_end(stream_take) */
         /* #@range_begin(multipleOf) */
-        var multipleOf = (n, m) => {
-          if ((n % m) === 0) {
-            return true;
-          } else {
-            return false;
-          }
-        };
+var multipleOf = (n, m) => {
+  if ((n % m) === 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
         /* #@range_end(multipleOf) */
         expect(
           multipleOf(4, 2)
@@ -2348,15 +2348,15 @@ var factorial = (n) => {
         };
         expect(((_) => { 
           /* #@range_begin(stream_remove_test) */
-          var even = (n) => {
-            return multipleOf(n, 2); // 偶数は2の倍数
-          };
-          take(5)(remove(even)(enumFrom(1)));
+var even = (n) => {
+  return multipleOf(n, 2); // 偶数は2の倍数
+};
+take(5)(remove(even)(enumFrom(1)));
           /* #@range_end(stream_remove_test) */
           return take(5)(remove(even)(enumFrom(1)));
         })()).to.eql(
           /* #@range_begin(stream_remove_test_result) */
-          [1, 3, 5, 7, 9]
+[1, 3, 5, 7, 9]
           /* #@range_end(stream_remove_test_result) */
         );
         expect(
@@ -2367,27 +2367,27 @@ var factorial = (n) => {
         // #### エラトステネスのふるいによる素数の生成 
         // [![IMAGE ALT TEXT](http://img.youtube.com/vi/1NzrrU8BawA/0.jpg)](http://www.youtube.com/watch?v=1NzrrU8BawA "エラトステネスのふるいの動画")
         /* #@range_begin(eratosthenes_sieve) */
-        /* エラトステネスのふるい */
-        var sieve = (aStream) => {
-          /* 変数primeは先頭にある素数 */
-          var prime = aStream[0];           
-          return [prime, (_) => {
-            return sieve(remove( /* その素数の倍数を除去する */
-              (item) => { 
-                return multipleOf(item, prime);  
-              }
-            )(aStream[1]()));
-          }]; 
-        };
+/* エラトステネスのふるい */
+var sieve = (aStream) => {
+  /* 変数primeは先頭にある素数 */
+  var prime = aStream[0];   
+  return [prime, (_) => {
+    return sieve(remove( /* その素数の倍数を除去する */
+      (item) => { 
+        return multipleOf(item, prime);  
+      }
+    )(aStream[1]()));
+  }]; 
+};
         /* #@range_end(eratosthenes_sieve) */
         var primes = sieve(enumFrom(2)); // 無限の素数列
         expect(
           /* #@range_begin(eratosthenes_sieve_test) */
-          take(10)(primes)
+take(10)(primes)
           /* #@range_end(eratosthenes_sieve_test) */
         ).to.eql(
           /* #@range_begin(eratosthenes_sieve_test_result) */
-          [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
+[ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
           /* #@range_end(eratosthenes_sieve_test_result) */
         );
         expect(
@@ -2489,34 +2489,34 @@ var factorial = (n) => {
       });
       it('参照透過性のある銀行口座', (next) => {
         /* #@range_begin(account_with_explicit_state) */
-        var account = {
-          /* 銀行口座を作る関数 */
-          init: (balance) => {
-            return balance;
-          },
-          /* 口座にお金を預ける関数 */
-          deposit: (amount) => { 
-            return (anAccount) => {
-              /* 銀行口座を作り直す */
-              return account.init(anAccount + amount); 
-            };
-          },
-          /* 口座からお金を引き出す関数 */
-          withdraw: (amount) => { 
-            return (anAccount) => {
-              /* 銀行口座を作り直す */
-              return account.init(anAccount - amount); 
-            };
-          },
-          /* 取り引きを実行する関数 */
-          commit: (anAccount) => { 
-            return (transactions) => {
-              return transactions.reduce((accumulator, transact) => {
-                return transact(accumulator);
-              }, anAccount);
-            };
-          }
-        };
+var account = {
+  /* 銀行口座を作る関数 */
+  init: (balance) => {
+    return balance;
+  },
+  /* 口座にお金を預ける関数 */
+  deposit: (amount) => { 
+    return (anAccount) => {
+      /* 銀行口座を作り直す */
+      return account.init(anAccount + amount); 
+    };
+  },
+  /* 口座からお金を引き出す関数 */
+  withdraw: (amount) => { 
+    return (anAccount) => {
+      /* 銀行口座を作り直す */
+      return account.init(anAccount - amount); 
+    };
+  },
+  /* 取り引きを実行する関数 */
+  commit: (anAccount) => { 
+    return (transactions) => {
+      return transactions.reduce((accumulator, transact) => {
+        return transact(accumulator);
+      }, anAccount);
+    };
+  }
+};
         /* #@range_end(account_with_explicit_state) */
         expect(
           account.init(20)
@@ -2530,41 +2530,41 @@ var factorial = (n) => {
         );
 
         /* #@range_begin(account_test) */
-        var theAcount = account.init(1000);
-        /* お金を引き出してから、預金する */
-        expect(
-          account.commit(theAcount)(
-            [account.withdraw(200), /* 一連の取り引きを実行する */
-             account.deposit(100)] 
-          )
-        ).to.eql(
-          900
-        );
-        /* お金を引き出すのみ */
-        expect(
-          account.commit(theAcount)( /* 先ほどの口座を再利用する */
-            [account.withdraw(10), 
-             account.withdraw(20), 
-             account.withdraw(30)]
-          )
-        ).to.eql(
-          940
-        );
+var theAcount = account.init(1000);
+/* お金を引き出してから、預金する */
+expect(
+  account.commit(theAcount)(
+    [account.withdraw(200),  /* 一連の取り引きを実行する */
+     account.deposit(100)] 
+  )
+).to.eql(
+  900
+);
+/* お金を引き出すのみ */
+expect(
+  account.commit(theAcount)( /* 先ほどの口座を再利用する */
+    [account.withdraw(10), 
+     account.withdraw(20), 
+     account.withdraw(30)]
+  )
+).to.eql(
+  940
+);
         /* #@range_end(account_test) */
         next();
       });
       describe('ゲームの勝敗の例', () => {
         it("参照透過性のないコードのテスト", (next) => {
           /* #@range_begin(winner_with_sideeffect) */
-          var winner = (playerL, playerR) => {
-            if (playerR.score > playerL.score) {
-              console.log(playerR.name + "が勝者です");
-            } else if (playerR.score < playerL.score) {
-              console.log(playerL.name + "が勝者です");
-            } else {
-              console.log("引き分けです");
-            }
-          }; 
+var winner = (playerL, playerR) => {
+  if (playerR.score > playerL.score) {
+    console.log(playerR.name + "が勝者です");
+  } else if (playerR.score < playerL.score) {
+    console.log(playerL.name + "が勝者です");
+  } else {
+    console.log("引き分けです");
+  }
+}; 
           /* #@range_end(winner_with_sideeffect) */
           var playerA = {
             name: 'a',
@@ -2579,43 +2579,43 @@ var factorial = (n) => {
         it("参照透過性のあるコードのテスト", (next) => {
           /* #@range_begin(winner_without_sideeffect) */
           /* 勝者を判定する */
-          var judge = (playerL, playerR) => {
-            if (playerL.score > playerR.score) {
-              return playerL;
-            } else if (playerL.score < playerR.score) {
-              return playerR;
-            } else {
-              return null;
-            }
-          }; 
-          /* 勝者を告げる文字列を生成する */
-          var announce = (winner) => {
-            if (winner) {
-              return winner.name + "が勝者です";
-            } else {
-              return "引き分けです";
-            }
-          };
-          /* 勝者を表示する */
-          var displayWinner = (winner) => {
-            console.log(announce(winner));
-          };
+var judge = (playerL, playerR) => {
+  if (playerL.score > playerR.score) {
+    return playerL;
+  } else if (playerL.score < playerR.score) {
+    return playerR;
+  } else {
+    return null;
+  }
+}; 
+/* 勝者を告げる文字列を生成する */
+var announce = (winner) => {
+  if (winner) {
+    return winner.name + "が勝者です";
+  } else {
+    return "引き分けです";
+  }
+};
+/* 勝者を表示する */
+var displayWinner = (winner) => {
+  console.log(announce(winner));
+};
           /* #@range_end(winner_without_sideeffect) */
           /* #@range_begin(announce_winner) */
-          var socrates = {
-            name: 'ソクラテス',
-            score: 10
-          };
-          var plato = {
-            name: 'プラトン',
-            score: 20
-          };
-          /* 純粋な関数をテストする */
-          expect(
-            announce(judge(socrates, plato))
-          ).to.eql(
-            "プラトンが勝者です"
-          );
+var socrates = {
+  name: 'ソクラテス',
+  score: 10
+};
+var plato = {
+  name: 'プラトン',
+  score: 20
+};
+/* 純粋な関数をテストする */
+expect(
+  announce(judge(socrates, plato))
+).to.eql(
+  "プラトンが勝者です"
+);
           /* #@range_end(announce_winner) */
           next();
         });
@@ -2787,25 +2787,25 @@ var factorial = (n) => {
           }, true);
         };
         /* #@range_begin(succ_property_test) */
-        /* ストリームのmap関数 */
-        var map = (transform) => {
-          return (aStream) => {
-            var head = aStream[0];
-            return [transform(head), (_) => {
-              return map(transform)(aStream[1]());
-            }];
-          };
-        };
-        /* 検証の対象となる命題 */
-        var proposition = (x) => {
-          return succ(0) + succ(x) === succ(succ(x));
-        };
-        /* 100個の整数について命題が正しいかをテストする */
-        expect(
-          all(take(100)(map(proposition)(enumFrom(0))))
-        ).to.eql(
-          true
-        );
+/* ストリームのmap関数 */
+var map = (transform) => {
+  return (aStream) => {
+    var head = aStream[0];
+    return [transform(head), (_) => {
+      return map(transform)(aStream[1]());
+    }];
+  };
+};
+/* 検証の対象となる命題 */
+var proposition = (x) => {
+  return succ(0) + succ(x) === succ(succ(x));
+};
+/* 100個の整数について命題が正しいかをテストする */
+expect(
+  all(take(100)(map(proposition)(enumFrom(0))))
+).to.eql(
+  true
+);
         /* #@range_end(succ_property_test) */
         next();
       });

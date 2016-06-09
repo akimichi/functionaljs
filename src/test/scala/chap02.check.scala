@@ -40,10 +40,10 @@ object MathSpecification extends Properties("Math") {
     n + 1
   }
   /* #@range_begin(check_succ) */
-  property("succ") = forAll( (x:Int) => // 変数xは整数である
-    (x >= 0) ==>  // xは0以上であるとする事前条件を設定する
-      (succ(0) + succ(x) == succ(succ(x)))
-  )
+property("succ") = forAll( (x:Int) => // 変数xは整数である
+  (x >= 0) ==>  // xは0以上であるとする事前条件を設定する
+    (succ(0) + succ(x) == succ(succ(x)))
+)
   /* #@range_end(check_succ) */
   /* #@range_begin(check_multiplication) */
   property("multiply") = forAll( (x:Int) => 

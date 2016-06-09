@@ -31,11 +31,11 @@ it('負のかけ算で失敗する', (next) => {
     return times(m, multiply, n, 1);
   };
   /* #@range_begin(multiply_failed_test) */
-  expect(
-    multiply(-2,3)
-  ).to.eql(
-      -6   // -2 * 3 = 6 のはず
-  );
+      expect(
+        multiply(-2, 3)
+      ).to.eql(
+        -6   // -2 * 3 = 6 のはず
+      );
   /* #@range_end(multiply_failed_test) */
   next();
 });

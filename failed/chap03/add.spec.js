@@ -18,11 +18,11 @@ it('負の足し算で失敗する', (next) => {
     }
   };
   /* #@range_begin(add_failed_test) */
-  expect(
-    add(1,-2)
-  ).to.eql(
-      -1 // -1 になるべきが、-1ではない
-  );
+      expect(
+        add(1, -2)
+      ).to.eql(
+        -1   // -1になるべきが、-1ではない
+      );
   /* #@range_end(add_failed_test) */
   next();
 });

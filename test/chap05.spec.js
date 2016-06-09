@@ -59,10 +59,10 @@ var list  = {
   /* append:: LIST[T] -> LIST[T] -> LIST[T] */
   append: (xs) => {
     return (ys) => {
-      if(list.isEmpty(xs)){
+      if (list.isEmpty(xs)) {
         return ys;
       } else {
-        return list.cons(list.head(xs),(list.append(list.tail(xs))(ys)));
+        return list.cons(list.head(xs), (list.append(list.tail(xs))(ys)));
       }
     };
   },
@@ -85,7 +85,7 @@ var list  = {
   },
   /* join:: LIST[LIST[T]] -> LIST[T] */
   join: (list_of_list) => {
-    if(self.isEmpty(list_of_list)){
+    if (self.isEmpty(list_of_list)) {
       return list.empty();
     } else {
       return list.append(list.head(list_of_list))(list.join(list.tail(list_of_list)));
@@ -96,7 +96,7 @@ var list  = {
     return (accumulator) => {
       return (glue) => {
         expect(glue).to.a('function');
-        return match(seq,{
+        return match(seq, {
           empty: (_) => {
             return accumulator;
           },
@@ -109,12 +109,12 @@ var list  = {
   },
   /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
   map: (seq, transform) => {
-    return match(seq,{
+    return match(seq, {
       empty: (_) => {
         return list.empty();
       },
-      cons: (x,xs) => {
-        return list.cons(transform(x),list.map(xs,transform));
+      cons: (x, xs) => {
+        return list.cons(transform(x), list.map(xs, transform));
       }
     });
   },
@@ -122,7 +122,7 @@ var list  = {
   reverse: (seq) => {
     var reverseHelper = (seq, accumulator) => {
       return match(seq, {
-        empty: (_) => {  // emptyの場合は、終了条件
+        empty: (_) => {  // emptyの場合は、終了条件となる
           return accumulator;
         },
         cons: (head, tail) => { // consの場合は、再帰的に呼び出す
@@ -138,12 +138,12 @@ var list  = {
     return (predicate) => {
       expect(predicate).to.a('function');
       var filterAux = (seq, accumulator) => {
-        return match(seq,{
+        return match(seq, {
           empty: (_) => {
             return accumulator;
           },
-          cons: (head,tail) => {
-            if(predicate(head) === true){
+          cons: (head, tail) => {
+            if (predicate(head) === true) {
               return list.append(list.append(accumulator)(list.cons(head, list.empty())))(filterAux(tail, accumulator));
             } else  {
               return filterAux(tail, accumulator);
@@ -156,11 +156,11 @@ var list  = {
   },
   /* list#length */
   length: (seq) => {
-    return match(seq,{
+    return match(seq, {
       empty: (_) => {
         return 0;
       },
-      cons: (head,tail) => {
+      cons: (head, tail) => {
         return list.foldr(seq)(0)((item) => {
           return (accumulator) => {
             return 1 + accumulator;
@@ -172,12 +172,12 @@ var list  = {
   any: (seq) => {
     return (predicate) => {
       expect(predicate).to.a('function');
-      return match(seq,{
+      return match(seq, {
         empty: (_) => {
           return false;
         },
-        cons: (head,tail) => {
-          if(truthy(predicate(head))) {
+        cons: (head, tail) => {
+          if (truthy(predicate(head))) {
             return true;
           } else {
             return list.any(tail)(predicate);
@@ -188,7 +188,7 @@ var list  = {
   },
   /* #@range_end(list_filter) */
   toArray: (seq) => {
-    var toArrayHelper = (seq,accumulator) => {
+    var toArrayHelper = (seq, accumulator) => {
       return match(seq, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
@@ -208,13 +208,13 @@ describe('条文分岐の種類と特徴', () => {
   describe('条件分岐としてのif文', () => {
     it('偶数の例', (next) => {
       /* ##@range_begin(even_function)*/
-      var even = (n) => {
-        if((n % 2) === 0) { // 2で割った余りが0の場合
-          return true;
-        } else {            // 2で割った余りが0でない場合
-          return false;
-        }
-      };
+var even = (n) => {
+  if ((n % 2) === 0) { // 2で割った余りが0の場合
+    return true;
+  } else {             // 2で割った余りが0でない場合
+    return false;
+  }
+};
       /* ##@range_end(even_function)*/
       expect(
         even(2)
@@ -231,7 +231,7 @@ describe('条文分岐の種類と特徴', () => {
     /*
       it('逆数の例', (next) => {
       var inverse = (n) => {
-      if(n === 0) {
+      if (n === 0) {
       return 0;
       } else {
       return 1 / n;
@@ -252,15 +252,15 @@ describe('条文分岐の種類と特徴', () => {
     */
     it('returnで関数を抜ける', (next) => {
       /* ##@range_begin(even_function_again) */
-      var even = (n) => {
-        if((n % 2) === 0) {
-          /* returnでeven関数を抜けてtrueを返す */
-          return true;       
-        } else {
-          /* returnでeven関数を抜けてfalseを返す */
-          return false;      
-        }
-      };
+var even = (n) => {
+  if ((n % 2) === 0) {
+    /* returnでeven関数を抜けてtrueを返す */
+    return true; 
+  } else {
+    /* returnでeven関数を抜けてfalseを返す */
+    return false;
+  }
+};
       /* ##@range_end(even_function_again) */
       next();
     });
@@ -286,9 +286,9 @@ describe('条文分岐の種類と特徴', () => {
   // ## 再帰呼び出しの条件
   describe('再帰呼び出しの条件', () => {
     /* ##@range_begin(infiniteLoop) */
-    var infiniteLoop = (_) => {
-      return infiniteLoop(_);
-    };
+var infiniteLoop = (_) => {
+  return infiniteLoop(_);
+};
     /* ##@range_end(infiniteLoop) */
     it('ifの非正格性', (next) => {
       /* ##@range_begin(if_nonstrict) */
@@ -296,7 +296,7 @@ describe('条文分岐の種類と特徴', () => {
         return infiniteLoop(_);     /* 同じ関数を実行するので無限ループになります */
       };
       var lessThanFive = (n) => {
-        if(n < 5) {
+        if (n < 5) {
           return true;
         } else {
           return infiniteLoop(); // ここが実行されると無限ループになります
@@ -321,7 +321,7 @@ describe('条文分岐の種類と特徴', () => {
     it('条件式の実装(不完全)', (next) => {
       /* #@range_begin(functional_if_strict) */
       var functionalIf = (predicate, trueClause, falseClause) => {
-        if(predicate){
+        if (predicate) {
           return trueClause; // 判定式が真の場合に実行する
         } else {
           return falseClause;  // 判定式が真の場合に実行する
@@ -344,7 +344,7 @@ describe('条文分岐の種類と特徴', () => {
     it('条件式の実装', (next) => {
       /* #@range_begin(functional_if) */
       var functionalIf = (predicate, pattern) => {
-        if(predicate){
+        if (predicate) {
           return pattern.thenClause();  // 判定式が真の場合に、pattern.thenClauseの関数を実行する
         } else {
           return pattern.elseClause();  // 判定式が真の場合に、pattern.elseClauseの関数を実行する
@@ -366,7 +366,7 @@ describe('条文分岐の種類と特徴', () => {
       /* #@range_end(functional_if) */
       /* #@range_begin(functional_if_test) */
       var even = (n) => {
-        return functionalIf((n % 2) === 0,{
+        return functionalIf((n % 2) === 0, {
           thenClause: () => {
             return true;
           },
@@ -386,7 +386,7 @@ describe('条文分岐の種類と特徴', () => {
       /* #@range_begin(multiplyOf)            */
       var multiplyOf = (n) => {
         return (m) => {
-          return functionalIf(m % n === 0,{
+          return functionalIf(m % n === 0, {
             thenClause: () => {
               return true;
             },
@@ -414,19 +414,19 @@ describe('条文分岐の種類と特徴', () => {
   });
   it('関数渡しで反復文を構築する', function(next) {
     /* #@range_begin(loop)            */
-    var loop = function(pred, accumulator, expression){
-      if(pred(accumulator)){
+    var loop = function(pred, accumulator, expression) {
+      if (pred(accumulator)) {
         return loop(pred, expression(accumulator), expression);
       } else {
         return accumulator;
       }
     };
-    var lessThan = function(n){
-      return function(x){
+    var lessThan = function(n) {
+      return function(x) {
         return x < n;
       };
     };
-    var succ = function(n){
+    var succ = function(n) {
       return n + 1;
     };
     expect(loop(lessThan(3), 0, succ)).to.eql(3);
@@ -496,7 +496,7 @@ describe('条文分岐の種類と特徴', () => {
       expect(((_) => {
         var eq = (x) => {
           return (y) => {
-            if(x === y) {
+            if (x === y) {
               return _true;
             } else {
               return _false;
@@ -525,7 +525,7 @@ describe('条件分岐としてのswitch文', () => {
     /* #@range_begin(signal) */
     var move;
     var signal = (light) => {
-      switch(light){
+      switch(light) {
       case "green":
         move = forward;
         break;
@@ -547,21 +547,21 @@ describe('条件分岐としてのswitch文', () => {
   });
   it("可変データとのマッチング", (next) => {
     /* #@range_begin(switch_for_mutable) */
-    var match_for_mutable = (array) => {
-      switch(array){
-      case [1,2,3]: // [1,2,3] とマッチさせたい
-        return true;   // マッチすれば、trueを返す
-        break;
-      default:
-        return false;  // マッチしなければ、falseを返す
-      }
-    };
-    /* テスト */
-    expect(
-      match_for_mutable([1,2,3])
-    ).to.eql(
-      false  // case [1,2,3] にはマッチしない
-    );
+var match_for_mutable = (array) => {
+  switch(array) {
+  case [1, 2, 3]:  // [1, 2, 3] とマッチさせたい
+    return true;   // マッチすれば、trueを返す
+    break;
+  default:
+    return false;  // マッチしなければ、falseを返す
+  }
+};
+/* テスト */
+expect(
+  match_for_mutable([1, 2, 3])
+).to.eql(
+  false  // case [1, 2, 3] にはマッチしない
+);
     /* #@range_end(switch_for_mutable) */
     next();
   });
@@ -569,7 +569,7 @@ describe('条件分岐としてのswitch文', () => {
     /* #@range_begin(currency) */
     var move;
     var signal = (currency) => {
-      switch(currency){
+      switch(currency) {
       case "yen":
         move = forward;
         break;
@@ -591,34 +591,34 @@ describe('条件分岐としてのswitch文', () => {
   });
   it("ネストされたif文で3つ以上の条件分岐を表現する", (next) => {
     /* #@range_begin(compare) */
-    var compare =  (n,m) => {
-      if (n > m) {     // nがmよりも大きなケース
-        return 1;
-      } else {
-        if(n === m) {  // ネストされたif文
-          return 0;
-        } else {
-          return -1;
-        }
-      }
-    };
-    /* テスト */
-    /* 3 は 2 よりも大きい */
-    expect(
-      compare(3,2)
-    ).to.eql(
-      1
-    );
-    /* 2 は 3 よりも小さい */
-    expect(
-      compare(2,3)
-    ).to.eql(
-        -1
-    );
+var compare =  (n, m) => {
+  if (n > m) {      // nがmよりも大きいケース
+    return 1;
+  } else {
+    if (n === m) {  // ネストされたif文
+      return 0;
+    } else {
+      return -1;
+    }
+  }
+};
+/* テスト */
+/* 3 は 2 よりも大きい */
+expect(
+  compare(3, 2)
+).to.eql(
+  1
+);
+/* 2 は 3 よりも小さい */
+expect(
+  compare(2, 3)
+).to.eql(
+  -1
+);
     /* #@range_end(compare) */
     /* 1 と 1 は等しい */
     expect(
-      compare(1,1)
+      compare(1, 1)
     ).to.eql(
       0
     );
@@ -626,32 +626,32 @@ describe('条件分岐としてのswitch文', () => {
   });
   it("elseif文で3つ以上の条件分岐を表現する", (next) => {
     /* #@range_begin(elseif) */
-    var compare =  (n,m) => {
-      if (n > m) {
-        return 1;
-      } else if (n === m) { // elseにif文を続ける
-        return 0;
-      } else  {
-        return -1;
-      }
+var compare =  (n, m) => {
+  if (n > m) {
+    return 1;
+  } else if (n === m) { // elseにif文を続ける
+    return 0;
+  } else  {
+    return -1;
+  }
     };
     /* #@range_end(elseif) */
     /* テスト */
     /* 3 は 2 よりも大きい */
     expect(
-      compare(3,2)
+      compare(3, 2)
     ).to.eql(
       1
     );
     /* 1 と 1 は等しい */
     expect(
-      compare(1,1)
+      compare(1, 1)
     ).to.eql(
       0
     );
     /* 2 は 3 よりも小さい */
     expect(
-      compare(2,3)
+      compare(2, 3)
     ).to.eql(
         -1
     );
@@ -672,44 +672,44 @@ describe('条件分岐としてのswitch文', () => {
       */
       /* thermostat:: (EVENT, BOOL) -> BOOL */
       var thermostat = (event) => {
-        if(event.hour > 12 && event.hour < 19){
-          if(event.temperture > 28) {
+        if (event.hour > 12 && event.hour < 19) {
+          if (event.temperture > 28) {
             return false;
           } else {
-            if(event.temperture < 26) {
+            if (event.temperture < 26) {
               return true;
             } else {
               return event.heater;
             }
           }
         }
-        if(event.hour > 18 && event.hour < 24){
-          if(event.temperture > 26) {
+        if (event.hour > 18 && event.hour < 24) {
+          if (event.temperture > 26) {
             return false;
           } else {
-            if(event.temperture < 24) {
+            if (event.temperture < 24) {
               return true;
             } else {
               return event.heater;
             }
           }
         }
-        if(event.hour > 0 && event.hour < 7){
-          if(event.temperture > 23) {
+        if (event.hour > 0 && event.hour < 7) {
+          if (event.temperture > 23) {
             return false;
           } else {
-            if(event.temperture < 21) {
+            if (event.temperture < 21) {
               return true;
             } else {
               return event.heater;
             }
           }
         }
-        if(event.hour > 6 && event.hour < 12){
-          if(event.temperture > 26) {
+        if (event.hour > 6 && event.hour < 12) {
+          if (event.temperture > 26) {
             return false;
           } else {
-            if(event.temperture < 24) {
+            if (event.temperture < 24) {
               return true;
             } else {
               return event.heater;
@@ -731,7 +731,7 @@ describe('条件分岐としてのswitch文', () => {
     });
     it('コンビネーターで実装する', (next) => {
       var functionalIf = (predicate, pattern) => {
-        if(predicate){
+        if (predicate) {
           return pattern.thenClause();
         } else {
           return pattern.elseClause()
@@ -749,7 +749,7 @@ describe('条件分岐としてのswitch文', () => {
       var temperture = extract('temperture');
       /* heater:: EVENT -> BOOL */
       var heater = extract('heater');
-      /* and:: (ANY -> BOOL,ANY -> BOOL) -> ANY -> BOOL */
+      /* and:: (ANY -> BOOL, ANY -> BOOL) -> ANY -> BOOL */
       var and = (former, latter) => {
         expect(former).to.a('function');
         expect(latter).to.a('function');
@@ -871,7 +871,7 @@ describe('条件分岐としてのswitch文', () => {
       /* above(28)(temperture):: EVENT -> BOOL */
       expect(
         and(afternoon
-            ,above(28)(temperture))({ hour: 13, temperture: 29, heater: false})
+            , above(28)(temperture))({ hour: 13, temperture: 29, heater: false})
       ).to.eql(
         true
       );
@@ -889,7 +889,7 @@ describe('条件分岐としてのswitch文', () => {
   describe('コンビネータによる条件分岐の改善', () => {
     var multiplyOf = (n) => {
       return (m) => {
-        if((m % n) === 0) {
+        if ((m % n) === 0) {
           return true;
         } else {
           return false;
@@ -924,7 +924,7 @@ describe('条件分岐としてのswitch文', () => {
       var fiveFold = multiplyOf(5); /* 5の倍数を判定する */
 
       var twoFoldAndThreeFoldButNotFiveFold = (n) => {
-        if(twoFold(n) && threeFold(n) && ! fiveFold(n)) {
+        if (twoFold(n) && threeFold(n) && ! fiveFold(n)) {
           return true;
         } else {
           return false;
@@ -977,23 +977,23 @@ describe('条件分岐としてのswitch文', () => {
       /* ##@range_begin(logical_combinator_test) */
       expect(
         /* 「2の倍数かつ3の倍数で、5の倍数ではない」*/
-        and(and(twoFold,threeFold),not(fiveFold))(6)
+        and(and(twoFold, threeFold), not(fiveFold))(6)
       ).to.eql(
         true
       );
       /* ##@range_end(logical_combinator_test) */
       expect(
-        and(twoFold,threeFold)(6)
+        and(twoFold, threeFold)(6)
       ).to.eql(
         true
       );
       expect(
-        and(twoFold,threeFold)(4)
+        and(twoFold, threeFold)(4)
       ).to.eql(
         false
       );
       expect(
-        and(and(twoFold,threeFold),not(fiveFold))(4)
+        and(and(twoFold, threeFold), not(fiveFold))(4)
       ).to.eql(
         false
       );
@@ -1001,7 +1001,7 @@ describe('条件分岐としてのswitch文', () => {
       /* ##@range_begin(another_logical_combinator_test) */
       expect(
         /* 「2の倍数もしくは3の倍数、かつ5の倍数でもある」 */
-        and(or(twoFold,threeFold),fiveFold)(10)
+        and(or(twoFold, threeFold), fiveFold)(10)
       ).to.eql(
         true
       );
@@ -1014,92 +1014,92 @@ describe('条件分岐としてのswitch文', () => {
 describe('代数的データ型', () => {
   it('Listを代数的データ型として実装する', (next) => {
     /* #@range_begin(list_in_algebraic_datatype) */
-    /* リストの代数的データ型 */
-    var empty = () => { // 空のリスト
-      return (pattern) => {
-        return pattern.empty();
-      };
-    };
-    var cons = (value, list) => { // 空でないリスト
-      return (pattern) => {
-        return pattern.cons(value, list);
-      };
-    };
+/* リストの代数的データ型 */
+var empty = () => { // 空のリスト
+  return (pattern) => {
+    return pattern.empty();
+  };
+};
+var cons = (value, list) => { // 空でないリスト
+  return (pattern) => {
+    return pattern.cons(value, list);
+  };
+};
     /* #@range_end(list_in_algebraic_datatype) */
     /* #@range_begin(match_in_algebraic_datatype) */
-    /* 代数的データ型に対してパターンマッチを実現する関数 */
-    var match = (data, pattern) => {
-      return data(pattern);
-    };
+/* 代数的データ構造に対してパターンマッチを実現する関数 */
+var match = (data, pattern) => {
+  return data(pattern);
+};
     /* #@range_end(match_in_algebraic_datatype) */
     /* #@range_begin(list_function_using_algebraic_datatype) */
-    /* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを判定する */
-    var isEmpty = (alist) => {
-      /* match関数で分岐する */
-      return match(alist, { 
-        // emptyにマッチするケース
-        empty: (_) => {          
-          return true;
-        },
-        // consにマッチするケース
-        cons: (head, tail) => {  // headとtailにそれぞれ先頭と後尾が入る
-          return false;
-        }
-      });
-    };
-    /* head関数は、引数alistに渡されたリストの先頭の要素を返す */
-    var head = (alist) => {
-      return match(alist, {
-        /* 空のリストには先頭要素はありません */
-        empty: (_) => {
-          return null; 
-        },
-        cons: (head, tail) => {
-          return head;
-        }
-      });
-    };
-    /* tail関数は、引数alistに渡されたリストの後尾のリストを返す */
-    var tail = (alist) => {
-      return match(alist, {
-        /* 空のリストには後尾はありません */
-        empty: (_) => {
-          return null;  
-        },
-        cons: (head, tail) => {
-          return tail;
-        }
-      });
-    };
+/* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを判定する */
+var isEmpty = (alist) => {
+  /* match関数で分岐する */
+  return match(alist, { 
+    // emptyにマッチするケース
+    empty: (_) => {  
+      return true;
+    },
+    // consにマッチするケース
+    cons: (head, tail) => {  // headとtailにそれぞれ先頭と後尾が入る
+      return false;
+    }
+  });
+};
+/* head関数は、引数alistに渡されたリストの先頭の要素を返す */
+var head = (alist) => {
+  return match(alist, {
+    /* 空のリストには先頭要素はない */
+    empty: (_) => {
+      return null; 
+    },
+    cons: (head, tail) => {
+      return head;
+    }
+  });
+};
+/* tail関数は、引数alistに渡されたリストの後尾のリストを返す */
+var tail = (alist) => {
+  return match(alist, {
+    /* 空のリストには後尾はない */
+    empty: (_) => {
+      return null;  
+    },
+    cons: (head, tail) => {
+      return tail;
+    }
+  });
+};
     /* #@range_end(list_function_using_algebraic_datatype) */
     /* #@range_begin(list_in_algebraic_datatype_test) */
-    /* empty は空のリストか */
-    expect(
-      isEmpty(empty())                    
-    ).to.eql(
-      true
-    );
-    /* cons(1,empty())は空のリストか */
-    expect(
-      isEmpty(cons(1,empty()))            
-    ).to.eql(
-      false
-    );
-    /* cons(1,empty())]の先頭要素は1である */
-    expect(
-      head(cons(1,empty()))               
-    ).to.eql(
-      1
-    );
-    /* cons(1,cons(2,empty()))の2番目の要素は2である */
-    expect(
-      head(tail(cons(1,cons(2,empty())))) 
-    ).to.eql(
-      2
-    );
+/* emptyは空のリストか */
+expect(
+  isEmpty(empty())
+).to.eql(
+  true
+);
+/* cons(1, empty())は空のリストか */
+expect(
+  isEmpty(cons(1, empty()))
+).to.eql(
+  false
+);
+/* cons(1, empty())の先頭要素は1である */
+expect(
+  head(cons(1, empty()))   
+).to.eql(
+  1
+);
+/* cons(1, cons(2, empty()))の2番目の要素は2である */
+expect(
+  head(tail(cons(1, cons(2, empty())))) 
+).to.eql(
+  2
+);
     /* #@range_end(list_in_algebraic_datatype_test) */
     expect(
-      isEmpty(tail(cons(1,empty())))     // [1]の末尾要素は空のリストである
+      isEmpty(tail(cons(1, empty())))     // [1]の末尾要素は空のリストである
     ).to.be(
       true
     );
@@ -1132,7 +1132,7 @@ describe('代数的データ型', () => {
             /* total body water */
             TBW: data.weight * 0.6,
             /* estimated blood volume */
-            EBV: 0.168 * Math.pow(data.height,3) + 0.050 * data.weight + 0.444
+            EBV: 0.168 * Math.pow(data.height, 3) + 0.050 * data.weight + 0.444
           };
         },
         female: (data) => {
@@ -1140,7 +1140,7 @@ describe('代数的データ型', () => {
             BMI: BMI(data.weight, data.height),
             TBW: data.weight * 0.5,
             /* estimated blood volume = 0.250 \times height^3 + 0.625 \times weight - 0.662 */
-            EBV: 0.250 * Math.pow(data.height,3) + 0.625 * data.weight - 0.662
+            EBV: 0.250 * Math.pow(data.height, 3) + 0.625 * data.weight - 0.662
           };
         }
       });
@@ -1163,21 +1163,21 @@ describe('代数的データ型', () => {
   });
   it('数式の例', (next) => {
     /* #@range_begin(expression_algebraic_datatype) */
-    var num = (n) => {
-      return (pattern) => {
-        return pattern.num(n);
-      };
-    };
-    var add = (exp1, exp2) => {
-      return (pattern) => {
-        return pattern.add(exp1, exp2);
-      };
-    };
-    var mul = (exp1, exp2) => {
-      return (pattern) => {
-        return pattern.mul(exp1, exp2);
-      };
-    };
+var num = (n) => {
+  return (pattern) => {
+    return pattern.num(n);
+  };
+};
+var add = (exp1, exp2) => {
+  return (pattern) => {
+    return pattern.add(exp1, exp2);
+  };
+};
+var mul = (exp1, exp2) => {
+  return (pattern) => {
+    return pattern.mul(exp1, exp2);
+  };
+};
     /* #@range_end(expression_algebraic_datatype) */
     /*
     var exp = {
@@ -1202,31 +1202,31 @@ describe('代数的データ型', () => {
     };
     */
     /* #@range_begin(expression_algebraic_datatype_recursion) */
-    var calculate = (exp) => {
-      return match(exp, { // パターンマッチを実行する
-        num: (n) => {
-          return n;
-        },
-        add: (expL, expR) => {
-          /* calculateを再帰呼び出して足し算を実行する */
-          return calculate(expL) + calculate(expR); 
-        },
-        /* calculateを再帰呼び出してかけ算を実行する */
-        mul: (expL, expR) => {
-          return calculate(expL) * calculate(expR); 
-        }
-      });
-    };
-    /**** テスト ****/
-    /* 1 + (2 * 3) を計算する */
-    var expression = add(num(1),
-                         mul(num(2),
-                             num(3)));
-    expect(
-      calculate(expression)
-    ).to.eql(
-      7
-    );
+var calculate = (exp) => {
+  return match(exp, { // パターンマッチを実行する
+    num: (n) => {
+      return n;
+    },
+    add: (expL, expR) => {
+      /* calculateを再帰的に呼び出して足し算を実行する */
+      return calculate(expL) + calculate(expR); 
+    },
+    mul: (expL, expR) => {
+      /* calculateを再帰的に呼び出してかけ算を実行する */
+      return calculate(expL) * calculate(expR); 
+    }
+  });
+};
+/**** テスト ****/
+/* 1 + (2 * 3) を計算する */
+var expression = add(num(1),
+                     mul(num(2),
+                         num(3)));
+expect(
+  calculate(expression)
+).to.eql(
+  7
+);
     /* #@range_end(expression_algebraic_datatype_recursion) */
     next();
   });
@@ -1236,22 +1236,22 @@ describe("反復処理の種類と特徴", function() {
   describe("while文", () => {
     it("カウント", (next) => {
       /* #@range_begin(while_counter) */
-      var counter = 0;         // 変数の初期化
-      while (counter < 10) {   // 反復の条件
-        counter = counter + 1; // 変数の更新
-      }
-      /* テスト */
-      expect(
-        counter
-      ).to.eql(
-        10
-      );
+var counter = 0;         // 変数の初期化
+while (counter < 10) {   // 反復の条件
+  counter = counter + 1; // 変数の更新
+}
+/* テスト */
+expect(
+  counter
+).to.eql(
+  10
+);
       /* #@range_end(while_counter) */
       next();
     });
     /*
       it("length", (next) => {
-      var array = [1,2,3,4,5];
+      var array = [1, 2, 3, 4, 5];
       var length = (array) => {
       var counter = 0;
       while (counter < 10) {
@@ -1266,7 +1266,7 @@ describe("反復処理の種類と特徴", function() {
       next();
       });
       it("whileによるsum", (next) => {
-      var array = [1,2,3,4,5];
+      var array = [1, 2, 3, 4, 5];
       var sum = (array) => {
       var counter = 0;
       while (counter < 10) {
@@ -1284,32 +1284,32 @@ describe("反復処理の種類と特徴", function() {
   });
   it("for文", (next) => {
     /* #@range_begin(for_example) */
-    for (var counter = 0; counter < 10; counter += 1) {
-      ;
-    }
-    /* テスト */
-    expect(
-      counter
-    ).to.eql(
-      10
-    );
+for (var counter = 0; counter < 10; counter += 1) {
+  ;
+}
+/* テスト */
+expect(
+  counter
+).to.eql(
+  10
+);
     /* #@range_end(for_example) */
     next();
   });
   describe('forEach文', () => {
     it("forEach文によるsum", (next) => {
       /* #@range_begin(forEach_sum) */
-      var array = [1,2,3,4,5];
-      var sum = 0;
-      array.forEach((element) => {
-        sum += element;
-      });
-      /* テスト */
-      expect(
-        sum
-      ).to.eql(
-        15
-      );
+var array = [1, 2, 3, 4, 5];
+var sum = 0;
+array.forEach((element) => {
+  sum += element;
+});
+/* テスト */
+expect(
+  sum
+).to.eql(
+  15
+);
       /* #@range_end(forEach_sum) */
       next();
     });
@@ -1324,7 +1324,7 @@ describe("反復処理の種類と特徴", function() {
       };
       /* テスト */
       expect(
-        length([1,2,3,4,5])
+        length([1, 2, 3, 4, 5])
       ).to.eql(
         5
       );
@@ -1338,14 +1338,14 @@ describe('再帰による反復処理', () => {
   describe('複利法の例', () => {
     /* f(n) = f(n-1) * (1 + r) */
     /* #@range_begin(compound_interest) */
-    var compoundInterest = (a, r, n) => {
-      if (n === 0) { // 初年度は利率がつかないので元金がそのまま返る
-        return a;
-      } else {
-        /* compoundInterestの再帰呼び出し */
-        return compoundInterest(a, r, n - 1) * (1 + r); 
-      }
-    };
+var compoundInterest = (a, r, n) => {
+  if (n === 0) { // 0年目は利率が付かないので元金がそのまま返る
+    return a;
+  } else {
+    /* compoundInterestの再帰呼び出し */
+    return compoundInterest(a, r, n - 1) * (1 + r); 
+  }
+};
     /* #@range_end(compound_interest) */
     it("複利の計算", (next) => {
       expect(
@@ -1430,28 +1430,28 @@ describe('再帰による反復処理', () => {
         0
       );
       expect(
-        length(cons(1,empty()), 0)                // [1]の長さは1
+        length(cons(1, empty()), 0)                // [1]の長さは1
       ).to.eql(
         1
       );
       expect(
-        length(cons(1,cons(2,cons(3,empty()))),0) // [1,2,3]の長さは3
+        length(cons(1, cons(2, cons(3, empty()))), 0) // [1, 2, 3]の長さは3
       ).to.eql(
         3
       );
       /* #@range_end(recursive_length) */
       /* #@range_begin(recursive_sum) */
-      var sum = (alist, accumulator) => {
-        return match(alist, {
-          empty: (_) => {
-            return accumulator;
-          },
-          cons: (head, tail) => {
-            /* sumの再帰呼び出し */
-            return sum(tail, accumulator + head); 
-          }
-        });
-      };
+var sum = (alist, accumulator) => {
+  return match(alist, {
+    empty: (_) => {
+      return accumulator;
+    },
+    cons: (head, tail) => {
+      /* sumの再帰呼び出し */
+      return sum(tail, accumulator + head); 
+    }
+  });
+};
       /* #@range_end(recursive_sum) */
       /**** テスト ****/
       expect(
@@ -1460,12 +1460,12 @@ describe('再帰による反復処理', () => {
         0
       );
       expect(
-        sum(cons(1,empty()), 0)
+        sum(cons(1, empty()), 0)
       ).to.eql(
         1
       );
       expect(
-        sum(cons(1,cons(2,cons(3,empty()))),0)
+        sum(cons(1, cons(2, cons(3, empty()))), 0)
       ).to.eql(
         6
       );
@@ -1473,20 +1473,20 @@ describe('再帰による反復処理', () => {
     });
     it('蓄積変数を持たないsum関数', (next) => {
       /* #@range_begin(recursive_sum_without_accumulator) */
-      var sum = (list) => {
-        /* 蓄積変数を持つ補助関数 */
-        var sumHelper = (list, accumulator) => { 
-          return match(list, {
-            empty: (_) => {
-              return accumulator;
-            },
-            cons: (head, tail) => {
-              return sumHelper(tail, accumulator + head);
-            }
-          });
-        };
-        return sumHelper(list,0); // 補助関数を呼び出す
-      };
+var sum = (list) => {
+  /* 蓄積変数を持つ補助関数 */
+  var sumHelper = (list, accumulator) => { 
+    return match(list, {
+      empty: (_) => {
+        return accumulator;
+      },
+      cons: (head, tail) => {
+        return sumHelper(tail, accumulator + head);
+      }
+    });
+  };
+  return sumHelper(list, 0); // 補助関数を呼び出す
+};
       /* #@range_end(recursive_sum_without_accumulator) */
       /**** テスト ****/
       expect(
@@ -1495,7 +1495,7 @@ describe('再帰による反復処理', () => {
         0
       );
       expect(
-        sum(cons(1,cons(2,cons(3,empty()))))
+        sum(cons(1, cons(2, cons(3, empty()))))
       ).to.eql(
         6
       );
@@ -1503,22 +1503,22 @@ describe('再帰による反復処理', () => {
     });
     it('蓄積変数を持たないlength関数', (next) => {
       /* #@range_begin(recursive_length_without_accumulator) */
-      var length = (list) => {
-        return match(list, {
-          /* emptyの場合は、終了条件となる */
-          empty: (_) => {    
-            return 0;
-          },
-          /* consの場合は、length関数を再帰的に呼び出す */
-          cons: (head, tail) => { 
-            return 1 + length(tail);
-          }
-        });
-      };
+var length = (list) => {
+  return match(list, {
+    /* emptyの場合は、終了条件となる */
+    empty: (_) => {    
+      return 0;
+    },
+    /* consの場合は、length関数を再帰的に呼び出す */
+    cons: (head, tail) => { 
+      return 1 + length(tail);
+    }
+  });
+};
       /* #@range_end(recursive_length_without_accumulator) */
       /************************ テスト ************************/
       expect(
-        length(cons(1,cons(2,cons(3,empty())))) // [1,2,3]の長さは 3
+        length(cons(1, cons(2, cons(3, empty())))) // [1, 2, 3]の長さは 3
       ).to.eql(
         3
       );
@@ -1602,22 +1602,22 @@ describe('再帰による反復処理', () => {
     it('リストのmap', (next) => {
       /* #@range_begin(list_map) */
       /* map :: LIST[T] -> FUN[T -> T] -> LIST[T] */
-      var map = (seq,transform) => {
-        return match(seq,{
+      var map = (seq, transform) => {
+        return match(seq, {
           empty: (_) => {
             return list.empty();
           },
           cons: (head, tail) => {
             return list.cons(transform(head), 
-                             map(tail,transform));
+                             map(tail, transform));
           }
         });
       };
       /* #@range_end(list_map) */
       
       /* #@range_begin(list_toArray) */
-      var toArray = (seq,callback) => {
-        var toArrayHelper = (seq,accumulator) => {
+      var toArray = (seq, callback) => {
+        var toArrayHelper = (seq, accumulator) => {
           return match(seq, {
             empty: (_) => {
               return accumulator;  // 空のリストの場合は accumulator を返して終了する
@@ -1637,7 +1637,7 @@ describe('再帰による反復処理', () => {
       var double = (number) => {
         return number * 2;
       };
-      var doubledList = map(numberList,double);
+      var doubledList = map(numberList, double);
       expect(
         list.head(doubledList)
       ).to.eql(
@@ -1646,16 +1646,16 @@ describe('再帰による反復処理', () => {
       expect(
         toArray(doubledList)
       ).to.eql(
-        [2,4]
+        [2, 4]
       );
-      var stringList = list.cons("a", list.cons("b",list.empty()));
+      var stringList = list.cons("a", list.cons("b", list.empty()));
       var upper = (string) => {
         return string.toUpperCase();
       };
       expect(
-        toArray(map(stringList,upper))
+        toArray(map(stringList, upper))
       ).to.eql(
-        ["A","B"]
+        ["A", "B"]
       );
       /* #@range_end(list_map_test) */
       next();
@@ -1666,8 +1666,8 @@ describe('再帰による反復処理', () => {
           return pattern.cons(x, xs);
         };
       };
-      var toArray = (seq,callback) => {
-        var toArrayAux = (seq,accumulator) => {
+      var toArray = (seq, callback) => {
+        var toArrayAux = (seq, accumulator) => {
           return match(seq, {
             empty: (_) => {
               return accumulator;
@@ -1681,19 +1681,19 @@ describe('再帰による反復処理', () => {
       };
       /* append :: (LIST[T], LIST[T]) -> LIST[T] */
       /* #@range_begin(list_append) */
-      var append = (xs, ys) => {
-        return match(xs,{
-          /* emptyの場合は、終了条件 */
-          empty: (_) => { 
-            return ys; // xsが空の場合は、ysを返す
-          },
-          /* consの場合は、append関数を再帰的に呼び出す */
-          cons: (head, tail) => { 
-            /* xsとysを連結させる */
-            return cons(head, append(tail,ys));
-          }
-        });
-      };
+var append = (xs, ys) => {
+  return match(xs, {
+    /* emptyの場合は、終了条件となる */
+    empty: (_) => { 
+      return ys; // xsが空の場合は、ysを返す
+    },
+    /* consの場合は、append関数を再帰的に呼び出す */
+    cons: (head, tail) => { 
+      /* xsとysを連結する */
+      return cons(head, append(tail, ys));
+    }
+  });
+};
       /* #@range_end(list_append) */
       
       /* #@range_begin(list_append_test) */
@@ -1704,9 +1704,9 @@ describe('再帰による反復処理', () => {
                          list.cons(4,
                                    list.empty()));
       expect(
-        toArray(append(xs,ys)) // toArray関数でリストを配列に変換する
+        toArray(append(xs, ys)) // toArray関数でリストを配列に変換する
       ).to.eql(
-        [1,2,3,4]
+        [1, 2, 3, 4]
       );
       /* #@range_end(list_append_test) */
       next();
@@ -1723,19 +1723,21 @@ describe('再帰による反復処理', () => {
         };
       };
       /* #@range_begin(list_reverse) */
-      var reverse = (seq) => {
-        var reverseHelper = (seq, accumulator) => {
-          return match(seq, {
-            empty: (_) => {  // emptyの場合は、終了条件
-              return accumulator;
-            },
-            cons: (head, tail) => { // consの場合は、reverse関数を再帰的に呼び出す
-              return reverseHelper(tail, cons(head, accumulator));
-            }
-          });
-        };
-        return reverseHelper(seq, empty());
-      };
+var reverse = (seq) => {
+  var reverseHelper = (seq, accumulator) => {
+    return match(seq, {
+      /* emptyの場合は、終了条件となる */
+      empty: (_) => {
+        return accumulator;
+      },
+      /* consの場合は、reverse関数を再帰的に呼び出す */
+      cons: (head, tail) => {
+        return reverseHelper(tail, cons(head, accumulator));
+      }
+    });
+  };
+  return reverseHelper(seq, empty());
+};
       /* #@range_end(list_reverse) */
       // expect(
       //   reverse(cons(1, cons(2, cons(3, empty()))))
@@ -1753,7 +1755,7 @@ describe('再帰による反復処理', () => {
       } else {
         var x = list.head(alist);
         var xs = list.tail(alist);
-        if(x > accumulator) {
+        if (x > accumulator) {
           return maximum(xs, x);
         } else {
           return maximum(xs, accumulator);
@@ -1830,7 +1832,7 @@ describe('再帰による反復処理', () => {
     it('再帰版と一般形', (next) => {
       /* #@range_begin(triangularRecurrenceForm) */
       var natural_sum = (n) => {
-        if(n === 1){
+        if (n === 1) {
           return 1;
         } else {
           return natural_sum(n-1) + n;
@@ -1879,13 +1881,13 @@ describe('再帰による反復処理', () => {
       });
     };
     var append = (xs, ys) => {
-      return match(xs,{
+      return match(xs, {
         empty: (_) => {
           return ys;
         },
         cons: (head, tail) => {
           return list.cons(head,
-                           append(tail,ys));
+                           append(tail, ys));
         }
       });
     };
@@ -1901,17 +1903,13 @@ describe('再帰による反復処理', () => {
         };
       };
       /* #@range_begin(statement_p_test) */
-      var xs = cons(1,
-                    cons(2,
-                         empty()));
-      var ys = cons(3,
-                    cons(4,
-                         empty()));
-      expect(
-        length(append(xs, ys))  // 命題Pの左辺
-      ).to.eql(
-        length(xs) + length(ys) // 命題Pの右辺
-      );
+var xs = cons(1, cons(2, empty()));
+var ys = cons(3, cons(4, empty()));
+expect(
+  length(append(xs, ys))  // 命題Pの左辺
+).to.eql(
+  length(xs) + length(ys) // 命題Pの右辺
+);
       /* #@range_end(statement_p_test) */
       next();
     });

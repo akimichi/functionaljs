@@ -166,11 +166,11 @@ describe('関数の基本', () => {
         1
       );
       /* #@range_begin(succ_function_test) */
-      var succ = (n) => {
+      var succ = (n) => { // nは仮引数 
         return n + 1;
       };
       expect(
-        succ(1)  // 1 を引数としてsucc関数を適用する
+        succ(1)  // 数値1をsucc関数を適用する
       ).to.eql(
         2
       );
@@ -515,6 +515,9 @@ describe('関数の基本', () => {
         it("無限の整数列をテストする", (next) => {
           this.timeout(3000);
           var list = {
+            match: (data, pattern) => {
+              return data(pattern);
+            },
             empty: (_) => {
               return (pattern) => {
                 return pattern.empty();
@@ -552,7 +555,7 @@ describe('関数の基本', () => {
             /* #@range_begin(list_toArray) */
             toArray: (alist) => {
               var toArrayHelper = (alist,accumulator) => {
-                return match(alist, {
+                return list.match(alist, {
                   empty: (_) => {
                     return accumulator;
                   },
@@ -567,6 +570,9 @@ describe('関数の基本', () => {
             /* #@range_end(list_toArray) */
           };
           var stream = {
+            match: (data, pattern) => {
+              return data(pattern);
+            },
             empty: (_) => {
               return (pattern) => {
                 return pattern.empty();
@@ -594,7 +600,7 @@ describe('関数の基本', () => {
             /* #@range_begin(stream_take) */
             /* take:: (STREAM[T], NUM) => LIST[T] */
             take: (astream, n) => {
-              return match(astream,{
+              return stream.match(astream,{
                 empty: (_) => {              // ストリームが空のケース
                   return list.empty();
                 },
@@ -821,7 +827,6 @@ describe('関数の基本', () => {
           };
         },
         /* #@range_end(list_filter) */
-        /* #@range_begin(list_toarray) */
         toArray: (list) => {
           var self = this;
           var toArrayHelper = (list,accumulator) => {
@@ -836,7 +841,6 @@ describe('関数の基本', () => {
           };
           return toArrayHelper(list, []);
         }
-        /* #@range_end(list_toarray) */
       };
       it('dividesTimesの例', (next) => {
         /* #@range_begin(dividesTimes) */

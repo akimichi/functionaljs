@@ -398,7 +398,7 @@ describe('関数の基本', () => {
       /* #@range_end(stream_with_thunk) */
       it("stream#cons", (next) => {
         /* #@range_begin(stream_with_thunk_test) */
-        var theStream = stream.cons(1, (_) => {  // 第1引数にサンクを渡す
+        var theStream = stream.cons(1, (_) => {  // 第2引数にサンクを渡す
           return stream.cons(2, (_) => {         // 第2引数にサンクを渡す
             return stream.empty();
           });

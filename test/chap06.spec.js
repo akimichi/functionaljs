@@ -51,16 +51,16 @@ var list = {
     };
   },
   isEmpty: (alist) => {
-    return match(alist, { // match関数で分岐する
+    return match(alist, {  // match関数で分岐する
       empty: true,
-      cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+      cons: (head, tail) => {  // headとtailにそれぞれ先頭要素、末尾要素が入る
         return false;
       }
     });
   },
   head: (alist) => {
     return match(alist, {
-      empty: null, // 空のリストには先頭要素はありません
+      empty: null,  // 空のリストには先頭要素はありません
       cons: (head, tail) => {
         return head;
       }
@@ -75,7 +75,7 @@ var list = {
     });
   },
   toArray: (alist) => {
-    var toArrayAux = (alist,accumulator) => {
+    var toArrayAux = (alist, accumulator) => {
       return match(alist, {
         empty: (_) => {
           return accumulator;
@@ -105,16 +105,16 @@ describe('関数の基本', () => {
       };
     },
     isEmpty: (list) => {
-      return match(list, { // match関数で分岐する
+      return match(list, {  // match関数で分岐する
         empty: true,
-        cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+        cons: (head, tail) => {  // headとtailにそれぞれ先頭要素、末尾要素が入る
           return false;
         }
       });
     },
     head: (list) => {
       return match(list, {
-        empty: null, // 空のリストには先頭要素はありません
+        empty: null,  // 空のリストには先頭要素はありません
         cons: (head, tail) => {
           return head;
         }
@@ -135,9 +135,9 @@ describe('関数の基本', () => {
   describe('関数の定義', () => {
     it('恒等関数の定義', (next) => {
       /* #@range_begin(identity_function_definition) */
-      var identity = (any) => {
-        return any;
-      };
+        var identity = (any) => {
+          return any;
+        };
       /* #@range_end(identity_function_definition) */
       /* #@range_begin(identity_function_test) */
       expect(
@@ -155,9 +155,9 @@ describe('関数の基本', () => {
     });
     it('succ関数の定義', (next) => {
       /* #@range_begin(succ_function_definition) */
-      var succ = (n) => {
-        return n + 1;
-      };
+        var succ = (n) => {
+          return n + 1;
+        };
       /* #@range_end(succ_function_definition) */
       /* テスト */
       expect(
@@ -166,14 +166,14 @@ describe('関数の基本', () => {
         1
       );
       /* #@range_begin(succ_function_test) */
-      var succ = (n) => { // nは仮引数 
-        return n + 1;
-      };
-      expect(
-        succ(1)  // 数値1をsucc関数を適用する
-      ).to.eql(
-        2
-      );
+        var succ = (n) => {  // nは仮引数 
+          return n + 1;
+        };
+        expect(
+          succ(1)  // 数値1にsucc関数を適用する
+        ).to.eql(
+          2
+        );
       /* #@range_end(succ_function_test) */
       next();
     });
@@ -186,7 +186,7 @@ describe('関数の基本', () => {
       /* #@range_end(add_function_definition) */
       /* テスト */
       expect(
-        add(0,1)
+        add(0, 1)
       ).to.eql(
         1
       );
@@ -194,9 +194,9 @@ describe('関数の基本', () => {
     });
     it('引数を参照しない関数', (next) => {
       /* #@range_begin(constant_one_function) */
-      var alwaysOne = (x) => {
-        return 1;
-      };
+        var alwaysOne = (x) => {
+          return 1;
+        };
       /* #@range_end(constant_one_function) */
       expect(
         alwaysOne(1)
@@ -209,12 +209,12 @@ describe('関数の基本', () => {
         1
       );
       /* #@range_begin(left_function) */
-      var left = (x,y) => {
-        return x;
-      };
+        var left = (x, y) => {
+          return x;
+        };
       /* #@range_end(left_function) */
       expect(
-        left(1,2)
+        left(1, 2)
       ).to.eql(
         1
       );
@@ -222,9 +222,9 @@ describe('関数の基本', () => {
     });
     it('関数の変数へのバインド', (next) => {
       /* #@range_begin(function_bound_to_variable) */
-      var succ = (x) => {
-        return x + 1;
-      };
+        var succ = (x) => {
+          return x + 1;
+        };
       /* #@range_end(function_bound_to_variable) */
       next();
     });
@@ -235,7 +235,7 @@ describe('関数の基本', () => {
     describe('関数の評価戦略', () => {
       it('JavaScriptの正格評価', (next) => {
         /* #@range_begin(strict_evaluation_in_javascript) */
-        var left = (x,y) => {
+        var left = (x, y) => {
           return x;
         };
         var infiniteLoop = (_) => {
@@ -258,7 +258,7 @@ describe('関数の基本', () => {
         };
 
         var conditional = (n) => {
-          if(n === 1) {
+          if (n === 1) {
             return true;
           } else {
             /* 条件文が真の場合には評価されない */
@@ -268,7 +268,7 @@ describe('関数の基本', () => {
         expect(
           conditional(1)
         ).to.eql(
-          true // 無限ループに陥いることなく計算に成功する
+          true  // 無限ループに陥いることなく計算に成功する
         );
         /* #@range_end(conditional_is_nonstrict) */
         next();
@@ -278,20 +278,20 @@ describe('関数の基本', () => {
           return infiniteLoop();
         };
         /* #@range_begin(multiply_lazy_evaluation) */
-        var lazyMultiply = (funX,funY) => {
-          if(funX() === 0){
-            return 0;         // funX()が0ならば、funYは評価しない
+        var lazyMultiply = (funX, funY) => {
+          if (funX() === 0) {
+            return 0;  // funX()が0ならば、funYは評価しない
           } else {
-            return funX() * funY(); // ここで初めてfunYを評価する
+            return funX() * funY();  // ここで初めてfunYを評価する
           }
         };
         /* #@range_end(multiply_lazy_evaluation) */
         /* #@range_begin(multiply_lazy_evaluation_test) */
         expect(
-          lazyMultiply((_) => { // 値を関数でラッピングする
+          lazyMultiply((_) => {  // 値を関数でラッピングする
             return 0;
           }, (_) => {
-            return infiniteLoop(); // ここが評価されると無限ループに陥いる
+            return infiniteLoop();  // ここが評価されると無限ループに陥いる
           })
         ).to.eql(
           0
@@ -305,7 +305,7 @@ describe('関数の基本', () => {
       /* #@range_begin(definition_thunk_force) */
       var thunk = (func) => {
         return (arg) => {
-          return (_) => { // サンクを返す
+          return (_) => {  // サンクを返す
             return func(arg);
           };
         };
@@ -316,18 +316,18 @@ describe('関数の基本', () => {
       /* #@range_end(definition_thunk_force) */
       it('thunkによる遅延評価', (next) => {
         /* #@range_begin(nonstrict_function_via_thunk) */
-        var multiply = (thunkX,thunkY) => {
-          if(force(thunkX) === 0){
+        var multiply = (thunkX, thunkY) => {
+          if (force(thunkX) === 0) {
             return 0;
           } else {
-            return thunkX() * thunkY(); // サンクを評価する
+            return thunkX() * thunkY();  // サンクを評価する
           }
         };
         var id = (any) => {
           return any;
         };
         expect(
-          multiply((_) => { // サンクで包む
+          multiply((_) => {  // サンクで包む
             return 0;
           }, (_) => {
             return 2;
@@ -341,8 +341,8 @@ describe('関数の基本', () => {
       it('thunkによる条件式', (next) => {
         /* #@range_begin(functionalIf_via_thunk) */
         var functionalIf = (predicate, trueClauseThunk, falseClauseThunk) => {
-          if(predicate){
-            return trueClauseThunk(); // 判定式が真の場合に実行する
+          if (predicate) {
+            return trueClauseThunk();  // 判定式が真の場合に実行する
           } else {
             return falseClauseThunk();  // 判定式が真の場合に実行する
           }
@@ -363,43 +363,43 @@ describe('関数の基本', () => {
     });
     describe('thunkによるStream型', () => {
       /* #@range_begin(stream_with_thunk) */
-      var stream = {
-        match: (data, pattern) => {
-          return data(pattern);
-        },
-        empty: (_) => {
-          return (pattern) => {
-            return pattern.empty();
-          };
-        },
-        cons: (head,tailThunk) => {
-          return (pattern) => {
-            return pattern.cons(head,tailThunk);
-          };
-        },
-        /* head:: STREAM[T] => T */
-        /* ストリーム型headの定義は、リスト型headと同じ */
-        head: (astream) => {
-          return stream.match(astream,{
-            empty: (_) => { return null; },
-            cons: (value, tailThunk) => { return value; }
-          });
-        },
-        /* tail:: STREAM[T] => STREAM[T] */
-        tail: (astream) => {
-          return stream.match(astream,{
-            empty: (_) => { return null; },
-            cons: (head, tailThunk) => {
-              return tailThunk(); // ここで初めてサンクを評価する
-            }
-          });
-        }
-      };
+        var stream = {
+          match: (data, pattern) => {
+            return data(pattern);
+          },
+          empty: (_) => {
+            return (pattern) => {
+              return pattern.empty();
+            };
+          },
+          cons: (head, tailThunk) => {
+            return (pattern) => {
+              return pattern.cons(head, tailThunk);
+            };
+          },
+          /* head:: STREAM[T] => T */
+          /* ストリーム型headの定義は、リスト型headと同じ */
+          head: (astream) => {
+            return stream.match(astream, {
+              empty: (_) => { return null; },
+              cons: (value, tailThunk) => { return value; }
+            });
+          },
+          /* tail:: STREAM[T] => STREAM[T] */
+          tail: (astream) => {
+            return stream.match(astream, {
+              empty: (_) => { return null; },
+              cons: (head, tailThunk) => {
+                return tailThunk();  // ここで初めてサンクを評価する
+              }
+            });
+          }
+        };
       /* #@range_end(stream_with_thunk) */
       it("stream#cons", (next) => {
         /* #@range_begin(stream_with_thunk_test) */
-        var theStream = stream.cons(1, (_) => { // 第2引数にサンクを渡す
-          return stream.cons(2,(_) => {     // 第2引数にサンクを渡す
+        var theStream = stream.cons(1, (_) => {  // 第1引数にサンクを渡す
+          return stream.cons(2, (_) => {         // 第2引数にサンクを渡す
             return stream.empty();
           });
         });
@@ -418,22 +418,22 @@ describe('関数の基本', () => {
               return pattern.empty();
             };
           },
-          cons: (head,tailThunk) => {
+          cons: (head, tailThunk) => {
             return (pattern) => {
-              return pattern.cons(head,tailThunk);
+              return pattern.cons(head, tailThunk);
             };
           },
           /* head:: STREAM[T] => T */
           /* ストリーム型headの定義は、リスト型headと同じ */
           head: (astream) => {
-            return match(astream,{
+            return match(astream, {
               empty: (_) => { return null; },
               cons: (value, tailThunk) => { return value; }
             });
           },
           /* tail:: STREAM[T] => STREAM[T] */
           tail: (astream) => {
-            return match(astream,{
+            return match(astream, {
               empty: (_) => { return null; },
               cons: (head, tailThunk) => {
                 return tailThunk();  // ここで初めてサンクを評価する
@@ -441,24 +441,24 @@ describe('関数の基本', () => {
             });
           },
           take: (astream, n) => {
-            return match(astream,{
+            return match(astream, {
               empty: (_) => {
                 return list.empty();
               },
-              cons: (head,tailThunk) => {
-                if(n === 0) {
+              cons: (head, tailThunk) => {
+                if (n === 0) {
                   return list.empty();
                 } else {
-                  return list.cons(head,stream.take(tailThunk(),(n -1)));
+                  return list.cons(head, stream.take(tailThunk(), (n - 1)));
                 }
               }
             });
           }
         };
         /* #@range_begin(infinite_ones) */
-        /* ones = 1,1,1,1,... */
+        /* ones = 1, 1, 1, 1, ... */
         var ones = stream.cons(1, (_) => {
-          return ones; // onesを再帰的に呼び出す
+          return ones;  // onesを再帰的に呼び出す
         });
         /* #@range_end(infinite_ones) */
         /* #@range_begin(infinite_integer) */
@@ -470,7 +470,7 @@ describe('関数の基本', () => {
         /* #@range_end(infinite_integer) */
         /* #@range_begin(infinite_ones_test) */
         expect(
-          stream.head(ones) // 最初の要素を取りだす
+          stream.head(ones)  // 最初の要素を取りだす
         ).to.eql(
           1
         );
@@ -487,8 +487,8 @@ describe('関数の基本', () => {
             var mark = (astream, k, m) => {
               var head = stream.head(astream);
               var tail = stream.tail(astream);
-              if(k === m) {
-                return stream.cons(0,(_) => {
+              if (k === m) {
+                return stream.cons(0, (_) => {
                   return mark(tail, 1, m);
                 });
               } else {
@@ -497,7 +497,7 @@ describe('関数の基本', () => {
                 });
               }
             };
-            if(head === 0) {
+            if (head === 0) {
               return sieve(tail);
             } else {
               return stream.cons(head, (_) => {
@@ -529,16 +529,16 @@ describe('関数の基本', () => {
               };
             },
             isEmpty: (alist) => {
-              return match(alist, { // match関数で分岐する
+              return match(alist, {  // match関数で分岐する
                 empty: true,
-                cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+                cons: (head, tail) => {  // headとtailにそれぞれ先頭要素、末尾要素が入る
                   return false;
                 }
               });
             },
             head: (alist) => {
               return match(alist, {
-                empty: null, // 空のリストには先頭要素はありません
+                empty: null,  // 空のリストには先頭要素はありません
                 cons: (head, tail) => {
                   return head;
                 }
@@ -553,20 +553,20 @@ describe('関数の基本', () => {
               });
             },
             /* #@range_begin(list_toArray) */
-            toArray: (alist) => {
-              var toArrayHelper = (alist,accumulator) => {
-                return list.match(alist, {
-                  empty: (_) => {
-                    return accumulator;
-                  },
-                  cons: (head, tail) => {
-                    return toArrayHelper(tail,
-                                         accumulator.concat(head));
-                  }
-                });
-              };
-              return toArrayHelper(alist, []);
-            }
+          toArray: (alist) => {
+            var toArrayHelper = (alist, accumulator) => {
+              return list.match(alist, {
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return toArrayHelper(tail,
+                                       accumulator.concat(head));
+                }
+              });
+            };
+            return toArrayHelper(alist, []);
+          }
             /* #@range_end(list_toArray) */
           };
           var stream = {
@@ -578,19 +578,19 @@ describe('関数の基本', () => {
                 return pattern.empty();
               };
             },
-            cons: (head,tailThunk) => {
+            cons: (head, tailThunk) => {
               return (pattern) => {
-                return pattern.cons(head,tailThunk);
+                return pattern.cons(head, tailThunk);
               };
             },
             head: (astream) => {
-              return match(astream,{
+              return match(astream, {
                 empty: (_) => { return null; },
                 cons: (value, tailThunk) => { return value; }
               });
             },
             tail: (astream) => {
-              return match(astream,{
+              return match(astream, {
                 empty: (_) => { return null; },
                 cons: (head, tailThunk) => {
                   return tailThunk();  // ここで初めてサンクを評価する
@@ -598,37 +598,37 @@ describe('関数の基本', () => {
               });
             },
             /* #@range_begin(stream_take) */
-            /* take:: (STREAM[T], NUM) => LIST[T] */
-            take: (astream, n) => {
-              return stream.match(astream,{
-                empty: (_) => {              // ストリームが空のケース
+          /* take:: (STREAM[T], NUM) => LIST[T] */
+          take: (astream, n) => {
+            return stream.match(astream, {
+              empty: (_) => {               // ストリームが空のケース
+                return list.empty();
+              },
+              cons: (head, tailThunk) => {  // ストリームが空でないケース 
+                if (n === 0) {
                   return list.empty();
-                },
-                cons: (head,tailThunk) => {  // ストリームが空でないケース 
-                  if(n === 0) {
-                    return list.empty();
-                  } else {
-                    return list.cons(head,   // リストを生成する
-                                     stream.take(tailThunk(),(n -1)));
-                  }
+                } else {
+                  return list.cons(head,    // リストを生成する
+                                   stream.take(tailThunk(), (n - 1)));
                 }
-              });
-            },
+              }
+            });
+          },
             /* #@range_end(stream_take) */
             /* #@range_begin(stream_filter) */
             /* filter :: (STREAM[T], FUN[T => BOOL]) => STREAM[T] */
-            filter: (astream,predicate) => {
-              return match(astream,{
+            filter: (astream, predicate) => {
+              return match(astream, {
                 empty: (_) => {
                   return stream.empty();
                 },
-                cons: (head,tailThunk) => {
-                  if(predicate(head)){ // 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する
-                    return stream.cons(head,(_) => {
-                      return stream.filter(tailThunk(),predicate);
+                cons: (head, tailThunk) => {
+                  if (predicate(head)) {  // 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する
+                    return stream.cons(head, (_) => {
+                      return stream.filter(tailThunk(), predicate);
                     });
-                  } else { // 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す
-                    return stream.filter(tailThunk(),predicate);
+                  } else {  // 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す
+                    return stream.filter(tailThunk(), predicate);
                   }
                 }
               });
@@ -646,25 +646,25 @@ describe('関数の基本', () => {
             2
           );
           /* #@range_begin(infinite_integer_test) */
-          expect(
-            list.toArray(stream.take(integersFrom(1), 4))
-          ).to.eql(
-            [1,2,3,4]
-          );
+        expect(
+          list.toArray(stream.take(integersFrom(1), 4))
+        ).to.eql(
+          [1, 2, 3, 4]
+        );
           /* #@range_end(infinite_integer_test) */
           /* #@range_begin(stream_filter_test) */
           expect(
             /* 無限の整数列から最初の4つの要素を取り出し、それを配列に変換する */
             list.toArray(stream.take(integersFrom(1), 4))
           ).to.eql(
-            [1,2,3,4]
+            [1, 2, 3, 4]
           );
           /* #@range_end(stream_filter_test) */
           /* #@range_begin(infinite_even_integer) */
           var even = (n) => {
             return 0 === (n % 2);
           };
-          var evenIntegers = stream.filter(integersFrom(1),even);
+          var evenIntegers = stream.filter(integersFrom(1), even);
           expect(
             list.toArray(stream.take(evenIntegers, 4))
           ).to.eql(
@@ -674,13 +674,13 @@ describe('関数の基本', () => {
           next();
         });
       });
-    }); // thunk
+    });  // thunk
     describe('再帰的な関数適用', () => {
       var seq  = {
         match: (data, pattern) => {
           return data(pattern);
         },
-        compose: (f,g) => {
+        compose: (f, g) => {
           return (arg) => {
             return f(g(arg));
           };
@@ -739,10 +739,10 @@ describe('関数の基本', () => {
         concat: (xs) => {
           var self = this;
           return (ys) => {
-            if(self.isEmpty(xs)){
+            if (self.isEmpty(xs)) {
               return ys;
             } else {
-              return self.cons(self.head(xs),(self.concat(self.tail(xs))(ys)));
+              return self.cons(self.head(xs), (self.concat(self.tail(xs))(ys)));
             }
           };
         },
@@ -767,7 +767,7 @@ describe('関数の基本', () => {
         /* concat:: LIST[LIST[T]] -> LIST[T]  */
         join: (list_of_list) => {
           var self = this;
-          if(self.isEmpty(list_of_list)){
+          if (self.isEmpty(list_of_list)) {
             return self.empty();
           } else {
             return self.concat(seq.head(list_of_list))(self.join(self.tail(list_of_list)));
@@ -779,7 +779,7 @@ describe('関数の基本', () => {
           return (accumulator) => {
             return (glue) => {
               expect(glue).to.a('function');
-              return self.match(list,{
+              return self.match(list, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -793,12 +793,12 @@ describe('関数の基本', () => {
         /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
         map: (list, transform) => {
           var self = this;
-          return self.match(list,{
+          return self.match(list, {
             empty: (_) => {
               return self.empty();
             },
-            cons: (x,xs) => {
-              return self.cons(transform(x),self.map(xs,transform));
+            cons: (x, xs) => {
+              return self.cons(transform(x), self.map(xs, transform));
             }
           });
         },
@@ -810,12 +810,12 @@ describe('関数の基本', () => {
           return (predicate) => {
             expect(predicate).to.a('function');
             var filterAux = (list, accumulator) => {
-              return self.match(list,{
+              return self.match(list, {
                 empty: (_) => {
                   return accumulator;
                 },
-                cons: (head,tail) => {
-                  if(predicate(head) === true){
+                cons: (head, tail) => {
+                  if (predicate(head) === true) {
                     return self.concat(self.concat(accumulator)(self.cons(head, self.empty())))(filterAux(tail, accumulator));
                   } else  {
                     return filterAux(tail, accumulator);
@@ -829,7 +829,7 @@ describe('関数の基本', () => {
         /* #@range_end(list_filter) */
         toArray: (list) => {
           var self = this;
-          var toArrayHelper = (list,accumulator) => {
+          var toArrayHelper = (list, accumulator) => {
             return self.match(list, {
               empty: (_) => {
                 return accumulator;  // 空のリストの場合は終了
@@ -844,39 +844,39 @@ describe('関数の基本', () => {
       };
       it('dividesTimesの例', (next) => {
         /* #@range_begin(dividesTimes) */
-        var multiplyOf = (n,m) => {
-          if(m % n === 0) {
+        var multiplyOf = (n, m) => {
+          if (m % n === 0) {
             return true;
           } else {
             return false;
           }
         };
         expect(
-          multiplyOf(3,6)
+          multiplyOf(3, 6)
         ).to.eql(
           true
         );
         var dividesTimes = (n, m) => {
-          var dividesTimesHelper = (n,m,accumulator) => {
-            if(n > m) {
+          var dividesTimesHelper = (n, m, accumulator) => {
+            if (n > m) {
               return accumulator;
             } else {
-              if(multiplyOf(n,m)) {
-                return dividesTimesHelper(n,m - n,accumulator + 1);
+              if (multiplyOf(n, m)) {
+                return dividesTimesHelper(n, m - n, accumulator + 1);
               } else {
                 return accumulator;
               }
             }
           };
-          return dividesTimesHelper(n,m,0);
+          return dividesTimesHelper(n, m, 0);
         };
         expect(
-          dividesTimes(3,6)
+          dividesTimes(3, 6)
         ).to.eql(
           2
         );
         expect(
-          dividesTimes(3,7)
+          dividesTimes(3, 7)
         ).to.eql(
           0
         );
@@ -885,8 +885,8 @@ describe('関数の基本', () => {
       });
       it('list#lastをテストする', (next) => {
         /* #@range_begin(list_last_test) */
-        /* list = [1,2,3,4] */
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+        /* list = [1, 2, 3, 4] */
+        var list = seq.cons(1, seq.cons(2, seq.cons(3, seq.cons(4, seq.empty()))));
         expect(
           seq.last(list)
         ).to.eql(
@@ -897,35 +897,35 @@ describe('関数の基本', () => {
       });
       it('list#mapをテストする', (next) => {
         /* #@range_begin(list_map_test) */
-        /* list = [1,2,3,4] */
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))));
+        /* list = [1, 2, 3, 4] */
+        var list = seq.cons(1, seq.cons(2, seq.cons(3, seq.cons(4, seq.empty))));
         expect(
-          seq.toArray(seq.map(list,(item) => {
+          seq.toArray(seq.map(list, (item) => {
             return item * 2;
           }))
         ).to.eql(
-          [2,4,6,8]
+          [2, 4, 6, 8]
         );
         /* #@range_end(list_map_test) */
         next();
       });
       it('list#filterテストする', (next) => {
         /* #@range_begin(list_filter_test) */
-        /* list = [1,2,3,4] */
-        var list = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty))));
+        /* list = [1, 2, 3, 4] */
+        var list = seq.cons(1, seq.cons(2, seq.cons(3, seq.cons(4, seq.empty))));
         var even = (n) => {
           return (n % 2) === 0;
         };
         expect(
           seq.toArray(seq.filter(list)(even))
         ).to.eql(
-          [2,4]
+          [2, 4]
         );
         /* #@range_end(list_filter_test) */
         next();
       });
       it('list#reverseをテストする', (next) => {
-        var reverse = (list,accumulator) => {
+        var reverse = (list, accumulator) => {
           return seq.match(list, {
             empty: (_) => {
               return accumulator;  // 空のリストの場合は終了
@@ -937,11 +937,11 @@ describe('関数の基本', () => {
         };
         /**************** テスト ****************/
         /* #@range_begin(list_reverse_test) */
-        var list = seq.cons(1, seq.cons(2,seq.empty()));
+        var list = seq.cons(1, seq.cons(2, seq.empty()));
         expect(
           seq.toArray(reverse(list, seq.empty()))
         ).to.eql(
-          [2,1]
+          [2, 1]
         );
         /* #@range_end(list_reverse_test) */
         next();
@@ -963,14 +963,14 @@ describe('関数の基本', () => {
         );
         /* #@range_end(function_applied_sequentially) */
         /* #@range_begin(function_applied_twice) */
-        var twice = (f,arg) => {
+        var twice = (f, arg) => {
           return f(f(arg));
         };
         var succ = (x) => {
           return x + 1;
         };
         expect(
-          twice(succ,2)
+          twice(succ, 2)
         ).to.eql(
           4
         );
@@ -980,18 +980,18 @@ describe('関数の基本', () => {
           var applyNTimesHelper = (n, func) => {
             return (init) => {
               return (accumulator) => {
-                if(n === 0) {
+                if (n === 0) {
                   return accumulator;
                 } else {
-                  return applyNTimesHelper(n - 1,func)(init)(func(accumulator));
+                  return applyNTimesHelper(n - 1, func)(init)(func(accumulator));
                 };
               };
             };
           };
-          return applyNTimesHelper(n,func)(0);
+          return applyNTimesHelper(n, func)(0);
         };
         expect(
-          applyNTimes(4,succ)(0)
+          applyNTimes(4, succ)(0)
         ).to.eql(
           4
         );
@@ -1000,7 +1000,7 @@ describe('関数の基本', () => {
       });
       describe('関数合成', () => {
         /* #@range_begin(compose_definition) */
-        var compose = (f,g,arg) => {
+        var compose = (f, g, arg) => {
           return f(g(arg));
         };
         /* #@range_end(compose_definition) */
@@ -1010,7 +1010,7 @@ describe('関数の基本', () => {
             return -1 *  n;
           };
           expect(
-            compose(negate,negate, 2)
+            compose(negate, negate, 2)
           ).to.eql(
             2
           );
@@ -1026,12 +1026,12 @@ describe('関数の基本', () => {
             return n - 1;
           };
           expect(
-            compose(prev,succ,5)
+            compose(prev, succ, 5)
           ).to.eql(
             5
           );
           expect(
-            compose(prev,succ,2)
+            compose(prev, succ, 2)
           ).to.eql(
             2
           );
@@ -1058,7 +1058,7 @@ describe('関数の基本', () => {
             }
           });
         };
-        var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+        var sequence = seq.cons(1, seq.cons(2, seq.cons(3, seq.cons(4, seq.empty()))));
         expect(
           last(sequence)
         ).to.eql(
@@ -1069,16 +1069,16 @@ describe('関数の基本', () => {
       });
       it('合成によるlast', (next) => {
         /* #@range_begin(list_last_compose) */
-        var sequence = seq.cons(1,seq.cons(2,seq.cons(3,seq.cons(4,seq.empty()))));
+        var sequence = seq.cons(1, seq.cons(2, seq.cons(3, seq.cons(4, seq.empty()))));
         var last = (list) => {
           return compose(seq.head)(seq.reverse)(list);
         };
         /* #@range_end(list_last_compose) */
         next();
       });
-    }); // 関数を合成する
-  }); // 関数の適用
-}); // 関数の基本
+    });  // 関数を合成する
+  });  // 関数の適用
+});  // 関数の基本
 // ## 関数と参照透過性
 describe('関数と参照透過性', () => {
   // ### 関数の純粋性
@@ -1087,40 +1087,40 @@ describe('関数と参照透過性', () => {
       return n + 1;
     };
     /* #@range_begin(succ_has_referential_transparency) */
-    expect(
-      succ(1)
-    ).to.eql(
-      succ(1)
-    );
+        expect(
+          succ(1)
+        ).to.eql(
+          succ(1)
+        );
     /* #@range_end(succ_has_referential_transparency) */
     next();
   });
   describe('副作用が参照透過性を損なうこと', () => {
     it('ファイルを操作する', (next) => {
       /* #@range_begin(fileio_destroys_referential_transparency) */
-      /* fsモジュールを変数fsにバインドする */
-      var fs = require('fs');
-      /* テストの実行前にあらかじめ "This is a test."
-       という文字列をファイルに書きこんでおく。 */
-      fs.writeFileSync('test/resources/file.txt', "This is a test.");
-
-      /* 第1回目のファイルの読込 */
-      var text = fs.readFileSync("test/resources/file.txt",'utf8');
-      expect(
-        fs.readFileSync("test/resources/file.txt", 'utf8')
-      ).to.eql(
-        "This is a test."
-      );
-      /* 途中でのファイルへの書込み */
-      fs.writeFileSync('test/resources/file.txt',
-                       "This is another test.");
-
-      /* 第2回目のファイルの読込 */
-      expect(
-        fs.readFileSync("test/resources/file.txt", 'utf8')
-      ).to.eql(/* 最初の readFileSync関数の結果と異なっている */
-        "This is another test."
-      );
+        /* fsモジュールを変数fsにバインドする */
+        var fs = require('fs');
+        /* テストの実行前にあらかじめ "This is a test."
+           という文字列をファイルに書き込んでおく */
+        fs.writeFileSync('test/resources/file.txt', "This is a test.");
+  
+        /* 第1回目のファイルの読み込み */
+        var text = fs.readFileSync("test/resources/file.txt", 'utf8');
+        expect(
+          fs.readFileSync("test/resources/file.txt", 'utf8')
+        ).to.eql(
+          "This is a test."
+        );
+        /* 途中でのファイルへの書き込み */
+        fs.writeFileSync('test/resources/file.txt',
+                         "This is another test.");
+  
+        /* 第2回目のファイルの読み込み */
+        expect(
+          fs.readFileSync("test/resources/file.txt", 'utf8')
+        ).to.eql(  /* 最初の readFileSync関数の結果と異なっている */
+          "This is another test."
+        );
       /* #@range_end(fileio_destroys_referential_transparency) */
       next();
     });
@@ -1147,29 +1147,29 @@ describe('関数と参照透過性', () => {
             return pattern.empty();
           };
         },
-        cons: (headThunk,tailThunk) => {
+        cons: (headThunk, tailThunk) => {
           return (pattern) => {
-            return pattern.cons(headThunk,tailThunk);
+            return pattern.cons(headThunk, tailThunk);
           };
         },
         head: (astream) => {
-          return stream.match(astream,{
+          return stream.match(astream, {
             empty: (_) => { return null; },
             cons: (headThunk, tailThunk) => { return headThunk(); }
           });
         },
         tail: (astream) => {
-          return stream.match(astream,{
+          return stream.match(astream, {
             empty: (_) => { return null; },
             cons: (head, tailThunk) => {
-              return tailThunk(); // ここで初めてサンクを評価する
+              return tailThunk();  // ここで初めてサンクを評価する
             }
           });
         },
         foldr: (astream) => {
           return (accumulator) => {
             return (callback) => {
-              return stream.match(astream,{
+              return stream.match(astream, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1282,39 +1282,39 @@ describe('関数と参照透過性', () => {
        */
       /* #@range_end(kestrel_combinator_test) */
       /*
-      setTimeout(function(){ // happens 0.5 seconds later:
+      setTimeout(function() {  // happens 0.5 seconds later:
         expect(
        kestrel(1)(infiniteLoop())
         ).to.eql(
        1
         );
-        next(); // this tells mocha to run the next test
-      },500);
+        next();  // this tells mocha to run the next test
+      }, 500);
       */
       next();
     });
   });
   describe('tapコンビネーターによる副作用の分離', () => {
     /* #@range_begin(tap_combinator) */
-    var tap = (target,sideEffect) => {
-      sideEffect(target); // 副作用を実行する
-      return target;
-    };
+        var tap = (target, sideEffect) => {
+          sideEffect(target);  // 副作用を実行する
+          return target;
+        };
     /* #@range_end(tap_combinator) */
     it('tapコンビネーターによる console.logのテスト', (next) => {
       var succ = (n) => {
         return n + 1;
       };
       /* #@range_begin(tap_combinator_test_in_console) */
-      /* 画面出力という副作用を実行する関数 */
-      var consoleSideEffect = (any) => {
-        console.log(any);
-      };
-      expect(
-        tap(succ(1), consoleSideEffect)
-      ).to.eql(
-        tap(succ(1), consoleSideEffect)
-      );
+        /* 画面出力という副作用を実行する関数 */
+        var consoleSideEffect = (any) => {
+          console.log(any);
+        };
+        expect(
+          tap(succ(1), consoleSideEffect)
+        ).to.eql(
+          tap(succ(1), consoleSideEffect)
+        );
       /* #@range_end(tap_combinator_test_in_console) */
       var updateSideEffect = (n) => {
         n = n + 1;
@@ -1348,27 +1348,27 @@ describe('関数と参照透過性', () => {
       next();
     });
     it('tapコンビネーターによるファイル入出力のテストは失敗する', (next) => {
-      var fs = require('fs'); // fsモジュールを変数fsにバインドする
+      var fs = require('fs');  // fsモジュールを変数fsにバインドする
       /* #@range_begin(tap_combinator_test_in_fileio) */
-      /* あらかじめ文字列をファイルに書きこんでおく */
-      fs.writeFileSync('test/resources/file.txt', "This is a test.");
-
-      /* ファイルからの読込という副作用を実行する */
-      var IOSideEffect = (_) => {
-        var content = fs.readFileSync("test/resources/file.txt",
-                                      'utf8');
-        fs.writeFileSync('test/resources/file.txt',
-                         "This is another test.");
-        return content;
-      };
-
-      expect(
-        tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
-            IOSideEffect)
-      ).not.to.eql( // 同じ引数で適用しているのに両者は等しくない
-        tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
-            IOSideEffect)
-      );
+        /* あらかじめ文字列をファイルに書き込んでおく */
+        fs.writeFileSync('test/resources/file.txt', "This is a test.");
+  
+        /* ファイルからの読み込みという副作用を実行する */
+        var IOSideEffect = (_) => {
+          var content = fs.readFileSync("test/resources/file.txt",
+                                        'utf8');
+          fs.writeFileSync('test/resources/file.txt',
+                           "This is another test.");
+          return content;
+        };
+  
+        expect(
+          tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
+              IOSideEffect)
+        ).not.to.eql(  // 同じ引数に適用しているが両者は等しくない
+          tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
+              IOSideEffect)
+        );
       /* #@range_end(tap_combinator_test_in_fileio) */
       next();
     });

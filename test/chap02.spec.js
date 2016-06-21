@@ -2435,13 +2435,13 @@ describe('関数型プログラミングの利点', () => {
             },
             /* 預金を預ける関数 */
             deposit: (amount) => {
-              /* 代入でお金を預ける */
+              /* 代入で残高を更新する */
               balance = balance + amount;
               return this;
             },
             /* 預金を引き出す関数 */
             withdraw: (amount) => {
-              /* 代入でお金を引き出す */
+              /* 代入で残高を更新する */
               balance = balance - amount;
               return this;
             }
@@ -2545,7 +2545,7 @@ describe('関数型プログラミングの利点', () => {
         ).to.eql(
           800
         );
-        /* お金を引き出すのみ */
+        /* 連続してお金を引き出す */
         expect(
           account.commit(theAcount)( /* 先ほどの口座を再利用する */
             [account.withdraw(10), 

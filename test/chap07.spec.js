@@ -575,6 +575,8 @@ var stream = {
       });
     };
   },
+  // ### stream#filter
+  /* take:: STREAM -> PREDICATE -> STREAM */
   filter: (astream) => {
     return (predicate) => {
       return stream.match(astream,{
@@ -3261,8 +3263,49 @@ describe('クロージャーを使う', () => {
           /* #@range_end(integer_generator) */
           next();
         });
+        it('無限の素数列',(next) => {
+          var multipleOf = (n) => {
+            return ( m) => {
+              if(n % m === 0) {
+                return true;
+              } else {
+                return false;
+              }
+            };
+          };
+          var not = (arg) => {
+            return ! arg;
+          };
+          var remove = (predicate) => {
+            return (aStream) => {
+              return stream.filter(aStream)(compose(not,predicate));
+            };
+          };
+          var sieve = (aStream) => {
+            return stream.match(aStream, {
+              empty: () => { return null; },
+              cons: (head, tailThunk) => {
+                return stream.cons(head, (_) => {
+                  return sieve(stream.filter(tailThunk())(
+                    (item) => { 
+                      return ! multipleOf(item)(head);  
+                    }
+                  ));
+                }); 
+              }
+            });
+          };
+          var primes = sieve(stream.integersFrom(2)); // 無限の素数列
+          expect(
+            stream.toArray(stream.take(primes)(10))
+          ).to.eql(
+            [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
+          );
+          next();
+        });
         it('素数のジェネレータ',(next) => {
           this.timeout(7000);
+
           var multipleOf = (n) => {
             return (m) => {
               if(m % n === 0) {

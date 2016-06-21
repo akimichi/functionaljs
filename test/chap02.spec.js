@@ -1422,14 +1422,11 @@ describe('関数型プログラミングの利点', () => {
     // #### 部品の汎用性
     describe('部品の汎用性', () => {
       it('単純なインターフェイス', (next) => {
-        /* #@range_begin(constant) */
         var constant = (any) => {
           return (_) => {
             return any;
           };
         };
-        /* #@range_end(constant) */
-        var alwaysOne = constant(1); 
         /* #@range_begin(add_uncurried) */
         var add = (n,m) => {
           return n + m;
@@ -1784,12 +1781,21 @@ describe('関数型プログラミングの利点', () => {
               return accumulator + item;                 // 足し算を実行する
             },0); // 第2引数には、蓄積変数の初期値として0を渡す 
           };
+          /* #@range_begin(constant) */
           var constant = (any) => {
             return (_) => {
               return any;
             };
           };
           var alwaysOne = constant(1); 
+          /* #@range_end(constant) */
+          /* #@range_begin(map_alwaysOne) */
+          expect(
+            map(alwaysOne)([1,2,3])
+          ).to.eql(
+            [1,1,1]
+          );
+          /* #@range_end(map_alwaysOne) */
           var flip = (fun) => {
             return  (x) => {
               return (y) => {
@@ -2534,11 +2540,10 @@ describe('関数型プログラミングの利点', () => {
         /* お金を引き出してから、預金する */
         expect(
           account.commit(theAcount)(
-            [account.withdraw(200), /* 一連の取り引きを実行する */
-             account.deposit(100)] 
+            [account.withdraw(200)] /* 取り引きを実行する */
           )
         ).to.eql(
-          900
+          800
         );
         /* お金を引き出すのみ */
         expect(

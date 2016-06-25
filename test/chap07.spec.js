@@ -3265,7 +3265,7 @@ describe('クロージャーを使う', () => {
         });
         it('無限の素数列',(next) => {
           var multipleOf = (n) => {
-            return ( m) => {
+            return (m) => {
               if(n % m === 0) {
                 return true;
               } else {
@@ -3281,6 +3281,8 @@ describe('クロージャーを使う', () => {
               return stream.filter(aStream)(compose(not,predicate));
             };
           };
+
+          /* #@range_begin(eratosthenes_sieve) */
           var sieve = (aStream) => {
             return stream.match(aStream, {
               empty: () => { return null; },
@@ -3296,11 +3298,14 @@ describe('クロージャーを使う', () => {
             });
           };
           var primes = sieve(stream.integersFrom(2)); // 無限の素数列
+          /* #@range_end(eratosthenes_sieve) */
+          /* #@range_begin(eratosthenes_sieve_test) */
           expect(
             stream.toArray(stream.take(primes)(10))
           ).to.eql(
             [ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 ]
           );
+          /* #@range_end(eratosthenes_sieve_test) */
           next();
         });
         it('素数のジェネレータ',(next) => {
@@ -3308,7 +3313,7 @@ describe('クロージャーを使う', () => {
 
           var multipleOf = (n) => {
             return (m) => {
-              if(m % n === 0) {
+              if(n % m === 0) {
                 return true;
               } else {
                 return false;
@@ -3320,7 +3325,7 @@ describe('クロージャーを使う', () => {
             var leastDivisorHelper = (k, n) => {
               expect(k).to.a('number');
               expect(n).to.a('number');
-              if(multipleOf(k)(n)) {
+              if(multipleOf(n)(k)) {
                 return k;
               } else {
                 if(n < (k * k)) {
@@ -3345,7 +3350,22 @@ describe('クロージャーを使う', () => {
           /* #@range_begin(prime_generator) */
           var integers = stream.integersFrom(1);
           /* 素数のストリーム */
-          var primes = stream.filter(integers)(isPrime); 
+          var sieve = (aStream) => {
+            return stream.match(aStream, {
+              empty: () => { return null; },
+              cons: (head, tailThunk) => {
+                return stream.cons(head, (_) => {
+                  return sieve(stream.filter(tailThunk())(
+                    (item) => { 
+                      return ! multipleOf(item)(head);  
+                    }
+                  ));
+                }); 
+              }
+            });
+          };
+          var primes = sieve(stream.integersFrom(2)); // 無限の素数列
+          // var primes = stream.filter(integers)(isPrime); 
           var primeGenerator = generate(primes);
           /******* テスト ********/
           expect(

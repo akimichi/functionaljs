@@ -294,7 +294,7 @@ describe('参照透過性', () => {
   describe('参照透過性を破壊するもの', () => {
     it('代入操作は参照透明性を破壊する', (next) => {
       /* #@range_begin(assignment_breaks_referential_transparency) */
-      var x = 0; //代入で変数を更新する
+      var x = 0;
       var add = (y) => {
         x = x + 1; // 代入で変数を更新する
         return x + y;
@@ -1878,13 +1878,6 @@ describe('関数型プログラミングの利点', () => {
           };
         };
         var succ = adder(1);
-        var iterate = (step) => {
-          return (init) => {
-            return [init, (_) => {
-              return iterate(step)(step(init));
-            }];
-          };
-        };
         var take = (n) => {
           return (aStream) => {
             if(n === 0) {
@@ -1892,6 +1885,13 @@ describe('関数型プログラミングの利点', () => {
             } else {
               return [aStream[0]].concat(take(n-1)(aStream[1]()));
             }
+          };
+        };
+        var iterate = (step) => {
+          return (init) => {
+            return [init, (_) => {
+              return iterate(step)(step(init));
+            }];
           };
         };
         var enumFrom = (from) => {
@@ -2170,6 +2170,21 @@ describe('関数型プログラミングの利点', () => {
     };
     var succ = adder(1);
     /* #@range_begin(stream_enumFrom) */
+    var map = (aStream) => {
+      return (transform) => {
+        var head = aStream[0];
+        return [transform(head), (_) => {
+          return map(aStream[1]())(transform);
+        }];
+      };
+    };
+    // var iterate = (f) => {
+    //   return (x) => {
+    //     return [x, (_) => {
+    //       return map(iterate(f)(x))(f);
+    //     }];
+    //   };
+    // };
     var iterate = (step) => {  // 次の値との差を計算する関数を渡す
       return (init) => {       // 先頭の値を渡す
         return [init, (_) => { // ストリーム型を返す
@@ -2234,22 +2249,53 @@ describe('関数型プログラミングの利点', () => {
       );
     });
     describe('ストリーム', () => {
+      // var series = (func) => {
+      //   return (init) => {
+      //     return [init, (_) => {
+      //       return series(func)(func(init));
+      //     }];
+      //   };
+      // };
+      // var identity = (any) => {
+      //   return any;
+      // };
+      // var ones = series(identity)(1);
+      // expect(
+      //   take(10,ones)
+      // ).to.eql(
+      //   [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+      // );
+      /* #@range_begin(stream_limit) */
+      // var limit = (predicate) => {
+      //   return (aStream) => {
+      //     if(predicate(aStream)) {
+      //       return aStream[0];
+      //     } else {
+      //       return limit(predicate)(aStream[1]());
+      //     };
+      //   };
+      // };
+      /* #@range_end(stream_limit) */
       it('簡単なストリームの例', (next) => {
         /* #@range_begin(stream_example) */
-        var stream = [1, (_) => { // 後尾は無名関数で表現する
+        var aStream = [1, (_) => { // 後尾は無名関数で表現する
           return 2;
         }];
         /* #@range_end(stream_example) */
+        /* #@range_begin(stream_head) */
         expect(
-          stream[0]
+          aStream[0] // ストリームの先頭要素を取得する
         ).to.eql(
           1
         );
+        /* #@range_end(stream_head) */
+        /* #@range_begin(stream_tail) */
         expect(
-          stream[1]()
+          aStream[1]() // 関数適用でストリームの後尾を取り出す
         ).to.eql(
           2
         );
+        /* #@range_end(stream_tail) */
         /* #@range_begin(stream_ones) */
         var ones = [1, (_) => {
           return ones;
@@ -2267,33 +2313,270 @@ describe('関数型プログラミングの利点', () => {
         );
         next();
       });
-      var series = (func) => {
-        return (init) => {
-          return [init, (_) => {
-            return series(func)(func(init));
-          }];
-        };
-      };
-      var identity = (any) => {
-        return any;
-      };
-      var ones = series(identity)(1);
-      expect(
-        take(10,ones)
-      ).to.eql(
-        [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-      );
-      /* #@range_begin(stream_limit) */
-      var limit = (predicate) => {
-        return (aStream) => {
-          if(predicate(aStream)) {
-            return aStream[0];
-          } else {
-            return limit(predicate)(aStream[1]());
+      it('フィボナッチ数列', (next) => {
+        var take = (n) => {
+          return (aStream) => {
+            /* 再帰処理の終了条件 */
+            if(n === 1) { 
+              return aStream[0];
+            } else {
+              /* take関数の再帰呼び出し */
+              return [aStream[0]].concat(take(n-1)(aStream[1]())); 
+            }
           };
         };
-      };
-      /* #@range_end(stream_limit) */
+        var fib = (a, b) => {
+          return [a, (_) => {
+            return fib(b, a + b);
+          }];
+        }; 
+        expect(
+          take(5)(fib(1, 1))
+        ).to.eql(
+          [ 1, 1 , 2, 3, 5]
+        );
+        next();
+      });
+      describe('円周率に関するライプニッツの法則', () => {
+        var multipleOf = (n,m) => {
+          if((n % m) === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+        var even = (n) => {
+          return multipleOf(n,2); // 偶数は2の倍数
+        };
+        var odd = (n) => {
+          return not(multipleOf(n,2)); // 偶数は2の倍数
+        };
+        var not = (arg) => {
+          return ! arg;
+        };
+        var remove = (predicate) => {
+          return (aStream) => {
+            return filter(compose(not,predicate))(aStream);
+          };
+        };
+        var odds = filter(odd)(enumFrom(1));
+        var take = (n) => {
+          return (aStream) => {
+            if(n === 1) { 
+              return aStream[0];
+            } else {
+              return [aStream[0]].concat(take(n-1)(aStream[1]())); 
+            }
+          };
+        };
+        var map = (aStream,transform) => {
+          var head = aStream[0];
+          return [transform(head), (_) => {
+            return map(aStream[1](), transform);
+          }];
+        };
+        var iterate = (f,x) => {
+          return [x, (_) => {
+            return map(iterate(f,x), f);
+          }];
+        };
+        var negate = (n) => {
+          return 0 - n;
+        };
+        var foldr = (aStream, accumulator) => {
+          return (glue) => {
+            if(aStream.length === 0) {
+              return accumulator;
+            } else {
+              var head = aStream[0];
+              var tailThunk = aStream[1];
+              return glue(head,foldr(tailThunk(),accumulator)(glue));
+            }
+          };
+        };
+        var append = (xs,ysThunk) => {
+          if(xs.length === 0) {
+            return ysThunk();
+          } else {
+            var x = xs[0];
+            return [x, (_) => {
+              return append(xs[1](), ysThunk);
+            }];
+          };
+        };
+        var concat = (xss) => {
+          return foldr(xss,[])(append);
+        };
+        it('listSums', (next) => {
+          this.timeout(10000);
+          // zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+          // zipWith' f [] _ = []
+          // zipWith' f _ [] = []
+          // zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+          var zipWith = (fun) => {
+            return (xs, ys) => {
+              if(xs.length === 0) {
+                return []; 
+              } 
+              if(ys.length === 0) {
+                return []; 
+              } 
+              return [fun(xs[0], ys[0]), (_) => {
+                return zipWith(fun)(xs[1](), ys[1]());
+              }];
+            };
+          };
+          
+          // var listSums = (aStream) => {
+          //   return [aStream[0], (_) => {
+          //     return zipWith((x,y) => { return x + y;})(aStream[1](),listSums(aStream));
+          //   }];
+          // };
+
+          var listSums = (aStream) => {
+            // var listSumsHelper = (aStream, accumulator) => {
+            //   return [accumulator, (_) => {
+            //     return zipWith((x,y) => { return x + y;})(aStream[1](),listSumsHelper(aStream, aStream[0]));
+            //   }];
+            // };
+            // return listSumsHelper(aStream, aStream[0]);
+            var out = [aStream[0], (_) => {
+              return zipWith((x,y) => { return x + y;})(aStream[1](), out);
+            }];
+            return out;
+          };
+          expect(
+            take(3)(listSums(enumFrom(1)))
+          ).to.eql(
+            [1, 3, 6]
+          );
+          expect(
+            take(4)(listSums(enumFrom(1)))
+          ).to.eql(
+            [1, 3, 6, 10]
+          );
+          var leibnitzSeries = zipWith((x,y) => {
+            return 4 * x * 1 /y;
+          })(iterate((item) => {
+            return negate(item);
+          },1),odds);
+          expect(
+            take(3)(leibnitzSeries)
+          ).to.eql(
+            [4 * 1, 4 * -1/3, 4 * 1/5]
+          );
+          var at = (n, aStream) => {
+            if(n === 1) {
+              return aStream[0];
+            } else {
+              return at(n-1, aStream[1]());
+            };
+          };
+          expect(
+            at(3,listSums(enumFrom(1)))
+          ).to.eql(
+            6
+          );
+          expect(
+            at(100, listSums(leibnitzSeries))
+          ).to.within(3.13, 3.15);
+          next();
+        });
+        it('take', (next) => {
+          this.timeout(10000);
+          var multipleOf = (n,m) => {
+            if((n % m) === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          };
+          expect(
+            take(5)(iterate((item) => {
+              return negate(item);
+            },1))
+          ).to.eql(
+            [1, -1, 1, -1, 1]
+          );
+          expect(
+            take(5)(iterate((item) => {
+              if(item > 0) {
+                return -1 * (item + 2);
+              } else {
+                return -1 * (item - 2);
+              }
+            },1))
+          ).to.eql(
+            [1, -3, 5, -7, 9]
+          );
+          // cycle                   :: [a] -> [a]
+          // cycle []  = error "Prelude.cycle: empty list"
+          // cycle xs  = xs' where xs' = xs ++ xs'
+          var cycle = (aStream) => {
+            return append(aStream,(_) => {
+              return cycle(aStream);
+            });
+          };
+          expect(
+            take(4)(cycle([1, (_) => {
+              return [-1, (_) => {
+                return [];
+              }];
+            }]))
+          ).to.eql(
+            [1, -1, 1, -1]
+          );
+          // zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+          // zipWith' f [] _ = []
+          // zipWith' f _ [] = []
+          // zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+          var zipWith = (fun) => {
+            return (xs, ys) => {
+              if(xs.length === 0) {
+                return []; 
+              } 
+              if(ys.length === 0) {
+                return []; 
+              } 
+              return [fun(xs[0], ys[0]), (_) => {
+                return zipWith(fun)(xs[1](), ys[1]());
+              }];
+            };
+          };
+          var leibnitzSeries = zipWith((x,y) => {
+            return x * 1 /y;
+          })(iterate((item) => {
+            return negate(item);
+          },1),odds);
+          expect(
+            take(3)(leibnitzSeries)
+          ).to.eql(
+            [1, -1/3, 1/5]
+          );
+          var at = (n, aStream) => {
+            if(n === 1) {
+              return aStream[0];
+            } else {
+              return at(n-1, aStream[1]());
+            };
+          };
+          var multiplier = (n) => {
+            return (m) => {
+              return n * m;
+            };
+          };
+          var pi = (times) => {
+            return 4 * take(times)(leibnitzSeries).reduce((accumulator, item) => {
+              return accumulator + item;
+            }, 0);
+          };
+          expect(
+            pi(1000)
+          ).to.within(3.14, 3.15);
+
+          next();
+        });
+      });
       it('エラトステネスのふるいによる素数の生成', (next) => {
         var filter = (predicate) => {
           return (aStream) => {
@@ -2785,21 +3068,21 @@ describe('関数型プログラミングの利点', () => {
         };
       };
       it('succ関数の性質テスト', (next) => {
+        /* ストリームのmap関数 */
+        var map = (transform) => {
+          return (astream) => {
+            var head = astream[0];
+            return [transform(head), (_) => {
+              return map(transform)(astream[1]());
+            }];
+          };
+        };
+        /* #@range_begin(succ_property_test) */
         /* 配列のall関数 */
         var all = (array) => {
           return array.reduce((accumulator, item) => {
             return accumulator && item;
           },true);
-        };
-        /* #@range_begin(succ_property_test) */
-        /* ストリームのmap関数 */
-        var map = (transform) => {
-          return (aStream) => {
-            var head = aStream[0];
-            return [transform(head), (_) => {
-              return map(transform)(aStream[1]());
-            }];
-          };
         };
         /* 検証の対象となる命題 */
         var proposition = (x) => {

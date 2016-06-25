@@ -2169,7 +2169,6 @@ describe('関数型プログラミングの利点', () => {
       };
     };
     var succ = adder(1);
-    /* #@range_begin(stream_enumFrom) */
     var map = (aStream) => {
       return (transform) => {
         var head = aStream[0];
@@ -2185,6 +2184,7 @@ describe('関数型プログラミングの利点', () => {
     //     }];
     //   };
     // };
+    /* #@range_begin(stream_enumFrom) */
     var iterate = (step) => {  // 次の値との差を計算する関数を渡す
       return (init) => {       // 先頭の値を渡す
         return [init, (_) => { // ストリーム型を返す
@@ -2201,6 +2201,40 @@ describe('関数型プログラミングの利点', () => {
     ).to.eql(
       [2,4,6]
     );
+    it('ストリームのフィルタリング', (next) => {
+      /* #@range_begin(odd_stream) */
+      var filter = (predicate) => {
+        return (aStream) => {
+          var head = aStream[0];
+          if(predicate(head) === true) {
+            return [head, (_) => {
+              return filter(predicate)(aStream[1]());
+            }];
+          } else {
+            return filter(predicate)(aStream[1]());
+          }
+        };
+      };
+      var multipleOf = (n) => {
+        return (m) => {
+          if((n % m) === 0) {
+            return true;
+          } else {
+            return false;
+          }
+        };
+      };
+      var odd = (n) => {
+        return ! (multipleOf(n)(2));
+      };
+      /* #@range_end(odd_stream) */
+      expect(
+        take(5,filter(odd)(enumFrom(1)))
+      ).to.eql(
+        [ 1, 3, 5, 7, 9 ] 
+      );
+      next();
+    });
     describe('カリー化バージョン', () => {
       var take = (n) => {
         return (aStream) => {
@@ -2409,10 +2443,18 @@ describe('関数型プログラミングの利点', () => {
         };
         it('listSums', (next) => {
           this.timeout(10000);
+          /* #@range_begin(streams) */
+          var intStream = enumFrom(1); // [1,2,3,,,,]
+          var oddStream = filter(odd)(intStream); // [1,3,5,...]
+          var cycledStream = iterate((item) => { // [1, -1, 1, -1...]
+            return negate(item);
+          },1);
+          /* #@range_end(streams) */
           // zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
           // zipWith' f [] _ = []
           // zipWith' f _ [] = []
           // zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+          /* #@range_begin(stream_zipWith) */
           var zipWith = (fun) => {
             return (xs, ys) => {
               if(xs.length === 0) {
@@ -2426,25 +2468,28 @@ describe('関数型プログラミングの利点', () => {
               }];
             };
           };
-          
+          /* #@range_end(stream_zipWith) */
+
           // var listSums = (aStream) => {
           //   return [aStream[0], (_) => {
           //     return zipWith((x,y) => { return x + y;})(aStream[1](),listSums(aStream));
           //   }];
           // };
-
-          var listSums = (aStream) => {
             // var listSumsHelper = (aStream, accumulator) => {
             //   return [accumulator, (_) => {
             //     return zipWith((x,y) => { return x + y;})(aStream[1](),listSumsHelper(aStream, aStream[0]));
             //   }];
             // };
             // return listSumsHelper(aStream, aStream[0]);
+
+          /* #@range_begin(listSums) */
+          var listSums = (aStream) => {
             var out = [aStream[0], (_) => {
               return zipWith((x,y) => { return x + y;})(aStream[1](), out);
             }];
             return out;
           };
+          /* #@range_end(listSums) */
           expect(
             take(3)(listSums(enumFrom(1)))
           ).to.eql(
@@ -2455,31 +2500,42 @@ describe('関数型プログラミングの利点', () => {
           ).to.eql(
             [1, 3, 6, 10]
           );
+          /* #@range_begin(leibnitzSeries) */
           var leibnitzSeries = zipWith((x,y) => {
-            return 4 * x * 1 /y;
-          })(iterate((item) => {
-            return negate(item);
-          },1),odds);
+            return x * 1 /y;
+          })(cycledStream, oddStream);
+          /* #@range_end(leibnitzSeries) */
           expect(
             take(3)(leibnitzSeries)
           ).to.eql(
-            [4 * 1, 4 * -1/3, 4 * 1/5]
+            [1, -1/3, 1/5]
           );
-          var at = (n, aStream) => {
-            if(n === 1) {
-              return aStream[0];
-            } else {
-              return at(n-1, aStream[1]());
+          /* #@range_begin(stream_at) */
+          var at = (n) => {
+            return (aStream) => {
+              if(n === 1) {
+                return aStream[0];
+              } else {
+                return at(n-1)(aStream[1]());
+              };
             };
           };
           expect(
-            at(3,listSums(enumFrom(1)))
+            at(3)(enumFrom(1))
+          ).to.eql(
+            3
+          );
+          /* #@range_end(stream_at) */
+          expect(
+            at(3)(listSums(enumFrom(1)))
           ).to.eql(
             6
           );
+          /* #@range_begin(leibnitzSeries_at_100) */
           expect(
-            at(100, listSums(leibnitzSeries))
+            4 * at(100)(listSums(leibnitzSeries))
           ).to.within(3.13, 3.15);
+          /* #@range_end(leibnitzSeries_at_100) */
           next();
         });
         it('take', (next) => {
@@ -2543,11 +2599,14 @@ describe('関数型プログラミングの利点', () => {
               }];
             };
           };
+          var intStream = enumFrom(1);
+          var oddStream = filter(odd)(intStream);
+          var cycles = iterate((item) => {
+            return negate(item);
+          },1);
           var leibnitzSeries = zipWith((x,y) => {
             return x * 1 /y;
-          })(iterate((item) => {
-            return negate(item);
-          },1),odds);
+          })(cycles, oddStream);
           expect(
             take(3)(leibnitzSeries)
           ).to.eql(

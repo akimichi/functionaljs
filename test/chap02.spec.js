@@ -2177,13 +2177,6 @@ describe('関数型プログラミングの利点', () => {
         }];
       };
     };
-    // var iterate = (f) => {
-    //   return (x) => {
-    //     return [x, (_) => {
-    //       return map(iterate(f)(x))(f);
-    //     }];
-    //   };
-    // };
     /* #@range_begin(stream_enumFrom) */
     var iterate = (step) => {  // 次の値との差を計算する関数を渡す
       return (init) => {       // 先頭の値を渡す
@@ -2201,6 +2194,10 @@ describe('関数型プログラミングの利点', () => {
     ).to.eql(
       [2,4,6]
     );
+    it('遅延評価の説明', (next) => {
+      var length
+      next();
+    });
     it('ストリームのフィルタリング', (next) => {
       /* #@range_begin(odd_stream) */
       var filter = (predicate) => {
@@ -2283,32 +2280,6 @@ describe('関数型プログラミングの利点', () => {
       );
     });
     describe('ストリーム', () => {
-      // var series = (func) => {
-      //   return (init) => {
-      //     return [init, (_) => {
-      //       return series(func)(func(init));
-      //     }];
-      //   };
-      // };
-      // var identity = (any) => {
-      //   return any;
-      // };
-      // var ones = series(identity)(1);
-      // expect(
-      //   take(10,ones)
-      // ).to.eql(
-      //   [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-      // );
-      /* #@range_begin(stream_limit) */
-      // var limit = (predicate) => {
-      //   return (aStream) => {
-      //     if(predicate(aStream)) {
-      //       return aStream[0];
-      //     } else {
-      //       return limit(predicate)(aStream[1]());
-      //     };
-      //   };
-      // };
       /* #@range_end(stream_limit) */
       it('簡単なストリームの例', (next) => {
         /* #@range_begin(stream_example) */

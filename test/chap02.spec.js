@@ -2442,7 +2442,7 @@ describe('関数型プログラミングの利点', () => {
           return foldr(xss,[])(append);
         };
         it('listSums', (next) => {
-          this.timeout(10000);
+          this.timeout(50000);
           /* #@range_begin(streams) */
           var intStream = enumFrom(1); // [1,2,3,,,,]
           var oddStream = filter(odd)(intStream); // [1,3,5,...]
@@ -2469,23 +2469,12 @@ describe('関数型プログラミングの利点', () => {
             };
           };
           /* #@range_end(stream_zipWith) */
-
-          // var listSums = (aStream) => {
-          //   return [aStream[0], (_) => {
-          //     return zipWith((x,y) => { return x + y;})(aStream[1](),listSums(aStream));
-          //   }];
-          // };
-            // var listSumsHelper = (aStream, accumulator) => {
-            //   return [accumulator, (_) => {
-            //     return zipWith((x,y) => { return x + y;})(aStream[1](),listSumsHelper(aStream, aStream[0]));
-            //   }];
-            // };
-            // return listSumsHelper(aStream, aStream[0]);
-
           /* #@range_begin(listSums) */
           var listSums = (aStream) => {
             var out = [aStream[0], (_) => {
-              return zipWith((x,y) => { return x + y;})(aStream[1](), out);
+              return zipWith((x,y) => { 
+                return x + y;
+              })(aStream[1](), out);
             }];
             return out;
           };
@@ -2510,32 +2499,84 @@ describe('関数型プログラミングの利点', () => {
           ).to.eql(
             [1, -1/3, 1/5]
           );
-          /* #@range_begin(stream_at) */
-          var at = (n) => {
+          /* #@range_begin(stream_elemAt) */
+          var elemAt = (n) => {
             return (aStream) => {
               if(n === 1) {
                 return aStream[0];
               } else {
-                return at(n-1)(aStream[1]());
+                return elemAt(n-1)(aStream[1]());
               };
             };
           };
           expect(
-            at(3)(enumFrom(1))
+            elemAt(3)(enumFrom(1))
           ).to.eql(
             3
           );
-          /* #@range_end(stream_at) */
+          /* #@range_end(stream_elemAt) */
           expect(
-            at(3)(listSums(enumFrom(1)))
+            elemAt(3)(listSums(enumFrom(1)))
           ).to.eql(
             6
           );
           /* #@range_begin(leibnitzSeries_at_100) */
           expect(
-            4 * at(100)(listSums(leibnitzSeries))
+            4 * elemAt(100)(listSums(leibnitzSeries))
           ).to.within(3.13, 3.15);
           /* #@range_end(leibnitzSeries_at_100) */
+          next();
+        });
+        it('タブロー化listSums', (next) => {
+          this.timeout(50000);
+          var intStream = enumFrom(1); // [1,2,3,,,,]
+          var oddStream = filter(odd)(intStream); // [1,3,5,...]
+          var cycledStream = iterate((item) => { // [1, -1, 1, -1...]
+            return negate(item);
+          },1);
+          // zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+          // zipWith' f [] _ = []
+          // zipWith' f _ [] = []
+          // zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+          var zipWith = (fun) => {
+            return (xs, ys) => {
+              if(xs.length === 0) {
+                return []; 
+              } 
+              if(ys.length === 0) {
+                return []; 
+              } 
+              return [fun(xs[0], ys[0]), (_) => {
+                return zipWith(fun)(xs[1](), ys[1]());
+              }];
+            };
+          };
+          var listSums = (aStream) => {
+            if(aStream.length === 0){
+              return [];
+            } else {
+              return [aStream[0], (_) => {
+                return listSums([aStream[0]+aStream[1]()[0], (_) => {
+                  return aStream[1]()[1]();
+                }]);
+              }];
+            }
+          };
+          var leibnitzSeries = zipWith((x,y) => {
+            return x * 1 /y;
+          })(cycledStream, oddStream);
+          var elemAt = (n) => {
+            return (aStream) => {
+              if(n === 1) {
+                return aStream[0];
+              } else {
+                return elemAt(n-1)(aStream[1]());
+              };
+            };
+          };
+          expect(
+            4 * elemAt(700)(listSums(leibnitzSeries))
+          ).to.within(3.14, 3.15);
           next();
         });
         it('take', (next) => {
@@ -3126,35 +3167,94 @@ describe('関数型プログラミングの利点', () => {
           }
         };
       };
-      it('succ関数の性質テスト', (next) => {
-        /* ストリームのmap関数 */
-        var map = (transform) => {
-          return (astream) => {
-            var head = astream[0];
-            return [transform(head), (_) => {
-              return map(transform)(astream[1]());
-            }];
+      describe('succ関数の性質テスト', () => {
+        it('遅延バージョン', (next) => {
+          var zipWith = (fun) => {
+            return (xs, ys) => {
+              if(xs.length === 0) {
+                return []; 
+              } 
+              if(ys.length === 0) {
+                return []; 
+              } 
+              return [fun(xs[0], ys[0]), (_) => {
+                return zipWith(fun)(xs[1](), ys[1]());
+              }];
+            };
           };
-        };
-        /* #@range_begin(succ_property_test) */
-        /* 配列のall関数 */
-        var all = (array) => {
-          return array.reduce((accumulator, item) => {
-            return accumulator && item;
-          },true);
-        };
-        /* 検証の対象となる命題 */
-        var proposition = (x) => {
-          return succ(0) + succ(x) === succ(succ(x));
-        };
-        /* 100個の整数について命題が正しいかをテストする */
-        expect(
-          all(take(100)(map(proposition)(enumFrom(0))))
-        ).to.eql(
-          true
-        );
-        /* #@range_end(succ_property_test) */
-        next();
+          var elemAt = (n) => {
+            return (aStream) => {
+              if(n === 1) {
+                return aStream[0];
+              } else {
+                return elemAt(n-1)(aStream[1]());
+              };
+            };
+          };
+          /* #@range_begin(succ_property_test) */
+          /* 検証の対象となる命題 */
+          var proposition = (x) => {
+            return succ(0) + succ(x) === succ(succ(x));
+          };
+          var conjunction = (x,y) => {
+            return x && y;  // 論理和をとる
+          };
+          /* ストリームのmap関数 */
+          var map = (transform) => {
+            return (astream) => {
+              var head = astream[0];
+              return [transform(head), (_) => {
+                return map(transform)(astream[1]());
+              }];
+            };
+          };
+          var scanl = (aStream) => {
+            return (glue) => {
+              var out = [aStream[0], (_) => {
+                return zipWith(glue)(aStream[1](), out);
+              }];
+              return out;
+            };
+          };
+          /* 100個の整数について命題が正しいかをテストする */
+          expect(
+            elemAt(100)(
+              scanl((map(proposition)(enumFrom(0))))(conjunction)
+            )
+          ).to.eql(
+            true
+          );
+          /* #@range_end(succ_property_test) */
+          next();
+        });
+        it('正格バージョン', (next) => {
+          /* ストリームのmap関数 */
+          var map = (transform) => {
+            return (astream) => {
+              var head = astream[0];
+              return [transform(head), (_) => {
+                return map(transform)(astream[1]());
+              }];
+            };
+          };
+          /* 配列のall関数 */
+          var all = (array) => {
+            return array.reduce((accumulator, item) => {
+              return accumulator && item;
+            },true);
+          };
+          /* 検証の対象となる命題 */
+          var proposition = (x) => {
+            return succ(0) + succ(x) === succ(succ(x));
+          };
+          /* 100個の整数について命題が正しいかをテストする */
+          expect(
+            all(take(100)(map(proposition)(enumFrom(0))))
+          ).to.eql(
+            true
+          );
+          next();
+        });
       });
     });
   });

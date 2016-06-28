@@ -2175,9 +2175,9 @@ describe('関数型プログラミングの利点', () => {
         var enumFrom = (n) => {
           return iterate(n)(succ);
         };
-        // 自然数列
+        // 自然数列を定義する
         var naturals = enumFrom(1);
-        // 偶数列
+        // 偶数列を定義する
         var twoStep = (n) => {
           return n + 2;
         };
@@ -2212,15 +2212,21 @@ describe('関数型プログラミングの利点', () => {
         });
         it('無限の偶数列', (next) => {
           /* #@range_begin(evenStream) */
-          var evenStream = ((_) => {
-            var evenFrom = (n) => {
-              return [n, (_) => {
-                return evenFrom(n + 2);
-              }];
-            };
-            return evenFrom(2);
-          })(); // 定義された無名関数をすぐに適用する
+          var evenFrom = (n) => {
+            return [n, (_) => {
+              return evenFrom(n + 2);
+            }];
+          };
+          var evenStream = evenFrom(2); 
           /* #@range_end(evenStream) */
+          // var evenStream = ((_) => {
+          //   var evenFrom = (n) => {
+          //     return [n, (_) => {
+          //       return evenFrom(n + 2);
+          //     }];
+          //   };
+          //   return evenFrom(2);
+          // })(); // 定義された無名関数をすぐに適用する
           // var evenFrom = (n) => {
           //   return [n, (_) => {
           //     return evenFrom(n + 2);

@@ -2162,18 +2162,27 @@ describe('関数型プログラミングの利点', () => {
             }];
           };
         };
-        /* #@range_begin(stream_enumFrom) */
-        var iterate = (step) => {  // 次の値との差を計算する関数を渡す
-          return (init) => {       // 先頭の値を渡す
+        /* #@range_begin(stream_iterate) */
+        var iterate = (init) => {  // 先頭の値を渡す
+          return (step) => {       // 次の値との差を計算する関数を渡す
             return [init, (_) => { // ストリーム型を返す
-              return iterate(step)(step(init));
+              return iterate(step(init))(step);
             }];
           };
         };
+        /* #@range_end(stream_iterate) */
+        /* #@range_begin(enumFrom_by_iterate) */
         var enumFrom = (n) => {
-          return iterate(succ)(n);
+          return iterate(n)(succ);
         };
-        /* #@range_end(stream_enumFrom) */
+        // 自然数列
+        var naturals = enumFrom(1);
+        // 偶数列
+        var twoStep = (n) => {
+          return n + 2;
+        };
+        var evenStream = iterate(2)(twoStep);
+        /* #@range_end(enumFrom_by_iterate) */
         expect(
           take(3,filter(even)(enumFrom(2)))
         ).to.eql(
@@ -2183,7 +2192,7 @@ describe('関数型プログラミングの利点', () => {
         var twoStep = (n) => {
           return n + 2;
         };
-        var oddStream = iterate(twoStep)(1);
+        var oddStream = iterate(1)(twoStep);
         /* #@range_end(oddStream_from_iterate) */
         expect(
           take(3,oddStream)
@@ -2191,6 +2200,40 @@ describe('関数型プログラミングの利点', () => {
           [1,3,5]
         );
 
+        it('無限の整数列', (next) => {
+          /* #@range_begin(enumFrom) */
+          var enumFrom = (n) => {
+            return [n, (_) => { // ストリームを返す
+              return enumFrom(n + 1);
+            }];
+          };
+          /* #@range_end(enumFrom) */
+          next();
+        });
+        it('無限の偶数列', (next) => {
+          /* #@range_begin(evenStream) */
+          var evenStream = ((_) => {
+            var evenFrom = (n) => {
+              return [n, (_) => {
+                return evenFrom(n + 2);
+              }];
+            };
+            return evenFrom(2);
+          })(); // 定義された無名関数をすぐに適用する
+          /* #@range_end(evenStream) */
+          // var evenFrom = (n) => {
+          //   return [n, (_) => {
+          //     return evenFrom(n + 2);
+          //   }];
+          // };
+          // var evenStream = evenFrom(2);
+          expect(
+            take(3, evenStream)
+          ).to.eql(
+            [2,4,6]
+          );
+          next();
+        });
         it('遅延評価の説明', (next) => {
           var map = (transform) => {
             return (array) => {
@@ -2288,6 +2331,56 @@ describe('関数型プログラミングの利点', () => {
           ).to.eql(
             [ 1, 3, 5, 7, 9 ] 
           );
+          /* #@range_begin(evenStream_by_filter) */
+          var even = (n) => {
+            return (n % 2) === 0; 
+          };
+          var evenStream = filter(even)(enumFrom(1));
+          /* #@range_end(evenStream_by_filter) */
+          expect(
+            /* #@range_begin(third_element_of_evenStream) */
+            elemAt(3)(evenStream)
+            /* #@range_end(third_element_of_evenStream) */
+          ).to.eql(
+            /* #@range_begin(third_element_of_evenStream_result) */
+            6
+            /* #@range_end(third_element_of_evenStream_result) */
+          );
+          // var ones = [1, (_) => {
+          //   return ones;
+          // }];
+          // var twos = [1, (_) => {
+          //   return ones;
+          // }];
+          // var zipWith = (fun) => {
+          //   return (xs, ys) => {
+          //     if(xs.length === 0) {
+          //       return []; 
+          //     } 
+          //     if(ys.length === 0) {
+          //       return []; 
+          //     } 
+          //     return [fun(xs[0], ys[0]), (_) => {
+          //       return zipWith(fun)(xs[1](), ys[1]());
+          //     }];
+          //   };
+          // };
+          // var listSums = (aStream) => {
+          //   var out = [aStream[0], (_) => {
+          //     return zipWith((x,y) => { 
+          //       return x + y;
+          //     })(aStream[1](), out);
+          //   }];
+          //   return out;
+          // };
+          // var scanl = (aStream) => {
+          //   return (glue) => {
+          //     var out = [aStream[0], (_) => {
+          //       return zipWith(glue)(aStream[1](), out);
+          //     }];
+          //     return out;
+          //   };
+          // };
           next();
         });
         // describe('カリー化バージョン', () => {

@@ -2286,12 +2286,12 @@ describe('関数型プログラミングの利点', () => {
           /* #@range_begin(stream_filter) */
           var filter = (predicate) => {
             return (aStream) => {
-              var head = aStream[0];
-              if(predicate(head) === true) {
+              var head = aStream[0]; // ストリームの先頭要素を取り出す
+              if(predicate(head) === true) { // 先頭要素headが条件に合致している場合
                 return [head, (_) => {
                   return filter(predicate)(aStream[1]());
                 }];
-              } else {
+              } else {                       // 先頭要素headが条件に合致していない場合
                 return filter(predicate)(aStream[1]());
               }
             };
@@ -2387,6 +2387,39 @@ describe('関数型プログラミングの利点', () => {
           //     return out;
           //   };
           // };
+          next();
+        });
+        it('正格評価のelemAt関数', (next) => {
+          /* #@range_begin(array_elemAt) */
+          var elemAt = (n) => {
+            return (anArray) => {
+              if(n === 1) {
+                return anArray[0];
+              } else {
+                var tail = anArray.slice(1,anArray.length);
+                return elemAt(n-1)(tail);
+              };
+            };
+          };
+          /* #@range_end(array_elemAt) */
+          expect(
+            /* #@range_begin(third_element_of_evenArray) */
+            elemAt(3)([2,4,6])
+            /* #@range_end(third_element_of_evenArray) */
+          ).to.eql(
+            /* #@range_begin(third_element_of_eventArray_result) */
+            6
+            /* #@range_end(third_element_of_eventArray_result) */
+          );
+          expect(
+            /* #@range_begin(fourth_element_of_evenArray) */
+            elemAt(4)([2,4,6])
+            /* #@range_end(fourth_element_of_evenArray) */
+          ).to.eql(
+            /* #@range_begin(fourth_element_of_evenArray_result) */
+            undefined
+            /* #@range_end(fourth_element_of_evenArray_result) */
+          );
           next();
         });
         // describe('カリー化バージョン', () => {

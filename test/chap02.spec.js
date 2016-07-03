@@ -3345,19 +3345,6 @@ describe('関数型プログラミングの利点', () => {
       };
       describe('succ関数の性質テスト', () => {
         it('遅延バージョン', (next) => {
-          var zipWith = (fun) => {
-            return (xs, ys) => {
-              if(xs.length === 0) {
-                return []; 
-              } 
-              if(ys.length === 0) {
-                return []; 
-              } 
-              return [fun(xs[0], ys[0]), (_) => {
-                return zipWith(fun)(xs[1](), ys[1]());
-              }];
-            };
-          };
           var elemAt = (n) => {
             return (aStream) => {
               if(n === 1) {
@@ -3365,23 +3352,6 @@ describe('関数型プログラミングの利点', () => {
               } else {
                 return elemAt(n-1)(aStream[1]());
               };
-            };
-          };
-          /* #@range_begin(succ_property_test) */
-          /* 検証の対象となる命題 */
-          var proposition = (x) => {
-            return succ(0) + succ(x) === succ(succ(x));
-          };
-          var conjunction = (x,y) => {
-            return x && y;  // 論理和をとる
-          };
-          /* ストリームのmap関数 */
-          var map = (transform) => {
-            return (astream) => {
-              var head = astream[0];
-              return [transform(head), (_) => {
-                return map(transform)(astream[1]());
-              }];
             };
           };
           var scanl = (aStream) => {
@@ -3392,15 +3362,91 @@ describe('関数型プログラミングの利点', () => {
               return out;
             };
           };
+          var conjunction = (x,y) => {
+            return x && y;  // 論理和をとる
+          };
+          var zipWith = (glue) => {
+            return (xs, ys) => {
+              if(xs.length === 0) {
+                return []; 
+              } 
+              if(ys.length === 0) {
+                return []; 
+              } 
+              return [glue(xs[0], ys[0]), (_) => {
+                return zipWith(glue)(xs[1](), ys[1]());
+              }];
+            };
+          };
+          var listAnd = (aStream) => {
+            var out = [aStream[0], (_) => {
+              return zipWith((x,y) => { 
+                return x && y;
+              })(aStream[1](), out);
+            }];
+            return out;
+          };
+          /* #@range_begin(succ_property) */
+          /* ストリームのmap関数 */
+          var map = (transform) => {
+            return (astream) => {
+              var head = astream[0];
+              return [transform(head), (_) => {
+                return map(transform)(astream[1]());
+              }];
+            };
+          };
+          /* ストリームの先頭から引数n分だけ取り出すtake関数 */
+          var take = (n) => {
+            return (aStream) => {
+              if(n === 0) {
+                return null;
+              } else {
+                return [aStream[0], (_) => {
+                  return take(n-1)(aStream[1]());
+                }];
+              }
+            };
+          };
+          /* ストリームの全ての要素がtrueであるかを判定するall関数 */
+          var all = (aStream) => {
+            var allHelper = (aStream, accumulator) => {
+             var head = aStream[0];
+             var newAccumulator = accumulator && head;
+             if(aStream[1]() === null){
+               return newAccumulator;
+             } else {
+               return allHelper(aStream[1](), newAccumulator);
+             } 
+            };
+            return allHelper(aStream, true);
+          };
+          /* 検証の対象となる命題 */
+          var proposition = (n) => {
+            return succ(0) + succ(n) === succ(succ(n));
+          };
+          /* #@range_end(succ_property) */
+          /* #@range_begin(succ_property_test) */
           /* 100個の整数について命題が正しいかをテストする */
           expect(
-            elemAt(100)(
-              scanl((map(proposition)(enumFrom(0))))(conjunction)
+            all(
+              take(100)(
+                map(proposition)(enumFrom(0))
+              )
             )
           ).to.eql(
             true
           );
           /* #@range_end(succ_property_test) */
+            // elemAt(100)(
+            //   compose(listAnd, map(proposition))(enumFrom(0))
+            // )
+            // elemAt(100)(
+            //   listAnd((map(proposition)(enumFrom(0))))
+            // )
+            // elemAt(100)(
+            //   scanl((map(proposition)(enumFrom(0))))(conjunction)
+            // )
           next();
         });
         it('正格バージョン', (next) => {

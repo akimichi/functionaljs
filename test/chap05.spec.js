@@ -1411,6 +1411,42 @@ describe('再帰による反復処理', () => {
         }
       });
     };
+    it('再帰によるmap関数', (next) => {
+      /* #@range_begin(recursive_map) */
+      var map = (alist,transform) => {
+        return match(alist,{
+          empty: (_) => { return empty(); },  // 終了条件で再帰を抜ける
+          cons: (head,tail) => {
+            return cons(transform(head),
+                        map(tail,transform)); // map関数の再帰呼び出し
+          }
+        });
+      };
+      /* #@range_end(recursive_map) */
+      /* #@range_begin(recursive_toArray) */
+      var toArray = (alist) => {
+        /* 補助関数 toArrayHelper */
+        var toArrayHelper = (alist,accumulator) => {
+          return match(alist, {
+            empty: (_) => { return accumulator; },  // 空のリストの場合は終了
+            cons: (head, tail) => {
+              return toArrayHelper(tail,accumulator.concat(head));
+            }
+          });
+        };
+        return toArrayHelper(alist,[]);
+      };
+      /* #@range_end(recursive_toArray) */
+      var succ = (n) => {
+        return n + 1;
+      };
+      expect(
+        toArray(map(cons(1,cons(2,cons(3,empty()))),succ))
+      ).to.eql(
+        [2,3,4]
+      );
+      next();
+    });
     it('蓄積変数を持つlength関数', (next) => {
       /* #@range_begin(recursive_length) */
       var length = (list, accumulator) => {
@@ -1565,7 +1601,6 @@ describe('再帰による反復処理', () => {
     });
   });
   describe('mapの例', () => {
-    /* #@range_begin(recursive_map) */
     var map = (alist, transform) => {
       if (list.isEmpty(alist)) {
         return list.empty;
@@ -1575,7 +1610,6 @@ describe('再帰による反復処理', () => {
         return list.cons(transform(x), map(xs, transform));
       }
     };
-    /* #@range_end(recursive_map) */
     var alist = list.cons(1,
                           list.cons(2,
                                     list.cons(3,

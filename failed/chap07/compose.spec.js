@@ -21,7 +21,7 @@ it('加算と反数の合成は失敗する', (next) => {
   expect(
     compose(opposite)(add)(2,3)
   ).to.eql(
-    -6
+    -5 // -(2 + 3) = -5
   );
   /* #@range_end(compose_opposite_add) */
   next();

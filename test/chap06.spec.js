@@ -462,9 +462,9 @@ describe('関数の基本', () => {
         });
         /* #@range_end(infinite_ones) */
         /* #@range_begin(infinite_integer) */
-        var integersFrom = (n) => {
+        var enumFrom = (n) => {
           return stream.cons(n, (_) => {
-            return integersFrom(n + 1);
+            return enumFrom(n + 1);
           });
         };
         /* #@range_end(infinite_integer) */
@@ -506,7 +506,7 @@ describe('関数の基本', () => {
             }
           };
           expect(
-            list.toArray(stream.take(sieve(integersFrom(2)), 10))
+            list.toArray(stream.take(sieve(enumFrom(2)), 10))
           ).to.eql(
             [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
           );
@@ -636,18 +636,18 @@ describe('関数の基本', () => {
             /* #@range_end(stream_filter) */
           };
           expect(
-            stream.head(integersFrom(1))
+            stream.head(enumFrom(1))
           ).to.eql(
             1
           );
           expect(
-            stream.head(stream.tail(integersFrom(1)))
+            stream.head(stream.tail(enumFrom(1)))
           ).to.eql(
             2
           );
           /* #@range_begin(infinite_integer_test) */
           expect(
-            list.toArray(stream.take(integersFrom(1), 4))
+            list.toArray(stream.take(enumFrom(1), 4))
           ).to.eql(
             [1,2,3,4]
           );
@@ -655,7 +655,7 @@ describe('関数の基本', () => {
           /* #@range_begin(stream_filter_test) */
           expect(
             /* 無限の整数列から最初の4つの要素を取り出し、それを配列に変換する */
-            list.toArray(stream.take(integersFrom(1), 4))
+            list.toArray(stream.take(enumFrom(1), 4))
           ).to.eql(
             [1,2,3,4]
           );
@@ -664,7 +664,7 @@ describe('関数の基本', () => {
           var even = (n) => {
             return 0 === (n % 2);
           };
-          var evenIntegers = stream.filter(integersFrom(1),even);
+          var evenIntegers = stream.filter(enumFrom(1),even);
           expect(
             list.toArray(stream.take(evenIntegers, 4))
           ).to.eql(

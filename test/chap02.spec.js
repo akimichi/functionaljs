@@ -1912,9 +1912,9 @@ describe('関数型プログラミングの利点', () => {
             return toArrayAux(alist, []);
           }
         };
-        var integersFrom = (n) => {
+        var enumFrom = (n) => {
           return stream.cons(n, (_) => {
-            return integersFrom(n + 1);
+            return enumFrom(n + 1);
           });
         };
         var sieve = (astream) => {
@@ -1942,7 +1942,7 @@ describe('関数型プログラミングの利点', () => {
           }
         };
         expect(
-          list.toArray(stream.take(sieve(integersFrom(2)), 10))
+          list.toArray(stream.take(sieve(enumFrom(2)), 10))
         ).to.eql(
           [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
         );

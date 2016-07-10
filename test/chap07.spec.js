@@ -610,9 +610,9 @@ var stream = {
       };
     };
   },
-  integersFrom: (from) => {
+  enumFrom: (from) => {
     return stream.cons(from, (_) => {
-      return stream.integersFrom(from + 1);
+      return stream.enumFrom(from + 1);
     });
   },
   /* #@range_begin(stream_generate) */
@@ -1014,7 +1014,7 @@ describe('カリー化で関数を渡す', () => {
             return accumulator;
           }
         };
-        var naturals = stream.integersFrom(0);
+        var naturals = stream.enumFrom(0);
         return innerProductHelper(naturals, 0);
       };
     };
@@ -2446,19 +2446,31 @@ describe('コンビネータで関数を組み合わせる', () => {
     });
   });
   it('Y combinator', (next) => {
+    // Y = λF. (λx. F (λy. x x y))(λx. F (λy. x x y)) に
     /* #@range_begin(Y_combinator) */
     var Y = (F) => {
-      return ((g) => {
-        return (x) =>  {
-          return F(g(g))(x);
-        };
-      })((g) =>  {
-        return (x) => {
-          return F(g(g))(x);
-        };
+      return ((x) => {
+        return F((y) => {
+          return x(x)(y);
+        }) ;
+      })((x) =>  {
+        return F((y) => {
+          return x(x)(y);
+        }) ;
       });
     };
     /* #@range_end(Y_combinator)  */
+    // var Y = (F) => {
+    //   return ((g) => {
+    //     return (x) =>  {
+    //       return F(g(g))(x);
+    //     };
+    //   })((g) =>  {
+    //     return (x) => {
+    //       return F(g(g))(x);
+    //     };
+    //   });
+    // };
     /* #@range_begin(Y_combinator_test) */
     var factorial = Y((fact) => {
       return (n) => {
@@ -2534,12 +2546,12 @@ describe('クロージャーを使う', () => {
         /* #@range_begin(counter_as_closure_test) */
         var counterFromZero = counter(0);
         expect(
-          counterFromZero()
+          counterFromZero() // 1回目の実行
         ).to.eql( 
           0
         );
         expect(
-          counterFromZero()
+          counterFromZero() // 2回目の実行
         ).to.eql( 
           1
         );
@@ -3256,24 +3268,24 @@ describe('クロージャーを使う', () => {
           /* #@range_end(infinite_stream) */
           /* #@range_begin(infinite_integer) */
           /* ones = [1,2,3,4,...] */
-          var integersFrom = (n) => {
+          var enumFrom = (n) => {
             return cons(n, (_) => {
-              return integersFrom(n + 1);
+              return enumFrom(n + 1);
             });
           };
           it("無限の整数列をテストする", (next) => {
             expect(
-              head(integersFrom(1))
+              head(enumFrom(1))
             ).to.eql(
               1
             );
             expect(
-              head(tail(integersFrom(1)))
+              head(tail(enumFrom(1)))
             ).to.eql(
               2
             );
             expect(
-              toArray(take(integersFrom(1))(10))
+              toArray(take(enumFrom(1))(10))
             ).to.eql(
               [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] 
             );
@@ -3285,7 +3297,7 @@ describe('クロージャーを使う', () => {
               return 0 === (n % 2);
             };
             /* #@range_begin(infinite_even_integer) */
-            var evenIntegers = stream.filter(integersFrom(1))(even);
+            var evenIntegers = stream.filter(enumFrom(1))(even);
             expect(
               head(evenIntegers)
             ).to.eql(
@@ -3339,7 +3351,7 @@ describe('クロージャーを使う', () => {
               }
             };
             
-            var primes = stream.filter(integersFrom(1))(isPrime);
+            var primes = stream.filter(enumFrom(1))(isPrime);
             expect(
               toArray(stream.take(primes)(10))
             ).to.eql(
@@ -3478,7 +3490,7 @@ describe('クロージャーを使う', () => {
           /* いったんローカル変数にストリームを格納する */
           var _stream = astream; 
           /* ジェネレータ関数が返る */
-          return () => {
+          return (_) => {
             return stream.match(_stream, {
               empty: () => {
                 return null;
@@ -3492,14 +3504,14 @@ describe('クロージャーを使う', () => {
         };
         /* #@range_end(generator_from_stream) */
         it('整数列のジェネレータ',(next) => {
-          var integersFrom = (from) => {
+          var enumFrom = (from) => {
             return stream.cons(from, (_) => {
-              return integersFrom(from + 1);
+              return enumFrom(from + 1);
             });
           };
           /* #@range_begin(integer_generator) */
-          var integers = integersFrom(0);
-          var intGenerator = generate(integers);
+          var integers = enumFrom(0);            // 無限の整数列を生成する
+          var intGenerator = generate(integers); // 無限ストリームからジェネレータを生成する
           expect(
             intGenerator()
           ).to.eql(
@@ -3552,7 +3564,7 @@ describe('クロージャーを使う', () => {
               }
             });
           };
-          var primes = sieve(stream.integersFrom(2)); // 無限の素数列
+          var primes = sieve(stream.enumFrom(2)); // 無限の素数列
           /* #@range_end(eratosthenes_sieve) */
           /* #@range_begin(eratosthenes_sieve_test) */
           expect(
@@ -3603,7 +3615,7 @@ describe('クロージャーを使う', () => {
             }
           };
           /* #@range_begin(prime_generator) */
-          var integers = stream.integersFrom(1);
+          var integers = stream.enumFrom(1);
           /* 素数のストリーム */
           var sieve = (aStream) => {
             return stream.match(aStream, {
@@ -3619,7 +3631,7 @@ describe('クロージャーを使う', () => {
               }
             });
           };
-          var primes = sieve(stream.integersFrom(2)); // 無限の素数列
+          var primes = sieve(stream.enumFrom(2)); // 無限の素数列
           // var primes = stream.filter(integers)(isPrime); 
           var primeGenerator = generate(primes);
           /******* テスト ********/

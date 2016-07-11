@@ -2852,6 +2852,7 @@ describe('関数型プログラミングの利点', () => {
             });
           });
           it('エラトステネスのふるいによる素数の生成', (next) => {
+            /* #@range_begin(stream_filter) */
             var filter = (predicate) => {
               return (aStream) => {
                 var head = aStream[0];
@@ -2864,6 +2865,7 @@ describe('関数型プログラミングの利点', () => {
                 }
               };
             };
+            /* #@range_end(stream_filter) */
             /* #@range_begin(stream_remove) */
             var not = (arg) => {
               return ! arg;
@@ -2927,8 +2929,6 @@ describe('関数型プログラミングの利点', () => {
             ).to.eql(
               10000
             );
-            // #### エラトステネスのふるいによる素数の生成 
-            // [![IMAGE ALT TEXT](http://img.youtube.com/vi/1NzrrU8BawA/0.jpg)](http://www.youtube.com/watch?v=1NzrrU8BawA "エラトステネスのふるいの動画")
             /* #@range_begin(eratosthenes_sieve) */
             /* エラトステネスのふるい */
             var sieve = (aStream) => {
@@ -2942,8 +2942,8 @@ describe('関数型プログラミングの利点', () => {
                 )(aStream[1]()));
               }]; 
             };
-            /* #@range_end(eratosthenes_sieve) */
             var primes = sieve(enumFrom(2)); // 無限の素数列
+            /* #@range_end(eratosthenes_sieve) */
             expect(
               /* #@range_begin(eratosthenes_sieve_test) */
               take(10)(primes)

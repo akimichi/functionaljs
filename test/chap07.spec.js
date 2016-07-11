@@ -20,6 +20,12 @@ var double = (number) => {
 };
 
 
+var not = (predicate) => {
+  return (arg) => {
+    return ! predicate(arg);
+  };
+};
+
 var compose = (f,g) => {
   return (arg) => {
     return f(g(arg));
@@ -576,25 +582,36 @@ var stream = {
     };
   },
   // ### stream#filter
-  /* take:: STREAM -> PREDICATE -> STREAM */
-  filter: (astream) => {
-    return (predicate) => {
-      return stream.match(astream,{
+  /* #@range_begin(stream_filter) */
+  /* filter:: STREAM -> PREDICATE -> STREAM */
+  filter: (predicate) => {
+    return (aStream) => {
+      return stream.match(aStream,{
         empty: (_) => {
           return stream.empty();
         },
         cons: (head,tailThunk) => {
           if(predicate(head)){
             return stream.cons(head,(_) => {
-              return stream.filter(tailThunk())(predicate);
+              return stream.filter(predicate)(tailThunk());
             });
           } else {
-            return stream.filter(tailThunk())(predicate);
+            return stream.filter(predicate)(tailThunk());
           }
         }
       });
     };
   },
+  /* #@range_end(stream_filter) */
+  // ### stream#remove
+  /* #@range_begin(stream_remove) */
+  /* filter:: STREAM -> PREDICATE -> STREAM */
+  remove: (predicate) => {
+    return (aStream) => {
+      return stream.filter(not(predicate))(aStream);
+    };
+  },
+  /* #@range_end(stream_remove) */
   foldr: (astream) => {
     return (accumulator) => {
       return (glue) => {
@@ -3297,7 +3314,7 @@ describe('クロージャーを使う', () => {
               return 0 === (n % 2);
             };
             /* #@range_begin(infinite_even_integer) */
-            var evenIntegers = stream.filter(enumFrom(1))(even);
+            var evenIntegers = stream.filter(even)(enumFrom(1));
             expect(
               head(evenIntegers)
             ).to.eql(
@@ -3351,7 +3368,7 @@ describe('クロージャーを使う', () => {
               }
             };
             
-            var primes = stream.filter(enumFrom(1))(isPrime);
+            var primes = stream.filter(isPrime)(enumFrom(1));
             expect(
               toArray(stream.take(primes)(10))
             ).to.eql(
@@ -3543,23 +3560,27 @@ describe('クロージャーを使う', () => {
           var not = (arg) => {
             return ! arg;
           };
-          var remove = (predicate) => {
-            return (aStream) => {
-              return stream.filter(aStream)(compose(not,predicate));
-            };
-          };
-
+          // var remove = (predicate) => {
+          //   return (aStream) => {
+          //     return stream.filter(aStream)(compose(not,predicate));
+          //   };
+          // };
+          // #### エラトステネスのふるいによる素数の生成 
+          // [![IMAGE ALT TEXT](http://img.youtube.com/vi/1NzrrU8BawA/0.jpg)](http://www.youtube.com/watch?v=1NzrrU8BawA "エラトステネスのふるいの動画")
           /* #@range_begin(eratosthenes_sieve) */
+          /* エラトステネスのふるい */
           var sieve = (aStream) => {
             return stream.match(aStream, {
-              empty: () => { return null; },
+              empty: () => { 
+                return null;
+              },
               cons: (head, tailThunk) => {
                 return stream.cons(head, (_) => {
-                  return sieve(stream.filter(tailThunk())(
+                  return sieve(stream.remove(
                     (item) => { 
-                      return ! multipleOf(item)(head);  
+                      return multipleOf(item)(head);  
                     }
-                  ));
+                  )(tailThunk()));
                 }); 
               }
             });
@@ -3622,11 +3643,11 @@ describe('クロージャーを使う', () => {
               empty: () => { return null; },
               cons: (head, tailThunk) => {
                 return stream.cons(head, (_) => {
-                  return sieve(stream.filter(tailThunk())(
+                  return sieve(stream.filter(
                     (item) => { 
                       return ! multipleOf(item)(head);  
                     }
-                  ));
+                  )(tailThunk()));
                 }); 
               }
             });
@@ -3693,7 +3714,7 @@ describe('クロージャーを使う', () => {
           var even = (n) => {
             return 0 === (n % 2);
           };
-          var evenIntegers = stream.filter(integers)(even);
+          var evenIntegers = stream.filter(even)(integers);
           stream.forEach(stream.take(evenIntegers)(10))((n) => {
             return expect(
               even(n)

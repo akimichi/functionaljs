@@ -4637,7 +4637,7 @@ describe('関数を渡す', () => {
         }
       };
       /* #@range_begin(amb_calculate) */
-      // 非決定性計算機の評価関数
+      // <section id='amb_calculate'>非決定性計算機の評価関数</section>
       var calculate = (anExp, 
                        continuesOnSuccess, 
                        continuesOnFailure) => {

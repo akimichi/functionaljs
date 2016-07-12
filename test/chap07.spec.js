@@ -4402,9 +4402,9 @@ describe('関数を渡す', () => {
         };
         /* #@range_end(succ_cps) */
         /* #@range_begin(succ_cps_test) */
+        /* identity関数を継続として渡すことで、
+           succ(1)の結果がそのまま返る */
         expect(
-          /* identity関数を継続として渡すことで、
-             succ(1)の結果がそのまま返る */
           succ(1, identity) 
         ).to.eql(
           2
@@ -4471,15 +4471,15 @@ describe('関数を渡す', () => {
     describe("継続で未来を選ぶ", () => {
       it("find関数", (next) => {
         /* #@range_begin(list_find) */
-        var find = (alist,accumulator, predicate) => {
+        var find = (alist,init, predicate) => {
           var continuesOnRecursion = (alist) => { // 反復処理を続ける継続
-            return find(alist, accumulator, predicate);  // find関数を再帰的に呼び出す
+            return find(alist, init, predicate);  // find関数を再帰的に呼び出す
           };
           var escapesFromRecursion = identity; // 反復処理を脱出する継続
 
           return list.match(alist, {
             empty: () => {
-              return escapesFromRecursion(accumulator); // 反復処理を抜ける
+              return escapesFromRecursion(init); // 反復処理を抜ける
             },
             cons: (head, tail) => { 
               if(predicate(head) === true) {
@@ -4511,28 +4511,26 @@ describe('関数を渡す', () => {
         next();
       }); 
       it("継続渡しfind関数", (next) => {
-        /* #@range_begin(list_find_cps) */
-        var find = (alist,accumulator, 
+        /* #@range_begin(stream_find_cps) */
+        var find = (aStream,
                     predicate, 
                     continuesOnFailure, 
                     continuesOnSuccess) => {
-                      return list.match(alist, {
+                      return list.match(aStream, {
+                        /* リストの最末尾に到着した場合
+                           成功継続で反復処理を抜ける */
                         empty: () => {
-                          /* 成功継続で反復処理を抜ける */
-                          return continuesOnSuccess(accumulator); 
+                          return continuesOnSuccess(null); 
                         },
-                        cons: (head, tail) => { 
-                          /* 目的の要素を見つけた場合 */
+                        cons: (head, tailThunk) => { 
+                          /* 目的の要素を見つけた場合
+                             成功継続で反復処理を脱出する */
                           if(predicate(head) === true) { 
-                            /* 成功継続で反復処理を脱出する */
                             return continuesOnSuccess(head); 
                           } else { 
-                            /* 
-                               目的の要素を見つけられなった場合、
-                               失敗継続で次の反復処理を続ける 
-                            */
-                            return continuesOnFailure(tail, 
-                                                      accumulator, 
+                            /* 目的の要素を見つけられなった場合、
+                               失敗継続で次の反復処理を続ける */
+                            return continuesOnFailure(tailThunk(), 
                                                       predicate,
                                                       continuesOnFailure,
                                                       continuesOnSuccess);
@@ -4540,18 +4538,16 @@ describe('関数を渡す', () => {
                         }
                       });
                     };
-        /* #@range_end(list_find_cps) */
-        /* #@range_begin(list_find_cps_test) */
+        /* #@range_end(stream_find_cps) */
+        /* #@range_begin(stream_find_continuations) */
         /* 失敗継続では、反復処理を続ける */
-        var failureContinuation = (alist,
-                                   accumulator, 
+        var failureContinuation = (aStream,
                                    predicate, 
                                    continuesOnRecursion, 
                                    escapesFromRecursion) => { 
                                      /* find関数を再帰的に呼び出す */
                                      return find( 
-                                       alist, 
-                                       accumulator, 
+                                       aStream, 
                                        predicate, 
                                        continuesOnRecursion, 
                                        escapesFromRecursion
@@ -4559,26 +4555,33 @@ describe('関数を渡す', () => {
                                    };
         /* 成功継続では、反復処理を脱出する */
         var successContinuation = identity; 
-        var numbers = list.cons(1,
-                                list.cons(2,
-                                          list.cons(3,
-                                                    list.cons(4,
-                                                              list.empty()))));
+        /* #@range_end(stream_find_continuations) */
+        /* #@range_begin(stream_find_cps_test) */
+        // upto3変数は、1から3までの有限ストリーム
+        var upto3 = stream.cons(1,(_) => {
+          return stream.cons(2, (_) => {
+            return stream.cons(3, (_) => {
+              return stream.empty();
+            });
+          });
+        });
         expect(
-          find(numbers,null, (item) => {
-            return (item === 10); // 10の要素を探します
+          find(upto3, (item) => {
+            return (item === 4); // 4を探します
           }, failureContinuation, successContinuation)
         ).to.eql(
-          null // 10の要素はないので、nullになります
+          null // リスト中に4の要素はないので、nullになります
         );
+        // integers変数は、無限の整数ストリーム
+        var intergers = stream.enumFrom(0);
         expect(
-          find(numbers,null, (item) => {
-            return (item === 2); // 2の要素を探します
+          find(intergers, (item) => {
+            return (item === 100); // 100を探します
           }, failureContinuation, successContinuation)
         ).to.eql(
-          2
+          100
         );
-        /* #@range_end(list_find_cps_test) */
+        /* #@range_end(stream_find_cps_test) */
         next();
       }); 
       it("継続による反復処理", (next) => {
@@ -4634,41 +4637,35 @@ describe('関数を渡す', () => {
         }
       };
       /* #@range_begin(amb_calculate) */
+      // 非決定性計算機の評価関数
       var calculate = (anExp, 
                        continuesOnSuccess, 
                        continuesOnFailure) => {
                          /* 式に対してパターンマッチを実行する */
                          return exp.match(anExp, { 
+                           /* #@range_begin(amb_calculate_num) */
                            /* 数値を評価する */
                            num: (n) => {
                              return continuesOnSuccess(n, continuesOnFailure);
                            },
-                           /* 足し算を評価する */
+                           /* #@range_end(amb_calculate_num) */
+                           /* #@range_begin(amb_calculate_add) */
+                           /* 足し算の式を評価する */
                            add: (x, y) => {
-                             /* 引数xを評価する */
-                             return calculate(x,
-                                              (
-                                                resultX,/* 引数xの計算結果 */ 
-                                                continuesOnFailureX
-                                              ) => { 
-                                                /* 引数yを評価する */
-                                                return calculate(y, 
-                                                                 (
-                                                                   resultY, /* 引数xの計算結果 */ 
-                                                                   continuesOnFailureY
-                                                                 ) => { 
-                                                                   /* 足し算を計算する */
-                                                                   return continuesOnSuccess(
-                                                                     resultX + resultY, 
-                                                                     continuesOnFailureY); 
-                                                                 }, 
-                                                                 continuesOnFailureX); /* y の計算に失敗すれば、
-                                                                                          xの失敗継続を渡す */
-                                              }, continuesOnFailure);
+                             /* まず引数xを評価する */
+                             return calculate(x,(resultX, continuesOnFailureX) => { 
+                               /* 次に引数yを評価する */
+                               return calculate(y, (resultY, continuesOnFailureY) => { 
+                                 /* 引数xとyがともに成功すれば、両者の値で足し算を計算する */
+                                 return continuesOnSuccess(resultX + resultY, continuesOnFailureY); 
+                               }, continuesOnFailureX); /* y の計算に失敗すれば、xの失敗継続を渡す */
+                             }, continuesOnFailure);    /* x の計算に失敗すれば、おおもとの失敗継続を渡す */
                            },
+                           /* #@range_end(amb_calculate_add) */
+                           /* #@range_begin(amb_calculate_amb) */
                            /* amb式を評価する */
                            amb: (choices) => {
-                             var calculateAmb = (choices) => {
+                              var calculateAmb = (choices) => {
                                return list.match(choices, {
                                  /* 
                                     amb(list.empty()) の場合、
@@ -4679,30 +4676,25 @@ describe('関数を渡す', () => {
                                  },
                                  /* 
                                     amb(list.cons(head, tail))の場合、
-                                    最初の要素を計算して、殘りは失敗継続に渡す
+                                    先頭要素を計算して、後尾は失敗継続に渡す
                                  */
                                  cons: (head, tail) => { 
-                                   return calculate(head, 
-                                                    continuesOnSuccess, 
-                                                    (_) => { /* 失敗継続のなかで
-                                                                次の選択肢について計算する */
-                                                      return calculateAmb(tail, 
-                                                                          continuesOnSuccess, 
-                                                                          continuesOnFailure);
-                                                    });
+                                   return calculate(head, continuesOnSuccess, (_) => { 
+                                     /* 失敗継続で後尾を計算する */
+                                     return calculateAmb(tail);
+                                   });
                                  }
                                });
                              };
-                             return calculateAmb(choices, 
-                                                 continuesOnSuccess, 
-                                                 continuesOnFailure);
+                             return calculateAmb(choices);
                            }
+                           /* #@range_end(amb_calculate_amb) */
                          });
                        };
       /* #@range_end(amb_calculate) */
       /* #@range_begin(amb_driver) */
       var driver = (expression) =>{
-        /* 中断された計算を継続として保存する  */
+        /* 中断された計算を継続として保存する変数 */
         var suspendedComputation = null; 
         /* 成功継続 */
         var continuesOnSuccess = (anyValue, 

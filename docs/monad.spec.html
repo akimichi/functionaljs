@@ -2144,8 +2144,8 @@ unit x s = (x,s)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  unit: (value) =&gt; {
-    <span class="hljs-keyword">return</span> (state) =&gt; {
+            <div class="content"><div class='highlight'><pre>  unit: (value) =&gt; { 
+    <span class="hljs-keyword">return</span> (state) =&gt; { <span class="hljs-comment">// run::STATE =&gt; PAIR[VALUE, STATE]</span>
       <span class="hljs-keyword">return</span> pair.cons(value,state);
     };
   },</pre></div></div>
@@ -2159,43 +2159,11 @@ unit x s = (x,s)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
-              <h3 id="state-flatmap">State#flatMap</h3>
-<p>var bind = (operate, transform) =&gt; {
-  return (stack) =&gt; {
-    var newState = operate(stack);
-    return transform(newState.value)(newState.stack);
-  };
-};</p>
-<pre><code class="lang-haskell">  (<span class="hljs-type">State</span> h) &gt;&gt;= f = <span class="hljs-type">State</span> $ \s -&gt; <span class="hljs-keyword">let</span> (a, newState) = h s
-                                      (<span class="hljs-type">State</span> g) = f a
-                                  <span class="hljs-keyword">in</span> g newState
-</code></pre>
-<pre><code class="lang-scheme">  <span class="hljs-list">(<span class="hljs-keyword">bindM</span> <span class="hljs-list">(<span class="hljs-keyword">m</span> f)</span>
-      <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">(<span class="hljs-keyword">s</span>)</span>
-         <span class="hljs-list">(<span class="hljs-keyword">receive</span> <span class="hljs-list">(<span class="hljs-keyword">val</span> s*)</span> <span class="hljs-list">(<span class="hljs-keyword">m</span> s)</span>
-            <span class="hljs-list">(<span class="hljs-list">(<span class="hljs-keyword">f</span> val)</span> s*)</span>)</span>)</span>)</span>
-  <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">define</span></span> <span class="hljs-list">(<span class="hljs-keyword">flatMap</span> m f)</span>
-     <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">()</span>
-        <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">let</span></span> <span class="hljs-list">(<span class="hljs-list">(<span class="hljs-keyword">value</span> <span class="hljs-list">(<span class="hljs-keyword">m</span>)</span>)</span>
-             <span class="hljs-list">(<span class="hljs-list">(<span class="hljs-keyword">f</span> value)</span>)</span>)</span>)</span></span></span>
-</code></pre>
+              <h3 id="state-evalstate">State#evalState</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  flatMap: (h) =&gt; {
-    expect(h).to.a(<span class="hljs-string">'function'</span>);
-    <span class="hljs-keyword">return</span> (f) =&gt; {
-      <span class="hljs-keyword">return</span> (state) =&gt; {
-        expect(f).to.a(<span class="hljs-string">'function'</span>);
-        <span class="hljs-keyword">return</span> pair.match(h(state),{
-          cons:(value, newState) =&gt; {
-            <span class="hljs-keyword">var</span> g = f(value);
-            <span class="hljs-keyword">return</span> g(newState);
-          }
-        });
-      };
-    };
-  },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* run:: State[A] =&gt; A */</span></pre></div></div>
             
         </li>
         
@@ -2206,30 +2174,17 @@ unit x s = (x,s)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
-              <h3 id="monad-state-mkstate">monad.state#mkState</h3>
-<pre><code class="lang-haskell"><span class="hljs-title">mkState</span> :: (s -&gt; (a,s)) -&gt; <span class="hljs-type">State</span> s a
-<span class="hljs-title">mkState</span> f = <span class="hljs-keyword">do</span> {
-            s &lt;- get;
-            <span class="hljs-keyword">let</span> (a, s') = f s;
-            put s';
-            return a
-          }
-</code></pre>
-<p>mkState: (f) =&gt; {  // f :: (s -&gt; (a,s)) 
-  var self = this;
-  return self.monad.state.flatMap()
-},</p>
-<pre><code class="lang-haskell"><span class="hljs-title">get</span> :: <span class="hljs-type">State</span> s s
-<span class="hljs-title">get</span> s = (s,s)
-</code></pre>
-<pre><code class="lang-scala"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span>[</span><span class="hljs-type">S</span>]: <span class="hljs-type">State</span>[<span class="hljs-type">S</span>,<span class="hljs-type">S</span>] = <span class="hljs-type">State</span>(s =&gt; (s,s))
-</code></pre>
+              <p>~~~haskell</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  get: () =&gt; {
-    <span class="hljs-keyword">return</span> () =&gt; {
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+            <div class="content"><div class='highlight'><pre>  evalState: (instanceM) =&gt; {
+    <span class="hljs-keyword">return</span> (state) =&gt; {
+      <span class="hljs-keyword">return</span> pair.match(instanceM(state),{
+        cons:(value, state) =&gt; {
+          <span class="hljs-keyword">return</span> value;
+        }
+      });
     };
   },</pre></div></div>
             
@@ -2242,21 +2197,11 @@ unit x s = (x,s)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
-              <p>put :: s -&gt; State s ()
-put x s = ((),x)</p>
+              <h3 id="state-runstate">State#runState</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  put: (value) =&gt; {
-    <span class="hljs-keyword">return</span> () =&gt; {
-      <span class="hljs-keyword">return</span>  <span class="hljs-literal">null</span>;
-    };
-  },
-  run: (instance) =&gt; {
-    expect(instance).to.a(<span class="hljs-string">'function'</span>);
-    <span class="hljs-keyword">return</span> instance();
-  }
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* runState:: State[A] =&gt; A */</span></pre></div></div>
             
         </li>
         
@@ -2267,9 +2212,15 @@ put x s = ((),x)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
-              <h2 id="st-">STモナド</h2>
+              <p>~~~haskell</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  runState: (instanceM) =&gt; {
+    <span class="hljs-keyword">return</span> (state) =&gt; {
+      <span class="hljs-keyword">return</span> instanceM(state); <span class="hljs-comment">// Stateモナドのインスタンス(アクション)を現在の状態に適用する</span>
+    };
+  },</pre></div></div>
             
         </li>
         
@@ -2279,6 +2230,190 @@ put x s = ((),x)</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <h3 id="state-flatmap">State#flatMap</h3>
+<p>flatMap:: State[T,S] =&gt; FUNC[S =&gt; STATE[T,U]] =&gt; STATE[T,U]</p>
+<pre><code class="lang-haskell">  (<span class="hljs-type">State</span> h) &gt;&gt;= f = <span class="hljs-type">State</span> $ \s -&gt; <span class="hljs-keyword">let</span> (a, newState) = h s
+                                      (<span class="hljs-type">State</span> g) = f a
+                                  <span class="hljs-keyword">in</span> g newState
+</code></pre>
+<pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">State</span> s a = <span class="hljs-type">State</span> <span class="hljs-container">{ <span class="hljs-title">runState</span> :: <span class="hljs-title">s</span> -&gt; (<span class="hljs-title">a</span>, <span class="hljs-title">s</span>) }</span></span>
+<span class="hljs-class">
+<span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">State</span> <span class="hljs-title">s</span>)</span> <span class="hljs-keyword">where</span></span>
+    return a = <span class="hljs-type">State</span> $ \s -&gt; (a, s)
+    m &gt;&gt;= k  = <span class="hljs-type">State</span> $ \s -&gt; <span class="hljs-keyword">let</span>
+            (a, s') = runState m s
+            <span class="hljs-keyword">in</span> runState (k a) s'
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  flatMap: (h) =&gt; {
+    expect(h).to.a(<span class="hljs-string">'function'</span>);
+    <span class="hljs-keyword">return</span> (transform) =&gt; { <span class="hljs-comment">// transform:: S =&gt; STATE[T,U]</span>
+      <span class="hljs-keyword">return</span> (state) =&gt; {
+        expect(transform).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> pair.match(State.runState(h)(state),{
+          cons:(value, newstate) =&gt; {
+            <span class="hljs-keyword">return</span> State.runState(transform(value))(newstate);
+          }
+        });
+      };
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <h3 id="monad-state-mkstate">monad.state#mkState</h3>
+<pre><code class="lang-haskell"><span class="hljs-title">mkState</span> :: (s -&gt; (a,s)) -&gt; <span class="hljs-type">State</span> s a
+<span class="hljs-title">mkState</span> f = <span class="hljs-keyword">do</span> {
+            s &lt;- get;
+            <span class="hljs-keyword">let</span> (a, s') = f s;
+            put s';
+            return a
+          }
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  mkState: (f) =&gt; {  <span class="hljs-comment">// f :: (s -&gt; (a,s)) </span>
+    <span class="hljs-keyword">return</span> State.flatMap(f);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <p>get :: State s s
+get s = (s,s)</p>
+<pre><code>~~~scala
+def get[S]: State[S,S] = State(s =&gt; (s,s))
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get: (state) =&gt; {
+    <span class="hljs-keyword">return</span> pair.cons(state,state);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>put :: s -&gt; State s ()
+put x s = ((),x)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  put: (value) =&gt; {
+    <span class="hljs-keyword">return</span> () =&gt; {
+      <span class="hljs-keyword">return</span>  <span class="hljs-literal">null</span>;
+    };
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <h3 id="state-">Stateモナドのテスト</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Stateモナドをテストする"</span>,() =&gt; {
+  describe(<span class="hljs-string">"スタックの例"</span>,() =&gt; {
+    <span class="hljs-keyword">var</span> Stack = {
+      pop: (alist) =&gt; {
+        <span class="hljs-keyword">return</span> List.match(alist, {
+          cons:(head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> pair.cons(head, tail);
+          }
+        });
+      },
+      push: (n) =&gt; {
+        <span class="hljs-keyword">return</span> (alist) =&gt; {
+          <span class="hljs-keyword">return</span> List.match(alist, {
+            cons:(head, tail) =&gt; {
+              <span class="hljs-keyword">return</span> pair.cons(<span class="hljs-literal">null</span>, List.cons(n,tail));
+            }
+          });
+        };
+      }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <p>it(“スタッフの操作”,(next) =&gt; {
+  var stackManipulation = (stack) =&gt; {
+    return State.flatMap(stack)(Stack.push(3));
+  };
+  // var stackManipulation = (stack) =&gt; {
+  //   return State.flatMap(State.flatMap(stack)(Stack.push(3)))((_) =&gt; {
+  //     return Stack.pop(3);
+  //   });
+  // };
+  expect(
+    State.evalState(stackManipulation(List.cons(1,List.cons(2,List.empty()))))
+  ).to.eql(
+    [0]
+  );
+  next();
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <h2 id="st-">STモナド</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <h2 id="cont-">Contモナド</h2>
 <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Cont</span> r a = <span class="hljs-type">Cont</span> <span class="hljs-container">{ <span class="hljs-title">runCont</span> :: ((<span class="hljs-title">a</span> -&gt; <span class="hljs-title">r</span>) -&gt; <span class="hljs-title">r</span>) }</span> <span class="hljs-comment">-- r は計算全体の最終の型</span></span>

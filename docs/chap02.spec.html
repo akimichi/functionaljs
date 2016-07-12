@@ -478,7 +478,7 @@
             <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透過性を破壊するもの'</span>, () =&gt; {
     it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
-      <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>; <span class="hljs-comment">//代入で変数を更新する</span>
+      <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
       <span class="hljs-keyword">var</span> add = (y) =&gt; {
         x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
         <span class="hljs-keyword">return</span> x + y;
@@ -1722,14 +1722,11 @@
             
             <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'部品の汎用性'</span>, () =&gt; {
       it(<span class="hljs-string">'単純なインターフェイス'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(constant) */</span>
         <span class="hljs-keyword">var</span> constant = (any) =&gt; {
           <span class="hljs-keyword">return</span> (_) =&gt; {
             <span class="hljs-keyword">return</span> any;
           };
         };
-        <span class="hljs-comment">/* #@range_end(constant) */</span>
-        <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
         <span class="hljs-comment">/* #@range_begin(add_uncurried) */</span>
         <span class="hljs-keyword">var</span> add = (n,m) =&gt; {
           <span class="hljs-keyword">return</span> n + m;
@@ -1986,11 +1983,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <h3 id="-">部品を合成する</h3>
+              <h3 id="-">部品を組み合わせる</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'部品を合成する'</span>, () =&gt; {
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'部品を組み合わせる'</span>, () =&gt; {
       it(<span class="hljs-string">'adderからsucc関数を作る'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(succ_from_adder) */</span>
         <span class="hljs-keyword">var</span> adder = (m) =&gt; {
@@ -2097,12 +2094,21 @@
               <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
             },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
           };
+          <span class="hljs-comment">/* #@range_begin(constant) */</span>
           <span class="hljs-keyword">var</span> constant = (any) =&gt; {
             <span class="hljs-keyword">return</span> (_) =&gt; {
               <span class="hljs-keyword">return</span> any;
             };
           };
           <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
+          <span class="hljs-comment">/* #@range_end(constant) */</span>
+          <span class="hljs-comment">/* #@range_begin(map_alwaysOne) */</span>
+          expect(
+            map(alwaysOne)([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+          ).to.eql(
+            [<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]
+          );
+          <span class="hljs-comment">/* #@range_end(map_alwaysOne) */</span>
           <span class="hljs-keyword">var</span> flip = (fun) =&gt; {
             <span class="hljs-keyword">return</span>  (x) =&gt; {
               <span class="hljs-keyword">return</span> (y) =&gt; {
@@ -2123,560 +2129,365 @@
           next();
         });
       });
-    });
-    describe(<span class="hljs-string">'階乗の計算'</span>, () =&gt; {
-      it(<span class="hljs-string">'命令型プログラミングによる階乗の計算'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
-        <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-          <span class="hljs-comment">/* 変数resultに結果が入る */</span>
-          <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
-          <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
-          <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
-          <span class="hljs-comment">/* while文は反復を処理する */</span>
-          <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
-            <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
-            result = result * times;  
-            <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
-            times = times + <span class="hljs-number">1</span>;        
-          }
-          <span class="hljs-keyword">return</span> result;
+      it(<span class="hljs-string">'素数の計算'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
+          <span class="hljs-keyword">return</span> data(pattern);
         };
-        <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
+        <span class="hljs-keyword">var</span> stream = {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> (pattern) =&gt; {
+              <span class="hljs-keyword">return</span> pattern.empty();
+            };
+          },
+          cons: (head,tailThunk) =&gt; {
+            <span class="hljs-keyword">return</span> (pattern) =&gt; {
+              <span class="hljs-keyword">return</span> pattern.cons(head,tailThunk);
+            };
+          },
+          <span class="hljs-comment">/* head:: STREAM[T] =&gt; T */</span>
+          <span class="hljs-comment">/* ストリーム型headの定義は、リスト型headと同じ */</span>
+          head: (astream) =&gt; {
+            <span class="hljs-keyword">return</span> match(astream,{
+              empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
+              cons: (value, tailThunk) =&gt; { <span class="hljs-keyword">return</span> value; }
+            });
+          },
+          <span class="hljs-comment">/* tail:: STREAM[T] =&gt; STREAM[T] */</span>
+          tail: (astream) =&gt; {
+            <span class="hljs-keyword">return</span> match(astream,{
+              empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
+              cons: (head, tailThunk) =&gt; {
+                <span class="hljs-keyword">return</span> tailThunk();  <span class="hljs-comment">// ここで初めてサンクを評価する</span>
+              }
+            });
+          },
+          take: (astream, n) =&gt; {
+            <span class="hljs-keyword">return</span> match(astream,{
+              empty: (_) =&gt; {
+                <span class="hljs-keyword">return</span> list.empty();
+              },
+              cons: (head,tailThunk) =&gt; {
+                <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
+                  <span class="hljs-keyword">return</span> list.empty();
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> list.cons(head,stream.take(tailThunk(),(n -<span class="hljs-number">1</span>)));
+                }
+              }
+            });
+          }
+        };
+        <span class="hljs-keyword">var</span> list = {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> (pattern) =&gt; {
+              <span class="hljs-keyword">return</span> pattern.empty();
+            };
+          },
+          cons: (value, list) =&gt; {
+            <span class="hljs-keyword">return</span> (pattern) =&gt; {
+              <span class="hljs-keyword">return</span> pattern.cons(value, list);
+            };
+          },
+          isEmpty: (alist) =&gt; {
+            <span class="hljs-keyword">return</span> match(alist, { <span class="hljs-comment">// match関数で分岐する</span>
+              empty: <span class="hljs-literal">true</span>,
+              cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              }
+            });
+          },
+          head: (alist) =&gt; {
+            <span class="hljs-keyword">return</span> match(alist, {
+              empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
+              cons: (head, tail) =&gt; {
+                <span class="hljs-keyword">return</span> head;
+              }
+            });
+          },
+          tail: (alist) =&gt; {
+            <span class="hljs-keyword">return</span> match(alist, {
+              empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
+              cons: (head, tail) =&gt; {
+                <span class="hljs-keyword">return</span> tail;
+              }
+            });
+          },
+          toArray: (alist) =&gt; {
+            <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
+              <span class="hljs-keyword">return</span> match(alist, {
+                empty: (_) =&gt; {
+                  <span class="hljs-keyword">return</span> accumulator;
+                },
+                cons: (head, tail) =&gt; {
+                  <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
+                }
+              });
+            };
+            <span class="hljs-keyword">return</span> toArrayAux(alist, []);
+          }
+        };
+        <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
+          <span class="hljs-keyword">return</span> stream.cons(n, (_) =&gt; {
+            <span class="hljs-keyword">return</span> enumFrom(n + <span class="hljs-number">1</span>);
+          });
+        };
+        <span class="hljs-keyword">var</span> sieve = (astream) =&gt; {
+          <span class="hljs-keyword">var</span> head = stream.head(astream);
+          <span class="hljs-keyword">var</span> tail = stream.tail(astream);
+          <span class="hljs-keyword">var</span> mark = (astream, k, m) =&gt; {
+            <span class="hljs-keyword">var</span> head = stream.head(astream);
+            <span class="hljs-keyword">var</span> tail = stream.tail(astream);
+            <span class="hljs-keyword">if</span>(k === m) {
+              <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">0</span>,(_) =&gt; {
+                <span class="hljs-keyword">return</span> mark(tail, <span class="hljs-number">1</span>, m);
+              });
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> stream.cons(head, (_) =&gt; {
+                <span class="hljs-keyword">return</span> mark(tail, k+<span class="hljs-number">1</span>, m);
+              });
+            }
+          };
+          <span class="hljs-keyword">if</span>(head === <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span> sieve(tail);
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> stream.cons(head, (_) =&gt; {
+              <span class="hljs-keyword">return</span> sieve(mark(tail, <span class="hljs-number">1</span>, head));
+            });
+          }
+        };
         expect(
-          factorial(<span class="hljs-number">2</span>)
+          list.toArray(stream.take(sieve(enumFrom(<span class="hljs-number">2</span>)), <span class="hljs-number">10</span>))
         ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        expect(
-          factorial(<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        expect(
-          factorial(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-number">24</span>
+          [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">11</span>, <span class="hljs-number">13</span>, <span class="hljs-number">17</span>, <span class="hljs-number">19</span>, <span class="hljs-number">23</span>, <span class="hljs-number">29</span>]
         );
         next();
       });
-      it(<span class="hljs-string">'関数型プログラミングによる階乗の計算'</span>, (next) =&gt; {
-        <span class="hljs-comment">/*
-        var foldr = (aStream) =&gt; {
-          return (accumulator) =&gt; {
-            return (glue) =&gt; {
-              if(aStream.length === 1) {
-                return accumulator;
-              } else {
-                return glue(aStream[0])(foldr(aStream[1]())(accumulator)(glue));
-              };
+      describe(<span class="hljs-string">'階乗の計算'</span>, () =&gt; {
+        it(<span class="hljs-string">'命令型プログラミングによる階乗の計算'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
+          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+            <span class="hljs-comment">/* 変数resultに結果が入る */</span>
+            <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
+            <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
+            <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
+            <span class="hljs-comment">/* while文は反復を処理する */</span>
+            <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
+              <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
+              result = result * times;  
+              <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
+              times = times + <span class="hljs-number">1</span>;        
+            }
+            <span class="hljs-keyword">return</span> result;
+          };
+          <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
+          expect(
+            factorial(<span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          expect(
+            factorial(<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-number">6</span>
+          );
+          expect(
+            factorial(<span class="hljs-number">4</span>)
+          ).to.eql(
+            <span class="hljs-number">24</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'関数型プログラミングによる階乗の計算'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> multiply = (m,n) =&gt; {
+            <span class="hljs-keyword">return</span> m * n;
+          };
+          <span class="hljs-keyword">var</span> product = (array) =&gt; {
+            <span class="hljs-keyword">return</span> array.reduce(multiply,<span class="hljs-number">1</span>);
+          }; 
+          <span class="hljs-keyword">var</span> adder = (m) =&gt; {
+            <span class="hljs-keyword">return</span> (n) =&gt; {
+              <span class="hljs-keyword">return</span> m + n;
             };
           };
+          <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);
+          <span class="hljs-keyword">var</span> take = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (aStream) =&gt; {
+              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> [];
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]()));
+              }
+            };
+          };
+          <span class="hljs-keyword">var</span> iterate = (step) =&gt; {
+            <span class="hljs-keyword">return</span> (init) =&gt; {
+              <span class="hljs-keyword">return</span> [init, (_) =&gt; {
+                <span class="hljs-keyword">return</span> iterate(step)(step(init));
+              }];
+            };
+          };
+          <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
+            <span class="hljs-keyword">return</span> iterate(succ)(from);
+          };
+          <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
+            <span class="hljs-keyword">return</span> (arg) =&gt; {
+              <span class="hljs-keyword">return</span> f(g(arg));
+            };
+          };
+          <span class="hljs-comment">/* #@range_begin(functional_factorial) */</span>
+          <span class="hljs-keyword">var</span> enumFromTo = (from) =&gt; {
+            <span class="hljs-keyword">return</span> (to) =&gt; {
+              <span class="hljs-keyword">return</span> take(to - from + <span class="hljs-number">1</span>)(enumFrom(from));
+            };
+          };
+          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+            <span class="hljs-keyword">return</span> compose(product, enumFromTo(<span class="hljs-number">1</span>))(n);
+          };
+          <span class="hljs-comment">/* #@range_end(functional_factorial) */</span>
+          <span class="hljs-comment">/*
+            var enumFromTo = (from, to) =&gt; {
+            return take(to - from + 1)(enumFrom(from));
+            };
+            var factorial = (n) =&gt; {
+            return product(enumFromTo(1,n));
+            };
+          */</span>
+          expect(
+            enumFromTo(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
+          ).to.eql(
+            [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
+          );
+          expect(
+            factorial(<span class="hljs-number">2</span>)
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          expect(
+            factorial(<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-number">6</span>
+          );
+          expect(
+            factorial(<span class="hljs-number">4</span>)
+          ).to.eql(
+            <span class="hljs-number">24</span>
+          );
+          <span class="hljs-comment">/* #@range_begin(permutation_combination) */</span>
+          <span class="hljs-keyword">var</span> perm = (n, r) =&gt; {
+            <span class="hljs-keyword">return</span> factorial(n) / factorial(n-r);          
+          };
+          <span class="hljs-keyword">var</span> comb = (n, r) =&gt; {
+            <span class="hljs-keyword">return</span> perm(n,r) / factorial(r);
+          };
+          <span class="hljs-comment">/* #@range_end(permutation_combination) */</span>
+          expect(
+            perm(<span class="hljs-number">3</span>,<span class="hljs-number">3</span>)
+          ).to.eql(
+            <span class="hljs-number">6</span>
+          );
+          expect(
+            comb(<span class="hljs-number">10</span>,<span class="hljs-number">4</span>)
+          ).to.eql(
+            <span class="hljs-number">210</span>
+          );
+          
+          next();
+        });
+      });
+      describe(<span class="hljs-string">'遅延評価'</span>, () =&gt; {
+        <span class="hljs-keyword">var</span> take = (n, astream) =&gt; {
+          <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+            <span class="hljs-keyword">return</span> astream[<span class="hljs-number">0</span>];
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> [astream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>, astream[<span class="hljs-number">1</span>]()));
+          }
         };
-        */</span>
-        <span class="hljs-keyword">var</span> multiply = (m,n) =&gt; {
-          <span class="hljs-keyword">return</span> m * n;
+        <span class="hljs-keyword">var</span> repeat = (n) =&gt; {
+          <span class="hljs-keyword">return</span> [n, (_) =&gt; {
+            <span class="hljs-keyword">return</span> repeat(n);
+          }];
         };
-        <span class="hljs-keyword">var</span> product = (array) =&gt; {
-          <span class="hljs-keyword">return</span> array.reduce(multiply,<span class="hljs-number">1</span>);
-        }; 
+        expect(
+          take(<span class="hljs-number">3</span>, repeat(<span class="hljs-number">2</span>))
+        ).to.eql(
+          [<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>]
+        );
+        <span class="hljs-keyword">var</span> ones = repeat(<span class="hljs-number">1</span>);
+        expect(
+          take(<span class="hljs-number">2</span>, ones)
+        ).to.eql(
+          [<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]
+        );
+        <span class="hljs-keyword">var</span> replicate = (n, x) =&gt; {
+          <span class="hljs-keyword">return</span> take(n, repeat(x));
+        };
+        expect(
+          replicate(<span class="hljs-number">4</span>, <span class="hljs-number">3</span>)
+        ).to.eql(
+          [<span class="hljs-number">3</span>,<span class="hljs-number">3</span>,<span class="hljs-number">3</span>,<span class="hljs-number">3</span>]
+        );
+        <span class="hljs-keyword">var</span> upto = (m, n) =&gt; {
+          <span class="hljs-keyword">if</span>(m &gt; n) {
+            <span class="hljs-keyword">return</span> [];
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> [m, (_) =&gt; {
+              <span class="hljs-keyword">return</span> upto(m+<span class="hljs-number">1</span>,n);
+            }];
+          };
+        };
+        expect(
+          take(<span class="hljs-number">3</span>, upto(<span class="hljs-number">2</span>,<span class="hljs-number">10</span>))
+        ).to.eql(
+          [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
+        );
+        <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
+        <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
+          <span class="hljs-keyword">return</span> (aStream) =&gt; {
+            <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+            <span class="hljs-comment">/* 先頭要素が条件に合致する場合 */</span>
+            <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) { 
+              <span class="hljs-keyword">return</span> [head, (_) =&gt; {
+                <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
+              }];
+            } <span class="hljs-keyword">else</span> {                       
+              <span class="hljs-comment">/* 先頭要素が条件に合致しない場合 */</span>
+              <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
+            }
+          };
+        };
+        <span class="hljs-comment">/* #@range_end(stream_filter) */</span>
+        <span class="hljs-keyword">var</span> mod = (n,m) =&gt; {
+          <span class="hljs-keyword">return</span> n % m;
+        };
+        <span class="hljs-keyword">var</span> even = (n) =&gt; {
+          <span class="hljs-keyword">return</span> mod(n,<span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
+        };
         <span class="hljs-keyword">var</span> adder = (m) =&gt; {
           <span class="hljs-keyword">return</span> (n) =&gt; {
             <span class="hljs-keyword">return</span> m + n;
           };
         };
         <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);
-        <span class="hljs-keyword">var</span> iterate = (step) =&gt; {
-          <span class="hljs-keyword">return</span> (init) =&gt; {
-            <span class="hljs-keyword">return</span> [init, (_) =&gt; {
-              <span class="hljs-keyword">return</span> iterate(step)(step(init));
-            }];
-          };
-        };
-        <span class="hljs-keyword">var</span> take = (n) =&gt; {
-          <span class="hljs-keyword">return</span> (aStream) =&gt; {
-            <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
-              <span class="hljs-keyword">return</span> [];
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]()));
-            }
-          };
-        };
-        <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
-          <span class="hljs-keyword">return</span> iterate(succ)(from);
-        };
-        <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
-          <span class="hljs-keyword">return</span> (arg) =&gt; {
-            <span class="hljs-keyword">return</span> f(g(arg));
-          };
-        };
-        <span class="hljs-comment">/* #@range_begin(functional_factorial) */</span>
-        <span class="hljs-keyword">var</span> enumFromTo = (from) =&gt; {
-          <span class="hljs-keyword">return</span> (to) =&gt; {
-            <span class="hljs-keyword">return</span> take(to - from + <span class="hljs-number">1</span>)(enumFrom(from));
-          };
-        };
-        <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-          <span class="hljs-keyword">return</span> compose(product, enumFromTo(<span class="hljs-number">1</span>))(n);
-        };
-        <span class="hljs-comment">/* #@range_end(functional_factorial) */</span>
-        <span class="hljs-comment">/*
-        var enumFromTo = (from, to) =&gt; {
-          return take(to - from + 1)(enumFrom(from));
-        };
-        var factorial = (n) =&gt; {
-          return product(enumFromTo(1,n));
-        };
-        */</span>
-        expect(
-          enumFromTo(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
-        ).to.eql(
-          [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-        );
-        expect(
-          factorial(<span class="hljs-number">2</span>)
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        expect(
-          factorial(<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        expect(
-          factorial(<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-number">24</span>
-        );
-        <span class="hljs-comment">/* #@range_begin(permutation_combination) */</span>
-        <span class="hljs-keyword">var</span> perm = (n, r) =&gt; {
-          <span class="hljs-keyword">return</span> factorial(n) / factorial(n-r);          
-        };
-        <span class="hljs-keyword">var</span> comb = (n, r) =&gt; {
-          <span class="hljs-keyword">return</span> perm(n,r) / factorial(r);
-        };
-        <span class="hljs-comment">/* #@range_end(permutation_combination) */</span>
-        expect(
-          perm(<span class="hljs-number">3</span>,<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        expect(
-          comb(<span class="hljs-number">10</span>,<span class="hljs-number">4</span>)
-        ).to.eql(
-          <span class="hljs-number">210</span>
-        );
-        
-        next();
-      });
-    });
-    it(<span class="hljs-string">'素数の計算'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
-        <span class="hljs-keyword">return</span> data(pattern);
-      };
-      <span class="hljs-keyword">var</span> stream = {
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.empty();
-          };
-        },
-        cons: (head,tailThunk) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.cons(head,tailThunk);
-          };
-        },
-        <span class="hljs-comment">/* head:: STREAM[T] =&gt; T */</span>
-        <span class="hljs-comment">/* ストリーム型headの定義は、リスト型headと同じ */</span>
-        head: (astream) =&gt; {
-          <span class="hljs-keyword">return</span> match(astream,{
-            empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
-            cons: (value, tailThunk) =&gt; { <span class="hljs-keyword">return</span> value; }
-          });
-        },
-        <span class="hljs-comment">/* tail:: STREAM[T] =&gt; STREAM[T] */</span>
-        tail: (astream) =&gt; {
-          <span class="hljs-keyword">return</span> match(astream,{
-            empty: (_) =&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; },
-            cons: (head, tailThunk) =&gt; {
-              <span class="hljs-keyword">return</span> tailThunk();  <span class="hljs-comment">// ここで初めてサンクを評価する</span>
-            }
-          });
-        },
-        take: (astream, n) =&gt; {
-          <span class="hljs-keyword">return</span> match(astream,{
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> list.empty();
-            },
-            cons: (head,tailThunk) =&gt; {
-              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
-                <span class="hljs-keyword">return</span> list.empty();
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> list.cons(head,stream.take(tailThunk(),(n -<span class="hljs-number">1</span>)));
-              }
-            }
-          });
-        }
-      };
-      <span class="hljs-keyword">var</span> list = {
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.empty();
-          };
-        },
-        cons: (value, list) =&gt; {
-          <span class="hljs-keyword">return</span> (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.cons(value, list);
-          };
-        },
-        isEmpty: (alist) =&gt; {
-          <span class="hljs-keyword">return</span> match(alist, { <span class="hljs-comment">// match関数で分岐する</span>
-            empty: <span class="hljs-literal">true</span>,
-            cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-            }
-          });
-        },
-        head: (alist) =&gt; {
-          <span class="hljs-keyword">return</span> match(alist, {
-            empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> head;
-            }
-          });
-        },
-        tail: (alist) =&gt; {
-          <span class="hljs-keyword">return</span> match(alist, {
-            empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> tail;
-            }
-          });
-        },
-        toArray: (alist) =&gt; {
-          <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
-            <span class="hljs-keyword">return</span> match(alist, {
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> accumulator;
-              },
-              cons: (head, tail) =&gt; {
-                <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
-              }
-            });
-          };
-          <span class="hljs-keyword">return</span> toArrayAux(alist, []);
-        }
-      };
-      <span class="hljs-keyword">var</span> integersFrom = (n) =&gt; {
-        <span class="hljs-keyword">return</span> stream.cons(n, (_) =&gt; {
-          <span class="hljs-keyword">return</span> integersFrom(n + <span class="hljs-number">1</span>);
-        });
-      };
-      <span class="hljs-keyword">var</span> sieve = (astream) =&gt; {
-        <span class="hljs-keyword">var</span> head = stream.head(astream);
-        <span class="hljs-keyword">var</span> tail = stream.tail(astream);
-        <span class="hljs-keyword">var</span> mark = (astream, k, m) =&gt; {
-          <span class="hljs-keyword">var</span> head = stream.head(astream);
-          <span class="hljs-keyword">var</span> tail = stream.tail(astream);
-          <span class="hljs-keyword">if</span>(k === m) {
-            <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">0</span>,(_) =&gt; {
-              <span class="hljs-keyword">return</span> mark(tail, <span class="hljs-number">1</span>, m);
-            });
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> stream.cons(head, (_) =&gt; {
-              <span class="hljs-keyword">return</span> mark(tail, k+<span class="hljs-number">1</span>, m);
-            });
-          }
-        };
-        <span class="hljs-keyword">if</span>(head === <span class="hljs-number">0</span>) {
-          <span class="hljs-keyword">return</span> sieve(tail);
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> stream.cons(head, (_) =&gt; {
-            <span class="hljs-keyword">return</span> sieve(mark(tail, <span class="hljs-number">1</span>, head));
-          });
-        }
-      };
-      expect(
-        list.toArray(stream.take(sieve(integersFrom(<span class="hljs-number">2</span>)), <span class="hljs-number">10</span>))
-      ).to.eql(
-        [<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">11</span>, <span class="hljs-number">13</span>, <span class="hljs-number">17</span>, <span class="hljs-number">19</span>, <span class="hljs-number">23</span>, <span class="hljs-number">29</span>]
-      );
-      next();
-    });
-  });
-  describe(<span class="hljs-string">'遅延評価'</span>, () =&gt; {
-    <span class="hljs-keyword">var</span> take = (n, astream) =&gt; {
-      <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-        <span class="hljs-keyword">return</span> astream[<span class="hljs-number">0</span>];
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> [astream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>, astream[<span class="hljs-number">1</span>]()));
-      }
-    };
-    <span class="hljs-keyword">var</span> repeat = (n) =&gt; {
-      <span class="hljs-keyword">return</span> [n, (_) =&gt; {
-        <span class="hljs-keyword">return</span> repeat(n);
-      }];
-    };
-    expect(
-      take(<span class="hljs-number">3</span>, repeat(<span class="hljs-number">2</span>))
-    ).to.eql(
-      [<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>]
-    );
-    <span class="hljs-keyword">var</span> ones = repeat(<span class="hljs-number">1</span>);
-    expect(
-      take(<span class="hljs-number">2</span>, ones)
-    ).to.eql(
-      [<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]
-    );
-    <span class="hljs-keyword">var</span> replicate = (n, x) =&gt; {
-      <span class="hljs-keyword">return</span> take(n, repeat(x));
-    };
-    expect(
-      replicate(<span class="hljs-number">4</span>, <span class="hljs-number">3</span>)
-    ).to.eql(
-      [<span class="hljs-number">3</span>,<span class="hljs-number">3</span>,<span class="hljs-number">3</span>,<span class="hljs-number">3</span>]
-    );
-    <span class="hljs-keyword">var</span> upto = (m, n) =&gt; {
-      <span class="hljs-keyword">if</span>(m &gt; n) {
-        <span class="hljs-keyword">return</span> [];
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> [m, (_) =&gt; {
-          <span class="hljs-keyword">return</span> upto(m+<span class="hljs-number">1</span>,n);
-        }];
-      };
-    };
-    expect(
-      take(<span class="hljs-number">3</span>, upto(<span class="hljs-number">2</span>,<span class="hljs-number">10</span>))
-    ).to.eql(
-      [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-    );
-    <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
-    <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
-      <span class="hljs-keyword">return</span> (aStream) =&gt; {
-        <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-        <span class="hljs-comment">/* 先頭要素が条件に合致する場合 */</span>
-        <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) { 
-          <span class="hljs-keyword">return</span> [head, (_) =&gt; {
-            <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-          }];
-        } <span class="hljs-keyword">else</span> {                       
-          <span class="hljs-comment">/* 先頭要素が条件に合致しない場合 */</span>
-          <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-        }
-      };
-    };
-    <span class="hljs-comment">/* #@range_end(stream_filter) */</span>
-    <span class="hljs-keyword">var</span> mod = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> n % m;
-    };
-    <span class="hljs-keyword">var</span> even = (n) =&gt; {
-      <span class="hljs-keyword">return</span> mod(n,<span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
-    };
-    <span class="hljs-keyword">var</span> adder = (m) =&gt; {
-      <span class="hljs-keyword">return</span> (n) =&gt; {
-        <span class="hljs-keyword">return</span> m + n;
-      };
-    };
-    <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);
-    <span class="hljs-comment">/* #@range_begin(stream_enumFrom) */</span>
-    <span class="hljs-keyword">var</span> iterate = (step) =&gt; {  <span class="hljs-comment">// 次の値との差を計算する関数を渡す</span>
-      <span class="hljs-keyword">return</span> (init) =&gt; {       <span class="hljs-comment">// 先頭の値を渡す</span>
-        <span class="hljs-keyword">return</span> [init, (_) =&gt; { <span class="hljs-comment">// ストリーム型を返す</span>
-          <span class="hljs-keyword">return</span> iterate(step)(step(init));
-        }];
-      };
-    };
-    <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
-      <span class="hljs-keyword">return</span> iterate(succ)(n);
-    };
-    <span class="hljs-comment">/* #@range_end(stream_enumFrom) */</span>
-    expect(
-      take(<span class="hljs-number">3</span>,filter(even)(enumFrom(<span class="hljs-number">2</span>)))
-    ).to.eql(
-      [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
-    );
-    describe(<span class="hljs-string">'カリー化バージョン'</span>, () =&gt; {
-      <span class="hljs-keyword">var</span> take = (n) =&gt; {
-        <span class="hljs-keyword">return</span> (aStream) =&gt; {
-          <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]()));
-          }
-        };
-      };
-      <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> (aStream) =&gt; {
-          <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-          <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) {
-            <span class="hljs-keyword">return</span> [head, (_) =&gt; {
-              <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-            }];
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-          }
-        };
-      };
-      <span class="hljs-keyword">var</span> even = (n) =&gt; {
-        <span class="hljs-keyword">return</span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>;
-      };
-      <span class="hljs-keyword">var</span> iterate = (step) =&gt; {
-        <span class="hljs-keyword">return</span> (init) =&gt; {
-          <span class="hljs-keyword">return</span> [init, (_) =&gt; {
-            <span class="hljs-keyword">return</span> iterate(step)(step(init));
-          }];
-        };
-      };
-      <span class="hljs-keyword">var</span> adder = (m) =&gt; {
-        <span class="hljs-keyword">return</span> (n) =&gt; {
-          <span class="hljs-keyword">return</span> m + n;
-        };
-      };
-      <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);
-      <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
-        <span class="hljs-keyword">return</span> iterate(succ)(n);
-      };
-      expect(
-        compose(take(<span class="hljs-number">3</span>), filter(even))(enumFrom(<span class="hljs-number">2</span>))
-      ).to.eql(
-        [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
-      );
-    });
-    describe(<span class="hljs-string">'ストリーム'</span>, () =&gt; {
-      it(<span class="hljs-string">'簡単なストリームの例'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(stream_example) */</span>
-        <span class="hljs-keyword">var</span> stream = [<span class="hljs-number">1</span>, (_) =&gt; { <span class="hljs-comment">// 末尾部分は無名関数で表現する</span>
-          <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;
-        }];
-        <span class="hljs-comment">/* #@range_end(stream_example) */</span>
-        expect(
-          stream[<span class="hljs-number">0</span>]
-        ).to.eql(
-          <span class="hljs-number">1</span>
-        );
-        expect(
-          stream[<span class="hljs-number">1</span>]()
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        <span class="hljs-comment">/* #@range_begin(stream_ones) */</span>
-        <span class="hljs-keyword">var</span> ones = [<span class="hljs-number">1</span>, (_) =&gt; {
-          <span class="hljs-keyword">return</span> ones;
-        }];
-        <span class="hljs-comment">/* #@range_end(stream_ones) */</span>
-        expect(
-          ones[<span class="hljs-number">0</span>]
-        ).to.eql(
-          <span class="hljs-number">1</span>
-        );
-        expect(
-          ones[<span class="hljs-number">1</span>]()[<span class="hljs-number">0</span>]
-        ).to.eql(
-          <span class="hljs-number">1</span>
-        );
-        next();
-      });
-      <span class="hljs-keyword">var</span> series = (func) =&gt; {
-        <span class="hljs-keyword">return</span> (init) =&gt; {
-          <span class="hljs-keyword">return</span> [init, (_) =&gt; {
-            <span class="hljs-keyword">return</span> series(func)(func(init));
-          }];
-        };
-      };
-      <span class="hljs-keyword">var</span> identity = (any) =&gt; {
-        <span class="hljs-keyword">return</span> any;
-      };
-      <span class="hljs-keyword">var</span> ones = series(identity)(<span class="hljs-number">1</span>);
-      expect(
-        take(<span class="hljs-number">10</span>,ones)
-      ).to.eql(
-        [ <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">1</span> ]
-      );
-      <span class="hljs-comment">/* #@range_begin(stream_limit) */</span>
-      <span class="hljs-keyword">var</span> limit = (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> (aStream) =&gt; {
-          <span class="hljs-keyword">if</span>(predicate(aStream)) {
-            <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> limit(predicate)(aStream[<span class="hljs-number">1</span>]());
-          };
-        };
-      };
-      <span class="hljs-comment">/* #@range_end(stream_limit) */</span>
-      it(<span class="hljs-string">'エラトステネスのふるいによる素数の生成'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
-          <span class="hljs-keyword">return</span> (aStream) =&gt; {
+        <span class="hljs-keyword">var</span> map = (aStream) =&gt; {
+          <span class="hljs-keyword">return</span> (transform) =&gt; {
             <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-            <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) {
-              <span class="hljs-keyword">return</span> [head, (_) =&gt; {
-                <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-              }];
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-            }
+            <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
+              <span class="hljs-keyword">return</span> map(aStream[<span class="hljs-number">1</span>]())(transform);
+            }];
           };
         };
-        <span class="hljs-comment">/* #@range_begin(stream_remove) */</span>
-        <span class="hljs-keyword">var</span> not = (arg) =&gt; {
-          <span class="hljs-keyword">return</span> ! arg;
-        };
-        <span class="hljs-keyword">var</span> remove = (predicate) =&gt; {
-          <span class="hljs-keyword">return</span> (aStream) =&gt; {
-            <span class="hljs-keyword">return</span> filter(compose(not,predicate))(aStream);
+        <span class="hljs-comment">/* #@range_begin(stream_iterate) */</span>
+        <span class="hljs-keyword">var</span> iterate = (init) =&gt; {  <span class="hljs-comment">// 先頭の値を渡す</span>
+          <span class="hljs-keyword">return</span> (step) =&gt; {       <span class="hljs-comment">// 次の値との差を計算する関数を渡す</span>
+            <span class="hljs-keyword">return</span> [init, (_) =&gt; { <span class="hljs-comment">// ストリーム型を返す</span>
+              <span class="hljs-keyword">return</span> iterate(step(init))(step);
+            }];
           };
         };
-        <span class="hljs-comment">/* #@range_end(stream_remove) */</span>
-        <span class="hljs-comment">/* #@range_begin(stream_take) */</span>
-        <span class="hljs-keyword">var</span> take = (n) =&gt; {
-          <span class="hljs-keyword">return</span> (aStream) =&gt; {
-            <span class="hljs-comment">/* 再帰処理の終了条件 */</span>
-            <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) { 
-              <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-comment">/* take関数の再帰呼び出し */</span>
-              <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]())); 
-            }
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(stream_take) */</span>
-        <span class="hljs-comment">/* #@range_begin(multipleOf) */</span>
-        <span class="hljs-keyword">var</span> multipleOf = (n,m) =&gt; {
-          <span class="hljs-keyword">if</span>((n % m) === <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        };
-        <span class="hljs-comment">/* #@range_end(multipleOf) */</span>
-        expect(
-          multipleOf(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          multipleOf(<span class="hljs-number">5</span>,<span class="hljs-number">2</span>)
-        ).to.eql(
-          <span class="hljs-literal">false</span>
-        );
-        <span class="hljs-keyword">var</span> even = (n) =&gt; {
-          <span class="hljs-keyword">return</span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>;
-        };
-        expect(((_) =&gt; { 
-          <span class="hljs-comment">/* #@range_begin(stream_remove_test) */</span>
-          <span class="hljs-keyword">var</span> even = (n) =&gt; {
-            <span class="hljs-keyword">return</span> multipleOf(n,<span class="hljs-number">2</span>); <span class="hljs-comment">// 偶数は2の倍数</span>
-          };
-          take(<span class="hljs-number">5</span>)(remove(even)(enumFrom(<span class="hljs-number">1</span>)));
-          <span class="hljs-comment">/* #@range_end(stream_remove_test) */</span>
-          <span class="hljs-keyword">return</span> take(<span class="hljs-number">5</span>)(remove(even)(enumFrom(<span class="hljs-number">1</span>)));
-        })()).to.eql(
-          <span class="hljs-comment">/* #@range_begin(stream_remove_test_result) */</span>
-          [<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">9</span>]
-          <span class="hljs-comment">/* #@range_end(stream_remove_test_result) */</span>
-        );
-        expect(
-          take(<span class="hljs-number">10000</span>)(remove(even)(enumFrom(<span class="hljs-number">1</span>))).length
-        ).to.eql(
-          <span class="hljs-number">10000</span>
-        );</pre></div></div>
+        <span class="hljs-comment">/* #@range_end(stream_iterate) */</span>
+        <span class="hljs-comment">/* #@range_begin(enumFrom_by_iterate) */</span>
+        <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
+          <span class="hljs-keyword">return</span> iterate(n)(succ);
+        };</pre></div></div>
             
         </li>
         
@@ -2687,44 +2498,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <h4 id="-">エラトステネスのふるいによる素数の生成</h4>
-<p><a href="http://www.youtube.com/watch?v=1NzrrU8BawA" title="エラトステネスのふるいの動画"><img src="http://img.youtube.com/vi/1NzrrU8BawA/0.jpg" alt="IMAGE ALT TEXT"></a></p>
+              <p>自然数列を定義する</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(eratosthenes_sieve) */</span>
-        <span class="hljs-comment">/* エラトステネスのふるい */</span>
-        <span class="hljs-keyword">var</span> sieve = (aStream) =&gt; {
-          <span class="hljs-comment">/* 変数primeは先頭にある素数 */</span>
-          <span class="hljs-keyword">var</span> prime = aStream[<span class="hljs-number">0</span>];           
-          <span class="hljs-keyword">return</span> [prime, (_) =&gt; {
-            <span class="hljs-keyword">return</span> sieve(remove( <span class="hljs-comment">/* その素数の倍数を除去する */</span>
-              (item) =&gt; { 
-                <span class="hljs-keyword">return</span> multipleOf(item, prime);  
-              }
-            )(aStream[<span class="hljs-number">1</span>]()));
-          }]; 
-        };
-        <span class="hljs-comment">/* #@range_end(eratosthenes_sieve) */</span>
-        <span class="hljs-keyword">var</span> primes = sieve(enumFrom(<span class="hljs-number">2</span>)); <span class="hljs-comment">// 無限の素数列</span>
-        expect(
-          <span class="hljs-comment">/* #@range_begin(eratosthenes_sieve_test) */</span>
-          take(<span class="hljs-number">10</span>)(primes)
-          <span class="hljs-comment">/* #@range_end(eratosthenes_sieve_test) */</span>
-        ).to.eql(
-          <span class="hljs-comment">/* #@range_begin(eratosthenes_sieve_test_result) */</span>
-          [ <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">11</span>, <span class="hljs-number">13</span>, <span class="hljs-number">17</span>, <span class="hljs-number">19</span>, <span class="hljs-number">23</span>, <span class="hljs-number">29</span> ]
-          <span class="hljs-comment">/* #@range_end(eratosthenes_sieve_test_result) */</span>
-        );
-        expect(
-          take(<span class="hljs-number">50</span>)(primes)
-        ).to.eql(
-          [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>,<span class="hljs-number">17</span>,<span class="hljs-number">19</span>,<span class="hljs-number">23</span>,<span class="hljs-number">29</span>,<span class="hljs-number">31</span>,<span class="hljs-number">37</span>,<span class="hljs-number">41</span>,<span class="hljs-number">43</span>,<span class="hljs-number">47</span>,<span class="hljs-number">53</span>,<span class="hljs-number">59</span>,<span class="hljs-number">61</span>,<span class="hljs-number">67</span>,<span class="hljs-number">71</span>,<span class="hljs-number">73</span>,<span class="hljs-number">79</span>,<span class="hljs-number">83</span>,<span class="hljs-number">89</span>,<span class="hljs-number">97</span>,<span class="hljs-number">101</span>,<span class="hljs-number">103</span>,<span class="hljs-number">107</span>,<span class="hljs-number">109</span>,<span class="hljs-number">113</span>,<span class="hljs-number">127</span>,<span class="hljs-number">131</span>,<span class="hljs-number">137</span>,<span class="hljs-number">139</span>,<span class="hljs-number">149</span>,<span class="hljs-number">151</span>,<span class="hljs-number">157</span>,<span class="hljs-number">163</span>,<span class="hljs-number">167</span>,<span class="hljs-number">173</span>,<span class="hljs-number">179</span>,<span class="hljs-number">181</span>,<span class="hljs-number">191</span>,<span class="hljs-number">193</span>,<span class="hljs-number">197</span>,<span class="hljs-number">199</span>,<span class="hljs-number">211</span>,<span class="hljs-number">223</span>,<span class="hljs-number">227</span>,<span class="hljs-number">229</span>]
-        );
-        next();
-      });
-    });
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> naturals = enumFrom(<span class="hljs-number">1</span>);</pre></div></div>
             
         </li>
         
@@ -2734,6 +2512,910 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>偶数列を定義する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> twoStep = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n + <span class="hljs-number">2</span>;
+        };
+        <span class="hljs-keyword">var</span> evenStream = iterate(<span class="hljs-number">2</span>)(twoStep);
+        <span class="hljs-comment">/* #@range_end(enumFrom_by_iterate) */</span>
+        expect(
+          take(<span class="hljs-number">3</span>,filter(even)(enumFrom(<span class="hljs-number">2</span>)))
+        ).to.eql(
+          [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
+        );
+        <span class="hljs-comment">/* #@range_begin(oddStream_from_iterate) */</span>
+        <span class="hljs-keyword">var</span> twoStep = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n + <span class="hljs-number">2</span>;
+        };
+        <span class="hljs-keyword">var</span> oddStream = iterate(<span class="hljs-number">1</span>)(twoStep);
+        <span class="hljs-comment">/* #@range_end(oddStream_from_iterate) */</span>
+        expect(
+          take(<span class="hljs-number">3</span>,oddStream)
+        ).to.eql(
+          [<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>]
+        );
+
+        it(<span class="hljs-string">'無限の整数列'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(enumFrom) */</span>
+          <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
+            <span class="hljs-keyword">return</span> [n, (_) =&gt; { <span class="hljs-comment">// ストリームを返す</span>
+              <span class="hljs-keyword">return</span> enumFrom(n + <span class="hljs-number">1</span>);
+            }];
+          };
+          <span class="hljs-comment">/* #@range_end(enumFrom) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'無限の偶数列'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(evenStream) */</span>
+          <span class="hljs-keyword">var</span> evenFrom = (n) =&gt; {
+            <span class="hljs-keyword">return</span> [n, (_) =&gt; {
+              <span class="hljs-keyword">return</span> evenFrom(n + <span class="hljs-number">2</span>);
+            }];
+          };
+          <span class="hljs-keyword">var</span> evenStream = evenFrom(<span class="hljs-number">2</span>); 
+          <span class="hljs-comment">/* #@range_end(evenStream) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>var evenStream = ((<em>) =&gt; {
+  var evenFrom = (n) =&gt; {
+    return [n, (</em>) =&gt; {
+      return evenFrom(n + 2);
+    }];
+  };
+  return evenFrom(2);
+})(); // 定義された無名関数をすぐに適用する
+var evenFrom = (n) =&gt; {
+  return [n, (_) =&gt; {
+    return evenFrom(n + 2);
+  }];
+};
+var evenStream = evenFrom(2);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          expect(
+            take(<span class="hljs-number">3</span>, evenStream)
+          ).to.eql(
+            [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
+          );
+          next();
+        });
+        it(<span class="hljs-string">'遅延評価の説明'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+            <span class="hljs-keyword">return</span> (array) =&gt; {
+              <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
+                <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
+              },[]); 
+            };
+          };
+          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
+              <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
+            },<span class="hljs-number">0</span>); 
+          };
+          <span class="hljs-keyword">var</span> constant = (any) =&gt; {
+            <span class="hljs-keyword">return</span> (_) =&gt; {
+              <span class="hljs-keyword">return</span> any;
+            };
+          };
+          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
+          <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));
+          expect(
+            <span class="hljs-comment">/* #@range_begin(strict_evaluation) */</span>
+            length([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>+<span class="hljs-number">1</span>])
+            <span class="hljs-comment">/* #@range_end(strict_evaluation) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(strict_evaluation_result) */</span>
+            <span class="hljs-number">2</span>
+            <span class="hljs-comment">/* #@range_end(strict_evaluation_result) */</span>
+          );
+          expect(
+            <span class="hljs-comment">/* #@range_begin(lazy_evaluation) */</span>
+            length([<span class="hljs-number">1</span>,(_) =&gt; {
+                         <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+<span class="hljs-number">1</span>; 
+                   }])
+            <span class="hljs-comment">/* #@range_end(lazy_evaluation) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(lazy_evaluation_result) */</span>
+            <span class="hljs-number">2</span>
+            <span class="hljs-comment">/* #@range_end(lazy_evaluation_result) */</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'ストリームのフィルタリング'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
+          <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
+            <span class="hljs-keyword">return</span> (aStream) =&gt; {
+              <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>]; <span class="hljs-comment">// ストリームの先頭要素を取り出す</span>
+              <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) { <span class="hljs-comment">// 先頭要素headが条件に合致している場合</span>
+                <span class="hljs-keyword">return</span> [head, (_) =&gt; {
+                  <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
+                }];
+              } <span class="hljs-keyword">else</span> {                       <span class="hljs-comment">// 先頭要素headが条件に合致していない場合</span>
+                <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
+              }
+            };
+          };
+          <span class="hljs-comment">/* #@range_end(stream_filter) */</span>
+          <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (m) =&gt; {
+              <span class="hljs-keyword">if</span>((n % m) === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              }
+            };
+          };
+          <span class="hljs-comment">/* #@range_begin(odd_stream) */</span>
+          <span class="hljs-keyword">var</span> odd = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">1</span>; 
+          };
+          <span class="hljs-keyword">var</span> oddStream = filter(odd)(enumFrom(<span class="hljs-number">1</span>));
+          <span class="hljs-comment">/* #@range_end(odd_stream) */</span>
+          <span class="hljs-comment">/* #@range_begin(stream_elemAt) */</span>
+          <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (aStream) =&gt; {
+              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
+              };
+            };
+          };
+          <span class="hljs-comment">/* #@range_end(stream_elemAt) */</span>
+          expect(
+            <span class="hljs-comment">/* #@range_begin(third_element_of_odd_stream) */</span>
+            elemAt(<span class="hljs-number">3</span>)(oddStream)
+            <span class="hljs-comment">/* #@range_end(third_element_of_odd_stream) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(third_element_of_odd_stream_result) */</span>
+            <span class="hljs-number">5</span>
+            <span class="hljs-comment">/* #@range_end(third_element_of_odd_stream_result) */</span>
+          );
+          expect(
+            take(<span class="hljs-number">5</span>,filter(odd)(enumFrom(<span class="hljs-number">1</span>)))
+          ).to.eql(
+            [ <span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">9</span> ] 
+          );
+          <span class="hljs-comment">/* #@range_begin(evenStream_by_filter) */</span>
+          <span class="hljs-keyword">var</span> even = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>; 
+          };
+          <span class="hljs-keyword">var</span> evenStream = filter(even)(enumFrom(<span class="hljs-number">1</span>));
+          <span class="hljs-comment">/* #@range_end(evenStream_by_filter) */</span>
+          expect(
+            <span class="hljs-comment">/* #@range_begin(third_element_of_evenStream) */</span>
+            elemAt(<span class="hljs-number">3</span>)(evenStream)
+            <span class="hljs-comment">/* #@range_end(third_element_of_evenStream) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(third_element_of_evenStream_result) */</span>
+            <span class="hljs-number">6</span>
+            <span class="hljs-comment">/* #@range_end(third_element_of_evenStream_result) */</span>
+          );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>var ones = [1, (<em>) =&gt; {
+  return ones;
+}];
+var twos = [1, (</em>) =&gt; {
+  return ones;
+}];
+var zipWith = (fun) =&gt; {
+  return (xs, ys) =&gt; {
+    if(xs.length === 0) {
+      return []; 
+    } 
+    if(ys.length === 0) {
+      return []; 
+    } 
+    return [fun(xs[0], ys[0]), (<em>) =&gt; {
+      return zipWith(fun)(xs<a href="">1</a>, ys<a href="">1</a>);
+    }];
+  };
+};
+var listSums = (aStream) =&gt; {
+  var out = [aStream[0], (</em>) =&gt; {
+    return zipWith((x,y) =&gt; { 
+      return x + y;
+    })(aStream<a href="">1</a>, out);
+  }];
+  return out;
+};
+var scanl = (aStream) =&gt; {
+  return (glue) =&gt; {
+    var out = [aStream[0], (_) =&gt; {
+      return zipWith(glue)(aStream<a href="">1</a>, out);
+    }];
+    return out;
+  };
+};</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          next();
+        });
+        it(<span class="hljs-string">'正格評価のelemAt関数'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(array_elemAt) */</span>
+          <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (anArray) =&gt; {
+              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> anArray[<span class="hljs-number">0</span>];
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">var</span> tail = anArray.slice(<span class="hljs-number">1</span>,anArray.length);
+                <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(tail);
+              };
+            };
+          };
+          <span class="hljs-comment">/* #@range_end(array_elemAt) */</span>
+          expect(
+            <span class="hljs-comment">/* #@range_begin(third_element_of_evenArray) */</span>
+            elemAt(<span class="hljs-number">3</span>)([<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>])
+            <span class="hljs-comment">/* #@range_end(third_element_of_evenArray) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(third_element_of_eventArray_result) */</span>
+            <span class="hljs-number">6</span>
+            <span class="hljs-comment">/* #@range_end(third_element_of_eventArray_result) */</span>
+          );
+          expect(
+            <span class="hljs-comment">/* #@range_begin(fourth_element_of_evenArray) */</span>
+            elemAt(<span class="hljs-number">4</span>)([<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>])
+            <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(fourth_element_of_evenArray_result) */</span>
+            <span class="hljs-literal">undefined</span>
+            <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray_result) */</span>
+          );
+          next();
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>describe(‘カリー化バージョン’, () =&gt; {
+  var take = (n) =&gt; {
+    return (aStream) =&gt; {
+      if(n === 1) {
+        return aStream[0];
+      } else {
+        return [aStream[0]].concat(take(n-1)(aStream<a href="">1</a>));
+      }
+    };
+  };
+  var filter = (predicate) =&gt; {
+    return (aStream) =&gt; {
+      var head = aStream[0];
+      if(predicate(head) === true) {
+        return [head, (<em>) =&gt; {
+          return filter(predicate)(aStream<a href="">1</a>);
+        }];
+      } else {
+        return filter(predicate)(aStream<a href="">1</a>);
+      }
+    };
+  };
+  var even = (n) =&gt; {
+    return n % 2 === 0;
+  };
+  var iterate = (step) =&gt; {
+    return (init) =&gt; {
+      return [init, (</em>) =&gt; {
+        return iterate(step)(step(init));
+      }];
+    };
+  };
+  var adder = (m) =&gt; {
+    return (n) =&gt; {
+      return m + n;
+    };
+  };
+  var succ = adder(1);
+  var enumFrom = (n) =&gt; {
+    return iterate(succ)(n);
+  };
+  expect(
+    compose(take(3), filter(even))(enumFrom(2))
+  ).to.eql(
+    [2,4,6]
+  );
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'ストリーム'</span>, () =&gt; {
+          it(<span class="hljs-string">'簡単なストリームの例'</span>, (next) =&gt; {
+            <span class="hljs-comment">/* #@range_begin(stream_example) */</span>
+            <span class="hljs-keyword">var</span> aStream = [<span class="hljs-number">1</span>, (_) =&gt; { <span class="hljs-comment">// 後尾は無名関数で表現する</span>
+              <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;
+            }];
+            <span class="hljs-comment">/* #@range_end(stream_example) */</span>
+            expect(
+              <span class="hljs-comment">/* #@range_begin(stream_head) */</span>
+              aStream[<span class="hljs-number">0</span>] <span class="hljs-comment">// ストリームの先頭要素を取得する</span>
+              <span class="hljs-comment">/* #@range_end(stream_head) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(stream_head_result) */</span>
+              <span class="hljs-number">1</span>
+              <span class="hljs-comment">/* #@range_end(stream_head_result) */</span>
+            );
+            expect(
+              <span class="hljs-comment">/* #@range_begin(stream_tail) */</span>
+              aStream[<span class="hljs-number">1</span>]() <span class="hljs-comment">// 関数適用でストリームの後尾を取り出す</span>
+              <span class="hljs-comment">/* #@range_end(stream_tail) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(stream_tail_result) */</span>
+              <span class="hljs-number">2</span>
+              <span class="hljs-comment">/* #@range_end(stream_tail_result) */</span>
+            );
+            <span class="hljs-comment">/* #@range_begin(stream_ones) */</span>
+            <span class="hljs-keyword">var</span> ones = [<span class="hljs-number">1</span>, (_) =&gt; {
+              <span class="hljs-keyword">return</span> ones;
+            }];
+            <span class="hljs-comment">/* #@range_end(stream_ones) */</span>
+            expect(
+              ones[<span class="hljs-number">0</span>]
+            ).to.eql(
+              <span class="hljs-number">1</span>
+            );
+            expect(
+              ones[<span class="hljs-number">1</span>]()[<span class="hljs-number">0</span>]
+            ).to.eql(
+              <span class="hljs-number">1</span>
+            );
+            next();
+          });
+          it(<span class="hljs-string">'フィボナッチ数列'</span>, (next) =&gt; {
+            <span class="hljs-keyword">var</span> take = (n) =&gt; {
+              <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                <span class="hljs-comment">/* 再帰処理の終了条件 */</span>
+                <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) { 
+                  <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-comment">/* take関数の再帰呼び出し */</span>
+                  <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]())); 
+                }
+              };
+            };
+            <span class="hljs-keyword">var</span> fib = (a, b) =&gt; {
+              <span class="hljs-keyword">return</span> [a, (_) =&gt; {
+                <span class="hljs-keyword">return</span> fib(b, a + b);
+              }];
+            }; 
+            expect(
+              take(<span class="hljs-number">5</span>)(fib(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>))
+            ).to.eql(
+              [ <span class="hljs-number">1</span>, <span class="hljs-number">1</span> , <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>]
+            );
+            next();
+          });
+          describe(<span class="hljs-string">'円周率に関するライプニッツの法則'</span>, () =&gt; {
+            <span class="hljs-keyword">var</span> multipleOf = (n,m) =&gt; {
+              <span class="hljs-keyword">if</span>((n % m) === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              }
+            };
+            <span class="hljs-keyword">var</span> even = (n) =&gt; {
+              <span class="hljs-keyword">return</span> multipleOf(n,<span class="hljs-number">2</span>); <span class="hljs-comment">// 偶数は2の倍数</span>
+            };
+            <span class="hljs-keyword">var</span> odd = (n) =&gt; {
+              <span class="hljs-keyword">return</span> not(multipleOf(n,<span class="hljs-number">2</span>)); <span class="hljs-comment">// 偶数は2の倍数</span>
+            };
+            <span class="hljs-keyword">var</span> not = (arg) =&gt; {
+              <span class="hljs-keyword">return</span> ! arg;
+            };
+            <span class="hljs-keyword">var</span> remove = (predicate) =&gt; {
+              <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                <span class="hljs-keyword">return</span> filter(compose(not,predicate))(aStream);
+              };
+            };
+            <span class="hljs-keyword">var</span> odds = filter(odd)(enumFrom(<span class="hljs-number">1</span>));
+            <span class="hljs-keyword">var</span> take = (n) =&gt; {
+              <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) { 
+                  <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]())); 
+                }
+              };
+            };
+            <span class="hljs-keyword">var</span> map = (aStream,transform) =&gt; {
+              <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
+                <span class="hljs-keyword">return</span> map(aStream[<span class="hljs-number">1</span>](), transform);
+              }];
+            };
+            <span class="hljs-keyword">var</span> iterate = (f,x) =&gt; {
+              <span class="hljs-keyword">return</span> [x, (_) =&gt; {
+                <span class="hljs-keyword">return</span> map(iterate(f,x), f);
+              }];
+            };
+            <span class="hljs-keyword">var</span> negate = (n) =&gt; {
+              <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> - n;
+            };
+            <span class="hljs-keyword">var</span> foldr = (aStream, accumulator) =&gt; {
+              <span class="hljs-keyword">return</span> (glue) =&gt; {
+                <span class="hljs-keyword">if</span>(aStream.length === <span class="hljs-number">0</span>) {
+                  <span class="hljs-keyword">return</span> accumulator;
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+                  <span class="hljs-keyword">var</span> tailThunk = aStream[<span class="hljs-number">1</span>];
+                  <span class="hljs-keyword">return</span> glue(head,foldr(tailThunk(),accumulator)(glue));
+                }
+              };
+            };
+            <span class="hljs-keyword">var</span> append = (xs,ysThunk) =&gt; {
+              <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> ysThunk();
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">var</span> x = xs[<span class="hljs-number">0</span>];
+                <span class="hljs-keyword">return</span> [x, (_) =&gt; {
+                  <span class="hljs-keyword">return</span> append(xs[<span class="hljs-number">1</span>](), ysThunk);
+                }];
+              };
+            };
+            <span class="hljs-keyword">var</span> concat = (xss) =&gt; {
+              <span class="hljs-keyword">return</span> foldr(xss,[])(append);
+            };
+            it(<span class="hljs-string">'listSums'</span>, (next) =&gt; {
+              <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">50000</span>);
+              <span class="hljs-comment">/* #@range_begin(streams_for_leibnitz) */</span>
+              <span class="hljs-comment">/* [1,3,5,...] */</span>
+              <span class="hljs-keyword">var</span> oddStream = filter(odd)(enumFrom(<span class="hljs-number">1</span>)); 
+
+              <span class="hljs-comment">/* [1, -1, 1, -1...] */</span>
+              <span class="hljs-keyword">var</span> cycledStream = iterate((item) =&gt; { 
+                <span class="hljs-keyword">return</span> - item; <span class="hljs-comment">// 符号を反転させる</span>
+              },<span class="hljs-number">1</span>);
+              <span class="hljs-comment">/* #@range_end(streams_for_leibnitz) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
+zipWith’ f [] <em> = []
+zipWith’ f </em> [] = []
+zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-comment">/* #@range_begin(stream_zipWith) */</span>
+              <span class="hljs-keyword">var</span> zipWith = (glue) =&gt; {
+                <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
+                  <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> []; 
+                  } 
+                  <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> []; 
+                  } 
+                  <span class="hljs-keyword">return</span> [glue(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
+                    <span class="hljs-keyword">return</span> zipWith(glue)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
+                  }];
+                };
+              };
+              <span class="hljs-comment">/* #@range_end(stream_zipWith) */</span>
+              <span class="hljs-comment">/* #@range_begin(listSums) */</span>
+              <span class="hljs-keyword">var</span> listSums = (aStream) =&gt; {
+                <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+                  <span class="hljs-keyword">return</span> zipWith((x,y) =&gt; { 
+                    <span class="hljs-keyword">return</span> x + y;
+                  })(aStream[<span class="hljs-number">1</span>](), out);
+                }];
+                <span class="hljs-keyword">return</span> out;
+              };
+              <span class="hljs-comment">/* #@range_end(listSums) */</span>
+              expect(
+                take(<span class="hljs-number">3</span>)(listSums(enumFrom(<span class="hljs-number">1</span>)))
+              ).to.eql(
+                [<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">6</span>]
+              );
+              expect(
+                take(<span class="hljs-number">4</span>)(listSums(enumFrom(<span class="hljs-number">1</span>)))
+              ).to.eql(
+                [<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, <span class="hljs-number">6</span>, <span class="hljs-number">10</span>]
+              );
+              <span class="hljs-comment">/* #@range_begin(leibnitz_series) */</span>
+              <span class="hljs-keyword">var</span> leibnitzSeries = zipWith((x,y) =&gt; {
+                <span class="hljs-keyword">return</span> x * <span class="hljs-number">1</span> / y; <span class="hljs-comment">// 逆数をとって、掛けあわせる</span>
+              })(cycledStream, oddStream);
+              <span class="hljs-comment">/* #@range_end(leibnitz_series) */</span>
+              expect(
+                take(<span class="hljs-number">3</span>)(leibnitzSeries)
+              ).to.eql(
+                [<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>/<span class="hljs-number">3</span>, <span class="hljs-number">1</span>/<span class="hljs-number">5</span>]
+              );
+              <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+                <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                  <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                    <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+                  } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
+                  };
+                };
+              };
+              expect(
+                elemAt(<span class="hljs-number">3</span>)(enumFrom(<span class="hljs-number">1</span>))
+              ).to.eql(
+                <span class="hljs-number">3</span>
+              );
+              expect(
+                elemAt(<span class="hljs-number">3</span>)(listSums(enumFrom(<span class="hljs-number">1</span>)))
+              ).to.eql(
+                <span class="hljs-number">6</span>
+              );
+              <span class="hljs-comment">/* #@range_begin(almostPi) */</span>
+              <span class="hljs-keyword">var</span> almostPi = (ntimes) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-number">4</span> * elemAt(ntimes)(listSums(leibnitzSeries));
+              };
+              <span class="hljs-comment">/* #@range_end(almostPi) */</span>
+              expect(
+              <span class="hljs-comment">/* #@range_begin(pi_approximation) */</span>
+              almostPi(<span class="hljs-number">100</span>)
+              <span class="hljs-comment">/* #@range_end(pi_approximation) */</span>
+              ).to.eql(
+                <span class="hljs-comment">/* #@range_begin(pi_approximation_result) */</span>
+                <span class="hljs-number">3.1315929035585537</span>
+                <span class="hljs-comment">/* #@range_end(pi_approximation_result) */</span>
+              );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>).to.within(3.13, 3.15);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              next();
+            });
+            it(<span class="hljs-string">'タブロー化listSums'</span>, (next) =&gt; {
+              <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">50000</span>);
+              <span class="hljs-keyword">var</span> intStream = enumFrom(<span class="hljs-number">1</span>); <span class="hljs-comment">// [1,2,3,,,,]</span>
+              <span class="hljs-keyword">var</span> oddStream = filter(odd)(intStream); <span class="hljs-comment">// [1,3,5,...]</span>
+              <span class="hljs-keyword">var</span> cycledStream = iterate((item) =&gt; { <span class="hljs-comment">// [1, -1, 1, -1...]</span>
+                <span class="hljs-keyword">return</span> negate(item);
+              },<span class="hljs-number">1</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
+zipWith’ f [] <em> = []
+zipWith’ f </em> [] = []
+zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-keyword">var</span> zipWith = (fun) =&gt; {
+                <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
+                  <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> []; 
+                  } 
+                  <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> []; 
+                  } 
+                  <span class="hljs-keyword">return</span> [fun(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
+                    <span class="hljs-keyword">return</span> zipWith(fun)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
+                  }];
+                };
+              };
+              <span class="hljs-keyword">var</span> listSums = (aStream) =&gt; {
+                <span class="hljs-keyword">if</span>(aStream.length === <span class="hljs-number">0</span>){
+                  <span class="hljs-keyword">return</span> [];
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+                    <span class="hljs-keyword">return</span> listSums([aStream[<span class="hljs-number">0</span>]+aStream[<span class="hljs-number">1</span>]()[<span class="hljs-number">0</span>], (_) =&gt; {
+                      <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">1</span>]()[<span class="hljs-number">1</span>]();
+                    }]);
+                  }];
+                }
+              };
+              <span class="hljs-keyword">var</span> leibnitzSeries = zipWith((x,y) =&gt; {
+                <span class="hljs-keyword">return</span> x * <span class="hljs-number">1</span> /y;
+              })(cycledStream, oddStream);
+              <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+                <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                  <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                    <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+                  } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
+                  };
+                };
+              };
+              expect(
+                <span class="hljs-number">4</span> * elemAt(<span class="hljs-number">100</span>)(listSums(leibnitzSeries))
+              ).to.within(<span class="hljs-number">3.13</span>, <span class="hljs-number">3.15</span>);
+              next();
+            });
+            it(<span class="hljs-string">'take'</span>, (next) =&gt; {
+              <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">10000</span>);
+              <span class="hljs-keyword">var</span> multipleOf = (n,m) =&gt; {
+                <span class="hljs-keyword">if</span>((n % m) === <span class="hljs-number">0</span>) {
+                  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+              };
+              expect(
+                take(<span class="hljs-number">5</span>)(iterate((item) =&gt; {
+                  <span class="hljs-keyword">return</span> negate(item);
+                },<span class="hljs-number">1</span>))
+              ).to.eql(
+                [<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">1</span>]
+              );
+              expect(
+                take(<span class="hljs-number">5</span>)(iterate((item) =&gt; {
+                  <span class="hljs-keyword">if</span>(item &gt; <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span> * (item + <span class="hljs-number">2</span>);
+                  } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span> * (item - <span class="hljs-number">2</span>);
+                  }
+                },<span class="hljs-number">1</span>))
+              ).to.eql(
+                [<span class="hljs-number">1</span>, -<span class="hljs-number">3</span>, <span class="hljs-number">5</span>, -<span class="hljs-number">7</span>, <span class="hljs-number">9</span>]
+              );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>cycle                   :: [a] -&gt; [a]
+cycle []  = error “Prelude.cycle: empty list”
+cycle xs  = xs’ where xs’ = xs ++ xs’</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-keyword">var</span> cycle = (aStream) =&gt; {
+                <span class="hljs-keyword">return</span> append(aStream,(_) =&gt; {
+                  <span class="hljs-keyword">return</span> cycle(aStream);
+                });
+              };
+              expect(
+                take(<span class="hljs-number">4</span>)(cycle([<span class="hljs-number">1</span>, (_) =&gt; {
+                  <span class="hljs-keyword">return</span> [-<span class="hljs-number">1</span>, (_) =&gt; {
+                    <span class="hljs-keyword">return</span> [];
+                  }];
+                }]))
+              ).to.eql(
+                [<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">1</span>]
+              );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
+zipWith’ f [] <em> = []
+zipWith’ f </em> [] = []
+zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-keyword">var</span> zipWith = (fun) =&gt; {
+                <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
+                  <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> []; 
+                  } 
+                  <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> []; 
+                  } 
+                  <span class="hljs-keyword">return</span> [fun(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
+                    <span class="hljs-keyword">return</span> zipWith(fun)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
+                  }];
+                };
+              };
+              <span class="hljs-keyword">var</span> intStream = enumFrom(<span class="hljs-number">1</span>);
+              <span class="hljs-keyword">var</span> oddStream = filter(odd)(intStream);
+              <span class="hljs-keyword">var</span> cycles = iterate((item) =&gt; {
+                <span class="hljs-keyword">return</span> negate(item);
+              },<span class="hljs-number">1</span>);
+              <span class="hljs-keyword">var</span> leibnitzSeries = zipWith((x,y) =&gt; {
+                <span class="hljs-keyword">return</span> x * <span class="hljs-number">1</span> /y;
+              })(cycles, oddStream);
+              expect(
+                take(<span class="hljs-number">3</span>)(leibnitzSeries)
+              ).to.eql(
+                [<span class="hljs-number">1</span>, -<span class="hljs-number">1</span>/<span class="hljs-number">3</span>, <span class="hljs-number">1</span>/<span class="hljs-number">5</span>]
+              );
+              <span class="hljs-keyword">var</span> at = (n, aStream) =&gt; {
+                <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                  <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> at(n-<span class="hljs-number">1</span>, aStream[<span class="hljs-number">1</span>]());
+                };
+              };
+              <span class="hljs-keyword">var</span> multiplier = (n) =&gt; {
+                <span class="hljs-keyword">return</span> (m) =&gt; {
+                  <span class="hljs-keyword">return</span> n * m;
+                };
+              };
+              <span class="hljs-keyword">var</span> pi = (times) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-number">4</span> * take(times)(leibnitzSeries).reduce((accumulator, item) =&gt; {
+                  <span class="hljs-keyword">return</span> accumulator + item;
+                }, <span class="hljs-number">0</span>);
+              };
+              expect(
+                pi(<span class="hljs-number">1000</span>)
+              ).to.within(<span class="hljs-number">3.14</span>, <span class="hljs-number">3.15</span>);
+
+              next();
+            });
+          });
+          it(<span class="hljs-string">'エラトステネスのふるいによる素数の生成'</span>, (next) =&gt; {
+            <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
+            <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
+              <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+                <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) {
+                  <span class="hljs-keyword">return</span> [head, (_) =&gt; {
+                    <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
+                  }];
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
+                }
+              };
+            };
+            <span class="hljs-comment">/* #@range_end(stream_filter) */</span>
+            <span class="hljs-comment">/* #@range_begin(stream_remove) */</span>
+            <span class="hljs-keyword">var</span> not = (arg) =&gt; {
+              <span class="hljs-keyword">return</span> ! arg;
+            };
+            <span class="hljs-keyword">var</span> remove = (predicate) =&gt; {
+              <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                <span class="hljs-keyword">return</span> filter(compose(not,predicate))(aStream);
+              };
+            };
+            <span class="hljs-comment">/* #@range_end(stream_remove) */</span>
+            <span class="hljs-comment">/* #@range_begin(stream_take) */</span>
+            <span class="hljs-keyword">var</span> take = (n) =&gt; {
+              <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                <span class="hljs-comment">/* 再帰処理の終了条件 */</span>
+                <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) { 
+                  <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+                } <span class="hljs-keyword">else</span> {
+                  <span class="hljs-comment">/* take関数の再帰呼び出し */</span>
+                  <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]())); 
+                }
+              };
+            };
+            <span class="hljs-comment">/* #@range_end(stream_take) */</span>
+            <span class="hljs-comment">/* #@range_begin(multipleOf) */</span>
+            <span class="hljs-keyword">var</span> multipleOf = (n,m) =&gt; {
+              <span class="hljs-keyword">if</span>((n % m) === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              }
+            };
+            <span class="hljs-comment">/* #@range_end(multipleOf) */</span>
+            expect(
+              multipleOf(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>)
+            ).to.eql(
+              <span class="hljs-literal">true</span>
+            );
+            expect(
+              multipleOf(<span class="hljs-number">5</span>,<span class="hljs-number">2</span>)
+            ).to.eql(
+              <span class="hljs-literal">false</span>
+            );
+            <span class="hljs-keyword">var</span> even = (n) =&gt; {
+              <span class="hljs-keyword">return</span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>;
+            };
+            expect(((_) =&gt; { 
+              <span class="hljs-comment">/* #@range_begin(stream_remove_test) */</span>
+              <span class="hljs-keyword">var</span> even = (n) =&gt; {
+                <span class="hljs-keyword">return</span> multipleOf(n,<span class="hljs-number">2</span>); <span class="hljs-comment">// 偶数は2の倍数</span>
+              };
+              take(<span class="hljs-number">5</span>)(remove(even)(enumFrom(<span class="hljs-number">1</span>)));
+              <span class="hljs-comment">/* #@range_end(stream_remove_test) */</span>
+              <span class="hljs-keyword">return</span> take(<span class="hljs-number">5</span>)(remove(even)(enumFrom(<span class="hljs-number">1</span>)));
+            })()).to.eql(
+              <span class="hljs-comment">/* #@range_begin(stream_remove_test_result) */</span>
+              [<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">9</span>]
+              <span class="hljs-comment">/* #@range_end(stream_remove_test_result) */</span>
+            );
+            expect(
+              take(<span class="hljs-number">10000</span>)(remove(even)(enumFrom(<span class="hljs-number">1</span>))).length
+            ).to.eql(
+              <span class="hljs-number">10000</span>
+            );
+            <span class="hljs-comment">/* #@range_begin(eratosthenes_sieve) */</span>
+            <span class="hljs-comment">/* エラトステネスのふるい */</span>
+            <span class="hljs-keyword">var</span> sieve = (aStream) =&gt; {
+              <span class="hljs-comment">/* 変数primeは先頭にある素数 */</span>
+              <span class="hljs-keyword">var</span> prime = aStream[<span class="hljs-number">0</span>];           
+              <span class="hljs-keyword">return</span> [prime, (_) =&gt; {
+                <span class="hljs-keyword">return</span> sieve(remove( <span class="hljs-comment">/* その素数の倍数を除去する */</span>
+                  (item) =&gt; { 
+                    <span class="hljs-keyword">return</span> multipleOf(item, prime);  
+                  }
+                )(aStream[<span class="hljs-number">1</span>]()));
+              }]; 
+            };
+            <span class="hljs-keyword">var</span> primes = sieve(enumFrom(<span class="hljs-number">2</span>)); <span class="hljs-comment">// 無限の素数列</span>
+            <span class="hljs-comment">/* #@range_end(eratosthenes_sieve) */</span>
+            expect(
+              <span class="hljs-comment">/* #@range_begin(eratosthenes_sieve_test) */</span>
+              take(<span class="hljs-number">10</span>)(primes)
+              <span class="hljs-comment">/* #@range_end(eratosthenes_sieve_test) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(eratosthenes_sieve_test_result) */</span>
+              [ <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">11</span>, <span class="hljs-number">13</span>, <span class="hljs-number">17</span>, <span class="hljs-number">19</span>, <span class="hljs-number">23</span>, <span class="hljs-number">29</span> ]
+              <span class="hljs-comment">/* #@range_end(eratosthenes_sieve_test_result) */</span>
+            );
+            expect(
+              take(<span class="hljs-number">50</span>)(primes)
+            ).to.eql(
+              [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>,<span class="hljs-number">17</span>,<span class="hljs-number">19</span>,<span class="hljs-number">23</span>,<span class="hljs-number">29</span>,<span class="hljs-number">31</span>,<span class="hljs-number">37</span>,<span class="hljs-number">41</span>,<span class="hljs-number">43</span>,<span class="hljs-number">47</span>,<span class="hljs-number">53</span>,<span class="hljs-number">59</span>,<span class="hljs-number">61</span>,<span class="hljs-number">67</span>,<span class="hljs-number">71</span>,<span class="hljs-number">73</span>,<span class="hljs-number">79</span>,<span class="hljs-number">83</span>,<span class="hljs-number">89</span>,<span class="hljs-number">97</span>,<span class="hljs-number">101</span>,<span class="hljs-number">103</span>,<span class="hljs-number">107</span>,<span class="hljs-number">109</span>,<span class="hljs-number">113</span>,<span class="hljs-number">127</span>,<span class="hljs-number">131</span>,<span class="hljs-number">137</span>,<span class="hljs-number">139</span>,<span class="hljs-number">149</span>,<span class="hljs-number">151</span>,<span class="hljs-number">157</span>,<span class="hljs-number">163</span>,<span class="hljs-number">167</span>,<span class="hljs-number">173</span>,<span class="hljs-number">179</span>,<span class="hljs-number">181</span>,<span class="hljs-number">191</span>,<span class="hljs-number">193</span>,<span class="hljs-number">197</span>,<span class="hljs-number">199</span>,<span class="hljs-number">211</span>,<span class="hljs-number">223</span>,<span class="hljs-number">227</span>,<span class="hljs-number">229</span>]
+            );
+            next();
+          });
+        });
+      });
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -2768,13 +3450,13 @@
             },
             <span class="hljs-comment">/* 預金を預ける関数 */</span>
             deposit: (amount) =&gt; {
-              <span class="hljs-comment">/* 代入でお金を預ける */</span>
+              <span class="hljs-comment">/* 代入で残高を更新する */</span>
               balance = balance + amount;
               <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
             },
             <span class="hljs-comment">/* 預金を引き出す関数 */</span>
             withdraw: (amount) =&gt; {
-              <span class="hljs-comment">/* 代入でお金を引き出す */</span>
+              <span class="hljs-comment">/* 代入で残高を更新する */</span>
               balance = balance - amount;
               <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
             }
@@ -2873,13 +3555,12 @@
         <span class="hljs-comment">/* お金を引き出してから、預金する */</span>
         expect(
           account.commit(theAcount)(
-            [account.withdraw(<span class="hljs-number">200</span>), <span class="hljs-comment">/* 一連の取り引きを実行する */</span>
-             account.deposit(<span class="hljs-number">100</span>)] 
+            [account.withdraw(<span class="hljs-number">200</span>)] <span class="hljs-comment">/* 取り引きを実行する */</span>
           )
         ).to.eql(
-          <span class="hljs-number">900</span>
+          <span class="hljs-number">800</span>
         );
-        <span class="hljs-comment">/* お金を引き出すのみ */</span>
+        <span class="hljs-comment">/* 連続してお金を引き出す */</span>
         expect(
           account.commit(theAcount)( <span class="hljs-comment">/* 先ほどの口座を再利用する */</span>
             [account.withdraw(<span class="hljs-number">10</span>), 
@@ -3081,11 +3762,11 @@
         </li>
         
         
-        <li id="section-26">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -3096,11 +3777,11 @@
         </li>
         
         
-        <li id="section-27">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -3144,35 +3825,153 @@
           }
         };
       };
-      it(<span class="hljs-string">'succ関数の性質テスト'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* 配列のall関数 */</span>
-        <span class="hljs-keyword">var</span> all = (array) =&gt; {
-          <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-            <span class="hljs-keyword">return</span> accumulator &amp;&amp; item;
-          },<span class="hljs-literal">true</span>);
-        };
-        <span class="hljs-comment">/* #@range_begin(succ_property_test) */</span>
-        <span class="hljs-comment">/* ストリームのmap関数 */</span>
-        <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-          <span class="hljs-keyword">return</span> (aStream) =&gt; {
-            <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-            <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
-              <span class="hljs-keyword">return</span> map(transform)(aStream[<span class="hljs-number">1</span>]());
-            }];
+      describe(<span class="hljs-string">'succ関数の性質テスト'</span>, () =&gt; {
+        it(<span class="hljs-string">'遅延バージョン'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (aStream) =&gt; {
+              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
+              };
+            };
           };
-        };
-        <span class="hljs-comment">/* 検証の対象となる命題 */</span>
-        <span class="hljs-keyword">var</span> proposition = (x) =&gt; {
-          <span class="hljs-keyword">return</span> succ(<span class="hljs-number">0</span>) + succ(x) === succ(succ(x));
-        };
-        <span class="hljs-comment">/* 100個の整数について命題が正しいかをテストする */</span>
-        expect(
-          all(take(<span class="hljs-number">100</span>)(map(proposition)(enumFrom(<span class="hljs-number">0</span>))))
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(succ_property_test) */</span>
-        next();
+          <span class="hljs-keyword">var</span> scanl = (aStream) =&gt; {
+            <span class="hljs-keyword">return</span> (glue) =&gt; {
+              <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+                <span class="hljs-keyword">return</span> zipWith(glue)(aStream[<span class="hljs-number">1</span>](), out);
+              }];
+              <span class="hljs-keyword">return</span> out;
+            };
+          };
+          <span class="hljs-keyword">var</span> conjunction = (x,y) =&gt; {
+            <span class="hljs-keyword">return</span> x &amp;&amp; y;  <span class="hljs-comment">// 論理和をとる</span>
+          };
+          <span class="hljs-keyword">var</span> zipWith = (glue) =&gt; {
+            <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
+              <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> []; 
+              } 
+              <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> []; 
+              } 
+              <span class="hljs-keyword">return</span> [glue(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
+                <span class="hljs-keyword">return</span> zipWith(glue)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
+              }];
+            };
+          };
+          <span class="hljs-keyword">var</span> listAnd = (aStream) =&gt; {
+            <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+              <span class="hljs-keyword">return</span> zipWith((x,y) =&gt; { 
+                <span class="hljs-keyword">return</span> x &amp;&amp; y;
+              })(aStream[<span class="hljs-number">1</span>](), out);
+            }];
+            <span class="hljs-keyword">return</span> out;
+          };
+          <span class="hljs-comment">/* #@range_begin(succ_property) */</span>
+          <span class="hljs-comment">/* ストリームのmap関数 */</span>
+          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+            <span class="hljs-keyword">return</span> (astream) =&gt; {
+              <span class="hljs-keyword">var</span> head = astream[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
+                <span class="hljs-keyword">return</span> map(transform)(astream[<span class="hljs-number">1</span>]());
+              }];
+            };
+          };
+          <span class="hljs-comment">/* ストリームの先頭から引数n分だけ取り出すtake関数 */</span>
+          <span class="hljs-keyword">var</span> take = (n) =&gt; {
+            <span class="hljs-keyword">return</span> (aStream) =&gt; {
+              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+                  <span class="hljs-keyword">return</span> take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
+                }];
+              }
+            };
+          };
+          <span class="hljs-comment">/* ストリームの全ての要素がtrueであるかを判定するall関数 */</span>
+          <span class="hljs-keyword">var</span> all = (aStream) =&gt; {
+            <span class="hljs-keyword">var</span> allHelper = (aStream, accumulator) =&gt; {
+             <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+             <span class="hljs-keyword">var</span> newAccumulator = accumulator &amp;&amp; head;
+             <span class="hljs-keyword">if</span>(aStream[<span class="hljs-number">1</span>]() === <span class="hljs-literal">null</span>){
+               <span class="hljs-keyword">return</span> newAccumulator;
+             } <span class="hljs-keyword">else</span> {
+               <span class="hljs-keyword">return</span> allHelper(aStream[<span class="hljs-number">1</span>](), newAccumulator);
+             } 
+            };
+            <span class="hljs-keyword">return</span> allHelper(aStream, <span class="hljs-literal">true</span>);
+          };
+          <span class="hljs-comment">/* 検証の対象となる命題 */</span>
+          <span class="hljs-keyword">var</span> proposition = (n) =&gt; {
+            <span class="hljs-keyword">return</span> succ(<span class="hljs-number">0</span>) + succ(n) === succ(succ(n));
+          };
+          <span class="hljs-comment">/* #@range_end(succ_property) */</span>
+          <span class="hljs-comment">/* #@range_begin(succ_property_test) */</span>
+          <span class="hljs-comment">/* 100個の整数について命題が正しいかをテストする */</span>
+          expect(
+            all(
+              take(<span class="hljs-number">100</span>)(
+                map(proposition)(enumFrom(<span class="hljs-number">0</span>))
+              )
+            )
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          <span class="hljs-comment">/* #@range_end(succ_property_test) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>elemAt(100)(
+  compose(listAnd, map(proposition))(enumFrom(0))
+)
+elemAt(100)(
+  listAnd((map(proposition)(enumFrom(0))))
+)
+elemAt(100)(
+  scanl((map(proposition)(enumFrom(0))))(conjunction)
+)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          next();
+        });
+        it(<span class="hljs-string">'正格バージョン'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* ストリームのmap関数 */</span>
+          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+            <span class="hljs-keyword">return</span> (astream) =&gt; {
+              <span class="hljs-keyword">var</span> head = astream[<span class="hljs-number">0</span>];
+              <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
+                <span class="hljs-keyword">return</span> map(transform)(astream[<span class="hljs-number">1</span>]());
+              }];
+            };
+          };
+          <span class="hljs-comment">/* 配列のall関数 */</span>
+          <span class="hljs-keyword">var</span> all = (array) =&gt; {
+            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
+              <span class="hljs-keyword">return</span> accumulator &amp;&amp; item;
+            },<span class="hljs-literal">true</span>);
+          };
+          <span class="hljs-comment">/* 検証の対象となる命題 */</span>
+          <span class="hljs-keyword">var</span> proposition = (x) =&gt; {
+            <span class="hljs-keyword">return</span> succ(<span class="hljs-number">0</span>) + succ(x) === succ(succ(x));
+          };
+          <span class="hljs-comment">/* 100個の整数について命題が正しいかをテストする */</span>
+          expect(
+            all(take(<span class="hljs-number">100</span>)(map(proposition)(enumFrom(<span class="hljs-number">0</span>))))
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          next();
+        });
       });
     });
   });

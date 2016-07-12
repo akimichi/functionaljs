@@ -13,6 +13,7 @@ var socket = net.connect({
  taraiサーバと接続したときに起動されるconnectイベントハンドラ 
  */
 socket.on('connect', () => {
+  // コンソールの標準入力を読み出すためのreadableイベントハンドラ
   process.stdin.on('readable', () => {
     var chunk = process.stdin.read();
     if (chunk !== null) {

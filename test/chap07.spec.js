@@ -3557,14 +3557,6 @@ describe('クロージャーを使う', () => {
               }
             };
           };
-          var not = (arg) => {
-            return ! arg;
-          };
-          // var remove = (predicate) => {
-          //   return (aStream) => {
-          //     return stream.filter(aStream)(compose(not,predicate));
-          //   };
-          // };
           // #### エラトステネスのふるいによる素数の生成 
           // [![IMAGE ALT TEXT](http://img.youtube.com/vi/1NzrrU8BawA/0.jpg)](http://www.youtube.com/watch?v=1NzrrU8BawA "エラトステネスのふるいの動画")
           /* #@range_begin(eratosthenes_sieve) */
@@ -3885,8 +3877,8 @@ describe('関数を渡す', () => {
         next();
       });
     });
-    describe('リストの再帰関数', () => {
-      it('リストの合計', (next) => {
+    describe('コールバックによるリストの再帰関数', () => {
+      it('リストのsum', (next) => {
         /* #@range_begin(list_sum) */
         var sum = (alist) => {
           return (accumulator) => {
@@ -3900,13 +3892,13 @@ describe('関数を渡す', () => {
             });
           };
         };
+        /* #@range_end(list_sum) */
         var numberList = list.cons(1, list.cons(2,list.cons(3,list.empty())));
         expect(
           sum(numberList)(0)
         ).to.eql(
           6
         );
-        /* #@range_end(list_sum) */
         /* #@range_begin(list_sum_callback) */
         var sumWithCallBack = (alist) => {
           return (accumulator) => {
@@ -3916,9 +3908,7 @@ describe('関数を渡す', () => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return sumWithCallBack(tail)(
-                    CALLBACK(head)(accumulator)
-                  )(CALLBACK);
+                  return CALLBACK(head)(sumWithCallBack(tail)(accumulator)(CALLBACK));
                 }
               });
             };
@@ -3927,9 +3917,35 @@ describe('関数を渡す', () => {
         /* #@range_end(list_sum_callback) */
         /* #@range_begin(list_sum_callback_test) */
         /* add関数は、sumWithCallBack関数に渡すコールバック関数 */
-        var add = (n) => {  
+        var numbers = list.cons(1, 
+                                list.cons(2,
+                                          list.cons(3,
+                                                    list.empty())));
+        var callback = (n) => {  
           return (m) => {
             return n + m;
+          };
+        };
+        expect(
+          sumWithCallBack(numbers)(0)(callback)
+        ).to.eql(
+          6  // 1 + 2 + 3 = 6
+        );
+        /* #@range_end(list_sum_callback_test) */
+        next();
+      });
+      it('リストのlength', (next) => {
+        /* #@range_begin(list_length) */
+        var length = (alist) => {
+          return (accumulator) => {
+            return match(alist,{
+              empty: (_) => {
+                return accumulator;
+              },
+              cons: (head, tail) => {
+                return length(tail)(accumulator + 1);
+              }
+            });
           };
         };
         var numbers = list.cons(1, 
@@ -3937,14 +3953,11 @@ describe('関数を渡す', () => {
                                           list.cons(3,
                                                     list.empty())));
         expect(
-          sumWithCallBack(numbers)(0)(add)
+          length(numbers)(0)
         ).to.eql(
-          6  // 1 + 2 + 3 = 6
+          3
         );
-        /* #@range_end(list_sum_callback_test) */
-        next();
-      });
-      it('リストの長さ', (next) => {
+        /* #@range_end(list_length) */
         /* #@range_begin(list_length_callback) */
         var lengthWithCallBack = (alist) => {
           return (accumulator) => {
@@ -3954,9 +3967,7 @@ describe('関数を渡す', () => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return lengthWithCallBack(tail)(
-                    CALLBACK(accumulator)
-                  )(CALLBACK);
+                  return CALLBACK(head)(lengthWithCallBack(tail)(accumulator)(CALLBACK));
                 }
               });
             };
@@ -3965,19 +3976,126 @@ describe('関数を渡す', () => {
         /* #@range_end(list_length_callback) */
         /* #@range_begin(list_length_callback_test) */
         /* lengthWithCallBack関数に渡すコールバック関数 */
-        var succ = (n) => { 
-          return n + 1;
+        var callback = (n) => {  
+          return (m) => {
+            return 1 + m;
+          };
+        };
+        expect(
+          lengthWithCallBack(numbers)(0)(callback)
+        ).to.eql(
+          3
+        );
+        /* #@range_end(list_length_callback_test) */
+        next();
+      });
+      it('リストのproduct', (next) => {
+        var productWithCallBack = (alist) => {
+          return (accumulator) => {
+            return (CALLBACK) => {
+              return match(alist,{
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return CALLBACK(head)(productWithCallBack(tail)(accumulator)(CALLBACK));
+                }
+              });
+            };
+          };
+        };
+        var callback = (n) => {  
+          return (m) => {
+            return n * m;
+          };
         };
         var numbers = list.cons(1, 
                                 list.cons(2,
                                           list.cons(3,
                                                     list.empty())));
         expect(
-          lengthWithCallBack(numbers)(0)(succ)
+          productWithCallBack(numbers)(1)(callback)
         ).to.eql(
-          3
+          6
         );
-        /* #@range_end(list_length_callback_test) */
+        next();
+      });
+      it('リストのreverse', (next) => {
+        var reverserWithCallBack = (alist) => {
+          return (accumulator) => {
+            return (CALLBACK) => {
+              return match(alist,{
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return CALLBACK(head)(reverserWithCallBack(tail)(accumulator)(CALLBACK));
+                }
+              });
+            };
+          };
+        };
+        var callback = (x) => {
+          return (xs) => {
+            return list.match(xs, {
+              empty: (_) => {
+                return list.cons(x, list.empty());
+              },
+              cons: (head, tail) => {
+                return list.cons(head, callback(x)(tail)); 
+              }
+            });
+          };
+        };
+        var numbers = list.cons(1, 
+                                list.cons(2,
+                                          list.cons(3,
+                                                    list.empty())));
+        expect(
+          list.toArray(reverserWithCallBack(numbers)(list.empty())(callback))
+        ).to.eql(
+          [3,2,1]
+        );
+        next();
+      });
+      it('リストのall', (next) => {
+        var allWithCallBack = (alist) => {
+          return (accumulator) => {
+            return (CALLBACK) => {
+              return match(alist,{
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return CALLBACK(head)(allWithCallBack(tail)(accumulator)(CALLBACK));
+                }
+              });
+            };
+          };
+        };
+        var callback = (n) => {  
+          return (m) => {
+            return n && m;
+          };
+        };
+        var allTrueList = list.cons(true, 
+                                list.cons(true,
+                                          list.cons(true,
+                                                    list.empty())));
+        expect(
+          allWithCallBack(allTrueList)(true)(callback)
+        ).to.eql(
+          true
+        );
+        var notAllTrueList = list.cons(true, 
+                                list.cons(true,
+                                          list.cons(false,
+                                                    list.empty())));
+        expect(
+          allWithCallBack(notAllTrueList)(true)(callback)
+        ).to.eql(
+          false
+        );
         next();
       });
     });
@@ -4032,6 +4150,29 @@ describe('関数を渡す', () => {
         ["A","B"]
       );
       /* #@range_end(stream_map_test) */
+      next();
+    });
+  });
+  // #### 非同期処理にコールバック関数を渡す 
+  describe('非同期処理にコールバック関数を渡す', () => {
+    it("たらい回し関数", (next) => {
+      /* #@range_begin(tarai_function) */
+      /* たらい回し関数 */
+      var tarai = (x,y,z) => {
+        if(x > y) {
+          return tarai(tarai(x - 1, y, z), 
+                       tarai(y - 1, z, x), 
+                       tarai(z - 1, x, y));
+        } else {
+          return y;
+        }
+      };
+      expect(
+        tarai(1 * 2, 1, 0)
+      ).to.eql(
+        2 
+      );
+      /* #@range_end(tarai_function) */
       next();
     });
   });

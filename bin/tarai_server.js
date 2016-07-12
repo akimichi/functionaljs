@@ -1,8 +1,4 @@
-/* #@range_begin(tarai_server) */
 "use strict";
-
-var net = require('net');
-var localhost = '127.0.0.1';
 
 /* tarai関数 */
 var tarai = (x,y,z) => {
@@ -14,26 +10,29 @@ var tarai = (x,y,z) => {
     return y;
   }
 };
+/* #@range_begin(tarai_server) */
+var net = require('net');
+var localhost = '127.0.0.1';
 
 net.createServer((socket) => {
-  /* 'data' イベントハンドラー */
-  socket.on('data', (incommingData) => {
+  /* dataイベントハンドラー */
+  socket.on('data', (incomingData) => {
     /* クライアントからデータを数値に変換します */
-    var number = parseInt(incommingData,10); 
+    var number = parseInt(incomingData,10); 
     console.log(number);
     /* tarai関数を計算して、クライアントに返します */
     socket.write(tarai(number * 2, number, 0) + '\r\n'); 
   });
-  /* 'close'イベントハンドラー */
+  /* closeイベントハンドラー */
   socket.on('close', (error) => {
     console.log("connection closed");
   });
 }).listen(3000, localhost);
 /* #@range_end(tarai_server) */
 
-var sleep = (sec) => {
-  var until = new Date().getTime() + (sec * 1000);
-  while (new Date().getTime() <= until) {
-    ;
-  }
-};
+// var sleep = (sec) => {
+//   var until = new Date().getTime() + (sec * 1000);
+//   while (new Date().getTime() <= until) {
+//     ;
+//   }
+// };

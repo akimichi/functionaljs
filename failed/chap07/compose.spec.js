@@ -4,11 +4,9 @@ var expect = require('expect.js');
 var util = require('util');
 
 it('加算と反数の合成は失敗する', (next) => {
-  var compose = (f) => {
-    return (g) => {
-      return (arg) =>{
-        return f(g(arg));
-      };
+  var compose = (f,g) => {
+    return (arg) => {
+      return f(g(arg));
     };
   };
   /* #@range_begin(compose_opposite_add) */
@@ -19,7 +17,7 @@ it('加算と反数の合成は失敗する', (next) => {
     return x + y;
   };
   expect(
-    compose(opposite)(add)(2,3)
+    compose(opposite,add)(2,3)
   ).to.eql(
     -5 // -(2 + 3) = -5
   );

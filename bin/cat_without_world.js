@@ -2,7 +2,6 @@
 
 /*
  $ node --harmony bin/cat.js test/resources/dream.txt
-
 */
 
 var pair = require('./pair');
@@ -18,16 +17,11 @@ var string = {
   isEmpty: (str) => {
     return str.length === 0;
   },
-  toArray: (str) => {
-    var glue = (item) => {
-      return (rest) => {
-        return [item].concat(rest);
-      };
-    };
+  toList: (str) => {
     if(string.isEmpty(str)) {
-      return [];
+      return list.empty();
     } else {
-      return [string.head(str)].concat(string.toArray(string.tail(str)));
+      return list.cons(string.head(str), string.toList(string.tail(str)));
     }
   }
 };
@@ -333,7 +327,7 @@ var cat_action =
   /* ファイルを読みこむ  */
   IO.flatMap(IO.readFile(path))((content) => { 
     /* 文字列を文字のリストに変換しておく */
-    var string_as_list = list.fromString(content); 
+    var string_as_list = string.toList(content); 
     /* putStrLnを実行する */
     return IO.flatMap(IO.putStrLn(string_as_list))((_) => { 
         return IO.done(_);

@@ -52,33 +52,43 @@ var match = (data, pattern) => {
 // 'string' module
 // ==============
 /* #@range_begin(string_module) */
+// 文字列用モジュール
 var string = {
+  /* 先頭文字を取得する */
   head: (str) => {
-    expect(str).to.a('string');
     return str[0];
   },
+  /* 後尾文字列を取得する */
   tail: (str) => {
-    expect(str).to.a('string');
     return str.substring(1);
   },
+  /* 空の文字列かどうかを判定する */
   isEmpty: (str) => {
     return str.length === 0;
   },
-  toArray: (str) => {
-    expect(str).to.a('string');
-    var glue = (item) => {
-      return (rest) => {
-        return [item].concat(rest);
-      };
-    };
+  /* 文字列を文字のリストに変換する */
+  toList: (str) => {
     if(string.isEmpty(str)) {
-      return [];
+      return list.empty();
     } else {
-      return [string.head(str)].concat(string.toArray(string.tail(str)));
+      return list.cons(string.head(str), string.toList(string.tail(str)));
     }
   }
 };
 /* #@range_end(string_module) */
+  // toArray: (str) => {
+  //   expect(str).to.a('string');
+  //   var glue = (item) => {
+  //     return (rest) => {
+  //       return [item].concat(rest);
+  //     };
+  //   };
+  //   if(string.isEmpty(str)) {
+  //     return [];
+  //   } else {
+  //     return [string.head(str)].concat(string.toArray(string.tail(str)));
+  //   }
+  // },
 
 it('stringのテスト', (next) => {
   expect(
@@ -91,11 +101,11 @@ it('stringのテスト', (next) => {
   ).to.eql(
     'bc'
   );
-  expect(
-    string.toArray("abc")
-  ).to.eql(
-    ['a','b','c']
-  );
+  // expect(
+  //   string.toArray("abc")
+  // ).to.eql(
+  //   ['a','b','c']
+  // );
   next();
 });
 
@@ -146,6 +156,16 @@ var list  = {
       }
     });
   },
+  /* #@range_begin(list_fromString) */
+  fromString: (str) => {
+    // expect(str).to.a('string');
+    if(string.isEmpty(str)) {
+      return list.empty();
+    } else {
+      return list.cons(string.head(str), list.fromString(string.tail(str)));
+    }
+  },
+  /* #@range_end(list_fromString) */
   /* append:: LIST[T] -> LIST[T] -> LIST[T] */
   // ~~~haskell
   // append [] ys = ys
@@ -321,16 +341,6 @@ var list  = {
       return list.append(accumulator)(list.cons(item, list.empty()));
     }, list.empty());
   },
-  /* #@range_begin(list_fromString) */
-  fromString: (str) => {
-    expect(str).to.a('string');
-    if(string.isEmpty(str)) {
-      return list.empty();
-    } else {
-      return list.cons(string.head(str), list.fromString(string.tail(str)));
-    }
-  },
-  /* #@range_end(list_fromString) */
   at: (alist) => {
     return (index) => {
       expect(index).to.a('number');
@@ -1201,7 +1211,8 @@ describe('カリー化で関数を渡す', () => {
         };
       };
       expect(
-        compose(opposite, addCurried(2))(3)
+        compose(opposite,
+                addCurried(2))(3)
       ).to.eql(
           -5
       );
@@ -1426,7 +1437,8 @@ describe('カリー化で関数を渡す', () => {
     it('合成によるlast', (next) => {
       /* #@range_begin(list_last_compose) */
       var last = (alist) => {
-        return compose(list.head,list.reverse)(alist);
+        return compose(list.head,
+                       list.reverse)(alist);
       };
       /* #@range_end(list_last_compose) */
       var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
@@ -1456,7 +1468,8 @@ describe('カリー化で関数を渡す', () => {
       };
       /* #@range_begin(abstract_length) */
       var length = (alist) => {
-        return compose(sum,flip(list.map)(alwaysOne))(alist);
+        return compose(sum,
+                       flip(list.map)(alwaysOne))(alist);
       };
       /****** テスト *******/
       var alist = list.cons(1,
@@ -3014,8 +3027,7 @@ describe('クロージャーを使う', () => {
         /* #@range_end(immutable_object_type_curried) */
         /* #@range_begin(immutable_object_type_curried_test) */
         var robots = compose(
-          object.set("C3PO", "Star Wars"),
-          object.set("HAL9000","2001: a space odessay")
+          object.set("C3PO", "Star Wars"),object.set("HAL9000","2001: a space odessay")
         )(object.empty);
 
         expect(
@@ -4820,13 +4832,13 @@ describe('モナドを作る', () => {
         succ(1)
       );
       /* #@range_end(identity_monad_flatMap_test) */
-      /* #@range_begin(flatMap_and_composition) */
       var succ = (n) => {
         return n + 1;
       };
       var double = (m) => {
         return m * 2;
       };
+      /* #@range_begin(flatMap_and_composition) */
       expect(
         ID.flatMap(ID.unit(1))((one) => {    
           /* succ関数を適用する */
@@ -4934,39 +4946,44 @@ describe('モナドを作る', () => {
     var id = (any) => {
       return any;
     };
-    var match = (exp, pattern) => {
-      return exp.call(pattern, pattern);
-    };
+    // var match = (exp, pattern) => {
+    //   return exp.call(pattern, pattern);
+    // };
     describe('Maybeモナドを作る', () => {
       /* #@range_begin(algebraic_type_maybe) */
-      var just = (value) => {
-        return (pattern) => {
-          return pattern.just(value);
-        };
-      };
-      var nothing = (_) => {
-        return (pattern) => {
-          return pattern.nothing(_);
-        };
+      var maybe = {
+        match: (exp, pattern) => {
+          return exp.call(pattern, pattern);
+        },
+        just: (value) => {
+          return (pattern) => {
+            return pattern.just(value);
+          };
+        },
+        nothing: (_) => {
+          return (pattern) => {
+            return pattern.nothing(_);
+          };
+        }
       };
       /* #@range_end(algebraic_type_maybe) */
       var MAYBE = {
         /* #@range_begin(maybe_monad) */
         /* unit:: T => MAYBE[T] */
         unit: (value) => {
-          return just(value);
+          return maybe.just(value);
         },
         /* flatMap:: MAYBE[T] => FUN[T => MAYBE[U]] => MAYBE[U] */
         flatMap: (instanceM) => {
           return (transform) => {
-            return match(instanceM,{
+            return maybe.match(instanceM,{
               /* 正常な値の場合は、transform関数を計算する */
               just: (value) => { 
                 return transform(value);
               },
               /* エラーの場合は、何もしない */
               nothing: (_) => { 
-                return nothing(_);
+                return maybe.nothing();
               }
             });
           };
@@ -4974,7 +4991,7 @@ describe('モナドを作る', () => {
         /* ヘルパー関数  */
         getOrElse: (instanceM) => {
           return (alternate) => {
-            return match(instanceM,{
+            return maybe.match(instanceM,{
               just: (value) => {
                 return value;
               },
@@ -4987,9 +5004,9 @@ describe('モナドを作る', () => {
         /* #@range_end(maybe_monad) */
         /* #@range_begin(maybe_monad_helper) */
         isEqual: (maybeA,maybeB) => {
-          return match(maybeA,{
+          return maybe.match(maybeA,{
             just: (valueA) => {
-              return match(maybeB,{
+              return maybe.match(maybeB,{
                 just: (valueB) => {
                   return (valueA === valueB);
                 },
@@ -4999,7 +5016,7 @@ describe('モナドを作る', () => {
               });
             },
             nothing: (_) => {
-              return match(maybeB,{
+              return maybe.match(maybeB,{
                 just: (_) => {
                   return false;
                 },
@@ -5012,12 +5029,12 @@ describe('モナドを作る', () => {
         },
         map: (maybeInstance) => {
           return (transform) => {
-            return match(maybeInstance,{
+            return maybe.match(maybeInstance,{
               just: (value) => {
-                return maybe.unit(transform(value));
+                return MAYBE.unit(transform(value));
               },
               nothing: (_) => {
-                return nothing(_);
+                return maybe.nothing(_);
               }
             });
           };
@@ -5026,7 +5043,7 @@ describe('モナドを作る', () => {
       /* #@range_end(maybe_monad_helper) */
       it("map id == id", (next) => {
         /* #@range_begin(maybe_monad_test) */
-        var justOne = just(1);
+        var justOne = maybe.just(1);
         expect(
           MAYBE.isEqual(MAYBE.map(justOne)(id),
                         id(justOne))
@@ -5034,8 +5051,8 @@ describe('モナドを作る', () => {
           true
         );
         expect(
-          MAYBE.isEqual(MAYBE.map(nothing())(id),
-                        id(nothing()))
+          MAYBE.isEqual(MAYBE.map(maybe.nothing())(id),
+                        id(maybe.nothing()))
         ).to.be(
           true
         );
@@ -5052,15 +5069,16 @@ describe('モナドを作る', () => {
             });
           });
         };
-        var justOne = just(1);
-        var justTwo = just(2);
+        var justOne = maybe.just(1);
+        var justTwo = maybe.just(2);
+
         expect(
-          MAYBE.getOrElse(add(justOne,justOne))(null)
+          MAYBE.getOrElse(add(justOne,justOne))(null) 
         ).to.eql(
-          MAYBE.getOrElse(justTwo)(null)
+          2
         );
         expect(
-          MAYBE.getOrElse(add(justOne,nothing()))(null)
+          MAYBE.getOrElse(add(justOne,maybe.nothing()))(null)
         ).to.eql(
           null
         );
@@ -5171,7 +5189,7 @@ describe('モナドを作る', () => {
         }
         /* #@range_end(io_monad_definition_with_world_helper_function) */
       }; // IO monad
-      var println = (message) => {
+      IO.println = (message) => {
         return (world) => { // IOモナドを返す
           console.log(message);
           return IO.unit(null)(world);
@@ -5181,7 +5199,7 @@ describe('モナドを作る', () => {
       /* 初期の外界に null をバインドする */
       var initialWorld = null; 
       expect(
-        IO.run(println("this is a test"))(initialWorld)
+        IO.run(IO.println("this is a test"))(initialWorld)
       ).to.eql(
         null
       );

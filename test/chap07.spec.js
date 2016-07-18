@@ -959,7 +959,7 @@ describe('カリー化で関数を渡す', () => {
   it('カリー化されていない multipleOf関数', (next) => {
     /* #@range_begin(multipleOf_uncurried) */
     var multipleOf = (n,m) => {
-      if(m % n === 0) {
+      if(m % n === 0) { /* m / n の余りがゼロかどうか */
         return true;
       } else {
         return false;
@@ -968,16 +968,16 @@ describe('カリー化で関数を渡す', () => {
     /* #@range_end(multipleOf_uncurried) */
     /* #@range_begin(multipleOf_uncurried_test) */
     expect(
-      multipleOf(2,4)     /* 2の倍数は4である */
+      multipleOf(2,4)     /* 4は、2の倍数である */
     ).to.eql(
       true
     );
+    /* #@range_end(multipleOf_uncurried_test) */
     expect(
       multipleOf(3,4)     /* 3の倍数は4ではない */
     ).to.eql(
       false
     );
-    /* #@range_end(multipleOf_uncurried_test) */
     next();
   });
   it('カリー化による関数の部品化', (next) => {
@@ -994,16 +994,16 @@ describe('カリー化で関数を渡す', () => {
     /* #@range_end(multipleOf_curried) */
     /* #@range_begin(multipleOf_curried_test) */
     expect(
-      multipleOf(2)(4)    /* 2の倍数は4である */
+      multipleOf(2)(4)   /* 関数適用を2回実行する */ 
     ).to.eql(
       true
     );
+    /* #@range_end(multipleOf_curried_test) */
     expect(
       multipleOf(3)(4)    /* 3の倍数は4ではない */
     ).to.eql(
       false
     );
-    /* #@range_end(multipleOf_curried_test) */
     /* #@range_begin(multipleOf_curried_partilly_applied) */
     var twoFold = multipleOf(2);
     expect(
@@ -1140,12 +1140,10 @@ describe('カリー化で関数を渡す', () => {
     var g = (x) => {
       return x - 2;
     };
-    var fg = compose(f,g); // f . g で合成された関数
-    
     expect(
-      fg(2) // 2^2  -4 * 2 + 5 
+      compose(f,g)(2) // f . g で合成された関数
     ).to.eql(
-      1
+      f(g(2))       // 合成せずに順次実行した場合
     );
     /* #@range_end(compose_test) */
     var subtract = (n) => {
@@ -1786,7 +1784,6 @@ describe('カリー化で関数を渡す', () => {
 // ## コンビネータで関数を組み合わせる
 describe('コンビネータで関数を組み合わせる', () => {
   it('multipleOfコンビネータ', (next) => {
-    /* #@range_begin(multipleOf_combinator) */
     var multipleOf = (n) => {
       return (m) => {
         if(m % n === 0) {
@@ -1796,7 +1793,8 @@ describe('コンビネータで関数を組み合わせる', () => {
         }
       };
     };
-    var even = multipleOf(2);
+    /* #@range_begin(multipleOf_combinator) */
+    var even = multipleOf(2); /* カリー化されたmultipleOf関数を使う */
     
     expect(
       even(2)
@@ -1819,9 +1817,10 @@ describe('コンビネータで関数を組み合わせる', () => {
     var even = multipleOf(2);
     /* #@range_begin(not_combinator) */
     /* not :: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
-    var not = (predicate) => { // predicate::FUN[NUM=>BOOL]
-      return (arg) => { // FUN[NUM=>BOOL]型を返す
-        return ! predicate(arg); // !演算子で論理を反転させる
+    var not = (predicate) => { // predicateの型はFUN[NUM=>BOOL]
+      /* 全体として、FUN[NUM=>BOOL]型を返す */
+      return (arg) => { // argの型はNUM
+        return ! predicate(arg); // !演算子で論理を反転させて、BOOLを返す
       };
     };
     /* #@range_end(not_combinator) */
@@ -1829,14 +1828,14 @@ describe('コンビネータで関数を組み合わせる', () => {
     var odd = not(even); // notコンビネータでodd関数を定義する
     /******** テスト ********/
     expect(
-      odd(2)
-    ).to.eql(
-      false
-    );
-    expect(
-      odd(3)
+      odd(3) // 3は奇数である
     ).to.eql(
       true
+    );
+    expect(
+      odd(2) // 2は奇数でない 
+    ).to.eql(
+      false
     );
     /* #@range_end(not_combinator_test) */
     /* #@range_begin(and_or_combinator) */
@@ -3560,6 +3559,7 @@ describe('クロージャーを使う', () => {
           next();
         });
         it('無限の素数列',(next) => {
+          this.timeout(4000);
           var multipleOf = (n) => {
             return (m) => {
               if(n % m === 0) {

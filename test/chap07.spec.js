@@ -4855,7 +4855,7 @@ describe('関数を渡す', () => {
       });
       it("amb[1,2] + amb[3,4] = amb[4, 5, 5, 6]", (next) => {
         /* #@range_begin(amb_test) */
-        /* amb[1,2] + amb[3,4] = amb[4, 5, 5, 6] */
+        /* amb[1,2] + amb[3,4] = 4, 5, 5, 6 */
         var ambExp = exp.add(
           exp.amb(list.fromArray([exp.num(1),exp.num(2)])),
           exp.amb(list.fromArray([exp.num(3),exp.num(4)])));

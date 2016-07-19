@@ -4773,7 +4773,8 @@ describe('関数を渡す', () => {
                            /* #@range_begin(amb_calculate_amb) */
                            /* amb式を評価する */
                            amb: (choices) => {
-                              var calculateAmb = (choices, continuesOnSuccess, continuesOnFailure) => {
+                              var calculateAmb = (choices) => {
+                              // var calculateAmb = (choices, continuesOnSuccess, continuesOnFailure) => {
                                return list.match(choices, {
                                  /* 
                                     amb(list.empty()) の場合、
@@ -4789,12 +4790,14 @@ describe('関数を渡す', () => {
                                  cons: (head, tail) => { 
                                    return calculate(head, continuesOnSuccess, (_) => { 
                                      /* 失敗継続で後尾を計算する */
-                                     return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
+                                     return calculateAmb(tail);
+                                     // return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);
                                    });
                                  }
                                });
                              };
-                             return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
+                             return calculateAmb(choices);
+                             // return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);
                            }
                            /* #@range_end(amb_calculate_amb) */
                          });
@@ -4815,6 +4818,8 @@ describe('関数を渡す', () => {
         var continuesOnFailure = () => {
           return null;
         };
+
+        /* 内部に可変な状態suspendedComputationを持つクロージャーを返す */
         return () => {
           /* 中断された継続がなければ、最初から計算する */
           if(suspendedComputation === null) { 
@@ -4883,7 +4888,7 @@ describe('関数を渡す', () => {
         /* #@range_end(amb_test) */
         next();
       });
-      it("amb[1,2,3] + amb[10,20] = amb[4, 5, 5, 6]", (next) => {
+      it("amb[1,2,3] + amb[10,20] = amb[11,21,12,22,13,23]", (next) => {
         var ambExp = exp.add(
           exp.amb(list.fromArray([exp.num(1),exp.num(2),exp.num(3)])),
           exp.amb(list.fromArray([exp.num(10),exp.num(20)])));
@@ -4923,7 +4928,48 @@ describe('関数を渡す', () => {
         ).to.eql(
           null // これ以上の候補はないので、計算は終了
         );
-        /* #@range_end(amb_test) */
+        next();
+      });
+      it("amb[1,2] + amb[10,20,30] = amb[11,21,31,12,22,32]", (next) => {
+        var ambExp = exp.add(
+          exp.amb(list.fromArray([exp.num(1),exp.num(2)])),
+          exp.amb(list.fromArray([exp.num(10),exp.num(20),exp.num(30)])));
+        var calculator = driver(ambExp);
+        expect(
+          calculator()
+        ).to.eql(
+          11 // 1 + 10 = 11
+        );
+        expect(
+          calculator()
+        ).to.eql(
+          21 // 1 + 20 = 21
+        );
+        expect(
+          calculator()
+        ).to.eql(
+          31 // 1 + 30 = 31
+        );
+        expect(
+          calculator()
+        ).to.eql(
+          12 // 2 + 10 = 12
+        );
+        expect(
+          calculator()
+        ).to.eql(
+          22 // 2 + 20 = 22
+        );
+        expect(
+          calculator()
+        ).to.eql(
+          32 // 2 + 30 = 32
+        );
+        expect(
+          calculator()
+        ).to.eql(
+          null // これ以上の候補はないので、計算は終了
+        );
         next();
       });
     }); 

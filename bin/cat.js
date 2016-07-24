@@ -56,7 +56,7 @@ var IO = {
     return (world) => { // 外界を引数とする 
       var fs = require('fs');
       var content = fs.readFileSync(path, 'utf8');
-      return IO.unit(content)(world); // 外界を渡してIOアクションを実行する
+      return IO.unit(content)(world); // 外界を渡してIOアクションを返す
     };
   },
   /* println:: STRING => IO[]

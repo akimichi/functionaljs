@@ -264,17 +264,22 @@ var IO = {
   /* #@range_begin(IO_seq) */
   /* 
      IO.seq関数は、2つのIOアクションを続けて実行する
-     IO.seq:: IO[T] => IO[U] => IO[U] 
   */
-  seq: (instanceA) => {
-    return (instanceB) => {
-      /* 最初のIOアクションである instanceAを実行する */
-      IO.run(instanceA); 
-      /* 続いて、 instanceB を実行する */
-      return IO.unit(IO.run(instanceB)); 
+  // IO.seq:: IO[T] => IO[U] => IO[U] 
+  seq: (actionA) => {
+    return (actionB) => {
+      return IO.unit(IO.run(IO.flatMap(actionA)((_) => {
+        return IO.flatMap(actionB)((_) => {
+          return IO.done();
+        });
+      })));
     };
   },
   /* #@range_end(IO_seq) */
+      // /* 最初のIOアクションである instanceAを実行する */
+      // IO.run(instanceA); 
+      // /* 続いて、 instanceB を実行する */
+      // return IO.unit(IO.run(instanceB)); 
   /* #@range_begin(IO_putChar) */
   /* IO.putChar:: CHAR => IO[] */
   /* IO.putChar関数は、一文字を出力する */
@@ -326,16 +331,15 @@ IO.run(composed_action); // 合成されたIOアクションを実行する
 // #@range_begin(run_putStrLn)
 var path = process.argv[2];
 
-var cat_action = 
-  /* ファイルを読みこむ  */
-  IO.flatMap(IO.readFile(path))((content) => { 
-    /* 文字列を文字のリストに変換しておく */
-    var string_as_list = string.toList(content); 
-    /* putStrLnを実行する */
-    return IO.flatMap(IO.putStrLn(string_as_list))((_) => { 
-        return IO.done(_);
-  });
-});
+/* ファイルをcontentに読みこむ  */
+var cat = IO.flatMap(IO.readFile(path))((content) => {  
+  /* 文字列を文字のリストに変換しておく */
+  var string_as_list = string.toList(content); 
+  /* putStrLnでコンソール画面に出力する */
+  return IO.flatMap(IO.putStrLn(string_as_list))((_) => {
+     return IO.done(_);
+   });
+ });
 
-IO.run(cat_action); // 合成されたIOアクションを実行する
+IO.run(cat); // 合成されたIOアクションを実行する
 // #@range_end(run_putStrLn)

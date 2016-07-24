@@ -71,7 +71,8 @@ var string = {
     if(string.isEmpty(str)) {
       return list.empty();
     } else {
-      return list.cons(string.head(str), string.toList(string.tail(str)));
+      return list.cons(string.head(str), 
+                       string.toList(string.tail(str)));
     }
   }
 };
@@ -1403,15 +1404,15 @@ describe('カリー化で関数を渡す', () => {
       /* #@range_begin(list_last_recursive) */
       var last = (alist) => {
         return match(alist, {
-          empty: (_) => {
+          empty: (_) => { // alistが空の場合
             return null;
           },
-          cons: (head, tail) => {
+          cons: (head, tail) => { // alistが空でない場合
             return match(tail, {
-              empty: (_) => {
+              empty: (_) => { // alistの要素がただ1個の場合
                 return head;
               },
-              cons: (head, _) => {
+              cons: (_, __) => {
                 return last(tail);
               }
             });
@@ -3939,7 +3940,7 @@ describe('関数を渡す', () => {
                     return accumulator;
                   },
                   cons: (head, tail) => {
-                    return CALLBACK(head)(
+                    return CALLBACK(head)( // コールバック関数を呼び出す
                       list.sumWithCallBack(tail)(accumulator)(CALLBACK)
                     );
                   }
@@ -4390,7 +4391,7 @@ describe('関数を渡す', () => {
         /* list.find関数は、条件に合致した要素をリストから探す */
         find:  (alist) => {
           return (predicate) => { // 要素を判定する述語関数
-            return foldr(alist)(null)((item) => {
+            return foldr(alist)(null)((item) => { // foldrを利用する
               return (accumulator) => {
                 /* 要素が見つかった場合、その要素を返す */
                 if(predicate(item) === true) { 
@@ -4978,10 +4979,39 @@ describe('関数を渡す', () => {
 
 // ## モナドを作る
 describe('モナドを作る', () => {
+  describe('モナドの原理', () => {
+    it("Kleisli合成", (next) => {
+      var flatMap = (instanceM) => {
+        return (transform) => {
+          return transform(instanceM); 
+        };
+      };
+      var compose = (f, g) => {
+        return (x) => {
+          return flatMap(f(x))(g);
+        };
+      };
+      var f = (n) => {
+        return n + 1;
+      };
+      var g = (n) => {
+        return 2 * n;
+      };
+      var h = (n) => {
+        return - n;
+      };
+      expect(
+        compose(compose(f,g),h)(2)
+      ).to.eql(
+        compose(f,compose(g,h))(2)
+      );
+      next();
+    });
+  }); 
   // ### 恒等モナド
   describe('恒等モナド', () => {
-    /* #@range_begin(identity_monad) */
     var ID = {
+    /* #@range_begin(identity_monad) */
       /* unit:: T => ID[T] */
       unit: (value) => {  // 単なる identity関数と同じ
         return value;
@@ -4991,9 +5021,14 @@ describe('モナドを作る', () => {
         return (transform) => {
           return transform(instanceM); // 単なる関数適用と同じ
         };
+      },
+    /* #@range_end(identity_monad) */
+      compose: (f, g) => {
+        return (x) => {
+          return ID.flatMap(f(x))(g);
+        };
       }
     };
-    /* #@range_end(identity_monad) */
     it("恒等モナドのunit関数", (next) => {
       /* #@range_begin(identity_monad_unit_test) */
       expect(
@@ -5041,9 +5076,9 @@ describe('モナドを作る', () => {
     describe("恒等モナドのモナド則", () => {
       /* #@range_begin(identity_monad_laws) */
       it("flatMap(instanceM)(unit) === instanceM", (next) => {
-        /* #@range_begin(identity_monad_laws_right_unit_law) */
         /* flatMap(instanceM)(unit) === instanceM の一例 */
         var instanceM = ID.unit(1);
+        /* #@range_begin(identity_monad_laws_right_unit_law) */
         expect(
           ID.flatMap(instanceM)(ID.unit)
         ).to.eql(
@@ -5053,11 +5088,11 @@ describe('モナドを作る', () => {
         next();
       });
       it("flatMap(unit(value))(f) == f(value)", (next) => {
-        /* #@range_begin(identity_monad_laws_left_unit_law) */
         /* flatMap(unit(value))(f) === f(value) */
         var f = (n) => {
-          return n + 1;
+          return ID.unit(n + 1);
         };
+        /* #@range_begin(identity_monad_laws_left_unit_law) */
         expect(
           ID.flatMap(ID.unit(1))(f)
         ).to.eql(
@@ -5067,21 +5102,21 @@ describe('モナドを作る', () => {
         next();
       });
       it("flatMap(flatMap(instanceM)(f))(g) == flatMap(instanceM)((x) => flatMap(f(x))(g))", (next) => {
-        /* #@range_begin(identity_monad_laws_associative_law) */
         /* 
            flatMap(flatMap(instanceM)(f))(g) 
            === 
            flatMap(instanceM)((x) => { 
-           return flatMap(f(x))(g); } 
+              return flatMap(f(x))(g); } 
            } 
         */
-        var instanceM = ID.unit(1);
         var f = (n) => {
-          return ID.unit(n * n);
+          return ID.unit(n + 1);
         };
         var g = (n) => {
           return ID.unit(- n);
         };
+        var instanceM = ID.unit(1);
+        /* #@range_begin(identity_monad_laws_associative_law) */
         expect(
           ID.flatMap(ID.flatMap(instanceM)(f))(g)
         ).to.eql(
@@ -5091,6 +5126,25 @@ describe('モナドを作る', () => {
         );
         /* #@range_end(identity_monad_laws_associative_law) */
         /* #@range_end(identity_monad_laws) */
+        next();
+      });
+      it("恒等モナドのKleisli合成オペレータ", (next) => {
+        /* #@range_begin(identity_monad_kleisli) */
+        var f = (n) => {
+          return n + 1;
+        };
+        var g = (n) => {
+          return 2 * n;
+        };
+        var h = (n) => {
+          return - n;
+        };
+        expect(
+          ID.compose(ID.compose(f,g),h)(2)
+        ).to.eql(
+          ID.compose(f,ID.compose(g,h))(2)
+        );
+        /* #@range_end(identity_monad_kleisli) */
         next();
       });
     });
@@ -5384,7 +5438,7 @@ describe('モナドを作る', () => {
       /* 初期の外界に null をバインドする */
       var initialWorld = null; 
       expect(
-        IO.run(IO.println("this is a test"))(initialWorld)
+        IO.run(IO.println("我輩は猫である"))(initialWorld)
       ).to.eql(
         null
       );
@@ -5445,7 +5499,7 @@ describe('モナドを作る', () => {
         /* #@range_begin(run_println_without_world) */
         expect(
           /* 外界を指定する必要はありません */
-          IO.run(IO.println("this is another test")) 
+          IO.run(IO.println("名前はまだない")) 
         ).to.eql(
           null
         );

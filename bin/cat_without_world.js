@@ -5,7 +5,6 @@
 */
 
 var pair = require('./pair');
-// var list = require('./list');
 
 var string = {
   head: (str) => {
@@ -265,7 +264,7 @@ var IO = {
   /* #@range_begin(IO_seq) */
   /* 
      IO.seq関数は、2つのIOアクションを続けて実行する
-     IO.seq:: IO[T] => IO[U] => IO[V] 
+     IO.seq:: IO[T] => IO[U] => IO[U] 
   */
   seq: (instanceA) => {
     return (instanceB) => {
@@ -276,7 +275,7 @@ var IO = {
     };
   },
   /* #@range_end(IO_seq) */
-  /* #@range_begin(IO_putStrLn) */
+  /* #@range_begin(IO_putChar) */
   /* IO.putChar:: CHAR => IO[] */
   /* IO.putChar関数は、一文字を出力する */
   putChar: (character) => {
@@ -284,6 +283,8 @@ var IO = {
     process.stdout.write(character); 
     return IO.unit(null);
   },
+  /* #@range_end(IO_putChar) */
+  /* #@range_begin(IO_putStr) */
   /* IO.putStr:: LIST[CHAR] => IO[] */
   /* IO.putStr関数は、文字のリストを連続して出力する  */
   putStr: (alist) => {
@@ -296,6 +297,8 @@ var IO = {
       }
     });
   },
+  /* #@range_end(IO_putStr) */
+  /* #@range_begin(IO_putStrLn) */
   /* IO.putStrLn:: LIST[CHAR] => IO[] */
   /* IO.putStrLn関数は、文字列を出力し、最後に改行を出力する */
   putStrLn:(alist) => {

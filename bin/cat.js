@@ -11,14 +11,14 @@ var IO = {
   /* #@range_begin(io_monad_definition_with_world) */
   // unit:: T => IO[T]
   unit: (any) => {
-    return (world) =>  {  // 現在の外界
+    return (world) =>  {  // 引数worldは現在の外界
       return pair.cons(any, world);
     };
   },
   // flatMap:: IO[A] => (A => IO[B]) => IO[B]
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: A -> IO[B]
-      return (world) => {
+      return (world) => {  // 引数worldは現在の外界
         /* 現在の外界のなかで instanceAのIOアクションを実行する */
         var newPair = instanceA(world); 
         return pair.match(newPair,{

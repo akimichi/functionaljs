@@ -23,7 +23,7 @@ socket.on('connect', () => {
         /* 数値でない場合、大文字に変換する */
         process.stdout.write(chunk.toUpperCase()); 
       } else { 
-        /* 数値の場合、taraiサーバーに計算をリクエストする */
+        /* 数値の場合、taraiサーバに計算をリクエストする */
         socket.write(maybeInt + '\r\n'); 
       };
     }
@@ -31,7 +31,7 @@ socket.on('connect', () => {
 });
 
 /* 
- taraiサーバーからの計算結果を受け取るdataイベントハンドラ 
+ taraiサーバからの計算結果を受け取るdataイベントハンドラ 
  */
 socket.on('data', (chunk) => { 
   process.stdout.write(chunk.toString());

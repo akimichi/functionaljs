@@ -960,7 +960,7 @@ describe('カリー化で関数を渡す', () => {
   it('カリー化されていない multipleOf関数', (next) => {
     /* #@range_begin(multipleOf_uncurried) */
     var multipleOf = (n,m) => {
-      if(m % n === 0) { /* m / n の余りがゼロかどうか */
+      if(m % n === 0) { /* m / n の余りが 0 かどうか */
         return true;
       } else {
         return false;
@@ -2913,7 +2913,7 @@ describe('クロージャーを使う', () => {
             return _init;
           };
         };
-        /***** counterクロージャを用いたチャーチ数のテスト *****/
+        /***** counterクロージャーを用いたチャーチ数のテスト *****/
         expect(
           one(counter(0))() // oneはチャーチ数(@<list>{church_numeral})の1
         ).to.eql(
@@ -3517,9 +3517,9 @@ describe('クロージャーを使う', () => {
       });
       describe('streamからジェネレータを作る', () => {
         /* #@range_begin(generator_from_stream) */
-        var generate = (astream) => {
+        var generate = (aStream) => {
           /* いったんローカル変数にストリームを格納する */
-          var _stream = astream; 
+          var _stream = aStream; 
           /* ジェネレータ関数が返る */
           return (_) => {
             return stream.match(_stream, {
@@ -3934,7 +3934,7 @@ describe('関数を渡す', () => {
           /* #@range_begin(list_sum_callback) */
           sumWithCallBack: (alist) => {
             return (accumulator) => {
-              return (CALLBACK) => { // コールバック関数を受けとる
+              return (CALLBACK) => { // コールバック関数を受け取る
                 return match(alist,{
                   empty: (_) => {
                     return accumulator;
@@ -4003,7 +4003,7 @@ describe('関数を渡す', () => {
           /* #@range_begin(list_length_callback) */
           lengthWithCallBack: (alist) => {
             return (accumulator) => {
-              return (CALLBACK) => { // コールバック関数を受けとる
+              return (CALLBACK) => { // コールバック関数を受け取る
                 return match(alist,{
                   empty: (_) => {
                     return accumulator;
@@ -4209,9 +4209,9 @@ describe('関数を渡す', () => {
   });
   // #### 非同期処理にコールバック関数を渡す 
   describe('非同期処理にコールバック関数を渡す', () => {
-    it("たらい回し関数", (next) => {
+    it("たらいまわし関数", (next) => {
       /* #@range_begin(tarai_function) */
-      /* たらい回し関数 */
+      /* たらいまわし関数 */
       var tarai = (x,y,z) => {
         if(x > y) {
           return tarai(tarai(x - 1, y, z), 
@@ -4680,11 +4680,11 @@ describe('関数を渡す', () => {
         );
         /* #@range_begin(stream_find_cps_test) */
         // integers変数は、無限の整数ストリーム
-        var intergers = stream.enumFrom(0);
+        var integers = stream.enumFrom(0);
         
         /* 無限の整数列のなかから100を探す */
         expect(
-          find(intergers, (item) => {
+          find(integers, (item) => {
             return (item === 100); 
           }, failureContinuation, successContinuation)
         ).to.eql(

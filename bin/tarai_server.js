@@ -15,7 +15,7 @@ var net = require('net');
 var localhost = '127.0.0.1';
 
 net.createServer((socket) => {
-  /* dataイベントハンドラー */
+  /* dataイベントハンドラ */
   socket.on('data', (incomingData) => {
     /* クライアントからデータを数値に変換します */
     var number = parseInt(incomingData,10); 
@@ -23,7 +23,7 @@ net.createServer((socket) => {
     /* tarai関数を計算して、クライアントに返します */
     socket.write(tarai(number * 2, number, 0) + '\r\n'); 
   });
-  /* closeイベントハンドラー */
+  /* closeイベントハンドラ */
   socket.on('close', (error) => {
     console.log("connection closed");
   });

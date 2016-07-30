@@ -96,21 +96,21 @@ describe('抽象化への指向', () => {
   });
   describe('関数抽象の例としての高階関数', () => {
 
-    var sequence = [2,3,5,7,11,13];
+    var anArray = [2,3,5,7,11,13];
     it('for文によるsum', (next) => {
       /* #@range_begin(sum_for) */
-      var sequence = [2,3,5,7,11,13];
-      var sum = (seq) => {
+      var anArray = [2,3,5,7,11,13];
+      var sum = (array) => {
         var result = 0;
-        for(var index = 0; index < seq.length; index++){
-          result = result + seq[index];
+        for(var index = 0; index < array.length; index++){
+          result = result + array[index];
         }
         return result;
       };
-      sum(sequence);
+      sum(anArray);
       /* #@range_end(sum_for) */
       expect(
-        sum(sequence)
+        sum(anArray)
       ).to.eql(
         41
       );
@@ -118,17 +118,17 @@ describe('抽象化への指向', () => {
     });
     it('forEach関数によるsum', (next) => {
       /* #@range_begin(sum_forEach) */
-      var sum = (seq) => {
+      var sum = (array) => {
         /* 結果を格納する変数result */
         var result = 0;
-        seq.forEach((item) => {
+        array.forEach((item) => {
           result = result + item;
         });
         return result;
       };
       /* #@range_end(sum_forEach) */
       expect(
-        sum(sequence)
+        sum(anArray)
       ).to.eql(
         41
       );
@@ -136,14 +136,14 @@ describe('抽象化への指向', () => {
     });
     it('reduce関数によるsum', (next) => {
       /* #@range_begin(sum_reduce) */
-      var sum = (seq) => {
-        return seq.reduce((x,y) => {
+      var sum = (array) => {
+        return array.reduce((x,y) => {
           return x + y;
         });
       };
       /* #@range_end(sum_reduce) */
       expect(
-        sum(sequence)
+        sum(anArray)
       ).to.eql(
         41
       );

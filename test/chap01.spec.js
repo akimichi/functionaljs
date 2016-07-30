@@ -222,8 +222,8 @@ describe('関数型モデル', () => {
       );
       next();
     });
-    it('足し算 add の簡約', (next) => {
-      /* #@range_begin(add) */
+    it('再帰関数としてのadd', (next) => {
+      /* #@range_begin(recursive_add) */
       var succ = (n) => {
         return n + 1;
       };
@@ -239,13 +239,47 @@ describe('関数型モデル', () => {
           return add(succ(x), prev(y)); 
         }
       };
-      /* #@range_end(add) */
+      /* #@range_end(recursive_add) */
       // #### <a name="add_reduction_demo"> **add(3,2)の簡約** </a>
       // ![add関数の簡約](images/add_reduction.gif) 
       expect(
         add(2,1)
       ).to.eql(
         3
+      );
+      next();
+    });
+    it('命令的なadd関数', (next) => {
+        // var result = x; // 結果を保存する変数result
+        // while(y > 0) {  // 反復処理を実行する
+        //   result = result + 1; // 変数resultを更新する 
+        //   y = y - 1;           // 変数yを更新する
+        // }
+        // return result;
+      /* add関数の定義 */
+      /* #@range_begin(imperative_add) */
+      var add = (x,y) => { 
+        while(y > 0) {  // yが0より大きいあいだ、反復処理を実行する
+          x = x + 1;    // 変数xを更新する 
+          y = y - 1;    // 変数yを更新する
+        }
+        return x;
+      };
+      /* #@range_end(imperative_add) */
+      expect(
+        add(1,2)
+      ).to.eql(
+        3
+      );
+      expect(
+        add(2,3)
+      ).to.eql(
+        5
+      );
+      expect(
+        add(0,2)
+      ).to.eql(
+        2
       );
       next();
     });

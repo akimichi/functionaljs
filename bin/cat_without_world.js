@@ -317,7 +317,7 @@ var IO = {
 var path = process.argv[2];
 
 var composed_action = 
-  IO.flatMap(IO.readFile(path))((content) => { // ファイルを読みこむ
+  IO.flatMap(IO.readFile(path))((content) => { // ファイルを読み込む
     // 次に読み込んだ内容を画面に出力する
     return IO.flatMap(IO.println(content))((_) => { 
       return IO.done(_);
@@ -331,7 +331,7 @@ IO.run(composed_action); // 合成されたIOアクションを実行する
 // #@range_begin(run_putStrLn)
 var path = process.argv[2];
 
-/* ファイルをcontentに読みこむ  */
+/* ファイルをcontentに読み込む  */
 var cat = IO.flatMap(IO.readFile(path))((content) => {  
   /* 文字列を文字のリストに変換しておく */
   var string_as_list = string.toList(content); 

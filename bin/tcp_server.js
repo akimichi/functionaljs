@@ -7,8 +7,8 @@ var localhost = '127.0.0.1';
 // サーバーインスタンスを生成
 net.createServer((socket) => {
   // 'data' イベントハンドラー
-  socket.on('data', (incommingData) => {
-    socket.write(incommingData);
+  socket.on('data', (incomingData) => {
+    socket.write(incomingData);
   });
   // 'close'イベントハンドラー
   socket.on('close', (error) => {

@@ -195,7 +195,7 @@ describe('セマンティクスを意識する', () => {
          obj1とobj2のオブジェクトをマージする関数のこと */
       return merge(binding, oldEnv); 
     };
-    /* 変数名に対応する値を環境から取りだす */
+    /* 変数名に対応する値を環境から取り出す */
     var lookupEnv = (name, env) => {
       return env[name];
     };

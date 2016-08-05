@@ -259,7 +259,7 @@ describe('関数型モデル', () => {
       /* add関数の定義 */
       /* #@range_begin(imperative_add) */
       var add = (x,y) => { 
-        while(y > 0) {  // yが0より大きいあいだ、反復処理を実行する
+        while(y > 0) {  // yが0より大きい間、反復処理を実行する
           x = x + 1;    // 変数xを更新する 
           y = y - 1;    // 変数yを更新する
         }
@@ -367,7 +367,7 @@ describe('関数型モデル', () => {
       /* #@range_begin(multiply) */
       var times = (count,fun,arg, memo) => {
         if(count > 1) {
-          /* times関数を再帰呼出し */
+          /* times関数を再帰呼び出し */
           return times(count-1,fun,arg, fun(memo,arg)); 
         } else {
           return fun(memo,arg);

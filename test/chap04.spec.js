@@ -654,7 +654,7 @@ describe('変数とデータの関係', () => {
     var bound = "我思うゆえに我あり";
     expect(
       bound
-    ).to.be(
+    ).to.eql(
       "我思うゆえに我あり"
     );
     expect(
@@ -672,13 +672,13 @@ describe('変数とデータの関係', () => {
   describe('スコープ', () => {
     it('関数はスコープを分ける', (next) => {
       /* #@range_begin(function_creates_scope) */
-      var createScope = (_) =>  { // 局所スコープを作る
+      var createScope = (_) =>  { // ローカルスコープを作る
         var innerScope = "inner"; 
         return innerScope; // innerScope変数は createScopeの中でのみ有効
       };
       expect(
         (_) => {
-          innerScope // 局所スコープにある変数innerScopeにアクセスを試みます
+          innerScope // ローカルスコープにある変数innerScopeにアクセスを試みます
         }
       ).to.throwException((e)=> {
         expect(e).to.be.a(

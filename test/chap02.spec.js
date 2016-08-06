@@ -3389,10 +3389,10 @@ describe('関数型プログラミングの利点', () => {
           /* #@range_begin(succ_property) */
           /* ストリームのmap関数 */
           var map = (transform) => {
-            return (astream) => {
-              var head = astream[0];
+            return (aStream) => {
+              var head = aStream[0];
               return [transform(head), (_) => {
-                return map(transform)(astream[1]());
+                return map(transform)(aStream[1]());
               }];
             };
           };

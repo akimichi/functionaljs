@@ -1757,9 +1757,9 @@ describe('再帰による反復処理', () => {
         };
       };
       /* #@range_begin(list_reverse) */
-      var reverse = (seq) => {
-        var reverseHelper = (seq, accumulator) => {
-          return match(seq, {
+      var reverse = (list) => {
+        var reverseHelper = (list, accumulator) => {
+          return match(list, {
             empty: (_) => {  // emptyの場合は、終了条件
               return accumulator;
             },
@@ -1768,7 +1768,7 @@ describe('再帰による反復処理', () => {
             }
           });
         };
-        return reverseHelper(seq, empty());
+        return reverseHelper(list, empty());
       };
       /* #@range_end(list_reverse) */
       // expect(

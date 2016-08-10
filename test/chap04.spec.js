@@ -188,7 +188,7 @@ describe('合成型', () => {
         /* hasOwnPropertyでプロパティの有無を調べる */
         /* #@range_begin(object_access) */
         expect(
-          addressbook.No1.name     // オブジェクト.キー記法
+          addressbook.No1.name        // オブジェクト.キー記法
         ).to.eql(
           "Alan Turing"
         );

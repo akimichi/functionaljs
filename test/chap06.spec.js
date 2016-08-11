@@ -279,10 +279,12 @@ describe('関数の基本', () => {
         };
         /* #@range_begin(multiply_lazy_evaluation) */
         var lazyMultiply = (funX,funY) => {
-          if(funX() === 0){
-            return 0;         // funX()が0ならば、funYは評価しない
+          var x = funX();
+
+          if(x === 0){
+            return 0;         // xが0ならば、funYは評価しない
           } else {
-            return funX() * funY(); // ここで初めてfunYを評価する
+            return x * funY(); // ここで初めてfunYを評価する
           }
         };
         /* #@range_end(multiply_lazy_evaluation) */
@@ -647,7 +649,9 @@ describe('関数の基本', () => {
           );
           /* #@range_begin(infinite_integer_test) */
           expect(
-            list.toArray(stream.take(enumFrom(1), 4))
+            list.toArray( // ストリームを配列に変換する
+              stream.take(enumFrom(1),4) // 無限の整数列から4個の要素を取り出す 
+            )
           ).to.eql(
             [1,2,3,4]
           );

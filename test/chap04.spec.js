@@ -188,7 +188,7 @@ describe('合成型', () => {
         /* hasOwnPropertyでプロパティの有無を調べる */
         /* #@range_begin(object_access) */
         expect(
-          addressbook.No1.name     // オブジェクト.キー記法
+          addressbook.No1.name        // オブジェクト.キー記法
         ).to.eql(
           "Alan Turing"
         );
@@ -658,8 +658,8 @@ describe('変数とデータの関係', () => {
       "我思うゆえに我あり"
     );
     expect(
-      (_) => { // 例外をキャッチするにはexpectに関数を渡します
-        unbound // 変数unboundは自由変数です
+      (_) => { // 例外をキャッチするにはexpectに関数を渡す
+        unbound // 変数unboundは自由変数
       }
     ).to.throwException((exception)=> {
       expect(exception).to.be.a(
@@ -674,11 +674,11 @@ describe('変数とデータの関係', () => {
       /* #@range_begin(function_creates_scope) */
       var createScope = (_) =>  { // ローカルスコープを作る
         var innerScope = "inner"; 
-        return innerScope; // innerScope変数は createScopeの中でのみ有効
+        return innerScope; // innerScope変数は createScopeのなかでのみ有効
       };
       expect(
         (_) => {
-          innerScope // ローカルスコープにある変数innerScopeにアクセスを試みます
+          innerScope // ローカルスコープにある変数innerScopeにアクセスを試みる
         }
       ).to.throwException((e)=> {
         expect(e).to.be.a(
@@ -698,7 +698,7 @@ describe('変数とデータの関係', () => {
       var outerScope = 1;
       var createScope = (_) =>  {
         var innerScope = 2;
-        return innerScope + outerScope; // 内側のスコープから外側のスコープにある outerScope変数にアクセスしています
+        return innerScope + outerScope; // 内側のスコープから外側のスコープにある outerScope変数にアクセスしている
       };
       /* #@range_end(nested_scope) */
       expect(
@@ -798,7 +798,7 @@ describe('変数とデータの関係', () => {
       /* #@range_begin(binding_in_closure) */
       var adder = (y) => { // 外側の関数
         var addWithFreeVariable = (x) => { // 内側の関数
-          return x + y; // 変数yはadder関数の引数yを参照できます
+          return x + y; // 変数yはadder関数の引数yを参照できる
         };
         return addWithFreeVariable;
       };
@@ -1005,7 +1005,7 @@ describe('参照透過性の仕組み', () => {
       ).to.eql(
         29
       );
-      // この時点で誕生日を迎えました
+      // この時点で誕生日を迎えた
       age = 30;
       expect(
         age

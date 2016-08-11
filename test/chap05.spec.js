@@ -1033,7 +1033,8 @@ describe('代数的データ型', () => {
     };
     /* #@range_end(match_in_algebraic_datatype) */
     /* #@range_begin(list_function_using_algebraic_datatype) */
-    /* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを判定する */
+    /* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
+       判定する */
     var isEmpty = (alist) => {
       /* match関数で分岐する */
       return match(alist, { 
@@ -1050,7 +1051,7 @@ describe('代数的データ型', () => {
     /* head関数は、引数alistに渡されたリストの先頭の要素を返す */
     var head = (alist) => {
       return match(alist, {
-        /* 空のリストには先頭要素はありません */
+        /* 空のリストに先頭要素はない */
         empty: (_) => {
           return null; 
         },
@@ -1062,7 +1063,7 @@ describe('代数的データ型', () => {
     /* tail関数は、引数alistに渡されたリストの後尾のリストを返す */
     var tail = (alist) => {
       return match(alist, {
-        /* 空のリストには後尾はありません */
+        /* 空のリストに後尾はない */
         empty: (_) => {
           return null;  
         },
@@ -1073,7 +1074,7 @@ describe('代数的データ型', () => {
     };
     /* #@range_end(list_function_using_algebraic_datatype) */
     /* #@range_begin(list_in_algebraic_datatype_test) */
-    /* empty は空のリストか */
+    /* emptyは空のリストか */
     expect(
       isEmpty(empty())                    
     ).to.eql(
@@ -1085,7 +1086,7 @@ describe('代数的データ型', () => {
     ).to.eql(
       false
     );
-    /* cons(1,empty())]の先頭要素は1である */
+    /* cons(1,empty())の先頭要素は1である */
     expect(
       head(cons(1,empty()))               
     ).to.eql(

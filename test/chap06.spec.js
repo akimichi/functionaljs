@@ -241,7 +241,7 @@ describe('関数の基本', () => {
         var infiniteLoop = (_) => {
           return infiniteLoop(_);
         };
-        /* このテストは無限ループになるのでコメントアウトしています
+        /* このテストは無限ループになるのでコメントアウトしている
          expect(
            left(1, infiniteLoop())
          ).to.eql(
@@ -268,7 +268,7 @@ describe('関数の基本', () => {
         expect(
           conditional(1)
         ).to.eql(
-          true // 無限ループに陥いることなく計算に成功する
+          true // 無限ループに陥ることなく計算に成功する
         );
         /* #@range_end(conditional_is_nonstrict) */
         next();
@@ -282,7 +282,7 @@ describe('関数の基本', () => {
           var x = funX();
 
           if(x === 0){
-            return 0;         // xが0ならば、funYは評価しない
+            return 0;          // xが0ならば、funYは評価しない
           } else {
             return x * funY(); // ここで初めてfunYを評価する
           }
@@ -290,10 +290,10 @@ describe('関数の基本', () => {
         /* #@range_end(multiply_lazy_evaluation) */
         /* #@range_begin(multiply_lazy_evaluation_test) */
         expect(
-          lazyMultiply((_) => { // 値を関数でラッピングする
+          lazyMultiply((_) => {    // 値を関数でラッピングする
             return 0;
           }, (_) => {
-            return infiniteLoop(); // ここが評価されると無限ループに陥いる
+            return infiniteLoop(); // ここが評価されると無限ループに陥る
           })
         ).to.eql(
           0
@@ -401,7 +401,7 @@ describe('関数の基本', () => {
       it("stream#cons", (next) => {
         /* #@range_begin(stream_with_thunk_test) */
         var theStream = stream.cons(1, (_) => { // 第2引数にサンクを渡す
-          return stream.cons(2,(_) => {     // 第2引数にサンクを渡す
+          return stream.cons(2,(_) => {         // 第2引数にサンクを渡す
             return stream.empty();
           });
         });
@@ -1105,21 +1105,21 @@ describe('関数と参照透過性', () => {
       /* fsモジュールを変数fsにバインドする */
       var fs = require('fs');
       /* テストの実行前にあらかじめ "This is a test."
-       という文字列をファイルに書きこんでおく。 */
+       という文字列をファイルに書き込んでおく */
       fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
-      /* 第1回目のファイルの読込 */
+      /* 第1回目のファイルの読み込み */
       var text = fs.readFileSync("test/resources/file.txt",'utf8');
       expect(
         fs.readFileSync("test/resources/file.txt", 'utf8')
       ).to.eql(
         "This is a test."
       );
-      /* 途中でのファイルへの書込み */
+      /* 途中でのファイルへの書き込み */
       fs.writeFileSync('test/resources/file.txt',
                        "This is another test.");
 
-      /* 第2回目のファイルの読込 */
+      /* 第2回目のファイルの読み込み */
       expect(
         fs.readFileSync("test/resources/file.txt", 'utf8')
       ).to.eql(/* 最初の readFileSync関数の結果と異なっている */
@@ -1354,7 +1354,7 @@ describe('関数と参照透過性', () => {
     it('tapコンビネーターによるファイル入出力のテストは失敗する', (next) => {
       var fs = require('fs'); // fsモジュールを変数fsにバインドする
       /* #@range_begin(tap_combinator_test_in_fileio) */
-      /* あらかじめ文字列をファイルに書きこんでおく */
+      /* あらかじめ文字列をファイルに書き込んでおく */
       fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
       /* ファイルからの読込という副作用を実行する */

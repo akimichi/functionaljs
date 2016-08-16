@@ -2566,7 +2566,7 @@ describe('クロージャーを使う', () => {
       it('counter関数の例', (next) => {
         /* #@range_begin(counter_as_closure) */
         var counter = (init) => {
-          var countingNumber =  init - 1;
+          var countingNumber =  init;
           /* countingNumberの環境を持つクロージャーを返す */
           return (_) => {  
             countingNumber = countingNumber + 1;
@@ -2579,12 +2579,12 @@ describe('クロージャーを使う', () => {
         expect(
           counterFromZero() // 1回目の実行
         ).to.eql( 
-          0
+          1
         );
         expect(
           counterFromZero() // 2回目の実行
         ).to.eql( 
-          1
+          2
         );
         /* #@range_end(counter_as_closure_test) */
         /* #@range_begin(another_counter) */
@@ -2592,7 +2592,7 @@ describe('クロージャーを使う', () => {
         expect(
           anoterCounterFromZero()
         ).to.eql( 
-          0
+          1
         );
         /* #@range_end(another_counter) */
         next();
@@ -2904,7 +2904,6 @@ describe('クロージャーを使う', () => {
             };
           };
         };
-        /* #@range_begin(church_numeral_counter) */
         /* 関数適用の回数を数えるcounterクロージャー */
         var counter = (init) => {
           var _init = init; // 可変な変数
@@ -2914,6 +2913,7 @@ describe('クロージャーを使う', () => {
           };
         };
         /***** counterクロージャーを用いたチャーチ数のテスト *****/
+        /* #@range_begin(church_numeral_counter) */
         expect(
           one(counter(0))() // oneはチャーチ数(@<list>{church_numeral})の1
         ).to.eql(
@@ -4647,21 +4647,21 @@ describe('関数を渡す', () => {
         /* #@range_end(stream_find_cps) */
         /* #@range_begin(stream_find_continuations) */
         /* 成功継続では、反復処理を脱出する */
-        var successContinuation = identity; 
+        var continuesOnSuccess = identity; 
 
         /* 失敗継続では、反復処理を続ける */
-        var failureContinuation = (aStream,
-                                   predicate, 
-                                   continuesOnRecursion, 
-                                   escapesFromRecursion) => { 
-                                     /* find関数を再帰的に呼び出す */
-                                     return find( 
-                                       aStream, 
-                                       predicate, 
-                                       continuesOnRecursion, 
-                                       escapesFromRecursion
-                                     );  
-                                   };
+        var continuesOnFailure = (aStream,
+                                  predicate, 
+                                  continuesOnRecursion, 
+                                  escapesFromRecursion) => { 
+                                    /* find関数を再帰的に呼び出す */
+                                    return find( 
+                                      aStream, 
+                                      predicate, 
+                                      continuesOnRecursion, 
+                                      escapesFromRecursion
+                                    );  
+                                  };
         /* #@range_end(stream_find_continuations) */
         // upto3変数は、1から3までの有限ストリーム
         var upto3 = stream.cons(1,(_) => {
@@ -4674,7 +4674,7 @@ describe('関数を渡す', () => {
         expect(
           find(upto3, (item) => {
             return (item === 4); // 4を探します
-          }, failureContinuation, successContinuation)
+          }, continuesOnFailure, continuesOnSuccess)
         ).to.eql(
           null // リスト中に4の要素はないので、nullになります
         );
@@ -4686,7 +4686,7 @@ describe('関数を渡す', () => {
         expect(
           find(integers, (item) => {
             return (item === 100); 
-          }, failureContinuation, successContinuation)
+          }, continuesOnFailure, continuesOnSuccess)
         ).to.eql(
           100 // 100を見つけて返ってくる
         );

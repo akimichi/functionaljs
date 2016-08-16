@@ -8,7 +8,7 @@ var fstream = fs.createReadStream('/var/log/syslog', {encoding: 'utf-8'});
 fstream.on('data', (chunk) =>  { // chunkには読み込まれたデータの一部が入る
   console.log(chunk);
 });
-// それ以上読みこむデータがないときに実行される
+// それ以上読み込むデータがないときに実行される
 fstream.on('end', () => {
   console.log("EXIT");
 });

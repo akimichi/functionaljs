@@ -4,13 +4,13 @@
 var net = require('net');
 var localhost = '127.0.0.1';
 
-// サーバーインスタンスを生成
+// サーバインスタンスを生成
 net.createServer((socket) => {
-  // 'data' イベントハンドラー
+  // 'data' イベントハンドラ
   socket.on('data', (incomingData) => {
     socket.write(incomingData);
   });
-  // 'close'イベントハンドラー
+  // 'close'イベントハンドラ
   socket.on('close', (error) => {
     console.log("connection closed");
   });

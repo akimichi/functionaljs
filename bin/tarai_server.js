@@ -17,10 +17,10 @@ var localhost = '127.0.0.1';
 net.createServer((socket) => {
   /* dataイベントハンドラ */
   socket.on('data', (incomingData) => {
-    /* クライアントからデータを数値に変換します */
+    /* クライアントからデータを数値に変換する */
     var number = parseInt(incomingData,10); 
     console.log(number);
-    /* tarai関数を計算して、クライアントに返します */
+    /* tarai関数を計算して、クライアントに返す */
     socket.write(tarai(number * 2, number, 0) + '\r\n'); 
   });
   /* closeイベントハンドラ */

@@ -282,7 +282,7 @@ var IO = {
       // return IO.unit(IO.run(instanceB)); 
   /* #@range_begin(IO_putChar) */
   /* IO.putChar:: CHAR => IO[] */
-  /* IO.putChar関数は、一文字を出力する */
+  /* IO.putChar関数は、1文字を出力する */
   putChar: (character) => {
     /* 1文字だけ画面に出力する */
     process.stdout.write(character); 

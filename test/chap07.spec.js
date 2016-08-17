@@ -975,7 +975,7 @@ describe('カリー化で関数を渡す', () => {
     );
     /* #@range_end(multipleOf_uncurried_test) */
     expect(
-      multipleOf(3,4)     /* 3の倍数は4ではない */
+      multipleOf(3,4)     /* 4は、3の倍数ではない */
     ).to.eql(
       false
     );
@@ -1001,14 +1001,14 @@ describe('カリー化で関数を渡す', () => {
     );
     /* #@range_end(multipleOf_curried_test) */
     expect(
-      multipleOf(3)(4)    /* 3の倍数は4ではない */
+      multipleOf(3)(4)    /* 4は、3の倍数ではない */
     ).to.eql(
       false
     );
     /* #@range_begin(multipleOf_curried_partilly_applied) */
     var twoFold = multipleOf(2);
     expect(
-      twoFold(4)    /* 2の倍数は4である */
+      twoFold(4)    /* 4は、2の倍数である */
     ).to.eql(
       true
     );
@@ -1144,7 +1144,7 @@ describe('カリー化で関数を渡す', () => {
     expect(
       compose(f,g)(2) // f . g で合成された関数
     ).to.eql(
-      f(g(2))       // 合成せずに順次実行した場合
+      f(g(2))         // 合成せずに順次実行した場合
     );
     /* #@range_end(compose_test) */
     var subtract = (n) => {
@@ -2915,12 +2915,12 @@ describe('クロージャーを使う', () => {
         /***** counterクロージャーを用いたチャーチ数のテスト *****/
         /* #@range_begin(church_numeral_counter) */
         expect(
-          one(counter(0))() // oneはチャーチ数(@<list>{church_numeral})の1
+          one(counter(0))() // oneはチャーチ数（@<list>{church_numeral}）の1
         ).to.eql(
           1
         );
         expect(
-          two(counter(0))() // twoはチャーチ数(@<list>{church_numeral})の2
+          two(counter(0))() // twoはチャーチ数（@<list>{church_numeral}）の2
         ).to.eql(
           2
         );
@@ -5451,7 +5451,7 @@ describe('モナドを作る', () => {
       var IO = {
         /* unit:: T => IO[T] */
         unit : (any) => {
-          return (_) =>  { // 外界は明示する必要はありません
+          return (_) =>  { // 外界を明示する必要はない
             return any;
           };
         },

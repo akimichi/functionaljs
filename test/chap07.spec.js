@@ -365,7 +365,7 @@ var list  = {
     };
   },
   /* ## list#drop */
-  /* drop :: List => List */
+  /* drop:: List => List */
   drop: function(list){
     var self = this;
     self.list.censor(list);
@@ -549,7 +549,7 @@ var stream = {
     });
   },
   // ### stream#flatten
-  /* flatten :: STREAM[STREAM[T]] => STREAM[T] */
+  /* flatten:: STREAM[STREAM[T]] => STREAM[T] */
   flatten: (astream) => {
     return list.concat(astream);
   },
@@ -594,7 +594,7 @@ var stream = {
   },
   // ### stream#filter
   /* #@range_begin(stream_filter) */
-  /* filter:: FUN[T=>BOOL] => STREAM[T] => STREAM[T] */
+  /* filter:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
   filter: (predicate) => {
     return (aStream) => {
       return stream.match(aStream,{
@@ -616,7 +616,7 @@ var stream = {
   /* #@range_end(stream_filter) */
   // ### stream#remove
   /* #@range_begin(stream_remove) */
-  /* remove:: FUN[T=>BOOL] => STREAM[T] => STREAM[T] */
+  /* remove:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
   remove: (predicate) => {
     return (aStream) => {
       return stream.filter(not(predicate))(aStream);
@@ -1570,8 +1570,8 @@ describe('カリー化で関数を渡す', () => {
       ).to.eql(
         [1,2]
       );
-      var not = (predicate) => { // predicate::FUN[NUM=>BOOL]
-        return (arg) => { // FUN[NUM=>BOOL]型を返す
+      var not = (predicate) => { // predicate::FUN[NUM => BOOL]
+        return (arg) => { // FUN[NUM => BOOL]型を返す
           return ! predicate(arg); // !演算子で論理を反転させる
         };
       };
@@ -1817,9 +1817,9 @@ describe('コンビネータで関数を組み合わせる', () => {
     };
     var even = multipleOf(2);
     /* #@range_begin(not_combinator) */
-    /* not :: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
-    var not = (predicate) => { // predicateの型はFUN[NUM=>BOOL]
-      /* 全体として、FUN[NUM=>BOOL]型を返す */
+    /* not:: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
+    var not = (predicate) => { // predicateの型はFUN[NUM => BOOL]
+      /* 全体として、FUN[NUM => BOOL]型を返す */
       return (arg) => { // argの型はNUM
         return ! predicate(arg); // !演算子で論理を反転させて、BOOLを返す
       };
@@ -2057,7 +2057,7 @@ describe('コンビネータで関数を組み合わせる', () => {
       /*
         c.f. Haskell Road, p.19
         ~~~haskell
-        factors :: Integer -> [Integer]
+        factors:: Integer -> [Integer]
         factors n | n < 1 = error "argument not positive"
         | n == 1 = []
         | otherwise = p : factors (div n p) where p = ld n
@@ -2531,7 +2531,7 @@ describe('クロージャーを使う', () => {
     var bar = "a string"; 
     /* #@range_end(variable_binding_in_environment) */
     /* #@range_begin(variable_binding_in_environment_test) */
-    /* 環境 <foo |->  1, bar |-> "a string"> のもとで評価する */
+    /* 環境 <foo |-> 1, bar |-> "a string"> のもとで評価する */
     expect(
       foo  // 上記環境から変数fooの値を取り出す
     ).to.eql(
@@ -3769,7 +3769,7 @@ describe('関数を渡す', () => {
     });
     it('リストのmap', (next) => {
       /* #@range_begin(list_map) */
-      /* map :: FUN[T => T] => LIST[T] =>  LIST[T] */
+      /* map:: FUN[T => T] => LIST[T] =>  LIST[T] */
       var map = (callback) => {
         return (alist) => {
           return match(alist,{
@@ -5540,7 +5540,7 @@ describe('モナドを作る', () => {
             }
           });
         };
-        /* IO.getc :: IO[CHAR] */
+        /* IO.getc:: IO[CHAR] */
         IO.getc =  () => {
           var continuation = () => {
             var chunk = process.stdin.read();

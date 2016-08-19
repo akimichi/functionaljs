@@ -2530,6 +2530,7 @@ describe('クロージャーを使う', () => {
     /* 変数bar に文字列 "a string" をバインドする */
     var bar = "a string"; 
     /* #@range_end(variable_binding_in_environment) */
+    /* 環境 <foo ↦ 1, bar ↦ "a string"> のもとで評価する */
     /* #@range_begin(variable_binding_in_environment_test) */
     /* 環境 <foo |-> 1, bar |-> "a string"> のもとで評価する */
     expect(
@@ -3751,16 +3752,16 @@ describe('関数を渡す', () => {
         return n + 1;
       };
       /* #@range_begin(call_callback) */
-      var setupCallBack = (callback) => {
+      var setupCallback = (callback) => {
         /* コールバック関数を実行する無名関数を返す */
         return (arg) => {  
           return callback(arg);
         };
       };
       /* コールバック関数を設定する */
-      var doCallBack = setupCallBack(succ);  
+      var doCallback = setupCallback(succ);  
       expect(
-        doCallBack(2) // 設定されたコールバック関数を実行する
+        doCallback(2) // 設定されたコールバック関数を実行する
       ).to.eql(
         3
       );

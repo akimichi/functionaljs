@@ -349,7 +349,7 @@ describe('合成型', () => {
       /* #@range_begin(sorting_array) */
       expect(
         addressbook.sort((onePerson,anotherPerson) => {
-          return onePerson.name> anotherPerson.name;
+          return onePerson.name > anotherPerson.name;
         })
       ).to.eql(
         [

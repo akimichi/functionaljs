@@ -609,7 +609,7 @@ describe('合成型', () => {
       expect(
         array
       ).not.to.eql(
-        [1,2,3,4,5]  // array変数の中身が[5,4,3,2,1]に変更されている
+        [1,2,3,4,5]  // 変数arrayの中身が[5,4,3,2,1]に変更されている
       );
       /* #@range_end(destructive_reverse) */
       next();
@@ -674,7 +674,7 @@ describe('変数とデータの関係', () => {
       /* #@range_begin(function_creates_scope) */
       var createScope = (_) =>  { // ローカルスコープを作る
         var innerScope = "inner"; 
-        return innerScope; // innerScope変数は createScopeのなかでのみ有効
+        return innerScope; // 変数innerScopeはcreateScopeのなかでのみ有効
       };
       expect(
         (_) => {

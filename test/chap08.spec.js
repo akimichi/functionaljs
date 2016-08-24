@@ -136,8 +136,8 @@ var list  = {
 };
 
 describe('環境を作る', () => {
-  /* #@range_begin(environment) */
   // ## 「環境」モジュール
+  /* #@range_begin(environment) */
   var env = {
     // empty:: STRING => VALUE
     /* 空の環境を作る */

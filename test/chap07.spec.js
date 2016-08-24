@@ -2909,7 +2909,7 @@ describe('クロージャーを使う', () => {
         var counter = (init) => {
           var _init = init; // 可変な変数
           return (_) => {
-            _init = _init + 1; // 代入で_init変数を更新する
+            _init = _init + 1; // 代入で変数_initを更新する
             return _init;
           };
         };
@@ -4680,7 +4680,7 @@ describe('関数を渡す', () => {
           null // リスト中に4の要素はないので、nullになります
         );
         /* #@range_begin(stream_find_cps_test) */
-        // integers変数は、無限の整数ストリーム
+        // 変数integersは、無限の整数ストリーム
         var integers = stream.enumFrom(0);
         
         /* 無限の整数列のなかから100を探す */

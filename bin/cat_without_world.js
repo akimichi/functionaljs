@@ -263,7 +263,7 @@ var IO = {
   /* #@range_end(io_monad_definition) */
   /* #@range_begin(IO_seq) */
   /* 
-     IO.seq関数は、2つのIOアクションを続けて実行する
+     seq関数は、2つのIOアクションを続けて実行する
   */
   // IO.seq:: IO[T] => IO[U] => IO[U] 
   seq: (actionA) => {
@@ -282,7 +282,7 @@ var IO = {
       // return IO.unit(IO.run(instanceB)); 
   /* #@range_begin(IO_putChar) */
   /* IO.putChar:: CHAR => IO[] */
-  /* IO.putChar関数は、1文字を出力する */
+  /* putChar関数は、1文字を出力する */
   putChar: (character) => {
     /* 1文字だけ画面に出力する */
     process.stdout.write(character); 
@@ -291,7 +291,7 @@ var IO = {
   /* #@range_end(IO_putChar) */
   /* #@range_begin(IO_putStr) */
   /* IO.putStr:: LIST[CHAR] => IO[] */
-  /* IO.putStr関数は、文字のリストを連続して出力する  */
+  /* putStr関数は、文字のリストを連続して出力する  */
   putStr: (alist) => {
     return list.match(alist, {
       empty: () => {
@@ -305,7 +305,7 @@ var IO = {
   /* #@range_end(IO_putStr) */
   /* #@range_begin(IO_putStrLn) */
   /* IO.putStrLn:: LIST[CHAR] => IO[] */
-  /* IO.putStrLn関数は、文字列を出力し、最後に改行を出力する */
+  /* putStrLn関数は、文字列を出力し、最後に改行を出力する */
   putStrLn:(alist) => {
     return IO.seq(IO.putStr(alist))(IO.putChar("\n"));
   }

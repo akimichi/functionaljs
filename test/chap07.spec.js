@@ -3028,7 +3028,7 @@ describe('クロージャーを使う', () => {
         };
         /* #@range_end(immutable_object_type_curried) */
         /* #@range_begin(immutable_object_type_curried_test) */
-        var robots = compose( // object.set関数を合成する
+        var robots = compose( // object.setを合成する
           object.set("C3PO", "Star Wars"),
           object.set("HAL9000","2001: a space odessay")
         )(object.empty());
@@ -4336,7 +4336,7 @@ describe('関数を渡す', () => {
           return toArrayAux(alist, []);
         },
         /* #@range_begin(foldr_reverse) */
-        /* list.append関数は、2つのリストを連結する */
+        /* listのappend関数は、2つのリストを連結する */
         append: (xs) => {
           return (ys) => {
             return match(xs, {

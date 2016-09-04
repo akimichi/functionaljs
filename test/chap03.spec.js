@@ -47,24 +47,28 @@ describe('DRY原則', () => {
     next();
   });
   it('DRYを適用する', (next) => {
-    /* #@range_begin(dry_code) */
-    var times = (count,fun,arg, memo) => {
+    /* #@range_begin(dry_times) */
+    var times = (count,arg, memo,fun) => { // fun引数を追加
       if(count > 1) {
-        return times(count-1,fun,arg, fun(arg,memo));
+        return times(count-1,arg, fun(arg,memo), fun);
       } else {
         return fun(arg,memo);
       }
     };
+    /* #@range_end(dry_times) */
+    /* #@range_begin(dry_functions) */
     var add = (n, m) => {
       return n + m;
     };
+    // times関数を利用してmultiply関数を定義する。
     var multiply = (n,m) => {
-      return times(m, add, n, 0); // add関数を渡す
+      return times(m, n, 0, add);
     };
+    // times関数を利用してexponential関数を定義する。
     var exponential = (n,m) => {
-      return times(m, multiply, n, 1); // multiply関数を渡す
+      return times(m, n, 1, multiply);
     };
-    /* #@range_end(dry_code) */
+    /* #@range_end(dry_functions) */
     expect(
       multiply(2,3)
     ).to.eql(
@@ -95,11 +99,11 @@ describe('抽象化への指向', () => {
     next();
   });
   describe('関数抽象の例としての高階関数', () => {
-
     var anArray = [2,3,5,7,11,13];
+
     it('for文によるsum', (next) => {
       /* #@range_begin(sum_for) */
-      var anArray = [2,3,5,7,11,13];
+      var anArray = [2,3,5,7];
       var sum = (array) => {
         var result = 0;
         for(var index = 0; index < array.length; index++){
@@ -112,7 +116,7 @@ describe('抽象化への指向', () => {
       expect(
         sum(anArray)
       ).to.eql(
-        41
+        17
       );
       next();
     });

@@ -3933,7 +3933,7 @@ describe('関数を渡す', () => {
           },
           /* #@range_end(list_sum) */
           /* #@range_begin(list_sum_callback) */
-          sumWithCallBack: (alist) => {
+          sumWithCallback: (alist) => {
             return (accumulator) => {
               return (CALLBACK) => { // コールバック関数を受け取る
                 return match(alist,{
@@ -3942,7 +3942,7 @@ describe('関数を渡す', () => {
                   },
                   cons: (head, tail) => {
                     return CALLBACK(head)( // コールバック関数を呼び出す
-                      list.sumWithCallBack(tail)(accumulator)(CALLBACK)
+                      list.sumWithCallback(tail)(accumulator)(CALLBACK)
                     );
                   }
                 });
@@ -3956,14 +3956,14 @@ describe('関数を渡す', () => {
                                 list.cons(2,
                                           list.cons(3,
                                                     list.empty())));
-        /* sumWithCallBack関数に渡すコールバック関数 */
+        /* sumWithCallback関数に渡すコールバック関数 */
         var callback = (n) => {  
           return (m) => {
             return n + m;
           };
         };
         expect(
-          list.sumWithCallBack(numbers)(0)(callback)
+          list.sumWithCallback(numbers)(0)(callback)
         ).to.eql(
           6  // 1 + 2 + 3 = 6
         );
@@ -4002,7 +4002,7 @@ describe('関数を渡す', () => {
           },
           /* #@range_end(list_length) */
           /* #@range_begin(list_length_callback) */
-          lengthWithCallBack: (alist) => {
+          lengthWithCallback: (alist) => {
             return (accumulator) => {
               return (CALLBACK) => { // コールバック関数を受け取る
                 return match(alist,{
@@ -4011,7 +4011,7 @@ describe('関数を渡す', () => {
                   },
                   cons: (head, tail) => {
                     return CALLBACK(head)(
-                      list.lengthWithCallBack(tail)(accumulator)(CALLBACK)
+                      list.lengthWithCallback(tail)(accumulator)(CALLBACK)
                     );
                   }
                 });
@@ -4030,14 +4030,14 @@ describe('関数を渡す', () => {
           3
         );
         /* #@range_begin(list_length_callback_test) */
-        /* lengthWithCallBack関数に渡すコールバック関数 */
+        /* lengthWithCallback関数に渡すコールバック関数 */
         var callback = (n) => {  
           return (m) => {
             return 1 + m;
           };
         };
         expect(
-          list.lengthWithCallBack(numbers)(0)(callback)
+          list.lengthWithCallback(numbers)(0)(callback)
         ).to.eql(
           3
         );
@@ -4045,7 +4045,7 @@ describe('関数を渡す', () => {
         next();
       });
       it('リストのproduct', (next) => {
-        var productWithCallBack = (alist) => {
+        var productWithCallback = (alist) => {
           return (accumulator) => {
             return (CALLBACK) => {
               return match(alist,{
@@ -4053,7 +4053,7 @@ describe('関数を渡す', () => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return CALLBACK(head)(productWithCallBack(tail)(accumulator)(CALLBACK));
+                  return CALLBACK(head)(productWithCallback(tail)(accumulator)(CALLBACK));
                 }
               });
             };
@@ -4069,14 +4069,14 @@ describe('関数を渡す', () => {
                                           list.cons(3,
                                                     list.empty())));
         expect(
-          productWithCallBack(numbers)(1)(callback)
+          productWithCallback(numbers)(1)(callback)
         ).to.eql(
           6
         );
         next();
       });
       it('リストのreverse', (next) => {
-        var reverserWithCallBack = (alist) => {
+        var reverserWithCallback = (alist) => {
           return (accumulator) => {
             return (CALLBACK) => {
               return match(alist,{
@@ -4084,7 +4084,7 @@ describe('関数を渡す', () => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return CALLBACK(head)(reverserWithCallBack(tail)(accumulator)(CALLBACK));
+                  return CALLBACK(head)(reverserWithCallback(tail)(accumulator)(CALLBACK));
                 }
               });
             };
@@ -4107,14 +4107,14 @@ describe('関数を渡す', () => {
                                           list.cons(3,
                                                     list.empty())));
         expect(
-          list.toArray(reverserWithCallBack(numbers)(list.empty())(callback))
+          list.toArray(reverserWithCallback(numbers)(list.empty())(callback))
         ).to.eql(
           [3,2,1]
         );
         next();
       });
       it('リストのall', (next) => {
-        var allWithCallBack = (alist) => {
+        var allWithCallback = (alist) => {
           return (accumulator) => {
             return (CALLBACK) => {
               return match(alist,{
@@ -4122,7 +4122,7 @@ describe('関数を渡す', () => {
                   return accumulator;
                 },
                 cons: (head, tail) => {
-                  return CALLBACK(head)(allWithCallBack(tail)(accumulator)(CALLBACK));
+                  return CALLBACK(head)(allWithCallback(tail)(accumulator)(CALLBACK));
                 }
               });
             };
@@ -4138,7 +4138,7 @@ describe('関数を渡す', () => {
                                           list.cons(true,
                                                     list.empty())));
         expect(
-          allWithCallBack(allTrueList)(true)(callback)
+          allWithCallback(allTrueList)(true)(callback)
         ).to.eql(
           true
         );
@@ -4147,7 +4147,7 @@ describe('関数を渡す', () => {
                                           list.cons(false,
                                                     list.empty())));
         expect(
-          allWithCallBack(notAllTrueList)(true)(callback)
+          allWithCallback(notAllTrueList)(true)(callback)
         ).to.eql(
           false
         );

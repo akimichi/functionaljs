@@ -1357,7 +1357,7 @@ describe('関数と参照透過性', () => {
       /* あらかじめ文字列をファイルに書き込んでおく */
       fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
-      /* ファイルからの読込という副作用を実行する */
+      /* ファイルからの読み込みという副作用を実行する */
       var IOSideEffect = (_) => {
         var content = fs.readFileSync("test/resources/file.txt",
                                       'utf8');

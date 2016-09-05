@@ -145,7 +145,7 @@ describe('環境を作る', () => {
       return undefined;
     },
     // lookup:: (STRING, ENV) => VALUE
-    /* 変数名に対応する値を環境から取りだす */
+    /* 変数名に対応する値を環境から取り出す */
     lookup : (name, environment) => {       
       return environment(name);
     },

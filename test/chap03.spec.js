@@ -8,39 +8,39 @@ var util = require('util');
 
 // ## DRY原則
 describe('DRY原則', () => {
-  var add = (x,y) => {
+  var add = (x, y) => {
     return x + y;
   };
   it('冗長なコードの例', (next) => {
     /* #@range_begin(redundant_code) */
-    var timesForMultiply = (count,arg, memo) => {
+    var timesForMultiply = (count, arg, memo) => {
       if(count > 1) {
-        return timesForMultiply(count-1,arg, arg + memo);
+        return timesForMultiply(count-1, arg, arg + memo);
       } else {
         return arg + memo;
       }
     };
-    var multiply = (n,m) => {
+    var multiply = (n, m) => {
       return timesForMultiply(n, m, 0);
     };
-    var timesForExponential = (count,arg, memo) => {
+    var timesForExponential = (count, arg, memo) => {
       if(count > 1) {
-        return timesForExponential(count-1,arg, arg * memo);
+        return timesForExponential(count-1, arg, arg * memo);
       } else {
         return arg * memo;
       }
     };
-    var exponential = (n,m) => {
+    var exponential = (n, m) => {
       return timesForExponential(m, n, 1);
     };
     /* #@range_end(redundant_code) */
     expect(
-      multiply(2,3)
+      multiply(2, 3)
     ).to.eql(
       6
     );
     expect(
-      exponential(2,3)
+      exponential(2, 3)
     ).to.eql(
       8
     );
@@ -48,9 +48,9 @@ describe('DRY原則', () => {
   });
   it('DRYを適用する', (next) => {
     /* #@range_begin(dry_times) */
-    var times = (count,arg, memo,fun) => { // fun引数を追加
+    var times = (count, arg, memo, fun) => { // 引数funを追加
       if(count > 1) {
-        return times(count-1,arg, fun(arg,memo), fun);
+        return times(count-1, arg, fun(arg,memo), fun);
       } else {
         return fun(arg,memo);
       }
@@ -60,27 +60,27 @@ describe('DRY原則', () => {
     var add = (n, m) => {
       return n + m;
     };
-    // times関数を利用してmultiply関数を定義する。
-    var multiply = (n,m) => {
+    // times関数を利用してmultiply関数を定義する
+    var multiply = (n, m) => {
       return times(m, n, 0, add);
     };
-    // times関数を利用してexponential関数を定義する。
-    var exponential = (n,m) => {
+    // times関数を利用してexponential関数を定義する
+    var exponential = (n, m) => {
       return times(m, n, 1, multiply);
     };
     /* #@range_end(dry_functions) */
     expect(
-      multiply(2,3)
+      multiply(2, 3)
     ).to.eql(
       6
     );
     expect(
-      exponential(2,3)
+      exponential(2, 3)
     ).to.eql(
       8
     );
     expect(
-      multiply(-2,3)
+      multiply(-2, 3)
     ).to.eql(
         -6
     );
@@ -141,7 +141,7 @@ describe('抽象化への指向', () => {
     it('reduce関数によるsum', (next) => {
       /* #@range_begin(sum_reduce) */
       var sum = (array) => {
-        return array.reduce((x,y) => {
+        return array.reduce((x, y) => {
           return x + y;
         });
       };
@@ -155,9 +155,9 @@ describe('抽象化への指向', () => {
     });
     /*
       it('times関数によるsum', (next) => {
-      var times = (count,fun,arg, memo) => {
+      var times = (count, fun, arg, memo) => {
       if(count > 1) {
-      return times(count-1,fun,arg, fun(memo,arg));
+      return times(count-1, fun, arg, fun(memo,arg));
       } else {
       return fun(memo,arg);
       }
@@ -165,10 +165,10 @@ describe('抽象化への指向', () => {
 
       var sum = (seq) => {
       var add = (seq) => {
-      return (index,memo)  => {
+      return (index, memo)  => {
       return seq[index] + memo;
       };
-      return times(seq.length, add(seq), 0,0);
+      return times(seq.length, add(seq), 0, 0);
       };
       expect(
       sum(sequence)
@@ -184,7 +184,7 @@ describe('抽象化への指向', () => {
 // ## セマンティクスを意識する
 describe('セマンティクスを意識する', () => {
   it('環境の例', (next) => {
-    var merge = (obj1,obj2) => {
+    var merge = (obj1, obj2) => {
       var mergedObject = {};
       for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
       for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
@@ -195,7 +195,7 @@ describe('セマンティクスを意識する', () => {
     var emptyEnv = {};
     /* 環境を拡張する */
     var extendEnv = (binding, oldEnv) => {
-      /* merge(obj1,obj2) は
+      /* merge(obj1, obj2) は
          obj1とobj2のオブジェクトをマージする関数のこと */
       return merge(binding, oldEnv); 
     };
@@ -213,9 +213,9 @@ describe('セマンティクスを意識する', () => {
       /* var b = 3 を実行して、辞書を拡張する */
       var secondEnv = extendEnv({"b": 3}, firstEnv); 
       /* 辞書から b の値を参照する */
-      lookupEnv("b",secondEnv);                
+      lookupEnv("b", secondEnv);                
       /* #@range_end(environment_example_usage) */
-      return lookupEnv("b",secondEnv);                 
+      return lookupEnv("b", secondEnv);                 
     })()).to.eql(
       3
     );
@@ -248,7 +248,7 @@ describe('テストに親しむ', () => {
   });
   // ### 単体テストの実践
   describe('単体テストの実践', () => {
-    it('add,multiply,exponential関数再び', (next) => {
+    it('add, multiply, exponential関数再び', (next) => {
       var succ = (n) => {
         return n + 1;
       };
@@ -260,26 +260,26 @@ describe('テストに親しむ', () => {
         if(y < 1){
           return x;
         } else {
-          return add(succ(x),prev(y));
+          return add(succ(x), prev(y));
         }
       };
-      var times = (count,fun,arg, memo) => {
+      var times = (count, fun, arg, memo) => {
         if(count > 1) {
-          return times(count-1,fun,arg, fun(memo,arg));
+          return times(count-1, fun, arg, fun(memo,arg));
         } else {
           return fun(memo,arg);
         }
       };
-      var multiply = (n,m) => {
+      var multiply = (n, m) => {
         return times(m, add, n, 0);
       };
-      var exponential = (n,m) => {
+      var exponential = (n, m) => {
         return times(m, multiply, n, 1);
       };
       /* #@range_end(arithmetic_again) */
       /* #@range_begin(multiply_test_example) */
       expect(
-        multiply(2,3) // テストする式を書く
+        multiply(2, 3) // テストする式を書く
       ).to.eql(
         6             // 期待する値を書く
       );
@@ -297,41 +297,41 @@ describe('テストに親しむ', () => {
         if(y < 1){
           return x;
         } else {
-          return add(succ(x),prev(y));
+          return add(succ(x), prev(y));
         }
       };
-      var times = (count,fun,arg, memo) => {
+      var times = (count, fun, arg, memo) => {
         if(count > 1) {
-          return times(count-1,fun,arg, fun(arg,memo));
+          return times(count-1, fun, arg, fun(arg,memo));
         } else {
           return fun(arg,memo);
         }
       };
-      var multiply = (n,m) => {
+      var multiply = (n, m) => {
         return times(m, add, n, 0);
       };
-      var exponential = (n,m) => {
+      var exponential = (n, m) => {
         return times(m, multiply, n, 1);
       };
       it('multiply関数が失敗する例', (next) => {
         /* #@range_begin(multiply_failed_test) */
         expect(
-          multiply(2,3)
+          multiply(2, 3)
         ).to.eql(
           6
         );
         expect(
-          multiply(-2,3)
+          multiply(-2, 3)
         ).to.not.eql(
             -6  // -6になるはずが、-6ではない
         );
         expect(
-          multiply(2,-3)
+          multiply(2, -3)
         ).to.not.eql(
             -6 // -6になるはずが、-6ではない
         );
         expect(
-          multiply(-2,-3)
+          multiply(-2, -3)
         ).to.not.eql(
           6 // 6になるはずが、6ではない
         );
@@ -339,7 +339,7 @@ describe('テストに親しむ', () => {
         next();
       });
       it('multiplyの改良後', (next) => {
-        var add = (x,y) => {
+        var add = (x, y) => {
           if(y === 0){
             return x;
           } else {
@@ -350,18 +350,18 @@ describe('テストに親しむ', () => {
             }
           }
         };
-        var times = (count,fun,arg, memo) => {
+        var times = (count, fun, arg, memo) => {
           if(count > 1) {
-            return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
+            return times(count-1, fun, arg, fun(memo,arg)); // times関数を再帰呼出し
           } else {
             return fun(memo, arg);
           }
         };
         /* #@range_begin(multiply_improved) */
-        var subtract = (n,m) => {
+        var subtract = (n, m) => {
           return add(n, -m);
         };
-        var multiply = (x,y) => {
+        var multiply = (x, y) => {
           if(y === 0) {
             return 0;
           } else if(y < 0) {
@@ -374,28 +374,28 @@ describe('テストに親しむ', () => {
         };
         /* #@range_end(multiply_improved) */
         expect(
-          multiply(3,0)
+          multiply(3, 0)
         ).to.eql(
           0
         );
         expect(
-          multiply(0,3)
+          multiply(0, 3)
         ).to.eql(
           0
         );
         /* #@range_begin(multiply_improved_test) */
         expect(
-          multiply(-2,-3)
+          multiply(-2, -3)
         ).to.eql(
           6
         );
         expect(
-          multiply(2,-3)
+          multiply(2, -3)
         ).to.eql(
             -6
         );
         expect(
-          multiply(-2,3)
+          multiply(-2, 3)
         ).to.eql(
             -6
         );
@@ -411,7 +411,7 @@ describe('テストに親しむ', () => {
         var prev = (n) => {
           return n - 1;
         };
-        var add = (x,y) => { // add関数の定義
+        var add = (x, y) => { // add関数の定義
           if(y < 1){
             return x;
           } else {
@@ -420,17 +420,17 @@ describe('テストに親しむ', () => {
         };
         /* #@range_begin(add_failed_test) */
         expect(
-          add(0,2)
+          add(0, 2)
         ).to.eql(
           2
         );
         expect(
-          add(-1,2)
+          add(-1, 2)
         ).to.eql(
           1
         );
         expect(
-          add(1,-2)
+          add(1, -2)
         ).to.not.eql(
             -1 // -1 になるべきが、-1ではない
         );
@@ -445,7 +445,7 @@ describe('テストに親しむ', () => {
           return n - 1;
         };
         /* #@range_begin(add_improved) */
-        var add = (x,y) => {
+        var add = (x, y) => {
           if(y === 0){
             return x;                       // yが0の場合
           } else {
@@ -459,38 +459,38 @@ describe('テストに親しむ', () => {
         /* #@range_end(add_improved) */
         /* #@range_begin(add_improved_test) */
         expect(
-          add(-1,2)
+          add(-1, 2)
         ).to.eql(
           1
         );
         expect(
-          add(1,-2)
+          add(1, -2)
         ).to.eql(
             -1
         );
         expect(
-          add(-1,-2)
+          add(-1, -2)
         ).to.eql(
             -3
         );
         /* #@range_end(add_improved_test) */
         expect(
-          add(0,-2)
+          add(0, -2)
         ).to.eql(
             -2
         );
         expect(
-          add(-2,0)
+          add(-2, 0)
         ).to.eql(
             -2
         );
         expect(
-          add(0,2)
+          add(0, 2)
         ).to.eql(
           2
         );
         expect(
-          add(0,0)
+          add(0, 0)
         ).to.eql(
           0
         );
@@ -505,7 +505,7 @@ describe('テストに親しむ', () => {
         var prev = (n) => {
           return n - 1;
         };
-        var add = (x,y) => {
+        var add = (x, y) => {
           if(y === 0){
             return x;
           } else {
@@ -516,33 +516,33 @@ describe('テストに親しむ', () => {
             }
           }
         };
-        var times = (count,fun,arg, memo) => {
+        var times = (count, fun, arg, memo) => {
           if(count > 1) {
-            return times(count-1,fun,arg, fun(arg,memo)); // times関数を再帰呼出し
+            return times(count-1, fun, arg, fun(arg,memo)); // times関数を再帰呼出し
           } else {
             return fun(arg,memo);
           }
         };
-        var multiply = (n,m) => {
+        var multiply = (n, m) => {
           return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
         };
         expect(
-          multiply(2,3)
+          multiply(2, 3)
         ).to.eql(
           6
         );
         expect(
-          multiply(-2,3)
+          multiply(-2, 3)
         ).to.eql(
             -6
         );
         expect(
-          multiply(-2,-3)
+          multiply(-2, -3)
         ).to.not.eql(
           6
         );
         expect(
-          multiply(2,-3)
+          multiply(2, -3)
         ).to.not.eql(
             -6
         );
@@ -555,7 +555,7 @@ describe('テストに親しむ', () => {
         var prev = (n) => {
           return n - 1;
         };
-        var add = (x,y) => {
+        var add = (x, y) => {
           if(y === 0){
             return x;
           } else {
@@ -566,17 +566,17 @@ describe('テストに親しむ', () => {
             }
           }
         };
-        var subtract = (n,m) => {
+        var subtract = (n, m) => {
           return add(n, -m);
         };
-        var times = (count,fun,arg, memo) => {
+        var times = (count, fun, arg, memo) => {
           if(count > 1) {
-            return times(count-1,fun,arg, fun(memo,arg)); // times関数を再帰呼出し
+            return times(count-1, fun, arg, fun(memo,arg)); // times関数を再帰呼出し
           } else {
             return fun(memo, arg);
           }
         };
-        var multiply = (n,m) => {
+        var multiply = (n, m) => {
           if(m === 0) {
             return 0;
           } else {
@@ -588,34 +588,34 @@ describe('テストに親しむ', () => {
           }
         };
         expect(
-          multiply(3,0)
+          multiply(3, 0)
         ).to.eql(
           0
         );
         expect(
-          multiply(0,3)
+          multiply(0, 3)
         ).to.eql(
           0
         );
         /* -2 * -3 = ((0 - (-2)) - (-2)) - (-2) */
         expect(
-          multiply(-2,-3)
+          multiply(-2, -3)
         ).to.eql(
           6
         );
         /* 2 * -3 = ((0 - 2) - 2) -2 */
         expect(
-          multiply(2,-3)
+          multiply(2, -3)
         ).to.eql(
             -6
         );
         expect(
-          multiply(2,3)
+          multiply(2, 3)
         ).to.eql(
           6
         );
         expect(
-          multiply(-2,3)
+          multiply(-2, 3)
         ).to.eql(
             -6
         );

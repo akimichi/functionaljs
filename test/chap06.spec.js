@@ -170,7 +170,7 @@ describe('関数の基本', () => {
         return n + 1;
       };
       expect(
-        succ(1)  // 数値1をsucc関数を適用する
+        succ(1)  // 数値1にsucc関数を適用する
       ).to.eql(
         2
       );
@@ -1105,7 +1105,7 @@ describe('関数と参照透過性', () => {
       /* fsモジュールを変数fsにバインドする */
       var fs = require('fs');
       /* テストの実行前にあらかじめ "This is a test."
-       という文字列をファイルに書き込んでおく */
+         という文字列をファイルに書き込んでおく */
       fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
       /* 第1回目のファイルの読み込み */
@@ -1369,7 +1369,7 @@ describe('関数と参照透過性', () => {
       expect(
         tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
             IOSideEffect)
-      ).not.to.eql( // 同じ引数で適用しているのに両者は等しくない
+      ).not.to.eql( // 同じ引数に適用しているのに両者は等しくない
         tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
             IOSideEffect)
       );

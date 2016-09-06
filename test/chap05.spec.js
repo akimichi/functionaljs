@@ -1209,11 +1209,11 @@ describe('代数的データ型', () => {
           return n;
         },
         add: (expL, expR) => {
-          /* calculateを再帰呼び出して足し算を実行する */
+          /* calculateを再帰的に呼び出して足し算を実行する */
           return calculate(expL) + calculate(expR); 
         },
-        /* calculateを再帰呼び出してかけ算を実行する */
         mul: (expL, expR) => {
+          /* calculateを再帰的に呼び出してかけ算を実行する */
           return calculate(expL) * calculate(expR); 
         }
       });

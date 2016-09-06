@@ -166,7 +166,7 @@ describe('環境を作る', () => {
     /* #@range_begin(environment_code_test) */
     expect(((_) => {
       /* 空の環境からnewEnv環境を作る */
-      var newEnv = env.extend('a',1, env.empty); 
+      var newEnv = env.extend("a", 1, env.empty); 
       /* newEnv環境を利用して a の値を求める */
       return env.lookup("a", newEnv);            
     })()).to.eql(
@@ -201,7 +201,7 @@ describe('環境を作る', () => {
       var outerEnv = env.extend("x", 1, initEnv);    
 
       /* closureEnv環境を作る */
-      var closureEnv = env.extend("y",2, outerEnv);  
+      var closureEnv = env.extend("y", 2, outerEnv);  
       /* closureEnv環境を利用してx+yを計算する */
       return env.lookup("x",closureEnv) + env.lookup("y",closureEnv);
     })()).to.eql(
@@ -377,7 +377,7 @@ describe('恒等モナド評価器を作る', () => {
       variable: (name) => {           
         return ID.unit(env.lookup(name, environment));
       },
-      /* λ式の評価  */
+      /* 関数定義（λ式）の評価  */
       lambda: (variable, body) => {   
         return exp.match(variable,{
           variable: (name) => {
@@ -444,7 +444,7 @@ describe('恒等モナド評価器を作る', () => {
   it('ID評価器で変数を評価する', (next) => {
     /* #@range_begin(variable_evaluation_test) */
     /* 変数xを1に対応させた環境を作る */
-    var newEnv = env.extend("x",1, env.empty); 
+    var newEnv = env.extend("x", 1, env.empty); 
     /* 拡張したnewEnv環境を用いて変数xを評価する */
     expect(
       evaluate(exp.variable("x"), newEnv)
@@ -774,7 +774,7 @@ describe('ログ出力用評価器を作る', () => {
   });
   it('LOG評価器で変数を評価する', (next) => {
     /* #@range_begin(log_interpreter_variable) */
-    var newEnv = env.extend("x",1, env.empty);
+    var newEnv = env.extend("x", 1, env.empty);
     pair.match(evaluate(exp.log(exp.variable("x")), newEnv), {
       cons: (value, log) => {
         expect( // 結果の値をテストする

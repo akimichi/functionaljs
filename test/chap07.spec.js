@@ -1142,7 +1142,7 @@ describe('カリー化で関数を渡す', () => {
       return x - 2;
     };
     expect(
-      compose(f,g)(2) // f . g で合成された関数
+      compose(f,g)(2) // f◦g で合成された関数
     ).to.eql(
       f(g(2))         // 合成せずに順次実行した場合
     );
@@ -3812,7 +3812,7 @@ describe('関数を渡す', () => {
                               list.cons(2,
                                         list.cons(3,
                                                   list.empty())));
-      /* 要素を2倍にするmap処理 */
+      /* 要素を2倍するmap処理 */
       var mapDouble = map((n) => { 
         return n * 2;
       });
@@ -3821,7 +3821,7 @@ describe('関数を渡す', () => {
       ).to.eql(
         [2,4,6]
       );
-      /* 要素を2乗にするmap処理 */
+      /* 要素を2乗するmap処理 */
       var mapSquare = map((n) => { 
         return n * n;
       });
@@ -4532,7 +4532,7 @@ describe('関数を渡す', () => {
         var add = (n,m, continues) => { 
           return continues(n + m);
         };
-        /* 継続渡しの succ関数と add関数を使って 
+        /* 継続渡しのsucc関数とadd関数を使って 
            add(2, succ(3)) を計算する */
         expect(
           succ(3, (succResult) => {
@@ -4763,7 +4763,7 @@ describe('関数を渡す', () => {
                            /* 足し算の式を評価する */
                            add: (x, y) => {
                              /* まず引数xを評価する */
-                             return calculate(x,(resultX, continuesOnFailureX) => { 
+                             return calculate(x, (resultX, continuesOnFailureX) => { 
                                /* 次に引数yを評価する */
                                return calculate(y, (resultY, continuesOnFailureY) => { 
                                  /* 引数xとyがともに成功すれば、両者の値で足し算を計算する */

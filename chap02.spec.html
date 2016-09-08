@@ -3871,10 +3871,10 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
           <span class="hljs-comment">/* #@range_begin(succ_property) */</span>
           <span class="hljs-comment">/* ストリームのmap関数 */</span>
           <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-            <span class="hljs-keyword">return</span> (astream) =&gt; {
-              <span class="hljs-keyword">var</span> head = astream[<span class="hljs-number">0</span>];
+            <span class="hljs-keyword">return</span> (aStream) =&gt; {
+              <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
               <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
-                <span class="hljs-keyword">return</span> map(transform)(astream[<span class="hljs-number">1</span>]());
+                <span class="hljs-keyword">return</span> map(transform)(aStream[<span class="hljs-number">1</span>]());
               }];
             };
           };

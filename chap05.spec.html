@@ -1165,7 +1165,8 @@
     };
     <span class="hljs-comment">/* #@range_end(match_in_algebraic_datatype) */</span>
     <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span>
-    <span class="hljs-comment">/* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを判定する */</span>
+    <span class="hljs-comment">/* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
+       判定する */</span>
     <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
       <span class="hljs-comment">/* match関数で分岐する */</span>
       <span class="hljs-keyword">return</span> match(alist, {</pre></div></div>
@@ -1208,7 +1209,7 @@
     <span class="hljs-comment">/* head関数は、引数alistに渡されたリストの先頭の要素を返す */</span>
     <span class="hljs-keyword">var</span> head = (alist) =&gt; {
       <span class="hljs-keyword">return</span> match(alist, {
-        <span class="hljs-comment">/* 空のリストには先頭要素はありません */</span>
+        <span class="hljs-comment">/* 空のリストに先頭要素はない */</span>
         empty: (_) =&gt; {
           <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
         },
@@ -1220,7 +1221,7 @@
     <span class="hljs-comment">/* tail関数は、引数alistに渡されたリストの後尾のリストを返す */</span>
     <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
       <span class="hljs-keyword">return</span> match(alist, {
-        <span class="hljs-comment">/* 空のリストには後尾はありません */</span>
+        <span class="hljs-comment">/* 空のリストに後尾はない */</span>
         empty: (_) =&gt; {
           <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  
         },
@@ -1231,7 +1232,7 @@
     };
     <span class="hljs-comment">/* #@range_end(list_function_using_algebraic_datatype) */</span>
     <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype_test) */</span>
-    <span class="hljs-comment">/* empty は空のリストか */</span>
+    <span class="hljs-comment">/* emptyは空のリストか */</span>
     expect(
       isEmpty(empty())                    
     ).to.eql(
@@ -1243,7 +1244,7 @@
     ).to.eql(
       <span class="hljs-literal">false</span>
     );
-    <span class="hljs-comment">/* cons(1,empty())]の先頭要素は1である */</span>
+    <span class="hljs-comment">/* cons(1,empty())の先頭要素は1である */</span>
     expect(
       head(cons(<span class="hljs-number">1</span>,empty()))               
     ).to.eql(
@@ -1366,11 +1367,11 @@
           <span class="hljs-keyword">return</span> n;
         },
         add: (expL, expR) =&gt; {
-          <span class="hljs-comment">/* calculateを再帰呼び出して足し算を実行する */</span>
+          <span class="hljs-comment">/* calculateを再帰的に呼び出して足し算を実行する */</span>
           <span class="hljs-keyword">return</span> calculate(expL) + calculate(expR); 
         },
-        <span class="hljs-comment">/* calculateを再帰呼び出してかけ算を実行する */</span>
         mul: (expL, expR) =&gt; {
+          <span class="hljs-comment">/* calculateを再帰的に呼び出してかけ算を実行する */</span>
           <span class="hljs-keyword">return</span> calculate(expL) * calculate(expR); 
         }
       });
@@ -1954,9 +1955,9 @@
         };
       };
       <span class="hljs-comment">/* #@range_begin(list_reverse) */</span>
-      <span class="hljs-keyword">var</span> reverse = (seq) =&gt; {
-        <span class="hljs-keyword">var</span> reverseHelper = (seq, accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> match(seq, {
+      <span class="hljs-keyword">var</span> reverse = (list) =&gt; {
+        <span class="hljs-keyword">var</span> reverseHelper = (list, accumulator) =&gt; {
+          <span class="hljs-keyword">return</span> match(list, {
             empty: (_) =&gt; {  <span class="hljs-comment">// emptyの場合は、終了条件</span>
               <span class="hljs-keyword">return</span> accumulator;
             },
@@ -1965,7 +1966,7 @@
             }
           });
         };
-        <span class="hljs-keyword">return</span> reverseHelper(seq, empty());
+        <span class="hljs-keyword">return</span> reverseHelper(list, empty());
       };
       <span class="hljs-comment">/* #@range_end(list_reverse) */</span></pre></div></div>
             

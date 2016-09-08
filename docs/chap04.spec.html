@@ -294,7 +294,7 @@
         <span class="hljs-comment">/* hasOwnPropertyでプロパティの有無を調べる */</span>
         <span class="hljs-comment">/* #@range_begin(object_access) */</span>
         expect(
-          addressbook.No1.name     <span class="hljs-comment">// オブジェクト.キー記法</span>
+          addressbook.No1.name        <span class="hljs-comment">// オブジェクト.キー記法</span>
         ).to.eql(
           <span class="hljs-string">"Alan Turing"</span>
         );
@@ -468,7 +468,7 @@
       <span class="hljs-comment">/* #@range_begin(sorting_array) */</span>
       expect(
         addressbook.sort((onePerson,anotherPerson) =&gt; {
-          <span class="hljs-keyword">return</span> onePerson.name&gt; anotherPerson.name;
+          <span class="hljs-keyword">return</span> onePerson.name &gt; anotherPerson.name;
         })
       ).to.eql(
         [
@@ -805,7 +805,7 @@
       expect(
         array
       ).not.to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>]  <span class="hljs-comment">// array変数の中身が[5,4,3,2,1]に変更されている</span>
+        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>]  <span class="hljs-comment">// 変数arrayの中身が[5,4,3,2,1]に変更されている</span>
       );
       <span class="hljs-comment">/* #@range_end(destructive_reverse) */</span>
       next();
@@ -863,12 +863,12 @@
     <span class="hljs-keyword">var</span> bound = <span class="hljs-string">"我思うゆえに我あり"</span>;
     expect(
       bound
-    ).to.be(
+    ).to.eql(
       <span class="hljs-string">"我思うゆえに我あり"</span>
     );
     expect(
-      (_) =&gt; { <span class="hljs-comment">// 例外をキャッチするにはexpectに関数を渡します</span>
-        unbound <span class="hljs-comment">// 変数unboundは自由変数です</span>
+      (_) =&gt; { <span class="hljs-comment">// 例外をキャッチするにはexpectに関数を渡す</span>
+        unbound <span class="hljs-comment">// 変数unboundは自由変数</span>
       }
     ).to.throwException((exception)=&gt; {
       expect(exception).to.be.a(
@@ -881,13 +881,13 @@
   describe(<span class="hljs-string">'スコープ'</span>, () =&gt; {
     it(<span class="hljs-string">'関数はスコープを分ける'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(function_creates_scope) */</span>
-      <span class="hljs-keyword">var</span> createScope = (_) =&gt;  { <span class="hljs-comment">// 局所スコープを作る</span>
+      <span class="hljs-keyword">var</span> createScope = (_) =&gt;  { <span class="hljs-comment">// ローカルスコープを作る</span>
         <span class="hljs-keyword">var</span> innerScope = <span class="hljs-string">"inner"</span>; 
-        <span class="hljs-keyword">return</span> innerScope; <span class="hljs-comment">// innerScope変数は createScopeの中でのみ有効</span>
+        <span class="hljs-keyword">return</span> innerScope; <span class="hljs-comment">// 変数innerScopeはcreateScopeのなかでのみ有効</span>
       };
       expect(
         (_) =&gt; {
-          innerScope <span class="hljs-comment">// 局所スコープにある変数innerScopeにアクセスを試みます</span>
+          innerScope <span class="hljs-comment">// ローカルスコープにある変数innerScopeにアクセスを試みる</span>
         }
       ).to.throwException((e)=&gt; {
         expect(e).to.be.a(
@@ -907,7 +907,7 @@
       <span class="hljs-keyword">var</span> outerScope = <span class="hljs-number">1</span>;
       <span class="hljs-keyword">var</span> createScope = (_) =&gt;  {
         <span class="hljs-keyword">var</span> innerScope = <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">return</span> innerScope + outerScope; <span class="hljs-comment">// 内側のスコープから外側のスコープにある outerScope変数にアクセスしています</span>
+        <span class="hljs-keyword">return</span> innerScope + outerScope; <span class="hljs-comment">// 内側のスコープから外側のスコープにある outerScope変数にアクセスしている</span>
       };
       <span class="hljs-comment">/* #@range_end(nested_scope) */</span>
       expect(
@@ -1020,7 +1020,7 @@
       <span class="hljs-comment">/* #@range_begin(binding_in_closure) */</span>
       <span class="hljs-keyword">var</span> adder = (y) =&gt; { <span class="hljs-comment">// 外側の関数</span>
         <span class="hljs-keyword">var</span> addWithFreeVariable = (x) =&gt; { <span class="hljs-comment">// 内側の関数</span>
-          <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// 変数yはadder関数の引数yを参照できます</span>
+          <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// 変数yはadder関数の引数yを参照できる</span>
         };
         <span class="hljs-keyword">return</span> addWithFreeVariable;
       };
@@ -1302,7 +1302,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>この時点で誕生日を迎えました</p>
+              <p>この時点で誕生日を迎えた</p>
 
             </div>
             

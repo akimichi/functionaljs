@@ -255,8 +255,7 @@
   }
 };
 
-describe(<span class="hljs-string">'環境を作る'</span>, () =&gt; {
-  <span class="hljs-comment">/* #@range_begin(environment) */</span></pre></div></div>
+describe(<span class="hljs-string">'環境を作る'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -271,7 +270,8 @@ describe(<span class="hljs-string">'環境を作る'</span>, () =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> env = {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(environment) */</span>
+  <span class="hljs-keyword">var</span> env = {</pre></div></div>
             
         </li>
         
@@ -304,7 +304,7 @@ describe(<span class="hljs-string">'環境を作る'</span>, () =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* 変数名に対応する値を環境から取り出す */</span>
     lookup : (name, environment) =&gt; {       
       <span class="hljs-keyword">return</span> environment(name);
     },</pre></div></div>
@@ -338,7 +338,7 @@ describe(<span class="hljs-string">'環境を作る'</span>, () =&gt; {
     <span class="hljs-comment">/* #@range_begin(environment_code_test) */</span>
     expect(((_) =&gt; {
       <span class="hljs-comment">/* 空の環境からnewEnv環境を作る */</span>
-      <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">'a'</span>,<span class="hljs-number">1</span>, env.empty); 
+      <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"a"</span>, <span class="hljs-number">1</span>, env.empty); 
       <span class="hljs-comment">/* newEnv環境を利用して a の値を求める */</span>
       <span class="hljs-keyword">return</span> env.lookup(<span class="hljs-string">"a"</span>, newEnv);            
     })()).to.eql(
@@ -385,7 +385,7 @@ closure()
       <span class="hljs-keyword">var</span> outerEnv = env.extend(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, initEnv);    
 
       <span class="hljs-comment">/* closureEnv環境を作る */</span>
-      <span class="hljs-keyword">var</span> closureEnv = env.extend(<span class="hljs-string">"y"</span>,<span class="hljs-number">2</span>, outerEnv);  
+      <span class="hljs-keyword">var</span> closureEnv = env.extend(<span class="hljs-string">"y"</span>, <span class="hljs-number">2</span>, outerEnv);  
       <span class="hljs-comment">/* closureEnv環境を利用してx+yを計算する */</span>
       <span class="hljs-keyword">return</span> env.lookup(<span class="hljs-string">"x"</span>,closureEnv) + env.lookup(<span class="hljs-string">"y"</span>,closureEnv);
     })()).to.eql(
@@ -625,7 +625,7 @@ closure()
       variable: (name) =&gt; {           
         <span class="hljs-keyword">return</span> ID.unit(env.lookup(name, environment));
       },
-      <span class="hljs-comment">/* λ式の評価  */</span>
+      <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
       lambda: (variable, body) =&gt; {   
         <span class="hljs-keyword">return</span> exp.match(variable,{
           variable: (name) =&gt; {
@@ -692,7 +692,7 @@ closure()
   it(<span class="hljs-string">'ID評価器で変数を評価する'</span>, (next) =&gt; {
     <span class="hljs-comment">/* #@range_begin(variable_evaluation_test) */</span>
     <span class="hljs-comment">/* 変数xを1に対応させた環境を作る */</span>
-    <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"x"</span>,<span class="hljs-number">1</span>, env.empty); 
+    <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, env.empty); 
     <span class="hljs-comment">/* 拡張したnewEnv環境を用いて変数xを評価する */</span>
     expect(
       evaluate(exp.variable(<span class="hljs-string">"x"</span>), newEnv)
@@ -1239,7 +1239,7 @@ closure()
   });
   it(<span class="hljs-string">'LOG評価器で変数を評価する'</span>, (next) =&gt; {
     <span class="hljs-comment">/* #@range_begin(log_interpreter_variable) */</span>
-    <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"x"</span>,<span class="hljs-number">1</span>, env.empty);
+    <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, env.empty);
     pair.match(evaluate(exp.log(exp.variable(<span class="hljs-string">"x"</span>)), newEnv), {
       cons: (value, log) =&gt; {
         expect( <span class="hljs-comment">// 結果の値をテストする</span>

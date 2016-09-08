@@ -238,7 +238,7 @@
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
       };
       expect(
-        succ(<span class="hljs-number">1</span>)  <span class="hljs-comment">// 数値1をsucc関数を適用する</span>
+        succ(<span class="hljs-number">1</span>)  <span class="hljs-comment">// 数値1にsucc関数を適用する</span>
       ).to.eql(
         <span class="hljs-number">2</span>
       );
@@ -348,7 +348,7 @@
         <span class="hljs-keyword">var</span> infiniteLoop = (_) =&gt; {
           <span class="hljs-keyword">return</span> infiniteLoop(_);
         };
-        <span class="hljs-comment">/* このテストは無限ループになるのでコメントアウトしています
+        <span class="hljs-comment">/* このテストは無限ループになるのでコメントアウトしている
          expect(
            left(1, infiniteLoop())
          ).to.eql(
@@ -375,7 +375,7 @@
         expect(
           conditional(<span class="hljs-number">1</span>)
         ).to.eql(
-          <span class="hljs-literal">true</span> <span class="hljs-comment">// 無限ループに陥いることなく計算に成功する</span>
+          <span class="hljs-literal">true</span> <span class="hljs-comment">// 無限ループに陥ることなく計算に成功する</span>
         );
         <span class="hljs-comment">/* #@range_end(conditional_is_nonstrict) */</span>
         next();
@@ -386,19 +386,21 @@
         };
         <span class="hljs-comment">/* #@range_begin(multiply_lazy_evaluation) */</span>
         <span class="hljs-keyword">var</span> lazyMultiply = (funX,funY) =&gt; {
-          <span class="hljs-keyword">if</span>(funX() === <span class="hljs-number">0</span>){
-            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;         <span class="hljs-comment">// funX()が0ならば、funYは評価しない</span>
+          <span class="hljs-keyword">var</span> x = funX();
+
+          <span class="hljs-keyword">if</span>(x === <span class="hljs-number">0</span>){
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;          <span class="hljs-comment">// xが0ならば、funYは評価しない</span>
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> funX() * funY(); <span class="hljs-comment">// ここで初めてfunYを評価する</span>
+            <span class="hljs-keyword">return</span> x * funY(); <span class="hljs-comment">// ここで初めてfunYを評価する</span>
           }
         };
         <span class="hljs-comment">/* #@range_end(multiply_lazy_evaluation) */</span>
         <span class="hljs-comment">/* #@range_begin(multiply_lazy_evaluation_test) */</span>
         expect(
-          lazyMultiply((_) =&gt; { <span class="hljs-comment">// 値を関数でラッピングする</span>
+          lazyMultiply((_) =&gt; {    <span class="hljs-comment">// 値を関数でラッピングする</span>
             <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
           }, (_) =&gt; {
-            <span class="hljs-keyword">return</span> infiniteLoop(); <span class="hljs-comment">// ここが評価されると無限ループに陥いる</span>
+            <span class="hljs-keyword">return</span> infiniteLoop(); <span class="hljs-comment">// ここが評価されると無限ループに陥る</span>
           })
         ).to.eql(
           <span class="hljs-number">0</span>
@@ -519,7 +521,7 @@
       it(<span class="hljs-string">"stream#cons"</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(stream_with_thunk_test) */</span>
         <span class="hljs-keyword">var</span> theStream = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; { <span class="hljs-comment">// 第2引数にサンクを渡す</span>
-          <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {     <span class="hljs-comment">// 第2引数にサンクを渡す</span>
+          <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {         <span class="hljs-comment">// 第2引数にサンクを渡す</span>
             <span class="hljs-keyword">return</span> stream.empty();
           });
         });
@@ -767,7 +769,9 @@
           );
           <span class="hljs-comment">/* #@range_begin(infinite_integer_test) */</span>
           expect(
-            list.toArray(stream.take(enumFrom(<span class="hljs-number">1</span>), <span class="hljs-number">4</span>))
+            list.toArray( <span class="hljs-comment">// ストリームを配列に変換する</span>
+              stream.take(enumFrom(<span class="hljs-number">1</span>),<span class="hljs-number">4</span>) <span class="hljs-comment">// 無限の整数列から4個の要素を取り出す </span>
+            )
           ).to.eql(
             [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
           );
@@ -1247,21 +1251,21 @@
       <span class="hljs-comment">/* fsモジュールを変数fsにバインドする */</span>
       <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
       <span class="hljs-comment">/* テストの実行前にあらかじめ "This is a test."
-       という文字列をファイルに書きこんでおく。 */</span>
+         という文字列をファイルに書き込んでおく */</span>
       fs.writeFileSync(<span class="hljs-string">'test/resources/file.txt'</span>, <span class="hljs-string">"This is a test."</span>);
 
-      <span class="hljs-comment">/* 第1回目のファイルの読込 */</span>
+      <span class="hljs-comment">/* 第1回目のファイルの読み込み */</span>
       <span class="hljs-keyword">var</span> text = fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>,<span class="hljs-string">'utf8'</span>);
       expect(
         fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>, <span class="hljs-string">'utf8'</span>)
       ).to.eql(
         <span class="hljs-string">"This is a test."</span>
       );
-      <span class="hljs-comment">/* 途中でのファイルへの書込み */</span>
+      <span class="hljs-comment">/* 途中でのファイルへの書き込み */</span>
       fs.writeFileSync(<span class="hljs-string">'test/resources/file.txt'</span>,
                        <span class="hljs-string">"This is another test."</span>);
 
-      <span class="hljs-comment">/* 第2回目のファイルの読込 */</span>
+      <span class="hljs-comment">/* 第2回目のファイルの読み込み */</span>
       expect(
         fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>, <span class="hljs-string">'utf8'</span>)
       ).to.eql(<span class="hljs-comment">/* 最初の readFileSync関数の結果と異なっている */</span>
@@ -1561,10 +1565,10 @@
     it(<span class="hljs-string">'tapコンビネーターによるファイル入出力のテストは失敗する'</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>); <span class="hljs-comment">// fsモジュールを変数fsにバインドする</span>
       <span class="hljs-comment">/* #@range_begin(tap_combinator_test_in_fileio) */</span>
-      <span class="hljs-comment">/* あらかじめ文字列をファイルに書きこんでおく */</span>
+      <span class="hljs-comment">/* あらかじめ文字列をファイルに書き込んでおく */</span>
       fs.writeFileSync(<span class="hljs-string">'test/resources/file.txt'</span>, <span class="hljs-string">"This is a test."</span>);
 
-      <span class="hljs-comment">/* ファイルからの読込という副作用を実行する */</span>
+      <span class="hljs-comment">/* ファイルからの読み込みという副作用を実行する */</span>
       <span class="hljs-keyword">var</span> IOSideEffect = (_) =&gt; {
         <span class="hljs-keyword">var</span> content = fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>,
                                       <span class="hljs-string">'utf8'</span>);
@@ -1576,7 +1580,7 @@
       expect(
         tap(fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>, <span class="hljs-string">'utf8'</span>),
             IOSideEffect)
-      ).not.to.eql( <span class="hljs-comment">// 同じ引数で適用しているのに両者は等しくない</span>
+      ).not.to.eql( <span class="hljs-comment">// 同じ引数に適用しているのに両者は等しくない</span>
         tap(fs.readFileSync(<span class="hljs-string">"test/resources/file.txt"</span>, <span class="hljs-string">'utf8'</span>),
             IOSideEffect)
       );

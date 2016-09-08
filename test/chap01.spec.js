@@ -1,17 +1,16 @@
 "use strict";
 
-// 「計算」とは
+// 第1章 「計算」とは
 // ========
-
 
 var expect = require('expect.js');
 var util = require('util');
 
-// ## 命令型モデル
+// ## 1.2 命令型モデル
 describe('命令型モデル', () => {
   // ### チューリング機械
   describe('チューリング機械 turing machine', () => {
-    /* c.f. http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069 */
+    // c.f. [A turing machine in 133 bytes of javascript](http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069) 
     // [![IMAGE ALT TEXT](http://img.youtube.com/vi/lf1KZmYOG_g/0.jpg)](https://www.youtube.com/watch?v=lf1KZmYOG_g "チューリングマシンの動画")
     /* #@range_begin(turing) */
     var machine = (program,tape,initState, endState) => {
@@ -47,63 +46,10 @@ describe('命令型モデル', () => {
     /* #@range_end(turing)  */
     // ### チューリング機械のテスト
     describe('チューリング機械をテストする', () => {
-      it('入力を複製する', (next) => {
-        /* #@range_begin(turing_example) */
-        var program = {
-          'q0': {"1": {"write": "B", "move": 1, "next": 'q1'}},
-          'q1': {"1": {"write": "1", "move": 1, "next": 'q1'},
-                 "0": {"write": "0", "move": 1, "next": 'q2'},
-                 "B": {"write": "0", "move": 1, "next": 'q2'}},
-          'q2': {"1": {"write": "1", "move": 1, "next": 'q2'},
-                 "B": {"write": "1", "move": -1, "next": 'q3'}},
-          'q3': {"1": {"write": "1", "move": -1, "next": 'q3'},
-                 "0": {"write": "0", "move": -1, "next": 'q3'},
-                 "B": {"write": "1", "move": 1, "next": 'q4'}},
-          'q4': {"1": {"write": "B", "move": 1, "next": 'q1'},
-                 "0": {"write": "0", "move": 1, "next": 'q5'}}
-        };
-        var tape = {
-          '0': '1',
-          '1':'1',
-          '2':'1'
-        };
-        var result = machine(program,     // プログラム
-                             tape,        // テープ
-                             'q0',        // 初期状態
-                             'q5');       // 終了状態
-        expect(
-          result
-        ).to.eql(
-          ['1','1','1','0','1','1','1' ]
-        );
-        /* #@range_end(turing_example) */
-        next();
-      });
-      it('最下位桁までヘッドを移動する', (next) => {
-        var program = {
-          'q0': {"1": {"write": "1", "move": 1, "next": 'q0'},
-                 "0": {"write": "0", "move": 1, "next": 'q0'},
-                 "B": {"write": "B", "move": -1, "next": 'q1'}}
-        };
-        expect(
-          machine(program,    // プログラム 
-                  ['0'],      // テープ
-                  'q0',       // 初期状態
-                  'q1')       // 終了状態
-        ).to.eql(
-          ['0','B']
-        );
-        expect(
-          machine(program,    // プログラム
-                  ['1'],      // テープ
-                  'q0',       // 初期状態
-                  'q1')       // 終了状態
-        ).to.eql(
-          ['1','B']
-        );
-        next();
-      });
-      it('succ関数を実装する', (next) => {
+      // #### チューリング機械でsucc関数を実装する
+      // #### <a name="turing_demo"> **チューリング機械の挙動** </a>
+      // ![チューリング機械の挙動](images/turing_succ.gif) 
+      it('チューリング機械でsucc関数を実装する', (next) => {
         /* #@range_begin(turing_example_succ) */
         /* 2進法で10、つまり10進法で2を表すテープ */
         var tape = { 
@@ -143,54 +89,45 @@ describe('命令型モデル', () => {
           }
           /* #@range_end(turing_example_succ_test_result) */
         );
-        // #### <a name="turing_demo"> **チューリング機械の挙動** </a>
-        // 
-        // ![チューリング機械の挙動](images/turing_succ.gif) 
+        next();
+      });
+      it('チューリング機械で入力を複製する', (next) => {
+        /* #@range_begin(turing_example) */
+        var program = {
+          'q0': {"1": {"write": "B", "move": 1, "next": 'q1'}},
+          'q1': {"1": {"write": "1", "move": 1, "next": 'q1'},
+                 "0": {"write": "0", "move": 1, "next": 'q2'},
+                 "B": {"write": "0", "move": 1, "next": 'q2'}},
+          'q2': {"1": {"write": "1", "move": 1, "next": 'q2'},
+                 "B": {"write": "1", "move": -1, "next": 'q3'}},
+          'q3': {"1": {"write": "1", "move": -1, "next": 'q3'},
+                 "0": {"write": "0", "move": -1, "next": 'q3'},
+                 "B": {"write": "1", "move": 1, "next": 'q4'}},
+          'q4': {"1": {"write": "B", "move": 1, "next": 'q1'},
+                 "0": {"write": "0", "move": 1, "next": 'q5'}}
+        };
+        var tape = {
+          '0': '1',
+          '1':'1',
+          '2':'1'
+        };
+        var result = machine(program,     // プログラム
+                             tape,        // テープ
+                             'q0',        // 初期状態
+                             'q5');       // 終了状態
+        expect(
+          result
+        ).to.eql(
+          ['1','1','1','0','1','1','1' ]
+        );
+        /* #@range_end(turing_example) */
         next();
       });
     });
   });
 });
-// ## 関数型モデル
+// ## 1.3 関数型モデル
 describe('関数型モデル', () => {
-  describe('さまざまなバインド関数 ', () => {
-    it('JavaScriptのbind関数', (next) => {
-      /* #@range_begin(bind_in_javascript) */
-      var foo = (y) => {
-        return this.x + y; 
-      };
-      var object = { x : 1 };
-      var bar = foo.bind(object);
-      /* #@range_end(bind_in_javascript) */
-      expect(
-        bar(2)
-      ).to.eql(
-        3
-      );
-      next();
-    });
-    it('monadのbind関数', (next) => {
-      /* #@range_begin(bind_in_monad) */
-      var bind = (instance) => {
-        return (transform) => {
-          return transform(instance);
-        };
-      };
-      /* #@range_end(bind_in_monad) */
-      expect(
-        /* #@range_begin(bind_in_monad_usage) */
-        bind(2 * 3)((n) => {
-          return n * 4;
-        })
-        /* #@range_end(bind_in_monad_usage) */
-      ).to.eql(
-        /* #@range_begin(bind_in_monad_usage_answer) */
-        24 
-        /* #@range_end(bind_in_monad_usage_answer) */
-      );
-      next();
-    });
-  });
   // ### 置換ルール
   describe('置換ルール', () => {
     it('単純なλ式の簡約', (next) => {
@@ -206,22 +143,7 @@ describe('関数型モデル', () => {
       );
       next();
     });
-    it('sumsquaresとsquareの簡約', (next) => {
-      /* #@range_begin(sumsquares) */
-      var sumsquares = (x,y) => {
-        return square(x) + square(y);
-      };
-      var square = (x) => {
-        return x * x;
-      };
-      /* #@range_end(sumsquares) */
-      expect(
-        sumsquares(3,4)
-      ).to.eql(
-        25
-      );
-      next();
-    });
+    // #### 再帰関数としてのadd
     it('再帰関数としてのadd', (next) => {
       /* #@range_begin(recursive_add) */
       var succ = (n) => {
@@ -249,13 +171,24 @@ describe('関数型モデル', () => {
       );
       next();
     });
+    it('sumsquaresとsquareの簡約', (next) => {
+      /* #@range_begin(sumsquares) */
+      var sumsquares = (x,y) => {
+        return square(x) + square(y);
+      };
+      var square = (x) => {
+        return x * x;
+      };
+      /* #@range_end(sumsquares) */
+      expect(
+        sumsquares(3,4)
+      ).to.eql(
+        25
+      );
+      next();
+    });
+    // #### 命令的なadd関数
     it('命令的なadd関数', (next) => {
-        // var result = x; // 結果を保存する変数result
-        // while(y > 0) {  // 反復処理を実行する
-        //   result = result + 1; // 変数resultを更新する 
-        //   y = y - 1;           // 変数yを更新する
-        // }
-        // return result;
       /* add関数の定義 */
       /* #@range_begin(imperative_add) */
       var add = (x,y) => { 
@@ -283,6 +216,7 @@ describe('関数型モデル', () => {
       );
       next();
     });
+    // #### コラム 再帰と漸化式
     it('再帰と漸化式', (next) => {
       /* #@range_begin(recursion) */
       var a = (n) => {
@@ -364,6 +298,7 @@ describe('関数型モデル', () => {
           return add(succ(x),prev(y)); // add関数の再帰呼び出し
         }
       };
+      // #### かけ算の定義
       /* #@range_begin(multiply) */
       var times = (count,fun,arg, memo) => {
         if(count > 1) {
@@ -408,6 +343,7 @@ describe('関数型モデル', () => {
       next();
     });
   });
+  // #### べき乗の定義
   it('べき乗の定義', (next) => {
     var succ = (n) => {
       return n + 1;

@@ -241,7 +241,10 @@
         );
         <span class="hljs-comment">/* #@range_end(turing_example) */</span>
         next();
-      });</pre></div></div>
+      });
+    });
+  });
+});</pre></div></div>
             
         </li>
         
@@ -252,46 +255,6 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>it(‘最下位桁までヘッドを移動する’, (next) =&gt; {
-  var program = {
-    ‘q0’: {“1”: {“write”: “1”, “move”: 1, “next”: ‘q0’},
-           “0”: {“write”: “0”, “move”: 1, “next”: ‘q0’},
-           “B”: {“write”: “B”, “move”: -1, “next”: ‘q1’}}
-  };
-  expect(
-    machine(program,    // プログラム 
-            [‘0’],      // テープ
-            ‘q0’,       // 初期状態
-            ‘q1’)       // 終了状態
-  ).to.eql(
-    [‘0’,’B’]
-  );
-  expect(
-    machine(program,    // プログラム
-            [‘1’],      // テープ
-            ‘q0’,       // 初期状態
-            ‘q1’)       // 終了状態
-  ).to.eql(
-    [‘1’,’B’]
-  );
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    });
-  });
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
               <h2 id="1-3-">1.3 関数型モデル</h2>
 
             </div>
@@ -301,11 +264,11 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <h3 id="-">置換ルール</h3>
 
@@ -329,11 +292,11 @@
         </li>
         
         
-        <li id="section-12">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <h4 id="-add">再帰関数としてのadd</h4>
 
@@ -361,11 +324,11 @@
         </li>
         
         
-        <li id="section-13">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h4 id="-a-name-add_reduction_demo-add-3-2-a-"><a name="add_reduction_demo"> <strong>add(3,2)の簡約</strong> </a></h4>
 <p><img src="images/add_reduction.gif" alt="add関数の簡約"> </p>
@@ -399,11 +362,11 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <h4 id="-add-">命令的なadd関数</h4>
 
@@ -441,11 +404,11 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <h4 id="-">コラム 再帰と漸化式</h4>
 
@@ -482,11 +445,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <h4 id="-">変数の置換ルール</h4>
 
@@ -534,11 +497,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h4 id="-">関数の置換ルール</h4>
 
@@ -562,11 +525,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h4 id="-">かけ算の定義</h4>
 
@@ -590,11 +553,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h4 id="-a-name-multiply_reduction_demo-multiply-2-3-a-"><a name="multiply_reduction_demo"> <strong>multiply(2,3)の簡約</strong> </a></h4>
 <p><img src="images/multiply_reduction.gif" alt="multiply関数の簡約"> </p>
@@ -633,11 +596,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h4 id="-">べき乗の定義</h4>
 

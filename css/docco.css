@@ -508,8 +508,7 @@ pre .hljs-tex .hljs-formula {
 #footer {
   bottom: 0;
   height: 5em;
-  position: absolute;
-  color: #112233;
+  color: #f8f8ff;
   line-height: 1em;
   font-weight: normal;
   font-family: "novecento-bold";

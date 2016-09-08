@@ -308,45 +308,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>describe(‘さまざまなバインド関数 ‘, () =&gt; {
-  it(‘JavaScriptのbind関数’, (next) =&gt; {
-    /<em> #@range_begin(bind_in_javascript) </em>/
-    var foo = (y) =&gt; {
-      return this.x + y; 
-    };
-    var object = { x : 1 };
-    var bar = foo.bind(object);
-    /<em> #@range_end(bind_in_javascript) </em>/
-    expect(
-      bar(2)
-    ).to.eql(
-      3
-    );
-    next();
-  });
-  it(‘monadのbind関数’, (next) =&gt; {
-    /<em> #@range_begin(bind_in_monad) </em>/
-    var bind = (instance) =&gt; {
-      return (transform) =&gt; {
-        return transform(instance);
-      };
-    };
-    /<em> #@range_end(bind_in_monad) </em>/
-    expect(
-      /<em> #@range_begin(bind_in_monad_usage) </em>/
-      bind(2 <em> 3)((n) =&gt; {
-        return n </em> 4;
-      })
-      /<em> #@range_end(bind_in_monad_usage) </em>/
-    ).to.eql(
-      /<em> #@range_begin(bind_in_monad_usage_answer) </em>/
-      24 
-      /<em> #@range_end(bind_in_monad_usage_answer) </em>/
-    );
-    next();
-  });
-});</p>
-<h3 id="-">置換ルール</h3>
+              <h3 id="-">置換ルール</h3>
 
             </div>
             
@@ -680,8 +642,59 @@ return result;</p>
       <span class="hljs-number">8</span>
     );
     next();
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>describe(‘さまざまなバインド関数 ‘, () =&gt; {
+  it(‘JavaScriptのbind関数’, (next) =&gt; {
+    /<em> #@range_begin(bind_in_javascript) </em>/
+    var foo = (y) =&gt; {
+      return this.x + y; 
+    };
+    var object = { x : 1 };
+    var bar = foo.bind(object);
+    /<em> #@range_end(bind_in_javascript) </em>/
+    expect(
+      bar(2)
+    ).to.eql(
+      3
+    );
+    next();
   });
-});</pre></div></div>
+  it(‘monadのbind関数’, (next) =&gt; {
+    /<em> #@range_begin(bind_in_monad) </em>/
+    var bind = (instance) =&gt; {
+      return (transform) =&gt; {
+        return transform(instance);
+      };
+    };
+    /<em> #@range_end(bind_in_monad) </em>/
+    expect(
+      /<em> #@range_begin(bind_in_monad_usage) </em>/
+      bind(2 <em> 3)((n) =&gt; {
+        return n </em> 4;
+      })
+      /<em> #@range_end(bind_in_monad_usage) </em>/
+    ).to.eql(
+      /<em> #@range_begin(bind_in_monad_usage_answer) </em>/
+      24 
+      /<em> #@range_end(bind_in_monad_usage_answer) </em>/
+    );
+    next();
+  });
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>});</pre></div></div>
             
         </li>
         

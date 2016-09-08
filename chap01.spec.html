@@ -395,8 +395,7 @@
         <span class="hljs-number">25</span>
       );
       next();
-    });
-    it(<span class="hljs-string">'命令的なadd関数'</span>, (next) =&gt; {</pre></div></div>
+    });</pre></div></div>
             
         </li>
         
@@ -407,16 +406,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>var result = x; // 結果を保存する変数result
-while(y &gt; 0) {  // 反復処理を実行する
-  result = result + 1; // 変数resultを更新する 
-  y = y - 1;           // 変数yを更新する
-}
-return result;</p>
+              <h4 id="-add-">命令的なadd関数</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* add関数の定義 */</span>
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'命令的なadd関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* add関数の定義 */</span>
       <span class="hljs-comment">/* #@range_begin(imperative_add) */</span>
       <span class="hljs-keyword">var</span> add = (x,y) =&gt; { 
         <span class="hljs-keyword">while</span>(y &gt; <span class="hljs-number">0</span>) {  <span class="hljs-comment">// yが0より大きい間、反復処理を実行する</span>

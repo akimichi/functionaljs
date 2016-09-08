@@ -504,3 +504,9 @@ pre .hljs-chunk {
 pre .hljs-tex .hljs-formula {
   opacity: 0.5;
 }
+
+footer {
+  bottom: 0;
+  height: 5em;
+  position: absolute;
+}

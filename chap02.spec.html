@@ -90,28 +90,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>describe(‘関数の評価戦略’, () =&gt; {
-  it(‘succ関数の定義’, (next) =&gt; {
-    /<em> #@range_begin(succ_definition) </em>/
-    var succ = (n) =&gt; {
-      return n + 1;
-    };
-    /<em> #@range_end(succ_definition) </em>/
-    /<em> succ関数のテスト </em>/
-    expect(
-      succ(0)
-    ).to.eql(
-      1
-    );
-    expect(
-      succ(1)
-    ).to.eql(
-      2
-    );
-    next();
-  });
-});</p>
-<h3 id="-">ファーストクラスオブジェクトとしての関数</h3>
+              <h3 id="-">ファーストクラスオブジェクトとしての関数</h3>
 
             </div>
             
@@ -480,43 +459,8 @@
           succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 2回目の実行</span>
         ).to.eql(
           <span class="hljs-number">2</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>/<em> #@range_begin(multiply_definition) </em>/
-var multiply = (x,y) =&gt; {
-  return x <em> y;
-};
-/</em>  #@range_end(multiply_definition) <em>/
-/</em> #@range_begin(multiply_is_transparent) <em>/
-expect(
-  multiply(2,3)
-).to.eql(
-  6
-);
-expect(
-  multiply(2,3)
-).to.eql(
-  6
-);
-expect(
-  multiply(2,3) === multiply(2,3)
-).to.eql(
-  true
-);
-/</em> #@range_end(multiply_is_transparent) */</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        next();
+        );
+        next();
       });
     });
     describe(<span class="hljs-string">'参照透明な関数では同値なものは置換可能である'</span>, () =&gt; {
@@ -556,11 +500,11 @@ expect(
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h3 id="-">参照透過性を破壊するもの</h3>
 
@@ -571,11 +515,11 @@ expect(
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>可変なデータは参照透明性を破壊する</p>
 <pre><code>node&gt; <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
@@ -607,11 +551,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-22">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>代入操作は参照透明性を破壊する</p>
 <pre><code>node&gt; <span class="hljs-keyword">var</span> one = <span class="hljs-number">1</span>;
@@ -704,126 +648,17 @@ node&gt; ichi === one;
         <span class="hljs-number">24</span>
       );
       next();
-    });</pre></div></div>
+    });
+  });</pre></div></div>
             
         </li>
         
         
-        <li id="section-23">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
-              </div>
-              <p>describe(‘階乗の計算’, () =&gt; {
-  it(‘関数型プログラミングによる階乗の計算’, (next) =&gt; {
-    var multiply = (m,n) =&gt; {
-      return m <em> n;
-    };
-    var product = (array) =&gt; {
-      return array.reduce(multiply,1);
-    }; 
-    var adder = (m) =&gt; {
-      return (n) =&gt; {
-        return m + n;
-      };
-    };
-    var succ = adder(1);
-    var take = (n) =&gt; {
-      return (aStream) =&gt; {
-        if(n === 0) {
-          return [];
-        } else {
-          return [aStream[0]].concat(take(n-1)(aStream<a href="">1</a>));
-        }
-      };
-    };
-    var iterate = (step) =&gt; {
-      return (init) =&gt; {
-        return [init, (_) =&gt; {
-          return iterate(step)(step(init));
-        }];
-      };
-    };
-    var enumFrom = (from) =&gt; {
-      return iterate(succ)(from);
-    };
-    var compose = (f,g) =&gt; {
-      return (arg) =&gt; {
-        return f(g(arg));
-      };
-    };
-    /</em> #@range_begin(functional_factorial) <em>/
-    var enumFromTo = (from) =&gt; {
-      return (to) =&gt; {
-        return take(to - from + 1)(enumFrom(from));
-      };
-    };
-    var factorial = (n) =&gt; {
-      return compose(product, enumFromTo(1))(n);
-    };
-    /</em> #@range_end(functional_factorial) <em>/
-    /</em>
-      var enumFromTo = (from, to) =&gt; {
-      return take(to - from + 1)(enumFrom(from));
-      };
-      var factorial = (n) =&gt; {
-      return product(enumFromTo(1,n));
-      };
-    <em>/
-    expect(
-      enumFromTo(2)(4)
-    ).to.eql(
-      [2,3,4]
-    );
-    expect(
-      factorial(2)
-    ).to.eql(
-      2
-    );
-    expect(
-      factorial(3)
-    ).to.eql(
-      6
-    );
-    expect(
-      factorial(4)
-    ).to.eql(
-      24
-    );
-    /</em> #@range_begin(permutation_combination) <em>/
-    var perm = (n, r) =&gt; {
-      return factorial(n) / factorial(n-r);<br>    };
-    var comb = (n, r) =&gt; {
-      return perm(n,r) / factorial(r);
-    };
-    /</em> #@range_end(permutation_combination) */
-    expect(
-      perm(3,3)
-    ).to.eql(
-      6
-    );
-    expect(
-      comb(10,4)
-    ).to.eql(
-      210
-    );
-    next();
-  });
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>副作用と入出力</p>
 
@@ -906,11 +741,11 @@ node&gt; ichi === one;
         </li>
         
         
-        <li id="section-25">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <h3 id="-">参照透明性を保証する</h3>
 
@@ -921,11 +756,11 @@ node&gt; ichi === one;
         </li>
         
         
-        <li id="section-26">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h4 id="-">値の参照透過性を保証する（可変なデータの排除）</h4>
 
@@ -957,11 +792,11 @@ node&gt; ichi === one;
         </li>
         
         
-        <li id="section-27">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
 
@@ -1023,138 +858,13 @@ node&gt; ichi === one;
         </li>
         
         
-        <li id="section-28">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>describe(‘命令的なstackの実装’, () =&gt; {
-  var object = {
-    empty: (_) =&gt; {
-      return null;
-    },
-    get: (key, obj) =&gt; {
-      return obj(key);
-    },
-    set: (key, value, obj) =&gt; {
-      return (key2) =&gt; {
-        if(key === key2) {
-          return value;
-        } else {
-          return object.get(key2,obj);
-        }
-      };
-    }
-  };
-});
-describe(‘命令的なstackの実装’, () =&gt; {
-  /<em> #@range_begin(imperative_stack) </em>/
-  var stack = [];
-  var add = (stack) =&gt; {
-    var x = stack.pop();
-    var y = stack.pop();
-    return stack.push(x+y);
-  };
-  var subtract = (stack) =&gt; {
-    var x = stack.pop();
-    var y = stack.pop();
-    return stack.push(x-y);
-  };
-  /<em> #@range_end(imperative_stack) </em>/
-  it(‘(2 + 3) <em> 2’, function(next) {
-    /</em> #@range_begin(imperative_stack_test) <em>/
-    stack.push(2);
-    stack.push(3);
-    add(stack);
-    stack.push(2);
-    add(stack);
-    expect(
-      stack.pop()
-    ).to.eql(
-      7
-    );
-    /</em> #@range_end(imperative_stack_test) <em>/
-    next();
-  });
-  it(‘(2 + 3) + 2 logged’, function(next) {
-    var stack = [];
-    /</em> #@range_begin(imperative_stack_log) <em>/
-    stack.push(2);
-    console.log(stack); // [ 2 ]
-    stack.push(3);
-    console.log(stack); // [ 2, 3 ]
-    add(stack);
-    console.log(stack); // [ 5 ]
-    stack.push(2);
-    console.log(stack); // [ 5, 2 ]
-    add(stack);
-    console.log(stack); // [ 7 ]
-    expect(
-      stack.pop()
-    ).to.eql(
-      7
-    );
-    console.log(stack); // []
-    /</em> #@range_end(imperative_stack_log) <em>/
-    next();
-  });
-});
-describe(‘関数的なstackの実装’, () =&gt; {
-  /</em> #@range_begin(functional_stack) <em>/
-  var push = (n, stack) =&gt; {
-    return [n].concat(stack);
-  };
-  var pop = (stack) =&gt; {
-    return {
-      value: stack[0],
-      rest: stack.slice(1,stack.length)
-    };
-  };
-  var empty = [];
-  var add = (stack) =&gt; {
-    var x = stack[0];
-    var y = stack[1];
-    var rest = stack.slice(2,stack.length);
-    return push(x+y,rest);
-  };
-  var subtract = (stack) =&gt; {
-    var x = stack[0];
-    var y = stack[1];
-    var rest = stack.slice(2,stack.length);
-    return push(x-y,rest);
-  };
-  var multiply = (stack) =&gt; {
-    var x = stack[0];
-    var y = stack[1];
-    var rest = stack.slice(2,stack.length);
-    return push(x</em>y,rest);
-  };
-  var divide = (stack) =&gt; {
-    var x = stack[0];
-    var y = stack[1];
-    var rest = stack.slice(2,stack.length);
-    return push(x/y,rest);
-  };
-  /<em> #@range_end(functional_stack) </em>/
-  it(‘(2 + 3) <em> 4’, function(next) {
-    /</em> #@range_begin(functional_stack_test) <em>/
-    var s0 = empty;
-    var s1 = push(2, s0);
-    var s2 = push(3, s1);
-    var s3 = add(s2);
-    var s4 = push(2,s3);
-    var s5 = multiply(s4);
-    expect(
-      pop(s5).value
-    ).to.eql(
-      10
-    );
-    /</em> #@range_end(functional_stack_test) */
-    next();
-  });
-});</p>
-<h4 id="-">関数の参照透過性を保証する（副作用の分離）</h4>
+              <h4 id="-">関数の参照透過性を保証する（副作用の分離）</h4>
 
             </div>
             
@@ -1469,11 +1179,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-29">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h2 id="-">関数型プログラミングの利点</h2>
 
@@ -1484,11 +1194,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-30">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <h3 id="-">高いモジュール性</h3>
 
@@ -1516,11 +1226,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-31">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               
             </div>
@@ -1534,11 +1244,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-32">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h4 id="-">部品の独立性</h4>
 
@@ -1977,11 +1687,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-33">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h4 id="-">部品の汎用性</h4>
 
@@ -2059,11 +1769,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-34">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>forEachメソッドによるsumの定義</p>
 
@@ -2101,11 +1811,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-35">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>reduceメソッドによるsumの定義</p>
 
@@ -2131,11 +1841,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-36">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>product関数の定義</p>
 
@@ -2225,11 +1935,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-37">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>map関数の定義</p>
 
@@ -2300,11 +2010,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-38">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h3 id="-">部品を組み合わせる</h3>
 
@@ -2362,11 +2072,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-39">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <h4 id="-">関数合成による処理の合成</h4>
 
@@ -2377,11 +2087,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-40">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>compose関数の定義</p>
 
@@ -2426,11 +2136,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-41">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>関数合成によるlength関数の定義（ポイントフリースタイル）</p>
 
@@ -2450,11 +2160,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-42">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <h4 id="-">関数適用で部品を組み合わせる</h4>
 
@@ -2477,11 +2187,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-43">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>constant関数</p>
 
@@ -2513,11 +2223,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-44">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>関数合成によるlength関数の定義</p>
 
@@ -2672,11 +2382,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-45">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h4 id="-">関数による遅延評価</h4>
 
@@ -2732,11 +2442,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-46">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>filter関数</p>
 
@@ -2782,11 +2492,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-47">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>無限ストリームの例</p>
 
@@ -2805,11 +2515,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-48">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>無限の偶数列</p>
 
@@ -2823,11 +2533,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-49">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -2838,11 +2548,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-50">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -2894,11 +2604,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-51">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>正格評価の例</p>
 
@@ -2917,11 +2627,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-52">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>遅延評価の例</p>
 
@@ -2943,11 +2653,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-53">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>無限の整数列</p>
 
@@ -2967,11 +2677,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-54">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>無限の偶数列を作る</p>
 
@@ -2997,11 +2707,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-55">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>ストリームのフィルタリング</p>
 
@@ -3041,11 +2751,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-56">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>elemAt関数</p>
 
@@ -3067,11 +2777,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-57">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>3番目の偶数を求める</p>
 
@@ -3094,11 +2804,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-58">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>filter関数で無限の偶数列を作る</p>
 
@@ -3125,11 +2835,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-59">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>配列に対するelemAt関数</p>
 
@@ -3162,11 +2872,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-60">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>4番目の偶数を求める</p>
 
@@ -3181,77 +2891,17 @@ describe(‘関数的なstackの実装’, () =&gt; {
             <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray_result) */</span>
           );
           next();
-        });</pre></div></div>
+        });
+        describe(<span class="hljs-string">'ストリーム'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
         
-        <li id="section-61">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
-              </div>
-              <p>describe(‘カリー化バージョン’, () =&gt; {
-  var take = (n) =&gt; {
-    return (aStream) =&gt; {
-      if(n === 1) {
-        return aStream[0];
-      } else {
-        return [aStream[0]].concat(take(n-1)(aStream<a href="">1</a>));
-      }
-    };
-  };
-  var filter = (predicate) =&gt; {
-    return (aStream) =&gt; {
-      var head = aStream[0];
-      if(predicate(head) === true) {
-        return [head, (<em>) =&gt; {
-          return filter(predicate)(aStream<a href="">1</a>);
-        }];
-      } else {
-        return filter(predicate)(aStream<a href="">1</a>);
-      }
-    };
-  };
-  var even = (n) =&gt; {
-    return n % 2 === 0;
-  };
-  var iterate = (step) =&gt; {
-    return (init) =&gt; {
-      return [init, (</em>) =&gt; {
-        return iterate(step)(step(init));
-      }];
-    };
-  };
-  var adder = (m) =&gt; {
-    return (n) =&gt; {
-      return m + n;
-    };
-  };
-  var succ = adder(1);
-  var enumFrom = (n) =&gt; {
-    return iterate(succ)(n);
-  };
-  expect(
-    compose(take(3), filter(even))(enumFrom(2))
-  ).to.eql(
-    [2,4,6]
-  );
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'ストリーム'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-62">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>ストリームの例</p>
 
@@ -3407,11 +3057,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-63">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3511,11 +3161,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-64">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3596,11 +3246,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>cycle                   :: [a] -&gt; [a]
 cycle []  = error “Prelude.cycle: empty list”
@@ -3626,11 +3276,11 @@ cycle xs  = xs’ where xs’ = xs ++ xs’</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3806,11 +3456,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -3821,11 +3471,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>単体テストの書き方の例</p>
 
@@ -3863,11 +3513,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>参照透過性のないコードのテスト</p>
 
@@ -3900,11 +3550,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>winner関数の分離</p>
 
@@ -3938,11 +3588,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>副作用のない関数のテスト</p>
 
@@ -3980,227 +3630,20 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
           <span class="hljs-number">3.14</span>
         );
         next();
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-72">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
-              </div>
-              <p>it(‘認証の例’, (next) =&gt; {
-  var length = (array) =&gt; {
-    return array.length; 
-  };
-  var pluck = (key) =&gt; {
-    return (object) =&gt; {
-      return object[key];
-    };
-  };
-  var filterWith = (predicate) =&gt; {
-    return (array) =&gt; {
-      return array.filter(predicate);
-    };
-  };
-  var doesContain = (value) =&gt; {
-    return (array) =&gt; {
-      return array.reduce((accumulator, item) =&gt; {
-        return accumulator || (item === value);
-      },false);
-    };
-  };
-  /<em> #@range_begin(authenticate_test) </em>/
-  var database = [
-    {
-      name: “夏目漱石”,
-      password: “12345”
-    },
-    {
-      name: “プラトン”,
-      password: “54321”
-    }
-  ];
-  var authenticate = (name, password) =&gt; {
-    var match = (key) =&gt; {
-      return pluck(key);
-    };
-    return length(filterWith((record) =&gt; { 
-      return (pluck(“name”)(record) === name) &amp;&amp; (pluck(“password”)(record) === password);
-    })(database)) === 1;
-  };
-  /<em> #@range_end(authenticate_test) </em>/
-  expect(
-    authenticate(“夏目漱石”,”12345”)
-  ).to.eql(
-    true
-  );
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    });
+      });
+    });
   });</pre></div></div>
             
         </li>
         
         
-        <li id="section-73">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
-              <p>it(‘状態を持つ銀行口座’, (next) =&gt; {
-  /<em> #@range_begin(account_with_state) </em>/
-  var Account = (initialDeposit) =&gt; {
-    /<em> 変数balanceは預金残高という可変な状態を表わす  </em>/
-    var balance = initialDeposit;
-    return {
-      /<em> 預金残高を返す関数 </em>/
-      balance: (_) =&gt; {
-        return balance;
-      },
-      /<em> 預金を預ける関数 </em>/
-      deposit: (amount) =&gt; {
-        /<em> 代入で残高を更新する </em>/
-        balance = balance + amount;
-        return this;
-      },
-      /<em> 預金を引き出す関数 </em>/
-      withdraw: (amount) =&gt; {
-        /<em> 代入で残高を更新する </em>/
-        balance = balance - amount;
-        return this;
-      }
-    };
-  };
-  /<em> #@range_end(account_with_state) </em>/
-  /<em> #@range_begin(account_with_state_test) </em>/
-  /<em> 1000円で口座を開設する </em>/
-  var account = Account(1000);
-  expect(
-    account.balance()
-  ).to.eql(
-    1000
-  );
-  /<em> 口座から200円を引き出す </em>/
-  expect(
-    account.withdraw(200).balance()
-  ).to.eql(
-    800
-  );
-  /<em> #@range_end(account_with_state_test) </em>/
-  next();
-  /<em>
-  var mkAccount = (balance) =&gt; {
-    var deposit = (amount) =&gt; {
-      balance = balance + amount;
-      return dispatch;
-    };
-    var withdraw = (amount) =&gt; {
-      balance = balance - amount;
-      return dispatch;
-    };
-    var dispatch = (method) =&gt; {
-      switch(method){
-      case “deposit”:
-        return deposit;
-      case “withdraw”:
-        return withdraw; 
-      case “balance”:
-        return balance;
-      default:
-        throw {
-          name: “そのようなメソッドはありません”,
-          message: “unknown: “ + method
-        };
-      }
-    };
-    return dispatch;
-  };
-  </em>/
-});
-it(‘参照透過性のある銀行口座’, (next) =&gt; {
-  /<em> #@range_begin(account_with_explicit_state) </em>/
-  var account = {
-    /<em> 銀行口座を作る関数 </em>/
-    init: (balance) =&gt; {
-      return balance;
-    },
-    /<em> 口座にお金を預ける関数 </em>/
-    deposit: (amount) =&gt; { 
-      return (anAccount) =&gt; {
-        /<em> 銀行口座を作り直す </em>/
-        return account.init(anAccount + amount); 
-      };
-    },
-    /<em> 口座からお金を引き出す関数 </em>/
-    withdraw: (amount) =&gt; { 
-      return (anAccount) =&gt; {
-        /<em> 銀行口座を作り直す </em>/
-        return account.init(anAccount - amount); 
-      };
-    },
-    /<em> 取り引きを実行する関数 </em>/
-    commit: (anAccount) =&gt; { 
-      return (transactions) =&gt; {
-        return transactions.reduce((accumulator, transact) =&gt; {
-          return transact(accumulator);
-        },anAccount);
-      };
-    }
-  };
-  /<em> #@range_end(account_with_explicit_state) </em>/
-  expect(
-    account.init(20)
-  ).to.eql(
-    20
-  );
-  expect(
-    account.deposit(30)(account.init(20))
-  ).to.eql(
-    50
-  );</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-74">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
-              </div>
-              <p>  /<em> #@range_begin(account_test) </em>/
-  var theAcount = account.init(1000);
-  /<em> お金を引き出してから、預金する </em>/
-  expect(
-    account.commit(theAcount)(
-      [account.withdraw(200)] /<em> 取り引きを実行する </em>/
-    )
-  ).to.eql(
-    800
-  );
-  /<em> 連続してお金を引き出す </em>/
-  expect(
-    account.commit(theAcount)( /<em> 先ほどの口座を再利用する </em>/
-      [account.withdraw(10), 
-       account.withdraw(20), 
-       account.withdraw(30)]
-    )
-  ).to.eql(
-    940
-  );
-  /<em> #@range_end(account_test) </em>/
-  next();
-});</p>
-<h3 id="-">コードの正しさを証明できる</h3>
+              <h3 id="-">コードの正しさを証明できる</h3>
 
             </div>
             
@@ -4209,11 +3652,11 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
         </li>
         
         
-        <li id="section-75">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -4303,11 +3746,11 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
         </li>
         
         
-        <li id="section-76">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>プロパティテストのための関数</p>
 
@@ -4357,11 +3800,11 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
         </li>
         
         
-        <li id="section-77">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>succ関数のプロパティテスト</p>
 
@@ -4380,59 +3823,18 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
         );
         <span class="hljs-comment">/* #@range_end(succ_property_test) */</span>
         next();
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-78">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
-              </div>
-              <p>it(‘正格バージョン’, (next) =&gt; {
-  /<em> ストリームのmap関数 </em>/
-  var map = (transform) =&gt; {
-    return (astream) =&gt; {
-      var head = astream[0];
-      return [transform(head), (_) =&gt; {
-        return map(transform)(astream<a href="">1</a>);
-      }];
-    };
-  };
-  /<em> 配列のall関数 </em>/
-  var all = (array) =&gt; {
-    return array.reduce((accumulator, item) =&gt; {
-      return accumulator &amp;&amp; item;
-    },true);
-  };
-  /<em> 検証の対象となる命題 </em>/
-  var proposition = (x) =&gt; {
-    return succ(0) + succ(x) === succ(succ(x));
-  };
-  /<em> 100個の整数について命題が正しいかをテストする </em>/
-  expect(
-    all(take(100)(map(proposition)(enumFrom(0))))
-  ).to.eql(
-    true
-  );
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    });
+      });
+    });
   });</pre></div></div>
             
         </li>
         
         
-        <li id="section-79">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

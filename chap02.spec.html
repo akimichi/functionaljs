@@ -4257,49 +4257,48 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
           }
         };
       };
-      describe(<span class="hljs-string">'succ関数の性質テスト'</span>, () =&gt; {
-        it(<span class="hljs-string">'遅延バージョン'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
-            <span class="hljs-keyword">return</span> (aStream) =&gt; {
-              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-                <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
-              };
+      it(<span class="hljs-string">'succ関数の性質テスト'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+          <span class="hljs-keyword">return</span> (aStream) =&gt; {
+            <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+              <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
             };
           };
-          <span class="hljs-keyword">var</span> scanl = (aStream) =&gt; {
-            <span class="hljs-keyword">return</span> (glue) =&gt; {
-              <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
-                <span class="hljs-keyword">return</span> zipWith(glue)(aStream[<span class="hljs-number">1</span>](), out);
-              }];
-              <span class="hljs-keyword">return</span> out;
-            };
-          };
-          <span class="hljs-keyword">var</span> conjunction = (x,y) =&gt; {
-            <span class="hljs-keyword">return</span> x &amp;&amp; y;  <span class="hljs-comment">// 論理和をとる</span>
-          };
-          <span class="hljs-keyword">var</span> zipWith = (glue) =&gt; {
-            <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
-              <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
-                <span class="hljs-keyword">return</span> []; 
-              } 
-              <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
-                <span class="hljs-keyword">return</span> []; 
-              } 
-              <span class="hljs-keyword">return</span> [glue(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
-                <span class="hljs-keyword">return</span> zipWith(glue)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
-              }];
-            };
-          };
-          <span class="hljs-keyword">var</span> listAnd = (aStream) =&gt; {
+        };
+        <span class="hljs-keyword">var</span> scanl = (aStream) =&gt; {
+          <span class="hljs-keyword">return</span> (glue) =&gt; {
             <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
-              <span class="hljs-keyword">return</span> zipWith((x,y) =&gt; { 
-                <span class="hljs-keyword">return</span> x &amp;&amp; y;
-              })(aStream[<span class="hljs-number">1</span>](), out);
+              <span class="hljs-keyword">return</span> zipWith(glue)(aStream[<span class="hljs-number">1</span>](), out);
             }];
             <span class="hljs-keyword">return</span> out;
-          };</pre></div></div>
+          };
+        };
+        <span class="hljs-keyword">var</span> conjunction = (x,y) =&gt; {
+          <span class="hljs-keyword">return</span> x &amp;&amp; y;  <span class="hljs-comment">// 論理和をとる</span>
+        };
+        <span class="hljs-keyword">var</span> zipWith = (glue) =&gt; {
+          <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
+            <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
+              <span class="hljs-keyword">return</span> []; 
+            } 
+            <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
+              <span class="hljs-keyword">return</span> []; 
+            } 
+            <span class="hljs-keyword">return</span> [glue(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
+              <span class="hljs-keyword">return</span> zipWith(glue)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
+            }];
+          };
+        };
+        <span class="hljs-keyword">var</span> listAnd = (aStream) =&gt; {
+          <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+            <span class="hljs-keyword">return</span> zipWith((x,y) =&gt; { 
+              <span class="hljs-keyword">return</span> x &amp;&amp; y;
+            })(aStream[<span class="hljs-number">1</span>](), out);
+          }];
+          <span class="hljs-keyword">return</span> out;
+        };</pre></div></div>
             
         </li>
         
@@ -4314,46 +4313,46 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(succ_property) */</span>
-          <span class="hljs-comment">/* ストリームのmap関数 */</span>
-          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-            <span class="hljs-keyword">return</span> (aStream) =&gt; {
-              <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-              <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
-                <span class="hljs-keyword">return</span> map(transform)(aStream[<span class="hljs-number">1</span>]());
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(succ_property) */</span>
+        <span class="hljs-comment">/* ストリームのmap関数 */</span>
+        <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+          <span class="hljs-keyword">return</span> (aStream) =&gt; {
+            <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+            <span class="hljs-keyword">return</span> [transform(head), (_) =&gt; {
+              <span class="hljs-keyword">return</span> map(transform)(aStream[<span class="hljs-number">1</span>]());
+            }];
+          };
+        };
+        <span class="hljs-comment">/* ストリームの先頭から引数n分だけ取り出すtake関数 */</span>
+        <span class="hljs-keyword">var</span> take = (n) =&gt; {
+          <span class="hljs-keyword">return</span> (aStream) =&gt; {
+            <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
+                <span class="hljs-keyword">return</span> take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
               }];
-            };
+            }
           };
-          <span class="hljs-comment">/* ストリームの先頭から引数n分だけ取り出すtake関数 */</span>
-          <span class="hljs-keyword">var</span> take = (n) =&gt; {
-            <span class="hljs-keyword">return</span> (aStream) =&gt; {
-              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
-                  <span class="hljs-keyword">return</span> take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
-                }];
-              }
-            };
+        };
+        <span class="hljs-comment">/* ストリームの全ての要素がtrueであるかを判定するall関数 */</span>
+        <span class="hljs-keyword">var</span> all = (aStream) =&gt; {
+          <span class="hljs-keyword">var</span> allHelper = (aStream, accumulator) =&gt; {
+            <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
+            <span class="hljs-keyword">var</span> newAccumulator = accumulator &amp;&amp; head;
+            <span class="hljs-keyword">if</span>(aStream[<span class="hljs-number">1</span>]() === <span class="hljs-literal">null</span>){
+              <span class="hljs-keyword">return</span> newAccumulator;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> allHelper(aStream[<span class="hljs-number">1</span>](), newAccumulator);
+            } 
           };
-          <span class="hljs-comment">/* ストリームの全ての要素がtrueであるかを判定するall関数 */</span>
-          <span class="hljs-keyword">var</span> all = (aStream) =&gt; {
-            <span class="hljs-keyword">var</span> allHelper = (aStream, accumulator) =&gt; {
-             <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-             <span class="hljs-keyword">var</span> newAccumulator = accumulator &amp;&amp; head;
-             <span class="hljs-keyword">if</span>(aStream[<span class="hljs-number">1</span>]() === <span class="hljs-literal">null</span>){
-               <span class="hljs-keyword">return</span> newAccumulator;
-             } <span class="hljs-keyword">else</span> {
-               <span class="hljs-keyword">return</span> allHelper(aStream[<span class="hljs-number">1</span>](), newAccumulator);
-             } 
-            };
-            <span class="hljs-keyword">return</span> allHelper(aStream, <span class="hljs-literal">true</span>);
-          };
-          <span class="hljs-comment">/* 検証の対象となる命題 */</span>
-          <span class="hljs-keyword">var</span> proposition = (n) =&gt; {
-            <span class="hljs-keyword">return</span> succ(<span class="hljs-number">0</span>) + succ(n) === succ(succ(n));
-          };
-          <span class="hljs-comment">/* #@range_end(succ_property) */</span></pre></div></div>
+          <span class="hljs-keyword">return</span> allHelper(aStream, <span class="hljs-literal">true</span>);
+        };
+        <span class="hljs-comment">/* 検証の対象となる命題 */</span>
+        <span class="hljs-keyword">var</span> proposition = (n) =&gt; {
+          <span class="hljs-keyword">return</span> succ(<span class="hljs-number">0</span>) + succ(n) === succ(succ(n));
+        };
+        <span class="hljs-comment">/* #@range_end(succ_property) */</span></pre></div></div>
             
         </li>
         
@@ -4368,20 +4367,20 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(succ_property_test) */</span>
-          <span class="hljs-comment">/* 100個の整数について命題が正しいかをテストする */</span>
-          expect(
-            all(
-              take(<span class="hljs-number">100</span>)(
-                map(proposition)(enumFrom(<span class="hljs-number">0</span>))
-              )
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(succ_property_test) */</span>
+        <span class="hljs-comment">/* 100個の整数について命題が正しいかをテストする */</span>
+        expect(
+          all(
+            take(<span class="hljs-number">100</span>)(
+              map(proposition)(enumFrom(<span class="hljs-number">0</span>))
             )
-          ).to.eql(
-            <span class="hljs-literal">true</span>
-          );
-          <span class="hljs-comment">/* #@range_end(succ_property_test) */</span>
-          next();
-        });</pre></div></div>
+          )
+        ).to.eql(
+          <span class="hljs-literal">true</span>
+        );
+        <span class="hljs-comment">/* #@range_end(succ_property_test) */</span>
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -4423,8 +4422,7 @@ it(‘参照透過性のある銀行口座’, (next) =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      });
-    });
+            <div class="content"><div class='highlight'><pre>    });
   });</pre></div></div>
             
         </li>

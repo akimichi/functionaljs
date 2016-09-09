@@ -2054,8 +2054,22 @@ describe(‘関数的なstackの実装’, () =&gt; {
         );
         next();
       });
-      describe(<span class="hljs-string">'reduceによる反復処理の汎用化'</span>, () =&gt; {
-        it(<span class="hljs-string">'forEachによるsumの定義'</span>, (next) =&gt; {
+      describe(<span class="hljs-string">'reduceによる反復処理の汎用化'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>forEachメソッドによるsumの定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'forEachメソッドによるsumの定義'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(sum_in_array_while) */</span>
           <span class="hljs-keyword">var</span> sum = (array) =&gt; {
             <span class="hljs-comment">/* 結果を格納する変数 */</span>
@@ -2082,8 +2096,22 @@ describe(‘関数的なstackの実装’, () =&gt; {
             <span class="hljs-number">10</span>
           );
           next();
-        });
-        it(<span class="hljs-string">'reduceによるsumの定義'</span>, (next) =&gt; {
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>reduceメソッドによるsumの定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'reduceメソッドによるsumの定義'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(sum_in_array_reduce) */</span>
           <span class="hljs-keyword">var</span> sum = (array) =&gt; {
             <span class="hljs-keyword">return</span> array.reduce(<span class="hljs-comment">/* 第1引数に関数を渡す */</span>
@@ -2098,8 +2126,22 @@ describe(‘関数的なstackの実装’, () =&gt; {
             <span class="hljs-number">10</span>
           );
           next();
-        });
-        it(<span class="hljs-string">'productの定義'</span>, (next) =&gt; {
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>product関数の定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'product関数の定義'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(product_in_array_reduce) */</span>
           <span class="hljs-keyword">var</span> product = (array) =&gt; {
             <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
@@ -2178,8 +2220,22 @@ describe(‘関数的なstackの実装’, () =&gt; {
           expect(reverse([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])).to.eql([<span class="hljs-number">4</span>,<span class="hljs-number">3</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]);
           <span class="hljs-comment">/* #@range_end(reverse_in_array_reduce)  */</span>
           next();
-        });
-        it(<span class="hljs-string">'reduceによるmapの定義'</span>, (next) =&gt; {
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>map関数の定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'map関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> succ = (n) =&gt; {
             <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
           };
@@ -2244,11 +2300,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-34">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h3 id="-">部品を組み合わせる</h3>
 
@@ -2627,11 +2683,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-35">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -2642,11 +2698,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-36">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -2697,11 +2753,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-37">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>var evenStream = ((<em>) =&gt; {
   var evenFrom = (n) =&gt; {
@@ -2843,11 +2899,11 @@ var evenStream = evenFrom(2);</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>var ones = [1, (<em>) =&gt; {
   return ones;
@@ -2926,11 +2982,11 @@ var scanl = (aStream) =&gt; {
         </li>
         
         
-        <li id="section-39">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>describe(‘カリー化バージョン’, () =&gt; {
   var take = (n) =&gt; {
@@ -3133,11 +3189,11 @@ var scanl = (aStream) =&gt; {
         </li>
         
         
-        <li id="section-40">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3228,11 +3284,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>).to.within(3.13, 3.15);</p>
 
@@ -3251,11 +3307,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3336,11 +3392,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>cycle                   :: [a] -&gt; [a]
 cycle []  = error “Prelude.cycle: empty list”
@@ -3366,11 +3422,11 @@ cycle xs  = xs’ where xs’ = xs ++ xs’</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3546,11 +3602,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -3897,11 +3953,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -3912,11 +3968,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -4059,11 +4115,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>elemAt(100)(
   compose(listAnd, map(proposition))(enumFrom(0))
@@ -4114,11 +4170,11 @@ elemAt(100)(
         </li>
         
         
-        <li id="section-49">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

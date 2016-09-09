@@ -578,7 +578,14 @@ expect(
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>可変なデータは参照透明性を破壊する</p>
-
+<pre><code>node&gt; <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
+node&gt; array
+[ <span class="hljs-number">1</span> ]
+node&gt; array.push(<span class="hljs-number">2</span>);
+<span class="hljs-number">2</span>
+node&gt; array
+[ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
+</code></pre>
             </div>
             
             <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {

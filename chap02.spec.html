@@ -614,7 +614,15 @@ node&gt; array
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>代入操作は参照透明性を破壊する</p>
-
+<pre><code>node&gt; <span class="hljs-keyword">var</span> one = <span class="hljs-number">1</span>;
+node&gt; <span class="hljs-keyword">var</span> ichi = one;
+node&gt; ichi === one;
+<span class="hljs-literal">true</span>
+node&gt; one = <span class="hljs-number">2</span>;
+<span class="hljs-number">2</span>
+node&gt; ichi === one;
+<span class="hljs-literal">false</span>
+</code></pre>
             </div>
             
             <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
@@ -663,7 +671,162 @@ node&gt; array
       <span class="hljs-comment">/* #@range_end(datenow_is_not_transparent) */</span>
       next();
     });
-  });
+    it(<span class="hljs-string">'命令型な階乗関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
+      <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+        <span class="hljs-comment">/* 変数resultに結果が入る */</span>
+        <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
+        <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
+        <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
+        <span class="hljs-comment">/* while文は反復を処理する */</span>
+        <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
+          <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
+          result = result * times;  
+          <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
+          times = times + <span class="hljs-number">1</span>;        
+        }
+        <span class="hljs-keyword">return</span> result;
+      };
+      <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
+      expect(
+        factorial(<span class="hljs-number">2</span>)
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      );
+      expect(
+        factorial(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">6</span>
+      );
+      expect(
+        factorial(<span class="hljs-number">4</span>)
+      ).to.eql(
+        <span class="hljs-number">24</span>
+      );
+      next();
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>describe(‘階乗の計算’, () =&gt; {
+  it(‘関数型プログラミングによる階乗の計算’, (next) =&gt; {
+    var multiply = (m,n) =&gt; {
+      return m <em> n;
+    };
+    var product = (array) =&gt; {
+      return array.reduce(multiply,1);
+    }; 
+    var adder = (m) =&gt; {
+      return (n) =&gt; {
+        return m + n;
+      };
+    };
+    var succ = adder(1);
+    var take = (n) =&gt; {
+      return (aStream) =&gt; {
+        if(n === 0) {
+          return [];
+        } else {
+          return [aStream[0]].concat(take(n-1)(aStream<a href="">1</a>));
+        }
+      };
+    };
+    var iterate = (step) =&gt; {
+      return (init) =&gt; {
+        return [init, (_) =&gt; {
+          return iterate(step)(step(init));
+        }];
+      };
+    };
+    var enumFrom = (from) =&gt; {
+      return iterate(succ)(from);
+    };
+    var compose = (f,g) =&gt; {
+      return (arg) =&gt; {
+        return f(g(arg));
+      };
+    };
+    /</em> #@range_begin(functional_factorial) <em>/
+    var enumFromTo = (from) =&gt; {
+      return (to) =&gt; {
+        return take(to - from + 1)(enumFrom(from));
+      };
+    };
+    var factorial = (n) =&gt; {
+      return compose(product, enumFromTo(1))(n);
+    };
+    /</em> #@range_end(functional_factorial) <em>/
+    /</em>
+      var enumFromTo = (from, to) =&gt; {
+      return take(to - from + 1)(enumFrom(from));
+      };
+      var factorial = (n) =&gt; {
+      return product(enumFromTo(1,n));
+      };
+    <em>/
+    expect(
+      enumFromTo(2)(4)
+    ).to.eql(
+      [2,3,4]
+    );
+    expect(
+      factorial(2)
+    ).to.eql(
+      2
+    );
+    expect(
+      factorial(3)
+    ).to.eql(
+      6
+    );
+    expect(
+      factorial(4)
+    ).to.eql(
+      24
+    );
+    /</em> #@range_begin(permutation_combination) <em>/
+    var perm = (n, r) =&gt; {
+      return factorial(n) / factorial(n-r);<br>    };
+    var comb = (n, r) =&gt; {
+      return perm(n,r) / factorial(r);
+    };
+    /</em> #@range_end(permutation_combination) */
+    expect(
+      perm(3,3)
+    ).to.eql(
+      6
+    );
+    expect(
+      comb(10,4)
+    ).to.eql(
+      210
+    );</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <pre><code>next();
+</code></pre><p>  });
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  });
   describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
     describe(<span class="hljs-string">'副作用としての代入'</span>, () =&gt; {
       it(<span class="hljs-string">'配列は参照透明性を破壊する'</span>, (next) =&gt; {
@@ -741,11 +904,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-23">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h3 id="-">参照透明性を保証する</h3>
 
@@ -756,11 +919,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-24">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
 
@@ -822,11 +985,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h4 id="-">不変なデータ</h4>
 
@@ -983,11 +1146,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <h3 id="-">副作用への対処</h3>
 
@@ -1304,11 +1467,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <h2 id="-">関数型プログラミングの利点</h2>
 
@@ -1319,11 +1482,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h3 id="-">高いモジュール性</h3>
 
@@ -1351,11 +1514,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               
             </div>
@@ -1369,11 +1532,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h4 id="-">部品の独立性</h4>
 
@@ -1812,11 +1975,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-31">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h4 id="-">部品の汎用性</h4>
 
@@ -2079,11 +2242,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-32">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <h3 id="-">部品を組み合わせる</h3>
 
@@ -2363,138 +2526,6 @@ node&gt; array
         );
         next();
       });
-      describe(<span class="hljs-string">'階乗の計算'</span>, () =&gt; {
-        it(<span class="hljs-string">'命令型プログラミングによる階乗の計算'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
-          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-            <span class="hljs-comment">/* 変数resultに結果が入る */</span>
-            <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
-            <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
-            <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
-            <span class="hljs-comment">/* while文は反復を処理する */</span>
-            <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
-              <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
-              result = result * times;  
-              <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
-              times = times + <span class="hljs-number">1</span>;        
-            }
-            <span class="hljs-keyword">return</span> result;
-          };
-          <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
-          expect(
-            factorial(<span class="hljs-number">2</span>)
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          expect(
-            factorial(<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          expect(
-            factorial(<span class="hljs-number">4</span>)
-          ).to.eql(
-            <span class="hljs-number">24</span>
-          );
-          next();
-        });
-        it(<span class="hljs-string">'関数型プログラミングによる階乗の計算'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> multiply = (m,n) =&gt; {
-            <span class="hljs-keyword">return</span> m * n;
-          };
-          <span class="hljs-keyword">var</span> product = (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce(multiply,<span class="hljs-number">1</span>);
-          }; 
-          <span class="hljs-keyword">var</span> adder = (m) =&gt; {
-            <span class="hljs-keyword">return</span> (n) =&gt; {
-              <span class="hljs-keyword">return</span> m + n;
-            };
-          };
-          <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);
-          <span class="hljs-keyword">var</span> take = (n) =&gt; {
-            <span class="hljs-keyword">return</span> (aStream) =&gt; {
-              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
-                <span class="hljs-keyword">return</span> [];
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]()));
-              }
-            };
-          };
-          <span class="hljs-keyword">var</span> iterate = (step) =&gt; {
-            <span class="hljs-keyword">return</span> (init) =&gt; {
-              <span class="hljs-keyword">return</span> [init, (_) =&gt; {
-                <span class="hljs-keyword">return</span> iterate(step)(step(init));
-              }];
-            };
-          };
-          <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
-            <span class="hljs-keyword">return</span> iterate(succ)(from);
-          };
-          <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
-            <span class="hljs-keyword">return</span> (arg) =&gt; {
-              <span class="hljs-keyword">return</span> f(g(arg));
-            };
-          };
-          <span class="hljs-comment">/* #@range_begin(functional_factorial) */</span>
-          <span class="hljs-keyword">var</span> enumFromTo = (from) =&gt; {
-            <span class="hljs-keyword">return</span> (to) =&gt; {
-              <span class="hljs-keyword">return</span> take(to - from + <span class="hljs-number">1</span>)(enumFrom(from));
-            };
-          };
-          <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-            <span class="hljs-keyword">return</span> compose(product, enumFromTo(<span class="hljs-number">1</span>))(n);
-          };
-          <span class="hljs-comment">/* #@range_end(functional_factorial) */</span>
-          <span class="hljs-comment">/*
-            var enumFromTo = (from, to) =&gt; {
-            return take(to - from + 1)(enumFrom(from));
-            };
-            var factorial = (n) =&gt; {
-            return product(enumFromTo(1,n));
-            };
-          */</span>
-          expect(
-            enumFromTo(<span class="hljs-number">2</span>)(<span class="hljs-number">4</span>)
-          ).to.eql(
-            [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-          );
-          expect(
-            factorial(<span class="hljs-number">2</span>)
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          expect(
-            factorial(<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          expect(
-            factorial(<span class="hljs-number">4</span>)
-          ).to.eql(
-            <span class="hljs-number">24</span>
-          );
-          <span class="hljs-comment">/* #@range_begin(permutation_combination) */</span>
-          <span class="hljs-keyword">var</span> perm = (n, r) =&gt; {
-            <span class="hljs-keyword">return</span> factorial(n) / factorial(n-r);          
-          };
-          <span class="hljs-keyword">var</span> comb = (n, r) =&gt; {
-            <span class="hljs-keyword">return</span> perm(n,r) / factorial(r);
-          };
-          <span class="hljs-comment">/* #@range_end(permutation_combination) */</span>
-          expect(
-            perm(<span class="hljs-number">3</span>,<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">6</span>
-          );
-          expect(
-            comb(<span class="hljs-number">10</span>,<span class="hljs-number">4</span>)
-          ).to.eql(
-            <span class="hljs-number">210</span>
-          );
-          
-          next();
-        });
-      });
       describe(<span class="hljs-string">'遅延評価'</span>, () =&gt; {
         <span class="hljs-keyword">var</span> take = (n, astream) =&gt; {
           <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
@@ -2594,11 +2625,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-33">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -2609,11 +2640,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-34">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -2664,11 +2695,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-35">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>var evenStream = ((<em>) =&gt; {
   var evenFrom = (n) =&gt; {
@@ -2810,11 +2841,11 @@ var evenStream = evenFrom(2);</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>var ones = [1, (<em>) =&gt; {
   return ones;
@@ -2893,11 +2924,11 @@ var scanl = (aStream) =&gt; {
         </li>
         
         
-        <li id="section-37">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>describe(‘カリー化バージョン’, () =&gt; {
   var take = (n) =&gt; {
@@ -3100,11 +3131,11 @@ var scanl = (aStream) =&gt; {
         </li>
         
         
-        <li id="section-38">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3195,11 +3226,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>).to.within(3.13, 3.15);</p>
 
@@ -3218,11 +3249,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3303,11 +3334,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>cycle                   :: [a] -&gt; [a]
 cycle []  = error “Prelude.cycle: empty list”
@@ -3333,11 +3364,11 @@ cycle xs  = xs’ where xs’ = xs ++ xs’</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3513,11 +3544,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -3864,11 +3895,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -3879,11 +3910,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -4026,11 +4057,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>elemAt(100)(
   compose(listAnd, map(proposition))(enumFrom(0))
@@ -4081,11 +4112,11 @@ elemAt(100)(
         </li>
         
         
-        <li id="section-47">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

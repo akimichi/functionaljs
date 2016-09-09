@@ -1154,11 +1154,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
     next();
   });
 });</p>
-<h3 id="-">副作用への対処</h3>
+<h4 id="-">関数の参照透過性を保証する（副作用の分離）</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'副作用への対処'</span>, () =&gt;  {
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数の参照透過性を保証する（副作用の分離）'</span>, () =&gt;  {
       it(<span class="hljs-string">'副作用が分離されていないコード'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(age_sideeffect) */</span>
         <span class="hljs-keyword">var</span> age = (birthYear) =&gt; {

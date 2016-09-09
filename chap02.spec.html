@@ -3497,22 +3497,8 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
                 <span class="hljs-comment">/* #@range_begin(pi_approximation_result) */</span>
                 <span class="hljs-number">3.1315929035585537</span>
                 <span class="hljs-comment">/* #@range_end(pi_approximation_result) */</span>
-              );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-64">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
-              </div>
-              <p>).to.within(3.13, 3.15);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              next();
+              );
+              next();
             });
             it(<span class="hljs-string">'タブロー化listSums'</span>, (next) =&gt; {
               <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">50000</span>);
@@ -3525,11 +3511,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3610,11 +3596,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>cycle                   :: [a] -&gt; [a]
 cycle []  = error “Prelude.cycle: empty list”
@@ -3640,11 +3626,11 @@ cycle xs  = xs’ where xs’ = xs ++ xs’</p>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3820,17 +3806,42 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <h3 id="-">テストが容易である</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'テスト'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
-              <h3 id="-">テストが容易である</h3>
+              <p>単体テストの書き方の例</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'テスト'</span>, () =&gt; {
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'単体テストの書き方の例'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+        <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+      };
+      expect(
+        succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// テストしたい式を書く</span>
+      ).to.eql(
+        <span class="hljs-number">2</span>       <span class="hljs-comment">// 期待する結果を書く</span>
+      );
+      next();
+    });
     it(<span class="hljs-string">'参照透過性のあるコードはテストが容易である'</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> adder = (m) =&gt; {
         <span class="hljs-keyword">return</span> (n) =&gt; {
@@ -3847,143 +3858,22 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
       next();
     });
     describe(<span class="hljs-string">'参照透過性のないコードはテストが困難である'</span>, () =&gt; {
-      it(<span class="hljs-string">'状態を持つ銀行口座'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(account_with_state) */</span>
-        <span class="hljs-keyword">var</span> Account = (initialDeposit) =&gt; {
-          <span class="hljs-comment">/* 変数balanceは預金残高という可変な状態を表わす  */</span>
-          <span class="hljs-keyword">var</span> balance = initialDeposit;
-          <span class="hljs-keyword">return</span> {
-            <span class="hljs-comment">/* 預金残高を返す関数 */</span>
-            balance: (_) =&gt; {
-              <span class="hljs-keyword">return</span> balance;
-            },
-            <span class="hljs-comment">/* 預金を預ける関数 */</span>
-            deposit: (amount) =&gt; {
-              <span class="hljs-comment">/* 代入で残高を更新する */</span>
-              balance = balance + amount;
-              <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-            },
-            <span class="hljs-comment">/* 預金を引き出す関数 */</span>
-            withdraw: (amount) =&gt; {
-              <span class="hljs-comment">/* 代入で残高を更新する */</span>
-              balance = balance - amount;
-              <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-            }
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(account_with_state) */</span>
-        <span class="hljs-comment">/* #@range_begin(account_with_state_test) */</span>
-        <span class="hljs-comment">/* 1000円で口座を開設する */</span>
-        <span class="hljs-keyword">var</span> account = Account(<span class="hljs-number">1000</span>);
-        expect(
-          account.balance()
-        ).to.eql(
-          <span class="hljs-number">1000</span>
-        );
-        <span class="hljs-comment">/* 口座から200円を引き出す */</span>
-        expect(
-          account.withdraw(<span class="hljs-number">200</span>).balance()
-        ).to.eql(
-          <span class="hljs-number">800</span>
-        );
-        <span class="hljs-comment">/* #@range_end(account_with_state_test) */</span>
-        next();
-        <span class="hljs-comment">/*
-        var mkAccount = (balance) =&gt; {
-          var deposit = (amount) =&gt; {
-            balance = balance + amount;
-            return dispatch;
-          };
-          var withdraw = (amount) =&gt; {
-            balance = balance - amount;
-            return dispatch;
-          };
-          var dispatch = (method) =&gt; {
-            switch(method){
-            case "deposit":
-              return deposit;
-            case "withdraw":
-              return withdraw; 
-            case "balance":
-              return balance;
-            default:
-              throw {
-                name: "そのようなメソッドはありません",
-                message: "unknown: " + method
-              };
-            }
-          };
-          return dispatch;
-        };
-        */</span>
-      });
-      it(<span class="hljs-string">'参照透過性のある銀行口座'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(account_with_explicit_state) */</span>
-        <span class="hljs-keyword">var</span> account = {
-          <span class="hljs-comment">/* 銀行口座を作る関数 */</span>
-          init: (balance) =&gt; {
-            <span class="hljs-keyword">return</span> balance;
-          },
-          <span class="hljs-comment">/* 口座にお金を預ける関数 */</span>
-          deposit: (amount) =&gt; { 
-            <span class="hljs-keyword">return</span> (anAccount) =&gt; {
-              <span class="hljs-comment">/* 銀行口座を作り直す */</span>
-              <span class="hljs-keyword">return</span> account.init(anAccount + amount); 
-            };
-          },
-          <span class="hljs-comment">/* 口座からお金を引き出す関数 */</span>
-          withdraw: (amount) =&gt; { 
-            <span class="hljs-keyword">return</span> (anAccount) =&gt; {
-              <span class="hljs-comment">/* 銀行口座を作り直す */</span>
-              <span class="hljs-keyword">return</span> account.init(anAccount - amount); 
-            };
-          },
-          <span class="hljs-comment">/* 取り引きを実行する関数 */</span>
-          commit: (anAccount) =&gt; { 
-            <span class="hljs-keyword">return</span> (transactions) =&gt; {
-              <span class="hljs-keyword">return</span> transactions.reduce((accumulator, transact) =&gt; {
-                <span class="hljs-keyword">return</span> transact(accumulator);
-              },anAccount);
-            };
-          }
-        };
-        <span class="hljs-comment">/* #@range_end(account_with_explicit_state) */</span>
-        expect(
-          account.init(<span class="hljs-number">20</span>)
-        ).to.eql(
-          <span class="hljs-number">20</span>
-        );
-        expect(
-          account.deposit(<span class="hljs-number">30</span>)(account.init(<span class="hljs-number">20</span>))
-        ).to.eql(
-          <span class="hljs-number">50</span>
-        );
+      describe(<span class="hljs-string">'ゲームの勝敗の例'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>参照透過性のないコードのテスト</p>
 
-        <span class="hljs-comment">/* #@range_begin(account_test) */</span>
-        <span class="hljs-keyword">var</span> theAcount = account.init(<span class="hljs-number">1000</span>);
-        <span class="hljs-comment">/* お金を引き出してから、預金する */</span>
-        expect(
-          account.commit(theAcount)(
-            [account.withdraw(<span class="hljs-number">200</span>)] <span class="hljs-comment">/* 取り引きを実行する */</span>
-          )
-        ).to.eql(
-          <span class="hljs-number">800</span>
-        );
-        <span class="hljs-comment">/* 連続してお金を引き出す */</span>
-        expect(
-          account.commit(theAcount)( <span class="hljs-comment">/* 先ほどの口座を再利用する */</span>
-            [account.withdraw(<span class="hljs-number">10</span>), 
-             account.withdraw(<span class="hljs-number">20</span>), 
-             account.withdraw(<span class="hljs-number">30</span>)]
-          )
-        ).to.eql(
-          <span class="hljs-number">940</span>
-        );
-        <span class="hljs-comment">/* #@range_end(account_test) */</span>
-        next();
-      });
-      describe(<span class="hljs-string">'ゲームの勝敗の例'</span>, () =&gt; {
-        it(<span class="hljs-string">"参照透過性のないコードのテスト"</span>, (next) =&gt; {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">"参照透過性のないコードのテスト"</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(winner_with_sideeffect) */</span>
           <span class="hljs-keyword">var</span> winner = (playerL, playerR) =&gt; {
             <span class="hljs-keyword">if</span>(playerR.score &gt; playerL.score) {
@@ -4005,8 +3895,22 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
           };
           next();
         });
-        it(<span class="hljs-string">"参照透過性のあるコードのテスト"</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(winner_without_sideeffect) */</span>
+        it(<span class="hljs-string">"参照透過性のあるコードのテスト"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <p>winner関数の分離</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(winner_without_sideeffect) */</span>
           <span class="hljs-comment">/* 勝者を判定する */</span>
           <span class="hljs-keyword">var</span> judge = (playerL, playerR) =&gt; {
             <span class="hljs-keyword">if</span>(playerL.score &gt; playerR.score) {
@@ -4029,8 +3933,22 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
           <span class="hljs-keyword">var</span> displayWinner = (winner) =&gt; {
             <span class="hljs-built_in">console</span>.log(announce(winner));
           };
-          <span class="hljs-comment">/* #@range_end(winner_without_sideeffect) */</span>
-          <span class="hljs-comment">/* #@range_begin(announce_winner) */</span>
+          <span class="hljs-comment">/* #@range_end(winner_without_sideeffect) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>副作用のない関数のテスト</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(announce_winner) */</span>
           <span class="hljs-keyword">var</span> socrates = {
             name: <span class="hljs-string">'ソクラテス'</span>,
             score: <span class="hljs-number">10</span>
@@ -4062,122 +3980,227 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
           <span class="hljs-number">3.14</span>
         );
         next();
-      });
-      it(<span class="hljs-string">'認証の例'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> length = (array) =&gt; {
-          <span class="hljs-keyword">return</span> array.length; 
-        };
-        <span class="hljs-keyword">var</span> pluck = (key) =&gt; {
-          <span class="hljs-keyword">return</span> (object) =&gt; {
-            <span class="hljs-keyword">return</span> object[key];
-          };
-        };
-        <span class="hljs-keyword">var</span> filterWith = (predicate) =&gt; {
-          <span class="hljs-keyword">return</span> (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.filter(predicate);
-          };
-        };
-        <span class="hljs-keyword">var</span> doesContain = (value) =&gt; {
-          <span class="hljs-keyword">return</span> (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator || (item === value);
-            },<span class="hljs-literal">false</span>);
-          };
-        };
-        <span class="hljs-comment">/* #@range_begin(authenticate_test) */</span>
-        <span class="hljs-keyword">var</span> database = [
-          {
-            name: <span class="hljs-string">"夏目漱石"</span>,
-            password: <span class="hljs-string">"12345"</span>
-          },
-          {
-            name: <span class="hljs-string">"プラトン"</span>,
-            password: <span class="hljs-string">"54321"</span>
-          }
-        ];
-        <span class="hljs-keyword">var</span> authenticate = (name, password) =&gt; {
-          <span class="hljs-keyword">var</span> match = (key) =&gt; {
-            <span class="hljs-keyword">return</span> pluck(key);
-          };
-          <span class="hljs-keyword">return</span> length(filterWith((record) =&gt; { 
-            <span class="hljs-keyword">return</span> (pluck(<span class="hljs-string">"name"</span>)(record) === name) &amp;&amp; (pluck(<span class="hljs-string">"password"</span>)(record) === password);
-          })(database)) === <span class="hljs-number">1</span>;
-        };
-        <span class="hljs-comment">/* #@range_end(authenticate_test) */</span>
-        expect(
-          authenticate(<span class="hljs-string">"夏目漱石"</span>,<span class="hljs-string">"12345"</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        next();
-      });
-      <span class="hljs-comment">/*
-      it('認証をテスト可能にする', (next) =&gt; {
-        var length = (array) =&gt; {
-          return array.length; 
-        };
-        var pluck = (key) =&gt; {
-          return (object) =&gt; {
-            return object[key];
-          };
-        };
-        var filterWith = (predicate) =&gt; {
-          return (array) =&gt; {
-            return array.filter(predicate);
-          };
-        };
-        var doesContain = (value) =&gt; {
-          return (array) =&gt; {
-            return array.reduce((accumulator, item) =&gt; {
-              return accumulator || (item === value);
-            },false);
-          };
-        };
-        var doesMatch = (predicate) =&gt; {
-          return (array) =&gt; {
-            return array.reduce((accumulator, item) =&gt; {
-              return accumulator || predicate(item);
-            },false);
-          };
-        };
-        var database = [
-          {
-            name: "夏目漱石",
-            password: "12345"
-          },
-          {
-            name: "プラトン",
-            password: "54321"
-          }
-        ];
-        var password = (name) =&gt; {
-      
-        var authenticate = (name, challengePassword, realPassword) =&gt; {
-          return length(filterWith((record) =&gt; { 
-            return (pluck("name")(record) === name) &amp;&amp; (pluck("password")(record) === password);
-          })(database)) === 1;
-        };
-        expect(
-          authenticate("夏目漱石","12345")
-        ).to.eql(
-          true
-        );
-        next();
-      });
-      */</span>
-    });
+      });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>it(‘認証の例’, (next) =&gt; {
+  var length = (array) =&gt; {
+    return array.length; 
+  };
+  var pluck = (key) =&gt; {
+    return (object) =&gt; {
+      return object[key];
+    };
+  };
+  var filterWith = (predicate) =&gt; {
+    return (array) =&gt; {
+      return array.filter(predicate);
+    };
+  };
+  var doesContain = (value) =&gt; {
+    return (array) =&gt; {
+      return array.reduce((accumulator, item) =&gt; {
+        return accumulator || (item === value);
+      },false);
+    };
+  };
+  /<em> #@range_begin(authenticate_test) </em>/
+  var database = [
+    {
+      name: “夏目漱石”,
+      password: “12345”
+    },
+    {
+      name: “プラトン”,
+      password: “54321”
+    }
+  ];
+  var authenticate = (name, password) =&gt; {
+    var match = (key) =&gt; {
+      return pluck(key);
+    };
+    return length(filterWith((record) =&gt; { 
+      return (pluck(“name”)(record) === name) &amp;&amp; (pluck(“password”)(record) === password);
+    })(database)) === 1;
+  };
+  /<em> #@range_end(authenticate_test) </em>/
+  expect(
+    authenticate(“夏目漱石”,”12345”)
+  ).to.eql(
+    true
+  );
+  next();
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    });
   });</pre></div></div>
             
         </li>
         
         
-        <li id="section-69">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
-              <h3 id="-">コードの正しさを証明できる</h3>
+              <p>it(‘状態を持つ銀行口座’, (next) =&gt; {
+  /<em> #@range_begin(account_with_state) </em>/
+  var Account = (initialDeposit) =&gt; {
+    /<em> 変数balanceは預金残高という可変な状態を表わす  </em>/
+    var balance = initialDeposit;
+    return {
+      /<em> 預金残高を返す関数 </em>/
+      balance: (_) =&gt; {
+        return balance;
+      },
+      /<em> 預金を預ける関数 </em>/
+      deposit: (amount) =&gt; {
+        /<em> 代入で残高を更新する </em>/
+        balance = balance + amount;
+        return this;
+      },
+      /<em> 預金を引き出す関数 </em>/
+      withdraw: (amount) =&gt; {
+        /<em> 代入で残高を更新する </em>/
+        balance = balance - amount;
+        return this;
+      }
+    };
+  };
+  /<em> #@range_end(account_with_state) </em>/
+  /<em> #@range_begin(account_with_state_test) </em>/
+  /<em> 1000円で口座を開設する </em>/
+  var account = Account(1000);
+  expect(
+    account.balance()
+  ).to.eql(
+    1000
+  );
+  /<em> 口座から200円を引き出す </em>/
+  expect(
+    account.withdraw(200).balance()
+  ).to.eql(
+    800
+  );
+  /<em> #@range_end(account_with_state_test) </em>/
+  next();
+  /<em>
+  var mkAccount = (balance) =&gt; {
+    var deposit = (amount) =&gt; {
+      balance = balance + amount;
+      return dispatch;
+    };
+    var withdraw = (amount) =&gt; {
+      balance = balance - amount;
+      return dispatch;
+    };
+    var dispatch = (method) =&gt; {
+      switch(method){
+      case “deposit”:
+        return deposit;
+      case “withdraw”:
+        return withdraw; 
+      case “balance”:
+        return balance;
+      default:
+        throw {
+          name: “そのようなメソッドはありません”,
+          message: “unknown: “ + method
+        };
+      }
+    };
+    return dispatch;
+  };
+  </em>/
+});
+it(‘参照透過性のある銀行口座’, (next) =&gt; {
+  /<em> #@range_begin(account_with_explicit_state) </em>/
+  var account = {
+    /<em> 銀行口座を作る関数 </em>/
+    init: (balance) =&gt; {
+      return balance;
+    },
+    /<em> 口座にお金を預ける関数 </em>/
+    deposit: (amount) =&gt; { 
+      return (anAccount) =&gt; {
+        /<em> 銀行口座を作り直す </em>/
+        return account.init(anAccount + amount); 
+      };
+    },
+    /<em> 口座からお金を引き出す関数 </em>/
+    withdraw: (amount) =&gt; { 
+      return (anAccount) =&gt; {
+        /<em> 銀行口座を作り直す </em>/
+        return account.init(anAccount - amount); 
+      };
+    },
+    /<em> 取り引きを実行する関数 </em>/
+    commit: (anAccount) =&gt; { 
+      return (transactions) =&gt; {
+        return transactions.reduce((accumulator, transact) =&gt; {
+          return transact(accumulator);
+        },anAccount);
+      };
+    }
+  };
+  /<em> #@range_end(account_with_explicit_state) </em>/
+  expect(
+    account.init(20)
+  ).to.eql(
+    20
+  );
+  expect(
+    account.deposit(30)(account.init(20))
+  ).to.eql(
+    50
+  );</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>  /<em> #@range_begin(account_test) </em>/
+  var theAcount = account.init(1000);
+  /<em> お金を引き出してから、預金する </em>/
+  expect(
+    account.commit(theAcount)(
+      [account.withdraw(200)] /<em> 取り引きを実行する </em>/
+    )
+  ).to.eql(
+    800
+  );
+  /<em> 連続してお金を引き出す </em>/
+  expect(
+    account.commit(theAcount)( /<em> 先ほどの口座を再利用する </em>/
+      [account.withdraw(10), 
+       account.withdraw(20), 
+       account.withdraw(30)]
+    )
+  ).to.eql(
+    940
+  );
+  /<em> #@range_end(account_test) </em>/
+  next();
+});</p>
+<h3 id="-">コードの正しさを証明できる</h3>
 
             </div>
             
@@ -4186,11 +4209,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -4333,11 +4356,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p>elemAt(100)(
   compose(listAnd, map(proposition))(enumFrom(0))
@@ -4388,11 +4411,11 @@ elemAt(100)(
         </li>
         
         
-        <li id="section-72">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

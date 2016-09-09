@@ -3,8 +3,9 @@
 // 第1章 「計算」とは
 // ========
 
+// アサートライブラリー expect.js の読み込み
 var expect = require('expect.js');
-var util = require('util');
+// var util = require('util');
 
 // ## 1.2 命令型モデル
 describe('命令型モデル', () => {
@@ -380,4 +381,6 @@ describe('関数型モデル', () => {
     );
     next();
   });
+  // [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap02.spec.html) 
 });
+

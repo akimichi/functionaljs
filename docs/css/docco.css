@@ -504,3 +504,14 @@ pre .hljs-chunk {
 pre .hljs-tex .hljs-formula {
   opacity: 0.5;
 }
+
+#footer {
+  bottom: 0;
+  height: 5em;
+  color: #990073
+  line-height: 1em;
+  font-weight: normal;
+  font-family: "novecento-bold";
+  text-transform: uppercase;
+  margin: 30px 0 15px 0;
+}

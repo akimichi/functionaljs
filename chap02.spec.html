@@ -362,18 +362,46 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透明性が成立する場面'</span>, () =&gt; {
-    describe(<span class="hljs-string">'変数の参照透明性'</span>, () =&gt; {
-      it(<span class="hljs-string">'値は参照透明性を持つ'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(any_value_has_referential_transparency) */</span>
-        expect(
-          <span class="hljs-number">2</span>
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        <span class="hljs-comment">/* #@range_end(any_value_has_referential_transparency) */</span>
-        next();
-      });
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透明性が成立する場面'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h4 id="-">値の参照透過性</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'値の参照透過性'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(number_has_referential_transparency) */</span>
+      expect(
+        <span class="hljs-number">2</span>
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      );
+      <span class="hljs-comment">/* #@range_end(number_has_referential_transparency) */</span>
+      next();
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h4 id="-">変数の参照透過性</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'変数の参照透明性'</span>, () =&gt; {
       it(<span class="hljs-string">'変数が参照透明性を持つ場合'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(variable_is_referential_transparent) */</span>
         <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
@@ -404,56 +432,92 @@
         <span class="hljs-comment">/* #@range_end(variable_isnt_referential_transparent) */</span>
         next();
       });
-    });
-    describe(<span class="hljs-string">'関数の参照透明性'</span>, () =&gt; {
-      it(<span class="hljs-string">'算術関数は参照透明性を持つ'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(square_definition) */</span>
-        <span class="hljs-keyword">var</span> square = (x) =&gt; {
-          <span class="hljs-keyword">return</span> x * x;
-        };
-        <span class="hljs-comment">/*  #@range_end(square_definition) */</span>
-        <span class="hljs-comment">/* #@range_begin(square_is_transparent) */</span>
-        expect(
-          square(<span class="hljs-number">2</span>) <span class="hljs-comment">// 1回目の実行</span>
-        ).to.eql(
-          <span class="hljs-number">4</span>
-        );
-        expect(
-          square(<span class="hljs-number">2</span>) <span class="hljs-comment">// 2回目の実行</span>
-        ).to.eql(
-          <span class="hljs-number">4</span>
-        );
-        expect(
-          square(<span class="hljs-number">3</span>) === square(<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(square_is_transparent) */</span>
-        <span class="hljs-comment">/* #@range_begin(multiply_definition) */</span>
-        <span class="hljs-keyword">var</span> multiply = (x,y) =&gt; {
-          <span class="hljs-keyword">return</span> x * y;
-        };
-        <span class="hljs-comment">/*  #@range_end(multiply_definition) */</span>
-        <span class="hljs-comment">/* #@range_begin(multiply_is_transparent) */</span>
-        expect(
-          multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        expect(
-          multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        expect(
-          multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>) === multiply(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(multiply_is_transparent) */</span>
-        next();
-      });
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h4 id="-">関数の参照透過性</h4>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数の参照透明性'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>succ関数は参照透明性を持つ</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'succ関数は参照透明性を持つ'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> succ = (x) =&gt; {
+          <span class="hljs-keyword">return</span> x + <span class="hljs-number">1</span>;
+        };
+        expect(
+          succ(<span class="hljs-number">1</span>)
+        ).to.eql(
+          succ(<span class="hljs-number">1</span>)
+        );
+        expect(
+          succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 1回目の実行</span>
+        ).to.eql(
+          <span class="hljs-number">2</span>
+        );
+        expect(
+          succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 2回目の実行</span>
+        ).to.eql(
+          <span class="hljs-number">2</span>
+        );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>/<em> #@range_begin(multiply_definition) </em>/
+var multiply = (x,y) =&gt; {
+  return x <em> y;
+};
+/</em>  #@range_end(multiply_definition) <em>/
+/</em> #@range_begin(multiply_is_transparent) <em>/
+expect(
+  multiply(2,3)
+).to.eql(
+  6
+);
+expect(
+  multiply(2,3)
+).to.eql(
+  6
+);
+expect(
+  multiply(2,3) === multiply(2,3)
+).to.eql(
+  true
+);
+/</em> #@range_end(multiply_is_transparent) */</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        next();
+      });
     });
     describe(<span class="hljs-string">'参照透明な関数では同値なものは置換可能である'</span>, () =&gt; {
       it(<span class="hljs-string">'同じ引数のsquare関数は置換可能である'</span>, (next) =&gt; {
@@ -492,11 +556,11 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h3 id="-">参照透過性を破壊するもの</h3>
 
@@ -638,11 +702,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <h3 id="-">参照透明性を保証する</h3>
 
@@ -653,11 +717,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
 
@@ -719,11 +783,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <h4 id="-">不変なデータ</h4>
 
@@ -880,11 +944,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h3 id="-">副作用への対処</h3>
 
@@ -1201,11 +1265,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h2 id="-">関数型プログラミングの利点</h2>
 
@@ -1216,11 +1280,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <h3 id="-">高いモジュール性</h3>
 
@@ -1248,11 +1312,11 @@
         </li>
         
         
-        <li id="section-22">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               
             </div>
@@ -1266,11 +1330,11 @@
         </li>
         
         
-        <li id="section-23">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <h4 id="-">部品の独立性</h4>
 
@@ -1709,11 +1773,11 @@
         </li>
         
         
-        <li id="section-24">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <h4 id="-">部品の汎用性</h4>
 
@@ -1976,11 +2040,11 @@
         </li>
         
         
-        <li id="section-25">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h3 id="-">部品を組み合わせる</h3>
 
@@ -2491,11 +2555,11 @@
         </li>
         
         
-        <li id="section-26">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -2506,11 +2570,11 @@
         </li>
         
         
-        <li id="section-27">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -2561,11 +2625,11 @@
         </li>
         
         
-        <li id="section-28">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>var evenStream = ((<em>) =&gt; {
   var evenFrom = (n) =&gt; {
@@ -2707,11 +2771,11 @@ var evenStream = evenFrom(2);</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>var ones = [1, (<em>) =&gt; {
   return ones;
@@ -2790,11 +2854,11 @@ var scanl = (aStream) =&gt; {
         </li>
         
         
-        <li id="section-30">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>describe(‘カリー化バージョン’, () =&gt; {
   var take = (n) =&gt; {
@@ -2997,11 +3061,11 @@ var scanl = (aStream) =&gt; {
         </li>
         
         
-        <li id="section-31">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3092,11 +3156,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>).to.within(3.13, 3.15);</p>
 
@@ -3115,11 +3179,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3200,11 +3264,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>cycle                   :: [a] -&gt; [a]
 cycle []  = error “Prelude.cycle: empty list”
@@ -3230,11 +3294,11 @@ cycle xs  = xs’ where xs’ = xs ++ xs’</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>zipWith’ :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
 zipWith’ f [] <em> = []
@@ -3410,11 +3474,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -3761,11 +3825,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -3776,11 +3840,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -3923,11 +3987,11 @@ zipWith’ f (x:xs) (y:ys) = f x y : zipWith’ f xs ys</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>elemAt(100)(
   compose(listAnd, map(proposition))(enumFrom(0))
@@ -3978,11 +4042,11 @@ elemAt(100)(
         </li>
         
         
-        <li id="section-40">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

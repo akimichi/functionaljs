@@ -2403,8 +2403,22 @@ describe(‘関数的なstackの実装’, () =&gt; {
             <span class="hljs-number">3</span>
           );
           next();
-        });
-        it(<span class="hljs-string">'関数合成でlength関数を作る'</span>, (next) =&gt; {
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <h4 id="-">関数適用で部品を組み合わせる</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'関数適用で部品を組み合わせる'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> map = (transform) =&gt; {
             <span class="hljs-keyword">return</span> (array) =&gt; {
               <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
@@ -2416,8 +2430,22 @@ describe(‘関数的なstackの実装’, () =&gt; {
             <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
               <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
             },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
-          };
-          <span class="hljs-comment">/* #@range_begin(constant) */</span>
+          };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>constant関数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(constant) */</span>
           <span class="hljs-keyword">var</span> constant = (any) =&gt; {
             <span class="hljs-keyword">return</span> (_) =&gt; {
               <span class="hljs-keyword">return</span> any;
@@ -2683,11 +2711,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-39">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -2698,11 +2726,11 @@ describe(‘関数的なstackの実装’, () =&gt; {
         </li>
         
         
-        <li id="section-40">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -2748,35 +2776,8 @@ describe(‘関数的なstackの実装’, () =&gt; {
             }];
           };
           <span class="hljs-keyword">var</span> evenStream = evenFrom(<span class="hljs-number">2</span>); 
-          <span class="hljs-comment">/* #@range_end(evenStream) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-41">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
-              </div>
-              <p>var evenStream = ((<em>) =&gt; {
-  var evenFrom = (n) =&gt; {
-    return [n, (</em>) =&gt; {
-      return evenFrom(n + 2);
-    }];
-  };
-  return evenFrom(2);
-})(); // 定義された無名関数をすぐに適用する
-var evenFrom = (n) =&gt; {
-  return [n, (_) =&gt; {
-    return evenFrom(n + 2);
-  }];
-};
-var evenStream = evenFrom(2);</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          expect(
+          <span class="hljs-comment">/* #@range_end(evenStream) */</span>
+          expect(
             take(<span class="hljs-number">3</span>, evenStream)
           ).to.eql(
             [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
@@ -2894,56 +2895,8 @@ var evenStream = evenFrom(2);</p>
             <span class="hljs-comment">/* #@range_begin(third_element_of_evenStream_result) */</span>
             <span class="hljs-number">6</span>
             <span class="hljs-comment">/* #@range_end(third_element_of_evenStream_result) */</span>
-          );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-42">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
-              </div>
-              <p>var ones = [1, (<em>) =&gt; {
-  return ones;
-}];
-var twos = [1, (</em>) =&gt; {
-  return ones;
-}];
-var zipWith = (fun) =&gt; {
-  return (xs, ys) =&gt; {
-    if(xs.length === 0) {
-      return []; 
-    } 
-    if(ys.length === 0) {
-      return []; 
-    } 
-    return [fun(xs[0], ys[0]), (<em>) =&gt; {
-      return zipWith(fun)(xs<a href="">1</a>, ys<a href="">1</a>);
-    }];
-  };
-};
-var listSums = (aStream) =&gt; {
-  var out = [aStream[0], (</em>) =&gt; {
-    return zipWith((x,y) =&gt; { 
-      return x + y;
-    })(aStream<a href="">1</a>, out);
-  }];
-  return out;
-};
-var scanl = (aStream) =&gt; {
-  return (glue) =&gt; {
-    var out = [aStream[0], (_) =&gt; {
-      return zipWith(glue)(aStream<a href="">1</a>, out);
-    }];
-    return out;
-  };
-};</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          next();
+          );
+          next();
         });
         it(<span class="hljs-string">'正格評価のelemAt関数'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(array_elemAt) */</span>

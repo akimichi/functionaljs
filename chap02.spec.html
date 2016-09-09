@@ -807,9 +807,14 @@ node&gt; ichi === one;
       comb(10,4)
     ).to.eql(
       210
-    );</p>
+    );
+    next();
+  });
+});</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  });</pre></div></div>
             
         </li>
         
@@ -820,13 +825,38 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <pre><code>next();
-</code></pre><p>  });
-});</p>
+              <p>副作用と入出力</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  });
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
+    it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
+      <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+      <span class="hljs-keyword">var</span> read = (path) =&gt; {
+        <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
+      };
+      <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
+        fs.writeFileSync(path, n);
+        <span class="hljs-keyword">return</span> n;
+      };
+      <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
+      write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">1</span>);
+      expect(
+        read(<span class="hljs-string">'test/resources/io.txt'</span>)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
+      expect(
+        read(<span class="hljs-string">'test/resources/io.txt'</span>)
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      );
+      next();
+    });
+  });
   describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
     describe(<span class="hljs-string">'副作用としての代入'</span>, () =&gt; {
       it(<span class="hljs-string">'配列は参照透明性を破壊する'</span>, (next) =&gt; {
@@ -871,34 +901,6 @@ node&gt; ichi === one;
         next();
       });
     });
-    describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
-      it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
-        <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
-        <span class="hljs-keyword">var</span> read = (path) =&gt; {
-          <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
-          <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
-        };
-        <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
-          fs.writeFileSync(path, n);
-          <span class="hljs-keyword">return</span> n;
-        };
-        <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
-        write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">1</span>);
-        expect(
-          read(<span class="hljs-string">'test/resources/io.txt'</span>)
-        ).to.eql(
-          <span class="hljs-number">1</span>
-        );
-        write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
-        expect(
-          read(<span class="hljs-string">'test/resources/io.txt'</span>)
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        next();
-      });
-    });
   });</pre></div></div>
             
         </li>
@@ -924,6 +926,42 @@ node&gt; ichi === one;
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <h4 id="-">値の参照透過性を保証する（可変なデータの排除）</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'値の参照透過性を保証する（可変なデータの排除）'</span>, () =&gt;  {
+      it(<span class="hljs-string">'不変なデータ型'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(immutable_datatype) */</span>
+        <span class="hljs-keyword">var</span> empty =  (_) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+        };
+        <span class="hljs-keyword">var</span> get = (key, obj) =&gt; {
+          <span class="hljs-keyword">return</span> obj(key);
+        };
+        <span class="hljs-keyword">var</span> set = (key, value, obj) =&gt; {
+          <span class="hljs-keyword">return</span> (key2) =&gt; {
+            <span class="hljs-keyword">if</span>(key === key2) {
+              <span class="hljs-keyword">return</span> value;
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">return</span> get(key2,obj);
+            }
+          };
+        };
+        <span class="hljs-comment">/* #@range_end(immutable_datatype) */</span>
+        next();
+      });
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
 
@@ -985,174 +1023,138 @@ node&gt; ichi === one;
         </li>
         
         
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <h4 id="-">不変なデータ</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'不変なデータ'</span>, () =&gt;  {
-      it(<span class="hljs-string">'不変なデータ型'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(immutable_datatype) */</span>
-        <span class="hljs-keyword">var</span> empty =  (_) =&gt; {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-        };
-        <span class="hljs-keyword">var</span> get = (key, obj) =&gt; {
-          <span class="hljs-keyword">return</span> obj(key);
-        };
-        <span class="hljs-keyword">var</span> set = (key, value, obj) =&gt; {
-          <span class="hljs-keyword">return</span> (key2) =&gt; {
-            <span class="hljs-keyword">if</span>(key === key2) {
-              <span class="hljs-keyword">return</span> value;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> get(key2,obj);
-            }
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(immutable_datatype) */</span>
-        next();
-      });
-      describe(<span class="hljs-string">'命令的なstackの実装'</span>, () =&gt; {
-        <span class="hljs-keyword">var</span> object = {
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-          },
-          get: (key, obj) =&gt; {
-            <span class="hljs-keyword">return</span> obj(key);
-          },
-          set: (key, value, obj) =&gt; {
-            <span class="hljs-keyword">return</span> (key2) =&gt; {
-              <span class="hljs-keyword">if</span>(key === key2) {
-                <span class="hljs-keyword">return</span> value;
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> object.get(key2,obj);
-              }
-            };
-          }
-        };
-      });
-      describe(<span class="hljs-string">'命令的なstackの実装'</span>, () =&gt; {
-        <span class="hljs-comment">/* #@range_begin(imperative_stack) */</span>
-        <span class="hljs-keyword">var</span> stack = [];
-        <span class="hljs-keyword">var</span> add = (stack) =&gt; {
-          <span class="hljs-keyword">var</span> x = stack.pop();
-          <span class="hljs-keyword">var</span> y = stack.pop();
-          <span class="hljs-keyword">return</span> stack.push(x+y);
-        };
-        <span class="hljs-keyword">var</span> subtract = (stack) =&gt; {
-          <span class="hljs-keyword">var</span> x = stack.pop();
-          <span class="hljs-keyword">var</span> y = stack.pop();
-          <span class="hljs-keyword">return</span> stack.push(x-y);
-        };
-        <span class="hljs-comment">/* #@range_end(imperative_stack) */</span>
-        it(<span class="hljs-string">'(2 + 3) * 2'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-          <span class="hljs-comment">/* #@range_begin(imperative_stack_test) */</span>
-          stack.push(<span class="hljs-number">2</span>);
-          stack.push(<span class="hljs-number">3</span>);
-          add(stack);
-          stack.push(<span class="hljs-number">2</span>);
-          add(stack);
-          expect(
-            stack.pop()
-          ).to.eql(
-            <span class="hljs-number">7</span>
-          );
-          <span class="hljs-comment">/* #@range_end(imperative_stack_test) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'(2 + 3) + 2 logged'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-          <span class="hljs-keyword">var</span> stack = [];
-          <span class="hljs-comment">/* #@range_begin(imperative_stack_log) */</span>
-          stack.push(<span class="hljs-number">2</span>);
-          <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 2 ]</span>
-          stack.push(<span class="hljs-number">3</span>);
-          <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 2, 3 ]</span>
-          add(stack);
-          <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 5 ]</span>
-          stack.push(<span class="hljs-number">2</span>);
-          <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 5, 2 ]</span>
-          add(stack);
-          <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// [ 7 ]</span>
-          expect(
-            stack.pop()
-          ).to.eql(
-            <span class="hljs-number">7</span>
-          );
-          <span class="hljs-built_in">console</span>.log(stack); <span class="hljs-comment">// []</span>
-          <span class="hljs-comment">/* #@range_end(imperative_stack_log) */</span>
-          next();
-        });
-      });
-      describe(<span class="hljs-string">'関数的なstackの実装'</span>, () =&gt; {
-        <span class="hljs-comment">/* #@range_begin(functional_stack) */</span>
-        <span class="hljs-keyword">var</span> push = (n, stack) =&gt; {
-          <span class="hljs-keyword">return</span> [n].concat(stack);
-        };
-        <span class="hljs-keyword">var</span> pop = (stack) =&gt; {
-          <span class="hljs-keyword">return</span> {
-            value: stack[<span class="hljs-number">0</span>],
-            rest: stack.slice(<span class="hljs-number">1</span>,stack.length)
-          };
-        };
-        <span class="hljs-keyword">var</span> empty = [];
-        <span class="hljs-keyword">var</span> add = (stack) =&gt; {
-          <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
-          <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
-          <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
-          <span class="hljs-keyword">return</span> push(x+y,rest);
-        };
-        <span class="hljs-keyword">var</span> subtract = (stack) =&gt; {
-          <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
-          <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
-          <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
-          <span class="hljs-keyword">return</span> push(x-y,rest);
-        };
-        <span class="hljs-keyword">var</span> multiply = (stack) =&gt; {
-          <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
-          <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
-          <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
-          <span class="hljs-keyword">return</span> push(x*y,rest);
-        };
-        <span class="hljs-keyword">var</span> divide = (stack) =&gt; {
-          <span class="hljs-keyword">var</span> x = stack[<span class="hljs-number">0</span>];
-          <span class="hljs-keyword">var</span> y = stack[<span class="hljs-number">1</span>];
-          <span class="hljs-keyword">var</span> rest = stack.slice(<span class="hljs-number">2</span>,stack.length);
-          <span class="hljs-keyword">return</span> push(x/y,rest);
-        };
-        <span class="hljs-comment">/* #@range_end(functional_stack) */</span>
-        it(<span class="hljs-string">'(2 + 3) * 4'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">next</span>) </span>{
-          <span class="hljs-comment">/* #@range_begin(functional_stack_test) */</span>
-          <span class="hljs-keyword">var</span> s0 = empty;
-          <span class="hljs-keyword">var</span> s1 = push(<span class="hljs-number">2</span>, s0);
-          <span class="hljs-keyword">var</span> s2 = push(<span class="hljs-number">3</span>, s1);
-          <span class="hljs-keyword">var</span> s3 = add(s2);
-          <span class="hljs-keyword">var</span> s4 = push(<span class="hljs-number">2</span>,s3);
-          <span class="hljs-keyword">var</span> s5 = multiply(s4);
-          expect(
-            pop(s5).value
-          ).to.eql(
-            <span class="hljs-number">10</span>
-          );
-          <span class="hljs-comment">/* #@range_end(functional_stack_test) */</span>
-          next();
-        });
-      });
-    });</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <h3 id="-">副作用への対処</h3>
+              <p>describe(‘命令的なstackの実装’, () =&gt; {
+  var object = {
+    empty: (_) =&gt; {
+      return null;
+    },
+    get: (key, obj) =&gt; {
+      return obj(key);
+    },
+    set: (key, value, obj) =&gt; {
+      return (key2) =&gt; {
+        if(key === key2) {
+          return value;
+        } else {
+          return object.get(key2,obj);
+        }
+      };
+    }
+  };
+});
+describe(‘命令的なstackの実装’, () =&gt; {
+  /<em> #@range_begin(imperative_stack) </em>/
+  var stack = [];
+  var add = (stack) =&gt; {
+    var x = stack.pop();
+    var y = stack.pop();
+    return stack.push(x+y);
+  };
+  var subtract = (stack) =&gt; {
+    var x = stack.pop();
+    var y = stack.pop();
+    return stack.push(x-y);
+  };
+  /<em> #@range_end(imperative_stack) </em>/
+  it(‘(2 + 3) <em> 2’, function(next) {
+    /</em> #@range_begin(imperative_stack_test) <em>/
+    stack.push(2);
+    stack.push(3);
+    add(stack);
+    stack.push(2);
+    add(stack);
+    expect(
+      stack.pop()
+    ).to.eql(
+      7
+    );
+    /</em> #@range_end(imperative_stack_test) <em>/
+    next();
+  });
+  it(‘(2 + 3) + 2 logged’, function(next) {
+    var stack = [];
+    /</em> #@range_begin(imperative_stack_log) <em>/
+    stack.push(2);
+    console.log(stack); // [ 2 ]
+    stack.push(3);
+    console.log(stack); // [ 2, 3 ]
+    add(stack);
+    console.log(stack); // [ 5 ]
+    stack.push(2);
+    console.log(stack); // [ 5, 2 ]
+    add(stack);
+    console.log(stack); // [ 7 ]
+    expect(
+      stack.pop()
+    ).to.eql(
+      7
+    );
+    console.log(stack); // []
+    /</em> #@range_end(imperative_stack_log) <em>/
+    next();
+  });
+});
+describe(‘関数的なstackの実装’, () =&gt; {
+  /</em> #@range_begin(functional_stack) <em>/
+  var push = (n, stack) =&gt; {
+    return [n].concat(stack);
+  };
+  var pop = (stack) =&gt; {
+    return {
+      value: stack[0],
+      rest: stack.slice(1,stack.length)
+    };
+  };
+  var empty = [];
+  var add = (stack) =&gt; {
+    var x = stack[0];
+    var y = stack[1];
+    var rest = stack.slice(2,stack.length);
+    return push(x+y,rest);
+  };
+  var subtract = (stack) =&gt; {
+    var x = stack[0];
+    var y = stack[1];
+    var rest = stack.slice(2,stack.length);
+    return push(x-y,rest);
+  };
+  var multiply = (stack) =&gt; {
+    var x = stack[0];
+    var y = stack[1];
+    var rest = stack.slice(2,stack.length);
+    return push(x</em>y,rest);
+  };
+  var divide = (stack) =&gt; {
+    var x = stack[0];
+    var y = stack[1];
+    var rest = stack.slice(2,stack.length);
+    return push(x/y,rest);
+  };
+  /<em> #@range_end(functional_stack) </em>/
+  it(‘(2 + 3) <em> 4’, function(next) {
+    /</em> #@range_begin(functional_stack_test) <em>/
+    var s0 = empty;
+    var s1 = push(2, s0);
+    var s2 = push(3, s1);
+    var s3 = add(s2);
+    var s4 = push(2,s3);
+    var s5 = multiply(s4);
+    expect(
+      pop(s5).value
+    ).to.eql(
+      10
+    );
+    /</em> #@range_end(functional_stack_test) */
+    next();
+  });
+});</p>
+<h3 id="-">副作用への対処</h3>
 
             </div>
             

@@ -4265,59 +4265,6 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
       <span class="hljs-comment">/* #@range_end(tarai_function) */</span>
       next();
     });
-  });
-  it(<span class="hljs-string">'ストリームのmap'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(stream_map) */</span>
-    <span class="hljs-keyword">var</span> map = (lazyList) =&gt; {
-      <span class="hljs-keyword">return</span> (callback) =&gt; {
-        <span class="hljs-keyword">return</span> match(lazyList,{
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> stream.empty();
-          },
-          cons: (head, tailThunk) =&gt; {
-            <span class="hljs-keyword">return</span> stream.cons(callback(head), (_) =&gt; {
-              <span class="hljs-keyword">return</span> map(tailThunk())(callback);
-            });
-          }
-        });
-      };
-    };
-    <span class="hljs-comment">/* #@range_end(stream_map) */</span>
-    <span class="hljs-comment">/* #@range_begin(stream_map_test) */</span>
-    <span class="hljs-keyword">var</span> numberStream = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
-      });
-    });
-    <span class="hljs-keyword">var</span> double = (number) =&gt; {
-      <span class="hljs-keyword">return</span> number * <span class="hljs-number">2</span>;
-    };
-    <span class="hljs-keyword">var</span> doubled_stream = map(numberStream)(double);
-    expect(
-      stream.head(doubled_stream)
-    ).to.eql(
-      <span class="hljs-number">2</span>
-    );
-    expect(
-      stream.toArray(doubled_stream)
-    ).to.eql(
-      [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>]
-    );
-    <span class="hljs-keyword">var</span> stringStream = stream.cons(<span class="hljs-string">"a"</span>, (_) =&gt; {
-      <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-string">"b"</span>,(_) =&gt; {
-        <span class="hljs-keyword">return</span> stream.empty();
-      });
-    });
-    <span class="hljs-keyword">var</span> upper = (string) =&gt; {
-      <span class="hljs-keyword">return</span> string.toUpperCase();
-    };
-    expect(
-      stream.toArray(map(stringStream)(upper))
-    ).to.eql(
-      [<span class="hljs-string">"A"</span>,<span class="hljs-string">"B"</span>]
-    );
-    <span class="hljs-comment">/* #@range_end(stream_map_test) */</span>
-    next();
   });</pre></div></div>
             
         </li>

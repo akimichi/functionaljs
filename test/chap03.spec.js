@@ -234,3 +234,5 @@ describe('テストに親しむ', () => {
     });
   });
 });
+
+// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap04.spec.html) 

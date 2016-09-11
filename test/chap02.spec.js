@@ -1341,5 +1341,6 @@ describe('関数型プログラミングの利点', () => {
       });
     });
   });
-  // [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap03.spec.html) 
 });
+
+// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap03.spec.html) 

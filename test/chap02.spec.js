@@ -110,33 +110,6 @@ describe('関数型プログラミングの特徴', () => {
           );
           next();
         });
-        it('reduceを定義する', (next) => {
-          /* #@range_begin(reduce_definition) */
-          var reduce = (init,glue) => {
-            return (array) => { // 関数が返る
-              if(array.length === 0){
-                return init;
-              } else {
-                var accumulator = glue(array[0], init);
-                var tail = array.slice(1,array.length);
-                return reduce(accumulator,glue)(tail);
-              }
-            };
-          };
-          /* #@range_end(reduce_definition) */
-          /* #@range_begin(function_returning_function_test) */
-          var adder = (x,y) => {
-            return x + y;
-          };
-          var sum = reduce(0,adder);
-          expect(
-            sum([1,2,3,4])
-          ).to.eql(
-            10
-          );
-          /* #@range_end(function_returning_function_test) */
-          next();
-        });
       });
     });
   });
@@ -196,10 +169,14 @@ describe('参照透過性', () => {
         var succ = (x) => {
           return x + 1;
         };
+        // ~~~
+        // node> succ(1) === succ(1)
+        // true
+        // ~~~
         expect(
-          succ(1)
+          succ(1) === succ(1)
         ).to.eql(
-          succ(1)
+          true
         );
         expect(
           succ(1) // 1回目の実行
@@ -214,387 +191,259 @@ describe('参照透過性', () => {
         next();
       });
     });
-    describe('参照透明な関数では同値なものは置換可能である', () => {
-      it('同じ引数のsquare関数は置換可能である', (next) => {
-        /* #@range_begin(equals_replacement)  */
-        var square = (n) => {
-          return n * n;
-        };
-        var b = 1;
-        var a = b;
-        expect(
-          square(a)
-        ).to.eql(
-          square(b)
-        );
-        expect(
-          square(b)
-        ).to.eql(
-          square(a)
-        );
-        expect(
-          square(a)
-        ).to.eql(
-          square(a)
-        );
-        expect(
-          square(b)
-        ).to.eql(
-          square(b)
-        );
-        /* #@range_end(equals_replacement)  */
-        next();
-      });
-    });
   });
-  // ### 参照透過性を破壊するもの
-  describe('参照透過性を破壊するもの', () => {
-    // 可変なデータは参照透明性を破壊する
-    // ~~~
-    // node> var array = [1];
-    // node> array
-    // [ 1 ]
-    // node> array.push(2);
-    // 2
-    // node> array
-    // [ 1, 2 ]
-    // ~~~
-    it('可変なデータは参照透明性を破壊する', (next) => {
-      var array = [1];
-      expect(
-        array
-      ).to.eql(
-        [1]
-      );
-      array.push(2);
-      expect(
-        array
-      ).to.eql(
-        [1,2]
-      );
-      next();
-    });
-    // 代入操作は参照透明性を破壊する
-    // ~~~
-    // node> var one = 1;
-    // node> var ichi = one;
-    // node> ichi === one;
-    // true
-    // node> one = 2;
-    // 2
-    // node> ichi === one;
-    // false
-    // ~~~
-    it('代入操作は参照透明性を破壊する', (next) => {
-      /* #@range_begin(assignment_breaks_referential_transparency) */
-      var x = 0;
-      var add = (y) => {
-        x = x + 1; // 代入で変数を更新する
-        return x + y;
-      };
-      /* #@range_end(assignment_breaks_referential_transparency)  */
-      expect(
-        add(1)
-      ).to.eql(
-        2
-      );
-      next();
-    });
-    it('参照不透明な関数では同値なものは置換できない', (next) => {
-      /* #@range_begin(unequals_replacement)  */
-      var wrapper = (f) => {
-        return (args) => {
-          return f.call(f, args);
-        };
-      };
-      var now = (_) => {
-        return Date.now();
-      };
-      var b = 1;
-      var a = b;
-      var aResult = wrapper(now)(a);
-      /* #@range_end(unequals_replacement)  */
-      next();
-    });
-    it('Date.now関数は参照透明性を持たない', (next) => {
-      /* #@range_begin(datenow_is_not_transparent) */
-      var a = Date.now();
-      /* 時間を1秒進める */
-      var sleep = require('sleep-async')();
-      sleep.sleep(2000, () => {
-        expect(
-          a
-        ).to.not.eql( /* 等しくないことをテストしている */
-          Date.now()
-        );
-      });
-      /* #@range_end(datenow_is_not_transparent) */
-      next();
-    });
-    // 命令型な階乗関数
-    it('命令型な階乗関数', (next) => {
-      /* #@range_begin(imperative_factorial) */
-      var factorial = (n) => {
-        /* 変数resultに結果が入る */
-        var result = 1;             
-        /* 変数timesは反復の回数を数える */
-        var times = 1;              
-        /* while文は反復を処理する */
-        while(times < n + 1) {      
-          /* 変数resultを代入で更新する */
-          result = result * times;  
-          /* 変数timesを代入で更新する */
-          times = times + 1;        
-        }
-        return result;
-      };
-      /* #@range_end(imperative_factorial) */
-      expect(
-        factorial(2)
-      ).to.eql(
-        2
-      );
-      expect(
-        factorial(3)
-      ).to.eql(
-        6
-      );
-      expect(
-        factorial(4)
-      ).to.eql(
-        24
-      );
-      next();
-    });
+});
+// ### 参照透過性を破壊するもの
+describe('参照透過性を破壊するもの', () => {
+  // 可変なデータは参照透明性を破壊する
+  // ~~~
+  // node> var array = [1];
+  // node> array
+  // [ 1 ]
+  // node> array.push(2);
+  // 2
+  // node> array
+  // [ 1, 2 ]
+  // ~~~
+  it('可変なデータは参照透明性を破壊する', (next) => {
+    var array = [1];
+    expect(
+      array
+    ).to.eql(
+      [1]
+    );
+    array.push(2);
+    expect(
+      array
+    ).to.eql(
+      [1,2]
+    );
+    next();
   });
-  // 副作用と入出力
-  describe('副作用と入出力', () => {
-    it('ファイル入出力が参照透明性を破壊する例', (next) => {
-      /* #@range_begin(fileio_breaks_referential_transparency)  */
-      var fs = require('fs');
-      var read = (path) => {
-        var readValue = fs.readFileSync(path);
-        return parseInt(readValue);
-      };
-      var write = (path, n) => {
-        fs.writeFileSync(path, n);
-        return n;
-      };
-      /* #@range_end(fileio_breaks_referential_transparency)  */
-      write('test/resources/io.txt', 1);
+  // 代入操作は参照透明性を破壊する
+  // ~~~
+  // node> var one = 1;
+  // node> var ichi = one;
+  // node> ichi === one;
+  // true
+  // node> one = 2;
+  // 2
+  // node> ichi === one;
+  // false
+  // ~~~
+  it('代入操作は参照透明性を破壊する', (next) => {
+    /* #@range_begin(assignment_breaks_referential_transparency) */
+    var x = 0;
+    var add = (y) => {
+      x = x + 1; // 代入で変数を更新する
+      return x + y;
+    };
+    /* #@range_end(assignment_breaks_referential_transparency)  */
+    expect(
+      add(1)
+    ).to.eql(
+      2
+    );
+    next();
+  });
+  // 命令型な階乗関数
+  it('命令型な階乗関数', (next) => {
+    /* #@range_begin(imperative_factorial) */
+    var factorial = (n) => {
+      /* 変数resultに結果が入る */
+      var result = 1;             
+      /* 変数timesは反復の回数を数える */
+      var times = 1;              
+      /* while文は反復を処理する */
+      while(times < n + 1) {      
+        /* 変数resultを代入で更新する */
+        result = result * times;  
+        /* 変数timesを代入で更新する */
+        times = times + 1;        
+      }
+      return result;
+    };
+    /* #@range_end(imperative_factorial) */
+    expect(
+      factorial(2)
+    ).to.eql(
+      2
+    );
+    expect(
+      factorial(3)
+    ).to.eql(
+      6
+    );
+    expect(
+      factorial(4)
+    ).to.eql(
+      24
+    );
+    next();
+  });
+});
+// 副作用と入出力
+describe('副作用と入出力', () => {
+  it('ファイル入出力が参照透明性を破壊する例', (next) => {
+    /* #@range_begin(fileio_breaks_referential_transparency)  */
+    var fs = require('fs');
+    var read = (path) => {
+      var readValue = fs.readFileSync(path);
+      return parseInt(readValue);
+    };
+    var write = (path, n) => {
+      fs.writeFileSync(path, n);
+      return n;
+    };
+    /* #@range_end(fileio_breaks_referential_transparency)  */
+    write('test/resources/io.txt', 1);
+    expect(
+      read('test/resources/io.txt')
+    ).to.eql(
+      1
+    );
+    write('test/resources/io.txt', 2); // ここでファイルに値を書きこむ
+    expect(
+      read('test/resources/io.txt')
+    ).to.eql(
+      2
+    );
+    next();
+  });
+});
+describe('副作用の種類', () => {
+  describe('副作用としての代入', () => {
+    it('配列は参照透明性を破壊する', (next) => {
+      /* #@range_begin(array_destroys_referential_transparency) */
+      var array = [];
+      array.push(1);
       expect(
-        read('test/resources/io.txt')
+        array.pop()
       ).to.eql(
         1
       );
-      write('test/resources/io.txt', 2); // ここでファイルに値を書きこむ
+      array.push(2);
       expect(
-        read('test/resources/io.txt')
+        array.pop()
       ).to.eql(
         2
       );
+      /* #@range_end(array_destroys_referential_transparency) */
       next();
     });
   });
-  describe('副作用の種類', () => {
-    describe('副作用としての代入', () => {
-      it('配列は参照透明性を破壊する', (next) => {
-        /* #@range_begin(array_destroys_referential_transparency) */
-        var array = [];
-        array.push(1);
-        expect(
-          array.pop()
-        ).to.eql(
-          1
-        );
-        array.push(2);
-        expect(
-          array.pop()
-        ).to.eql(
-          2
-        );
-        /* #@range_end(array_destroys_referential_transparency) */
-        next();
-      });
-      it('配列の状態を表示する', (next) => {
-        /* #@range_begin(array_destroys_referential_transparency_log) */
-        var add = (n,m) => {
-          return n + m;
-        };
-        var array = [];
-        array.push(1);
-        console.log(array); // [ 1 ]
-        expect(
-          add(array.pop(),2)
-        ).to.eql(
-          3
-        );
-        array.push(2);
-        console.log(array); // [ 2 ]
-        expect(
-          add(array.pop(),2)
-        ).to.eql(
-          4
-        );
-        /* #@range_end(array_destroys_referential_transparency_log) */
-        next();
-      });
-    });
-  });
-  // ### 参照透明性を保証する
-  describe('参照透明性を保証する', () => {
-    // #### 値の参照透過性を保証する（可変なデータの排除）
-    describe('値の参照透過性を保証する（可変なデータの排除）', () =>  {
-      it('不変なデータ型', (next) => {
-        /* #@range_begin(immutable_datatype) */
-        var empty =  (_) => {
-          return null;
-        };
-        var get = (key, obj) => {
-          return obj(key);
-        };
-        var set = (key, value, obj) => {
-          return (key2) => {
-            if(key === key2) {
-              return value;
-            } else {
-              return get(key2,obj);
-            }
-          };
-        };
-        /* #@range_end(immutable_datatype) */
-        next();
-      });
-    });
-    // #### 変数の参照透過性を保証する(代入の排除)
-    describe('変数の参照透過性を保証する(代入の排除)', () => {
-      it('命令型プログラミングによる乗算', (next) => {
-        /* #@range_begin(imperative_addition) */
-        var add = (x,y) => {
-          var times = 0;          
-          var result = x;         
-
-          /* while文で反復を処理する */
-          while(times < y){       
-            result = result + 1;
-            times = times + 1;    
-          };
-          return result;
-        };
-        /* #@range_end(imperative_addition) */
-        expect(
-          add(2,3)
-        ).to.eql(
-          5
-        );
-        var x = 4;
-        var y = 5;
-        expect(
-          add(x,y)
-        ).to.eql(
-          9
-        );
-        expect(
-          x
-        ).to.eql(
-          4
-        );
-        next();
-      });
-      it('関数型プログラミングによる乗算', (next) => {
-        /* #@range_begin(functional_addition) */
-        var add = (x,y) => {
-          if(y < 1){
-            return x;
+});
+// ### 参照透明性を保証する
+describe('参照透明性を保証する', () => {
+  // #### 値の参照透過性を保証する（可変なデータの排除）
+  describe('値の参照透過性を保証する（可変なデータの排除）', () =>  {
+    it('不変なデータ型', (next) => {
+      /* #@range_begin(immutable_datatype) */
+      var empty =  (_) => {
+        return null;
+      };
+      var get = (key, obj) => {
+        return obj(key);
+      };
+      var set = (key, value, obj) => {
+        return (key2) => {
+          if(key === key2) {
+            return value;
           } else {
-            /* 新しい引数でadd関数を再帰的に呼び出す */
-            return add(x + 1, y - 1); 
+            return get(key2,obj);
           }
         };
-        /* #@range_end(functional_addition) */
-        expect(add(2,1)).to.eql(3);
-        expect(add(2,2)).to.eql(4);
-        expect(add(3,2)).to.eql(5);
-        expect(add(12,5)).to.eql(17);
-        next();
-      });
+      };
+      /* #@range_end(immutable_datatype) */
+      next();
     });
-    // #### 関数の参照透過性を保証する（副作用の分離）
-    describe('関数の参照透過性を保証する（副作用の分離）', () =>  {
-      it('副作用が分離されていないコード', (next) => {
-        /* #@range_begin(age_sideeffect) */
-        var age = (birthYear) => {
-          /* todayは現時点の日付データ */
-          var today = new Date();
-          /* getFullYear関数は日付データにもとづいて現時点の西暦を返す */
-          var thisYear = today.getFullYear(); 
-          return thisYear - birthYear;
+  });
+  // #### 変数の参照透過性を保証する(代入の排除)
+  describe('変数の参照透過性を保証する(代入の排除)', () => {
+    it('命令型プログラミングによる乗算', (next) => {
+      /* #@range_begin(imperative_addition) */
+      var add = (x,y) => {
+        var times = 0;          
+        var result = x;         
+
+        /* while文で反復を処理する */
+        while(times < y){       
+          result = result + 1;
+          times = times + 1;    
         };
-        /* #@range_end(age_sideeffect) */
-        next();
-      });
-      it('副作用が分離されているコード', (next) => {
-        /* #@range_begin(age_without_sideeffect) */
-        var age = (birthYear, thisYear) => {
-          return thisYear - birthYear;
-        };
-        /* #@range_end(age_without_sideeffect) */
-        next();
-      });
-      it('画面出力を分離する', (next) => {
-        /* #@range_begin(tap_console_log) */
-        var tap = (target, sideEffect) => {
-          sideEffect(target);
-          return target;
-        };
-        var logger = (value) =>{
-          console.log(value);
-        };
-        /* #@range_end(tap_console_log) */
-        next();
-      });
-      describe('副作用を関数のスコープに閉じこめる', () => {
-        /* #@range_begin(action) */
-        var action = (io) => {
-          return (_) => { // 入出力を関数で包み込む
-            return io;
-          };
-        };
-        /* #@range_end(action) */
-        /* #@range_begin(reader_and_writer) */
-        var fs = require('fs'); // ファイルを操作するライブラリーfsをロードする
-        var read = (path) => { // ファイルを読み込む操作を関数で包みこむ
-          return fs.readFileSync(path, 'utf8');
-        };
-        var write = (path, content) => { // ファイルを書き込む操作を関数で包みこむ
-          return fs.writeFileSync(path,content);
-        };
-        var reader = (path) => { // ファイルを読み込む操作を関数で包みこむ
-          return action(fs.readFileSync(path, 'utf8'));
-        };
-        var writer = (path, content) => { // ファイルを書き込む操作を関数で包みこむ
-          return action(fs.writeFileSync(path,content));
-        };
-        /* #@range_end(reader_and_writer) */
-        /* #@range_begin(fileio_actions) */
-        var fileio_actions = () => {
-          write('test/resources/test.txt', 1);
-          read('test/resources/test.txt');
-          write('test/resources/test.txt', 2);
-          return read('test/resources/test.txt');
-        };
-        /* #@range_end(fileio_actions) */
-        expect(
-          fileio_actions()
-        ).to.eql(
-          2
-        );
-        expect(
-          fileio_actions()
-        ).to.eql(
-          2
-        );
-      });
+        return result;
+      };
+      /* #@range_end(imperative_addition) */
+      expect(
+        add(2,3)
+      ).to.eql(
+        5
+      );
+      var x = 4;
+      var y = 5;
+      expect(
+        add(x,y)
+      ).to.eql(
+        9
+      );
+      expect(
+        x
+      ).to.eql(
+        4
+      );
+      next();
+    });
+    it('関数型プログラミングによる乗算', (next) => {
+      /* #@range_begin(functional_addition) */
+      var add = (x,y) => {
+        if(y < 1){
+          return x;
+        } else {
+          /* 新しい引数でadd関数を再帰的に呼び出す */
+          return add(x + 1, y - 1); 
+        }
+      };
+      /* #@range_end(functional_addition) */
+      expect(add(2,1)).to.eql(3);
+      expect(add(2,2)).to.eql(4);
+      expect(add(3,2)).to.eql(5);
+      expect(add(12,5)).to.eql(17);
+      next();
+    });
+  });
+  // #### 関数の参照透過性を保証する（副作用の分離）
+  describe('関数の参照透過性を保証する（副作用の分離）', () =>  {
+    it('副作用が分離されていないコード', (next) => {
+      /* #@range_begin(age_sideeffect) */
+      var age = (birthYear) => {
+        /* todayは現時点の日付データ */
+        var today = new Date();
+        /* getFullYear関数は日付データにもとづいて現時点の西暦を返す */
+        var thisYear = today.getFullYear(); 
+        return thisYear - birthYear;
+      };
+      /* #@range_end(age_sideeffect) */
+      next();
+    });
+    it('副作用が分離されているコード', (next) => {
+      /* #@range_begin(age_without_sideeffect) */
+      var age = (birthYear, thisYear) => {
+        return thisYear - birthYear;
+      };
+      /* #@range_end(age_without_sideeffect) */
+      next();
+    });
+    it('画面出力を分離する', (next) => {
+      /* #@range_begin(tap_console_log) */
+      var tap = (target, sideEffect) => {
+        sideEffect(target);
+        return target;
+      };
+      var logger = (value) =>{
+        console.log(value);
+      };
+      /* #@range_end(tap_console_log) */
+      next();
     });
   });
 });
@@ -602,459 +451,7 @@ describe('参照透過性', () => {
 describe('関数型プログラミングの利点', () => {
   // ### 高いモジュール性
   describe('モジュール性とは何か', () => {
-    // it('名前空間としてのモジュール', (next) => {
-    //   /* #@range_begin(module_as_namespace) */
-    //   /* 数値計算のモジュール */
-    //   var math = {
-    //     add: (n, m) => { // 数値の足し算
-    //       return n + m;
-    //     },
-    //     multiply: (n, m) => {
-    //       return n * m;
-    //     }
-    //   };
-    //   /* 文字列操作のモジュール */
-    //   var string = {
-    //     add: (strL, strR) => { // 文字列の連結
-    //       return strL.concat(strR);
-    //     },
-    //     multiply: (str, nTimes) => {
-    //       //
-    //     }
-    //   };
-    //   /* #@range_end(module_as_namespace) */
-    //   next();
-    // });
     // #### 部品の独立性
-    describe('部品の独立性', () => {
-      var not = (predicate) => {
-        return (arg) => {
-          return ! predicate(arg);
-        };
-      };
-      var array = {
-        cons: (head, tail) => {
-          return [head].concat(tail);
-        },
-        empty: (_) => {
-          return [];
-        },
-        head: (anArray) => {
-          return anArray[0];
-        },
-        tail: (anArray) => {
-          return anArray.slice(1,array.length(anArray));
-        },
-        length: (anArray) => {
-          return anArray.length;
-        },
-        isEmpty: (anArray) => {
-          return array.length(anArray) === 0;
-        },
-        fromString: (str) => {
-          if(string.isEmpty(str)) {
-            return array.empty();
-          } else {
-            return array.cons(string.head(str), 
-                              array.fromString(string.tail(str)));
-          }
-        },
-        takeWhile: (anArray) => {
-          return (predicate) => {
-            if(array.isEmpty(anArray)){
-              return array.empty(); 
-            } else {
-              var head = array.head(anArray);
-              var tail = array.tail(anArray);
-              if(predicate(head) === true) {
-                return array.cons(head,
-                                  array.takeWhile(tail)(predicate));
-              } else {
-                return array.empty();
-              }
-            }
-          };
-        },
-        dropWhile: (anArray) => {
-          return (predicate) => {
-            if(array.isEmpty(anArray)){
-              return [];
-            } else {
-              var head = array.head(anArray);
-              var tail = array.tail(anArray);
-              if(predicate(head) === true) {
-                return array.dropWhile(tail)(predicate);
-              } else {
-                return anArray;
-              }
-            };
-          };
-        },
-        span: (anArray) => {
-          return (predicate) => {
-            if(array.isEmpty(anArray)){
-              return [];
-            } else {
-              var head = array.head(anArray);
-              var tail = array.tail(anArray);
-              return [array.takeWhile(anArray)(predicate),
-                      array.dropWhile(anArray)(predicate)];
-            };
-          };
-        },
-        break: (anArray) => {
-          return (predicate) => {
-            return array.span(anArray)(not(predicate));
-          };
-        },  
-        lines: (xs) => {
-          var isNewline = (ch) => {
-            return ch === '\n';
-          };
-          var apair = array.break(xs)(isNewline);
-          var ys = apair[0];
-          var zs = apair[1];
-
-          if(array.isEmpty(zs)){
-            return [ys];
-          } else {
-            var head = array.head(zs);
-            var tail = array.tail(zs);
-            return array.cons(ys, array.lines(tail));
-          };
-        }
-      };
-      var string = {
-        head: (str) => {
-          return str[0];
-        },
-        tail: (str) => {
-          return str.substring(1);
-        },
-        isEmpty: (str) => {
-          return str.length === 0;
-        },
-        add: (strL, strR) => {
-          return strL + strR;
-        },
-        toArray: (str) => {
-          if(string.isEmpty(str)) {
-            return [];
-          } else {
-            return array.cons(string.head(str),
-                              string.toArray(string.tail(str)));
-          }
-        },
-        fromArray: (anArray) => {
-          return anArray.reduce((accumulator, item) => {
-            return string.add(accumulator, item);
-          }, "");
-        },
-        lines: (str) => {
-          var isNewline = (ch) => {
-            return ch === '\n';
-          };
-          var apair = array.break(array.fromString(str))(isNewline);
-          var ys = apair[0];
-          var zs = apair[1];
-
-          if(array.isEmpty(zs)){
-            return [string.fromArray(ys)];
-          } else {
-            var tail = array.tail(zs);
-            return array.cons(string.fromArray(ys), 
-                              string.lines(string.fromArray(tail)));
-          };
-        }
-      };
-      describe('array', () => {
-        it('array#head', (next) => {
-          expect(
-            array.head([0,1,2])
-          ).to.eql(
-            0
-          );
-          next();
-        });
-        it('array#tail', (next) => {
-          expect(
-            array.tail([0,1,2])
-          ).to.eql(
-            [1,2]
-          );
-          next();
-        });
-        it('array#cons', (next) => {
-          expect(
-            array.cons(0,[1,2])
-          ).to.eql(
-            [0,1,2]
-          );
-          next();
-        });
-        it('array#fromString', (next) => {
-          expect(
-            array.fromString("123")
-          ).to.eql(
-            [1,2,3]
-          );
-          next();
-        });
-        it('array#takeWhile', (next) => {
-          var theArray = [1,2,3]; 
-          var even = (n) => {
-            return 0 === (n % 2);
-          };
-          var odd = not(even);
-          expect(
-            array.takeWhile(theArray)(odd)
-          ).to.eql(
-            [1]
-          );
-          next();
-        });
-        it('array#dropWhile', (next) => {
-          var theArray = [1,2,3]; 
-          var even = (n) => {
-            return 0 === (n % 2);
-          };
-          var odd = not(even);
-          expect(
-            array.dropWhile(theArray)(odd)
-          ).to.eql(
-            [2,3]
-          );
-          next();
-        });
-        it('array#span', (next) => {
-          var theArray = [1,2,3]; 
-          var even = (n) => {
-            return 0 === (n % 2);
-          };
-          expect(
-            array.span(theArray)(even)
-          ).to.eql(
-            [[],[1,2,3]]
-          );
-          var odd = not(even);
-          expect(
-            array.span(theArray)(odd)
-          ).to.eql(
-            [[1],[2,3]]
-          );
-          next();
-        });
-        it('array#break', (next) => {
-          var theArray = [1,2,3]; 
-          var even = (n) => {
-            return 0 === (n % 2);
-          };
-          expect(
-            array.break(theArray)(even)
-          ).to.eql(
-            [[1],[2,3]]
-          );
-          var odd = not(even);
-          expect(
-            array.break(theArray)(odd)
-          ).to.eql(
-            [[],[1,2,3]]
-          );
-          var isNewline = (ch) => {
-            return ch === '\n';
-          };
-          expect(
-            array.break(['a','b','c','\n','d','e','f'])(isNewline)
-          ).to.eql(
-            [['a','b','c'],['\n','d','e','f']]
-          );
-          next();
-        });
-        it('array#lines', (next) => {
-          var theArray = array.fromString("abc\ndef"); 
-          expect(
-            array.lines(theArray)
-          ).to.eql(
-            [ [ 'a', 'b', 'c' ], [ 'd', 'e', 'f' ] ]
-          );
-          next();
-        });
-      });
-      describe('string', () => {
-        it('string#head', (next) => {
-          expect(
-            string.head("abc")
-          ).to.eql(
-            'a'
-          );
-          next();
-        });
-        it('string#tail', (next) => {
-          expect(
-            string.tail("abc")
-          ).to.eql(
-            "bc"
-          );
-          next();
-        });
-        it('string#fromArray', (next) => {
-          expect(
-            string.fromArray(['a','b','c'])
-          ).to.eql(
-            "abc"
-          );
-          next();
-        });
-        it('string#toArray', (next) => {
-          expect(
-            string.toArray("abc")
-          ).to.eql(
-            ['a','b','c']
-          );
-          next();
-        });
-        it('string#lines', (next) => {
-          expect(
-            string.lines("abc\ndef")
-          ).to.eql(
-            [ 'abc', 'def' ]
-          );
-          next();
-        });
-      });
-    });
-    it('統一的なインターフェイス', (next) => {
-      /* #@range_begin(books_as_array) */
-      var books = [
-        {name: "こころ", author: ["夏目漱石"], genre: "文学"},
-        {name: "夢十夜", author: ["夏目漱石"], genre: "文学"},
-        {name: "ソクラテスの弁明", author: ["プラトン"], genre: "哲学"},
-        {name: "国家", author: ["プラトン"], genre: "哲学"},
-        {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
-
-        {name: "計算機プログラムの構造と解釈", author: ["サスマン","エイベルソン"], genre: "コンピュータ"},
-      ];
-      /* #@range_end(books_as_array) */
-      var get = (object) => {
-        return (key) => {
-          return object[key];
-        };
-      };
-      /* #@range_begin(pluck) */
-      var pluck = (key) => {
-        return (object) => {
-          return object[key];
-        };
-      };
-      /* #@range_end(pluck) */
-      /* #@range_begin(mapWith) */
-      var mapWith = (func) => {
-        return (array) => {
-          return array.map(func);
-        };
-      };
-      /* #@range_end(mapWith) */
-      var multiplier = (n) => {
-        return (m) => {
-          return n * m;
-        };
-      };
-      var square = (n) => {
-        return multiplier(n)(n);
-      };
-      expect(
-        mapWith(square)([1,2,3])
-      ).to.eql(
-        [1,4,9]
-      );
-      expect(
-        /* #@range_begin(mapWith_pluck) */
-        mapWith(pluck("name"))(books)
-        /* #@range_end(mapWith_pluck) */
-      ).to.eql(
-        ['こころ','夢十夜','ソクラテスの弁明','国家','プログラミング言語C','計算機プログラムの構造と解釈']
-      );
-      /* #@range_begin(filterWith) */
-      var filterWith = (predicate) => {
-        return (array) => {
-          return array.filter(predicate);
-        };
-      };
-      /* #@range_end(filterWith) */
-      var isEqual = (a,b) => {
-        return a === b;
-      };
-      expect(
-        /* #@range_begin(filterWith_pluck) */
-        filterWith((book) => { 
-          return pluck("genre")(book) ===  "文学";
-        })(books)
-        /* #@range_end(filterWith_pluck) */
-      ).to.eql(
-        /* #@range_begin(filterWith_pluck_result) */
-        [
-          {name: "こころ", author: ["夏目漱石"], genre: "文学"},
-          {name: "夢十夜", author: ["夏目漱石"], genre: "文学"},
-        ]
-        /* #@range_end(filterWith_pluck_result) */
-      );
-      expect(
-        /* #@range_begin(map_filter) */
-        mapWith(pluck("name"))(filterWith((book) => { 
-          return pluck("genre")(book) ===  "哲学";
-        })(books))
-        /* #@range_end(map_filter) */
-      ).to.eql(
-        /* #@range_begin(map_filter_result) */
-        ["ソクラテスの弁明", "国家"]
-        /* #@range_end(map_filter_result) */
-      );
-      
-      /* #@range_begin(doesContain) */
-      var doesContain = (value) => {
-        return (array) => {
-          return array.reduce((accumulator, item) => {
-            return accumulator || (item === value);
-          },false);
-        };
-      };
-      /* #@range_end(doesContain) */
-      var doesMatch = (predicate) => {
-        return (array) => {
-          return array.reduce((accumulator, item) => {
-            return accumulator || predicate(item);
-          },false);
-        };
-      };
-      expect(
-        /* #@range_begin(filterWith_doesContain) */
-        filterWith((book) => { 
-          return doesContain("カーニハン")(pluck("author")(book));
-        })(books)
-        /* #@range_end(filterWith_doesContain) */
-      ).to.eql(
-        /* #@range_begin(filterWith_doesContain_result) */
-        [
-          {name: "プログラミング言語C", author: ["カーニハン","リッチー"], genre: "コンピュータ"},
-        ]
-        /* #@range_end(filterWith_doesContain_result) */
-      );
-      /* #@range_begin(findWith) */
-      var findWith = (predicate) => {
-        return (array) => {
-          return array.filter(predicate)[0];
-        };
-      };
-      /* #@range_end(findWith) */
-      expect(
-        findWith((book) => { 
-          return pluck("genre")(book) === "哲学";
-        })(books)
-      ).to.eql(
-        {name: "ソクラテスの弁明", author: ["プラトン"], genre: "哲学"}
-      );
-      next();
-    });
     // #### 部品の汎用性
     describe('部品の汎用性', () => {
       describe('reduceによる反復処理の汎用化', () => {
@@ -1399,129 +796,8 @@ describe('関数型プログラミングの利点', () => {
       });
       // #### 関数による遅延評価
       describe('関数による遅延評価', () => {
-        var take = (n, astream) => {
-          if(n === 1) {
-            return astream[0];
-          } else {
-            return [astream[0]].concat(take(n-1, astream[1]()));
-          }
-        };
-        var repeat = (n) => {
-          return [n, (_) => {
-            return repeat(n);
-          }];
-        };
-        expect(
-          take(3, repeat(2))
-        ).to.eql(
-          [2,2,2]
-        );
-        var ones = repeat(1);
-        expect(
-          take(2, ones)
-        ).to.eql(
-          [1,1]
-        );
-        var replicate = (n, x) => {
-          return take(n, repeat(x));
-        };
-        expect(
-          replicate(4, 3)
-        ).to.eql(
-          [3,3,3,3]
-        );
-        var upto = (m, n) => {
-          if(m > n) {
-            return [];
-          } else {
-            return [m, (_) => {
-              return upto(m+1,n);
-            }];
-          };
-        };
-        expect(
-          take(3, upto(2,10))
-        ).to.eql(
-          [2,3,4]
-        );
-        var mod = (n,m) => {
-          return n % m;
-        };
-        var even = (n) => {
-          return mod(n,2) === 0;
-        };
-        var adder = (m) => {
-          return (n) => {
-            return m + n;
-          };
-        };
-        var succ = adder(1);
-        var map = (aStream) => {
-          return (transform) => {
-            var head = aStream[0];
-            return [transform(head), (_) => {
-              return map(aStream[1]())(transform);
-            }];
-          };
-        };
-        // 無限ストリームの例
-        /* #@range_begin(stream_iterate) */
-        var iterate = (init) => {  // 先頭の値を渡す
-          return (step) => {       // 次の値との差を計算する関数を渡す
-            return [init, (_) => { // ストリーム型を返す
-              return iterate(step(init))(step);
-            }];
-          };
-        };
-        /* #@range_end(stream_iterate) */
-        // 無限の偶数列
-        /* #@range_begin(enumFrom_by_iterate) */
-        var enumFrom = (n) => {
-          return iterate(n)(succ);
-        };
-        // 自然数列を定義する
-        var naturals = enumFrom(1);
-        // 偶数列を定義する
-        var twoStep = (n) => {
-          return n + 2;
-        };
-        var evenStream = iterate(2)(twoStep);
-        /* #@range_end(enumFrom_by_iterate) */
-        // filter関数
-        /* #@range_begin(stream_filter) */
-        var filter = (predicate) => {
-          return (aStream) => {
-            /* ストリームの先頭要素を取り出す */
-            var head = aStream[0];
-            /* 先頭要素が条件に合致する場合 */
-            if(predicate(head) === true) { 
-              return [head, (_) => {
-                return filter(predicate)(aStream[1]());
-              }];
-            } else {                       
-              /* 先頭要素が条件に合致しない場合 */
-              return filter(predicate)(aStream[1]());
-            }
-          };
-        };
-        /* #@range_end(stream_filter) */
-        expect(
-          take(3,filter(even)(enumFrom(2)))
-        ).to.eql(
-          [2,4,6]
-        );
-        /* #@range_begin(oddStream_from_iterate) */
-        var twoStep = (n) => {
-          return n + 2;
-        };
-        var oddStream = iterate(1)(twoStep);
-        /* #@range_end(oddStream_from_iterate) */
-        expect(
-          take(3,oddStream)
-        ).to.eql(
-          [1,3,5]
-        );
-        it('遅延評価の説明', (next) => {
+        // #### 評価戦略の種類
+        describe('評価戦略の種類', () => {
           var map = (transform) => {
             return (array) => {
               return array.reduce((accumulator, item) => {
@@ -1563,145 +839,9 @@ describe('関数型プログラミングの利点', () => {
             2
             /* #@range_end(lazy_evaluation_result) */
           );
-          next();
         });
-        // 無限の整数列
-        it('無限の整数列', (next) => {
-          /* #@range_begin(enumFrom) */
-          var enumFrom = (n) => {
-            return [n, (_) => { // ストリームを返す
-              return enumFrom(n + 1);
-            }];
-          };
-          /* #@range_end(enumFrom) */
-          next();
-        });
-        // 無限の偶数列を作る
-        it('無限の偶数列を作る', (next) => {
-          /* #@range_begin(evenStream) */
-          var evenFrom = (n) => {
-            return [n, (_) => {
-              return evenFrom(n + 2);
-            }];
-          };
-          var evenStream = evenFrom(2); 
-          /* #@range_end(evenStream) */
-          expect(
-            take(3, evenStream)
-          ).to.eql(
-            [2,4,6]
-          );
-          next();
-        });
-        it('ストリームのフィルタリング', (next) => {
-          var filter = (predicate) => {
-            return (aStream) => {
-              var head = aStream[0]; // ストリームの先頭要素を取り出す
-              if(predicate(head) === true) { // 先頭要素headが条件に合致している場合
-                return [head, (_) => {
-                  return filter(predicate)(aStream[1]());
-                }];
-              } else {                       // 先頭要素headが条件に合致していない場合
-                return filter(predicate)(aStream[1]());
-              }
-            };
-          };
-          var multipleOf = (n) => {
-            return (m) => {
-              if((n % m) === 0) {
-                return true;
-              } else {
-                return false;
-              }
-            };
-          };
-          /* #@range_begin(odd_stream) */
-          var odd = (n) => {
-            return (n % 2) === 1; 
-          };
-          var oddStream = filter(odd)(enumFrom(1));
-          /* #@range_end(odd_stream) */
-          // elemAt関数
-          /* #@range_begin(stream_elemAt) */
-          var elemAt = (n) => {
-            return (aStream) => {
-              if(n === 1) {
-                return aStream[0];
-              } else {
-                return elemAt(n-1)(aStream[1]());
-              };
-            };
-          };
-          /* #@range_end(stream_elemAt) */
-          expect(
-            // 3番目の偶数を求める
-            /* #@range_begin(third_element_of_odd_stream) */
-            elemAt(3)(oddStream)
-            /* #@range_end(third_element_of_odd_stream) */
-          ).to.eql(
-            /* #@range_begin(third_element_of_odd_stream_result) */
-            5
-            /* #@range_end(third_element_of_odd_stream_result) */
-          );
-          expect(
-            take(5,filter(odd)(enumFrom(1)))
-          ).to.eql(
-            [ 1, 3, 5, 7, 9 ] 
-          );
-          // filter関数で無限の偶数列を作る
-          /* #@range_begin(evenStream_by_filter) */
-          var even = (n) => {
-            return (n % 2) === 0; 
-          };
-          var evenStream = filter(even)(enumFrom(1));
-          /* #@range_end(evenStream_by_filter) */
-          expect(
-            /* #@range_begin(third_element_of_evenStream) */
-            elemAt(3)(evenStream)
-            /* #@range_end(third_element_of_evenStream) */
-          ).to.eql(
-            /* #@range_begin(third_element_of_evenStream_result) */
-            6
-            /* #@range_end(third_element_of_evenStream_result) */
-          );
-          next();
-        });
-        // 配列に対するelemAt関数
-        it('配列に対するelemAt関数', (next) => {
-          /* #@range_begin(array_elemAt) */
-          var elemAt = (n) => {
-            return (anArray) => {
-              if(n === 1) {
-                return anArray[0];
-              } else {
-                var tail = anArray.slice(1,anArray.length);
-                return elemAt(n-1)(tail);
-              };
-            };
-          };
-          /* #@range_end(array_elemAt) */
-          expect(
-            /* #@range_begin(third_element_of_evenArray) */
-            elemAt(3)([2,4,6])
-            /* #@range_end(third_element_of_evenArray) */
-          ).to.eql(
-            /* #@range_begin(third_element_of_eventArray_result) */
-            6
-            /* #@range_end(third_element_of_eventArray_result) */
-          );
-          expect(
-            // 4番目の偶数を求める
-            /* #@range_begin(fourth_element_of_evenArray) */
-            elemAt(4)([2,4,6])
-            /* #@range_end(fourth_element_of_evenArray) */
-          ).to.eql(
-            /* #@range_begin(fourth_element_of_evenArray_result) */
-            undefined
-            /* #@range_end(fourth_element_of_evenArray_result) */
-          );
-          next();
-        });
-        describe('ストリーム', () => {
+        // #### 遅延評価によるストリーム
+        describe('遅延評価によるストリーム', () => {
           // ストリームの例
           it('ストリームの例', (next) => {
             /* #@range_begin(stream_example) */
@@ -1744,6 +884,216 @@ describe('関数型プログラミングの利点', () => {
             );
             next();
           });
+
+          // 無限ストリームの例
+          /* #@range_begin(stream_iterate) */
+          var iterate = (init) => {  // 先頭の値を渡す
+            return (step) => {       // 次の値との差を計算する関数を渡す
+              return [init, (_) => { // ストリーム型を返す
+                return iterate(step(init))(step);
+              }];
+            };
+          };
+          /* #@range_end(stream_iterate) */
+          // 無限の偶数列
+          var succ = (n) => {
+            return n + 1;
+          };
+          /* #@range_begin(enumFrom_by_iterate) */
+          var enumFrom = (n) => {
+            return iterate(n)(succ);
+          };
+          // 自然数列を定義する
+          var naturals = enumFrom(1);
+          // 偶数列を定義する
+          var twoStep = (n) => {
+            return n + 2;
+          };
+          var evenStream = iterate(2)(twoStep);
+          /* #@range_end(enumFrom_by_iterate) */
+          // filter関数
+          /* #@range_begin(stream_filter) */
+          var filter = (predicate) => {
+            return (aStream) => {
+              /* ストリームの先頭要素を取り出す */
+              var head = aStream[0];
+              /* 先頭要素が条件に合致する場合 */
+              if(predicate(head) === true) { 
+                return [head, (_) => {
+                  return filter(predicate)(aStream[1]());
+                }];
+              } else {                       
+                /* 先頭要素が条件に合致しない場合 */
+                return filter(predicate)(aStream[1]());
+              }
+            };
+          };
+          /* #@range_end(stream_filter) */
+          var take = (n, astream) => {
+            if(n === 1) {
+              return astream[0];
+            } else {
+              return [astream[0]].concat(take(n-1, astream[1]()));
+            }
+          };
+          var even = (n) => {
+            var mod = (n,m) => {
+              return n % m;
+            };
+            return mod(n,2) === 0;
+          };
+          expect(
+            take(3,filter(even)(enumFrom(2)))
+          ).to.eql(
+            [2,4,6]
+          );
+          /* #@range_begin(oddStream_from_iterate) */
+          var twoStep = (n) => {
+            return n + 2;
+          };
+          var oddStream = iterate(1)(twoStep);
+          /* #@range_end(oddStream_from_iterate) */
+          expect(
+            take(3,oddStream)
+          ).to.eql(
+            [1,3,5]
+          );
+          // 無限の整数列
+          it('無限の整数列', (next) => {
+            /* #@range_begin(enumFrom) */
+            var enumFrom = (n) => {
+              return [n, (_) => { // ストリームを返す
+                return enumFrom(n + 1);
+              }];
+            };
+            /* #@range_end(enumFrom) */
+            next();
+          });
+          // 無限の偶数列を作る
+          it('無限の偶数列を作る', (next) => {
+            /* #@range_begin(evenStream) */
+            var evenFrom = (n) => {
+              return [n, (_) => {
+                return evenFrom(n + 2);
+              }];
+            };
+            var evenStream = evenFrom(2); 
+            /* #@range_end(evenStream) */
+            expect(
+              take(3, evenStream)
+            ).to.eql(
+              [2,4,6]
+            );
+            next();
+          });
+          it('ストリームのフィルタリング', (next) => {
+            var filter = (predicate) => {
+              return (aStream) => {
+                var head = aStream[0]; // ストリームの先頭要素を取り出す
+                if(predicate(head) === true) { // 先頭要素headが条件に合致している場合
+                  return [head, (_) => {
+                    return filter(predicate)(aStream[1]());
+                  }];
+                } else {                       // 先頭要素headが条件に合致していない場合
+                  return filter(predicate)(aStream[1]());
+                }
+              };
+            };
+            var multipleOf = (n) => {
+              return (m) => {
+                if((n % m) === 0) {
+                  return true;
+                } else {
+                  return false;
+                }
+              };
+            };
+            /* #@range_begin(odd_stream) */
+            var odd = (n) => {
+              return (n % 2) === 1; 
+            };
+            var oddStream = filter(odd)(enumFrom(1));
+            /* #@range_end(odd_stream) */
+            // elemAt関数
+            /* #@range_begin(stream_elemAt) */
+            var elemAt = (n) => {
+              return (aStream) => {
+                if(n === 1) {
+                  return aStream[0];
+                } else {
+                  return elemAt(n-1)(aStream[1]());
+                };
+              };
+            };
+            /* #@range_end(stream_elemAt) */
+            expect(
+              // 3番目の偶数を求める
+              /* #@range_begin(third_element_of_odd_stream) */
+              elemAt(3)(oddStream)
+              /* #@range_end(third_element_of_odd_stream) */
+            ).to.eql(
+              /* #@range_begin(third_element_of_odd_stream_result) */
+              5
+              /* #@range_end(third_element_of_odd_stream_result) */
+            );
+            expect(
+              take(5,filter(odd)(enumFrom(1)))
+            ).to.eql(
+              [ 1, 3, 5, 7, 9 ] 
+            );
+            // filter関数で無限の偶数列を作る
+            /* #@range_begin(evenStream_by_filter) */
+            var even = (n) => {
+              return (n % 2) === 0; 
+            };
+            var evenStream = filter(even)(enumFrom(1));
+            /* #@range_end(evenStream_by_filter) */
+            expect(
+              /* #@range_begin(third_element_of_evenStream) */
+              elemAt(3)(evenStream)
+              /* #@range_end(third_element_of_evenStream) */
+            ).to.eql(
+              /* #@range_begin(third_element_of_evenStream_result) */
+              6
+              /* #@range_end(third_element_of_evenStream_result) */
+            );
+            next();
+          });
+        });
+        // 配列に対するelemAt関数
+        it('配列に対するelemAt関数', (next) => {
+          /* #@range_begin(array_elemAt) */
+          var elemAt = (n) => {
+            return (anArray) => {
+              if(n === 1) {
+                return anArray[0];
+              } else {
+                var tail = anArray.slice(1,anArray.length);
+                return elemAt(n-1)(tail);
+              };
+            };
+          };
+          /* #@range_end(array_elemAt) */
+          expect(
+            /* #@range_begin(third_element_of_evenArray) */
+            elemAt(3)([2,4,6])
+            /* #@range_end(third_element_of_evenArray) */
+          ).to.eql(
+            /* #@range_begin(third_element_of_eventArray_result) */
+            6
+            /* #@range_end(third_element_of_eventArray_result) */
+          );
+          expect(
+            // 4番目の偶数を求める
+            /* #@range_begin(fourth_element_of_evenArray) */
+            elemAt(4)([2,4,6])
+            /* #@range_end(fourth_element_of_evenArray) */
+          ).to.eql(
+            /* #@range_begin(fourth_element_of_evenArray_result) */
+            undefined
+            /* #@range_end(fourth_element_of_evenArray_result) */
+          );
+          next();
         });
       });
     });
@@ -1802,8 +1152,8 @@ describe('関数型プログラミングの利点', () => {
           };
           next();
         });
-        it("参照透過性のあるコードのテスト", (next) => {
-          // winner関数の分離
+        // winner関数の分離
+        it("winner関数の分離", (next) => {
           /* #@range_begin(winner_without_sideeffect) */
           /* 勝者を判定する */
           var judge = (playerL, playerR) => {
@@ -1848,20 +1198,6 @@ describe('関数型プログラミングの利点', () => {
           next();
         });
       });
-      // it('数学モジュールの例', (next) => {
-      //   var math = {
-      //     PI: 3.14
-      //   };
-      //   var area = (radius) => {
-      //     return radius * radius * math.PI;
-      //   };
-      //   expect(
-      //     area(1)
-      //   ).to.eql(
-      //     3.14
-      //   );
-      //   next();
-      // });
     });
   });
   // ### コードの正しさを証明できる

@@ -58,91 +58,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-
-<span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
-  <span class="hljs-keyword">return</span> data(pattern);
-};
-
-
-<span class="hljs-keyword">var</span> uncurry = (fun) =&gt; {
-  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">var</span> result = fun;
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">arguments</span>.length; i++)
-      result = result(<span class="hljs-built_in">arguments</span>[i]);
-    <span class="hljs-keyword">return</span> result;
-  };
-};
-
-<span class="hljs-keyword">var</span> flip = (fun) =&gt; {
-  <span class="hljs-keyword">return</span>  (f) =&gt; {
-    <span class="hljs-keyword">return</span> (g) =&gt; {
-      <span class="hljs-keyword">return</span> fun(g)(f);
-    };
-  };
-};
-
-<span class="hljs-keyword">var</span> id = (any) =&gt; {
-  <span class="hljs-keyword">return</span> any;
-};
-
-<span class="hljs-keyword">var</span> compose = (f) =&gt; {
-  <span class="hljs-keyword">return</span> (g) =&gt; {
-    <span class="hljs-keyword">return</span> (arg) =&gt; {
-      <span class="hljs-keyword">return</span> f(g(arg));
-    };
-  };
-};
-
-<span class="hljs-keyword">var</span> list = {
-  empty: (_) =&gt; {
-    <span class="hljs-keyword">return</span> (pattern) =&gt; {
-      <span class="hljs-keyword">return</span> pattern.empty();
-    };
-  },
-  cons: (value, list) =&gt; {
-    <span class="hljs-keyword">return</span> (pattern) =&gt; {
-      <span class="hljs-keyword">return</span> pattern.cons(value, list);
-    };
-  },
-  isEmpty: (alist) =&gt; {
-    <span class="hljs-keyword">return</span> match(alist, { <span class="hljs-comment">// match関数で分岐する</span>
-      empty: <span class="hljs-literal">true</span>,
-      cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-      }
-    });
-  },
-  head: (alist) =&gt; {
-    <span class="hljs-keyword">return</span> match(alist, {
-      empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
-      cons: (head, tail) =&gt; {
-        <span class="hljs-keyword">return</span> head;
-      }
-    });
-  },
-  tail: (alist) =&gt; {
-    <span class="hljs-keyword">return</span> match(alist, {
-      empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
-      cons: (head, tail) =&gt; {
-        <span class="hljs-keyword">return</span> tail;
-      }
-    });
-  },
-  toArray: (alist) =&gt; {
-    <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
-      <span class="hljs-keyword">return</span> match(alist, {
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> accumulator;
-        },
-        cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
-        }
-      });
-    };
-    <span class="hljs-keyword">return</span> toArrayAux(alist, []);
-  }
-};</pre></div></div>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
             
         </li>
         
@@ -609,6 +525,9 @@
         next();
       });
       describe(<span class="hljs-string">"無限ストリーム"</span>, () =&gt; {
+        <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
+          <span class="hljs-keyword">return</span> data(pattern);
+        };
         <span class="hljs-keyword">var</span> stream = {
           empty: (_) =&gt; {
             <span class="hljs-keyword">return</span> (pattern) =&gt; {

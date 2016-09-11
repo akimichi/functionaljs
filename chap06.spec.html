@@ -306,7 +306,21 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数の評価戦略'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数の評価戦略'</span>, () =&gt; {
+      it(<span class="hljs-string">'add(succ(0), succ(2))の簡約'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> add = (n, m) =&gt; {
+          <span class="hljs-keyword">return</span> n + m;
+        };
+        <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+        };
+        expect(
+          add(succ(<span class="hljs-number">0</span>), succ(<span class="hljs-number">2</span>))
+        ).to.eql(
+          <span class="hljs-number">4</span>
+        );
+        next();
+      });</pre></div></div>
             
         </li>
         

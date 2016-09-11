@@ -730,22 +730,9 @@
       <span class="hljs-comment">/* ##@range_end(if_nonstrict) */</span>
       next();
     });
-    it(<span class="hljs-string">'再帰によるmap関数'</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>第5章で紹介したリスト型</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
+    it(<span class="hljs-string">'再帰によるmap関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* 第5章で紹介したリスト型 */</span>
+      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
         <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
       };
       <span class="hljs-keyword">var</span> empty = (_) =&gt; {
@@ -762,11 +749,11 @@
         </li>
         
         
-        <li id="section-28">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>再帰によるmap関数</p>
 
@@ -787,11 +774,11 @@
         </li>
         
         
-        <li id="section-29">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>再帰によるtoArray関数</p>
 
@@ -826,11 +813,11 @@
         </li>
         
         
-        <li id="section-30">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <h3 id="-">再帰処理の利点</h3>
 
@@ -884,11 +871,11 @@
         </li>
         
         
-        <li id="section-31">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h4 id="-">再帰処理と再帰的データ構造</h4>
 
@@ -901,11 +888,11 @@
         </li>
         
         
-        <li id="section-32">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>再帰によるlength関数</p>
 
@@ -938,11 +925,11 @@
         </li>
         
         
-        <li id="section-33">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>再帰によるappend関数</p>
 
@@ -966,22 +953,9 @@
               });
             };
             <span class="hljs-keyword">return</span> toArrayAux(seq, []);
-          };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
-              <p>append :: (LIST[T], LIST[T]) -&gt; LIST[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(list_append) */</span>
+          };
+          <span class="hljs-comment">/* append :: (LIST[T], LIST[T]) -&gt; LIST[T] */</span>
+          <span class="hljs-comment">/* #@range_begin(list_append) */</span>
           <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
             <span class="hljs-keyword">return</span> match(xs,{
               <span class="hljs-comment">/* emptyの場合は、終了条件 */</span>
@@ -1016,11 +990,11 @@
         </li>
         
         
-        <li id="section-35">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>再帰によるreverse関数</p>
 
@@ -1060,11 +1034,11 @@
         </li>
         
         
-        <li id="section-36">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>代数的データ構造による数式</p>
 
@@ -1091,11 +1065,11 @@
         </li>
         
         
-        <li id="section-37">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>数式を再帰的に計算する</p>
 
@@ -1135,11 +1109,11 @@
         </li>
         
         
-        <li id="section-38">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h4 id="-">再帰処理と帰納法</h4>
 
@@ -1179,11 +1153,11 @@
         </li>
         
         
-        <li id="section-39">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <pre><code>命題P  length(append(xs, ys)) === length(xs) + length(ys)
 </code></pre>
@@ -1204,11 +1178,11 @@
         </li>
         
         
-        <li id="section-40">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>命題Pの単体テスト</p>
 
@@ -1235,11 +1209,11 @@
         </li>
         
         
-        <li id="section-41">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap06.spec.html">次章に移る</a> </p>
 

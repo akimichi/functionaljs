@@ -1436,8 +1436,22 @@
           next();
         });
       });
-      describe(<span class="hljs-string">'再帰的データ構造としての数式'</span>, () =&gt; {
-        <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype) */</span>
+      describe(<span class="hljs-string">'再帰的データ構造としての数式'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>代数的データ構造による数式</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype) */</span>
         <span class="hljs-keyword">var</span> num = (n) =&gt; {
           <span class="hljs-keyword">return</span> (pattern) =&gt; {
             <span class="hljs-keyword">return</span> pattern.num(n);
@@ -1453,8 +1467,22 @@
             <span class="hljs-keyword">return</span> pattern.mul(exp1, exp2);
           };
         };
-        <span class="hljs-comment">/* #@range_end(expression_algebraic_datatype) */</span>
-        <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype_recursion) */</span>
+        <span class="hljs-comment">/* #@range_end(expression_algebraic_datatype) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>数式を再帰的に計算する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(expression_algebraic_datatype_recursion) */</span>
         <span class="hljs-keyword">var</span> calculate = (exp) =&gt; {
           <span class="hljs-keyword">return</span> match(exp, { <span class="hljs-comment">// パターンマッチを実行する</span>
             num: (n) =&gt; {
@@ -1488,11 +1516,11 @@
         </li>
         
         
-        <li id="section-35">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <h4 id="-">再帰処理と帰納法</h4>
 
@@ -1535,11 +1563,11 @@
         </li>
         
         
-        <li id="section-36">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>命題Pの単体テスト</p>
 
@@ -1566,11 +1594,11 @@
         </li>
         
         
-        <li id="section-37">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap06.spec.html">次章に移る</a> </p>
 

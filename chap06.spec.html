@@ -84,49 +84,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>var seq = {
-  match: (data, pattern) =&gt; {
-    return data(pattern);
-  },
-  empty: (<em>) =&gt; {
-    return (pattern) =&gt; {
-      return pattern.empty();
-    };
-  },
-  cons: (value, list) =&gt; {
-    return (pattern) =&gt; {
-      return pattern.cons(value, list);
-    };
-  },
-  isEmpty: (list) =&gt; {
-    return match(list, { // match関数で分岐する
-      empty: true,
-      cons: (head, tail) =&gt; { // headとtailにそれぞれ先頭要素、末尾要素が入る
-        return false;
-      }
-    });
-  },
-  head: (list) =&gt; {
-    return match(list, {
-      empty: null, // 空のリストには先頭要素はありません
-      cons: (head, tail) =&gt; {
-        return head;
-      }
-    });
-  },
-  tail: (list) =&gt; {
-    return match(list, {
-      empty: null,  // 空のリストには末尾要素はありません
-      cons: (head, tail) =&gt; {
-        return tail;
-      }
-    });
-  }
-};
-var infiniteLoop = (</em>) =&gt; {
-  return infiniteLoop(_);
-};</p>
-<h3 id="-">関数の定義</h3>
+              <h3 id="-">関数の定義</h3>
 
             </div>
             

@@ -1363,6 +1363,71 @@
       );
       next();
     });
+    it(<span class="hljs-string">'リストの連結'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
+        <span class="hljs-keyword">return</span> (pattern) =&gt; {
+          <span class="hljs-keyword">return</span> pattern.cons(x, xs);
+        };
+      };
+      <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
+        <span class="hljs-keyword">var</span> toArrayAux = (seq,accumulator) =&gt; {
+          <span class="hljs-keyword">return</span> match(seq, {
+            empty: (_) =&gt; {
+              <span class="hljs-keyword">return</span> accumulator;
+            },
+            cons: (head, tail) =&gt; {
+              <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
+            }
+          });
+        };
+        <span class="hljs-keyword">return</span> toArrayAux(seq, []);
+      };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>再帰によるappend関数
+append :: (LIST[T], LIST[T]) -&gt; LIST[T]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(list_append) */</span>
+      <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
+        <span class="hljs-keyword">return</span> match(xs,{
+          <span class="hljs-comment">/* emptyの場合は、終了条件 */</span>
+          empty: (_) =&gt; { 
+            <span class="hljs-keyword">return</span> ys; <span class="hljs-comment">// xsが空の場合は、ysを返す</span>
+          },
+          <span class="hljs-comment">/* consの場合は、append関数を再帰的に呼び出す */</span>
+          cons: (head, tail) =&gt; { 
+            <span class="hljs-comment">/* xsとysを連結させる */</span>
+            <span class="hljs-keyword">return</span> cons(head, append(tail,ys));
+          }
+        });
+      };
+      <span class="hljs-comment">/* #@range_end(list_append) */</span>
+      
+      <span class="hljs-comment">/* #@range_begin(list_append_test) */</span>
+      <span class="hljs-keyword">var</span> xs = list.cons(<span class="hljs-number">1</span>,
+                         list.cons(<span class="hljs-number">2</span>,
+                                   list.empty()));
+      <span class="hljs-keyword">var</span> ys = list.cons(<span class="hljs-number">3</span>,
+                         list.cons(<span class="hljs-number">4</span>,
+                                   list.empty()));
+      expect(
+        toArray(append(xs,ys)) <span class="hljs-comment">// toArray関数でリストを配列に変換する</span>
+      ).to.eql(
+        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
+      );
+      <span class="hljs-comment">/* #@range_end(list_append_test) */</span>
+      next();
+    });
   });
   describe(<span class="hljs-string">'factorialの例'</span>, () =&gt; {
     it(<span class="hljs-string">'素朴なfactorialの例'</span>, (next) =&gt; {
@@ -1497,57 +1562,6 @@
       <span class="hljs-comment">/* #@range_end(list_map_test) */</span>
       next();
     });
-    it(<span class="hljs-string">'リストの連結'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.cons(x, xs);
-        };
-      };
-      <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
-        <span class="hljs-keyword">var</span> toArrayAux = (seq,accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> match(seq, {
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> toArrayAux(tail, accumulator.concat(head));
-            }
-          });
-        };
-        <span class="hljs-keyword">return</span> toArrayAux(seq, []);
-      };
-      <span class="hljs-comment">/* append :: (LIST[T], LIST[T]) -&gt; LIST[T] */</span>
-      <span class="hljs-comment">/* #@range_begin(list_append) */</span>
-      <span class="hljs-keyword">var</span> append = (xs, ys) =&gt; {
-        <span class="hljs-keyword">return</span> match(xs,{
-          <span class="hljs-comment">/* emptyの場合は、終了条件 */</span>
-          empty: (_) =&gt; { 
-            <span class="hljs-keyword">return</span> ys; <span class="hljs-comment">// xsが空の場合は、ysを返す</span>
-          },
-          <span class="hljs-comment">/* consの場合は、append関数を再帰的に呼び出す */</span>
-          cons: (head, tail) =&gt; { 
-            <span class="hljs-comment">/* xsとysを連結させる */</span>
-            <span class="hljs-keyword">return</span> cons(head, append(tail,ys));
-          }
-        });
-      };
-      <span class="hljs-comment">/* #@range_end(list_append) */</span>
-      
-      <span class="hljs-comment">/* #@range_begin(list_append_test) */</span>
-      <span class="hljs-keyword">var</span> xs = list.cons(<span class="hljs-number">1</span>,
-                         list.cons(<span class="hljs-number">2</span>,
-                                   list.empty()));
-      <span class="hljs-keyword">var</span> ys = list.cons(<span class="hljs-number">3</span>,
-                         list.cons(<span class="hljs-number">4</span>,
-                                   list.empty()));
-      expect(
-        toArray(append(xs,ys)) <span class="hljs-comment">// toArray関数でリストを配列に変換する</span>
-      ).to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-      );
-      <span class="hljs-comment">/* #@range_end(list_append_test) */</span>
-      next();
-    });
     it(<span class="hljs-string">'リストの逆転'</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> empty = (_) =&gt; {
         <span class="hljs-keyword">return</span> (pattern) =&gt; {
@@ -1578,11 +1592,11 @@
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>expect(
   reverse(cons(1, cons(2, cons(3, empty()))))
@@ -1720,11 +1734,11 @@
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h3 id="-">再帰処理と帰納法</h3>
 
@@ -1784,11 +1798,11 @@
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap06.spec.html">次章に移る</a> </p>
 

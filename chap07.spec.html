@@ -812,8 +812,7 @@ it(<span class="hljs-string">'listのテスト'</span>, (next) =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
-  <span class="hljs-comment">/* filter:: FUN[T =&gt; BOOL] =&gt; STREAM[T] =&gt; STREAM[T] */</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* filter:: FUN[T =&gt; BOOL] =&gt; STREAM[T] =&gt; STREAM[T] */</span>
   filter: (predicate) =&gt; {
     <span class="hljs-keyword">return</span> (aStream) =&gt; {
       <span class="hljs-keyword">return</span> stream.match(aStream,{
@@ -831,8 +830,7 @@ it(<span class="hljs-string">'listのテスト'</span>, (next) =&gt; {
         }
       });
     };
-  },
-  <span class="hljs-comment">/* #@range_end(stream_filter) */</span></pre></div></div>
+  },</pre></div></div>
             
         </li>
         
@@ -2910,7 +2908,7 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
           <span class="hljs-comment">/* #@range_end(immutable_object_type_curried_test) */</span>
           next();
         });
-        it(<span class="hljs-string">'不変なリスト型'</span>, (next) =&gt; {</pre></div></div>
+      });</pre></div></div>
             
         </li>
         
@@ -2921,122 +2919,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
-              <pre><code class="lang-scheme"><span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">define</span></span> <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">cons</span></span> x y)</span>
-  <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">(<span class="hljs-keyword">m</span>)</span> <span class="hljs-list">(<span class="hljs-keyword">m</span> x y)</span>)</span>)</span>
-<span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">define</span></span> <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">car</span></span> z)</span>
-  <span class="hljs-list">(<span class="hljs-keyword">z</span> <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">(<span class="hljs-keyword">p</span> q)</span> p)</span>)</span>)</span>
-<span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">define</span></span> <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">cdr</span></span> z)</span>
-  <span class="hljs-list">(<span class="hljs-keyword">z</span> <span class="hljs-list">(<span class="hljs-keyword"><span class="hljs-built_in">lambda</span></span> <span class="hljs-list">(<span class="hljs-keyword">p</span> q)</span> q)</span>)</span>)</span>
-</code></pre>
+              <h4 id="-">クロージャーでジェネレーターを作る</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(immutable_list) */</span>
-          <span class="hljs-keyword">var</span> list = {
-            empty: (index) =&gt; {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-            },
-            cons: (head,tail) =&gt; {
-              <span class="hljs-keyword">return</span> (f) =&gt; {
-                <span class="hljs-keyword">return</span> f(head,tail);
-              };
-            },
-            head: (array) =&gt; {
-              <span class="hljs-keyword">return</span> array((head,tail) =&gt; {
-                <span class="hljs-keyword">return</span> head;
-              });
-            },
-            tail: (array) =&gt; {
-              <span class="hljs-keyword">return</span> array((head,tail) =&gt; {
-                <span class="hljs-keyword">return</span> tail;
-              });
-            },
-            at: (index,array) =&gt; {
-              <span class="hljs-keyword">if</span>(index === <span class="hljs-number">0</span>){
-                <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.head(array);
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.at(index -<span class="hljs-number">1</span>, <span class="hljs-keyword">this</span>.tail(array));
-              }
-            }
-          };
-          <span class="hljs-keyword">var</span> theList = list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-number">2</span>,list.cons(<span class="hljs-number">3</span>,list.empty)));
-          expect(
-            list.head(theList)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect(
-            list.head(list.tail(theList))
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          )
-          expect(
-            list.at(<span class="hljs-number">0</span>,theList)
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          )
-          expect(
-            list.at(<span class="hljs-number">1</span>,theList)
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          )
-          expect(
-            list.at(<span class="hljs-number">2</span>,theList)
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          <span class="hljs-comment">/* #@range_end(immutable_list) */</span>
-          next();
-        });
-        describe(<span class="hljs-string">'代数的ストリーム型'</span>, () =&gt; {
-          <span class="hljs-comment">/* #@range_begin(algebraic_stream) */</span>
-          <span class="hljs-keyword">var</span> empty = (_) =&gt; {
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              expect(pattern).to.an(<span class="hljs-string">'object'</span>);
-              <span class="hljs-keyword">return</span> pattern.empty(_);
-            };
-          };
-          <span class="hljs-keyword">var</span> cons = (head,tailThunk) =&gt; {
-            expect(tailThunk).to.a(<span class="hljs-string">'function'</span>);
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              expect(pattern).to.an(<span class="hljs-string">'object'</span>);
-              <span class="hljs-keyword">return</span> pattern.cons(head,tailThunk);
-            };
-          };
-          <span class="hljs-comment">/* head:: STREAM -&gt; MAYBE[STREAM] */</span>
-          <span class="hljs-keyword">var</span> head = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> match(lazyList,{
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-              },
-              cons: (value, tailThunk) =&gt; {
-                <span class="hljs-keyword">return</span> value;
-              }
-            });
-          };
-          <span class="hljs-comment">/* tail:: STREAM -&gt; MAYBE[STREAM] */</span>
-          <span class="hljs-keyword">var</span> tail = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> match(lazyList,{
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-              },
-              cons: (head, tailThunk) =&gt; {
-                <span class="hljs-keyword">return</span> tailThunk();
-              }
-            });
-          };
-          <span class="hljs-keyword">var</span> isEmpty = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> match(lazyList,{
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-              },
-              cons: (head1,tailThunk1) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-              }
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(algebraic_stream) */</span>
-          <span class="hljs-comment">/* #@range_begin(algebraic_stream_helpers) */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'クロージャーでジェネレーターを作る'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -3047,342 +2934,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
-              <h3 id="stream-toarray">stream#toArray</h3>
+              <p>ストリームからジェネレータを作る</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> toArray = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> match(lazyList,{
-              empty: (_) =&gt; {
-                <span class="hljs-keyword">return</span> [];
-              },
-              cons: (head,tailThunk) =&gt; {
-                <span class="hljs-keyword">return</span> match(tailThunk(),{
-                  empty: (_) =&gt; {
-                    <span class="hljs-keyword">return</span> [head];
-                  },
-                  cons: (head_,tailThunk_) =&gt; {
-                    <span class="hljs-keyword">return</span> [head].concat(toArray(tailThunk()));
-                  }
-                });
-              }
-            });
-          };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-57">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
-              </div>
-              <h3 id="stream-take">stream#take</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* take:: STREAM -&gt; NUMBER -&gt; STREAM */</span>
-          <span class="hljs-keyword">var</span> take = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> (number) =&gt; {
-              expect(number).to.a(<span class="hljs-string">'number'</span>);
-              expect(number).to.be.greaterThan(-<span class="hljs-number">1</span>);
-              <span class="hljs-keyword">return</span> match(lazyList,{
-                empty: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> empty();
-                },
-                cons: (head,tailThunk) =&gt; {
-                  <span class="hljs-keyword">if</span>(number === <span class="hljs-number">0</span>) {
-                    <span class="hljs-keyword">return</span> empty();
-                  } <span class="hljs-keyword">else</span> {
-                    <span class="hljs-keyword">return</span> cons(head,(_) =&gt; {
-                      <span class="hljs-keyword">return</span> take(tailThunk())(number -<span class="hljs-number">1</span>);
-                    });
-                  }
-                }
-              });
-            };
-          };
-          <span class="hljs-comment">/* #@range_end(algebraic_stream_helpers) */</span>
-          it(<span class="hljs-string">"stream#cons"</span>, (next) =&gt; {
-            <span class="hljs-keyword">var</span> stream = cons(<span class="hljs-number">1</span>, (_) =&gt; {
-              <span class="hljs-keyword">return</span> cons(<span class="hljs-number">2</span>,(_) =&gt; {
-                <span class="hljs-keyword">return</span> empty();
-              });
-            });
-            expect(
-              head(stream)
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            next();
-          });
-          it(<span class="hljs-string">"stream#tail"</span>, (next) =&gt; {
-            <span class="hljs-comment">/* stream = [1,2] */</span>
-            <span class="hljs-keyword">var</span> stream = cons(<span class="hljs-number">1</span>, (_) =&gt; {
-              <span class="hljs-keyword">return</span> cons(<span class="hljs-number">2</span>,(_) =&gt; {
-                <span class="hljs-keyword">return</span> empty();
-              });
-            });
-            expect(
-              tail(stream)
-            ).to.a(<span class="hljs-string">"function"</span>);
-            expect(
-              head(tail(stream))
-            ).to.eql(
-              <span class="hljs-number">2</span>
-            );
-            next();
-          });
-          describe(<span class="hljs-string">"無限ストリーム"</span>, () =&gt; {
-            <span class="hljs-comment">/* #@range_begin(infinite_stream) */</span>
-            <span class="hljs-comment">/* ones = [1,1,1,1,...] */</span>
-            <span class="hljs-keyword">var</span> ones = cons(<span class="hljs-number">1</span>, (_) =&gt; {
-              <span class="hljs-keyword">return</span> ones;
-            });
-            expect(
-              head(ones)
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            expect(
-              head(tail(ones))
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            <span class="hljs-comment">/* #@range_end(infinite_stream) */</span>
-            <span class="hljs-comment">/* #@range_begin(infinite_integer) */</span>
-            <span class="hljs-comment">/* ones = [1,2,3,4,...] */</span>
-            <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
-              <span class="hljs-keyword">return</span> cons(n, (_) =&gt; {
-                <span class="hljs-keyword">return</span> enumFrom(n + <span class="hljs-number">1</span>);
-              });
-            };
-            it(<span class="hljs-string">"無限の整数列をテストする"</span>, (next) =&gt; {
-              expect(
-                head(enumFrom(<span class="hljs-number">1</span>))
-              ).to.eql(
-                <span class="hljs-number">1</span>
-              );
-              expect(
-                head(tail(enumFrom(<span class="hljs-number">1</span>)))
-              ).to.eql(
-                <span class="hljs-number">2</span>
-              );
-              expect(
-                toArray(take(enumFrom(<span class="hljs-number">1</span>))(<span class="hljs-number">10</span>))
-              ).to.eql(
-                [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>, <span class="hljs-number">10</span> ] 
-              );
-              <span class="hljs-comment">/* #@range_end(infinite_integer) */</span>
-              next();
-            });
-            it(<span class="hljs-string">"filterで無限の偶数列を作る"</span>, (next) =&gt; {
-              <span class="hljs-keyword">var</span> even = (n) =&gt; {
-                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> === (n % <span class="hljs-number">2</span>);
-              };
-              <span class="hljs-comment">/* #@range_begin(infinite_even_integer) */</span>
-              <span class="hljs-keyword">var</span> evenIntegers = stream.filter(even)(enumFrom(<span class="hljs-number">1</span>));
-              expect(
-                head(evenIntegers)
-              ).to.eql(
-                <span class="hljs-number">2</span>
-              );
-              expect(
-                toArray(stream.take(evenIntegers)(<span class="hljs-number">4</span>))
-              ).to.eql(
-                [ <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span> ]
-              );
-              <span class="hljs-comment">/* #@range_end(infinite_even_integer) */</span>
-              next();
-            });
-            it(<span class="hljs-string">"filterで無限の素数列を作る"</span>, (next) =&gt; {
-              <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">7000</span>);
-              <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
-                <span class="hljs-keyword">return</span> (m) =&gt; {
-                  <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
-                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-                  } <span class="hljs-keyword">else</span> {
-                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-                  }
-                };
-              };
-              <span class="hljs-comment">/* #@range_begin(infinite_primes) */</span>
-              <span class="hljs-keyword">var</span> leastDivisor = (n) =&gt; {
-                expect(n).to.a(<span class="hljs-string">'number'</span>);
-                <span class="hljs-keyword">var</span> leastDivisorHelper = (k, n) =&gt; {
-                  expect(k).to.a(<span class="hljs-string">'number'</span>);
-                  expect(n).to.a(<span class="hljs-string">'number'</span>);
-                  <span class="hljs-keyword">if</span>(multipleOf(k)(n)) {
-                    <span class="hljs-keyword">return</span> k;
-                  } <span class="hljs-keyword">else</span> {
-                    <span class="hljs-keyword">if</span>(n &lt; (k * k)) {
-                      <span class="hljs-keyword">return</span> n;
-                    } <span class="hljs-keyword">else</span> {
-                      <span class="hljs-keyword">return</span> leastDivisorHelper(k+<span class="hljs-number">1</span>, n);
-                    }
-                  };
-                };
-                <span class="hljs-keyword">return</span> leastDivisorHelper(<span class="hljs-number">2</span>,n);
-              };
-              <span class="hljs-keyword">var</span> isPrime = (n) =&gt; {
-                <span class="hljs-keyword">if</span>(n &lt; <span class="hljs-number">1</span>) {
-                  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"argument not positive"</span>);
-                }
-                <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-                  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-                } <span class="hljs-keyword">else</span> {
-                  <span class="hljs-keyword">return</span> leastDivisor(n)  === n ;
-                }
-              };
-              
-              <span class="hljs-keyword">var</span> primes = stream.filter(isPrime)(enumFrom(<span class="hljs-number">1</span>));
-              expect(
-                toArray(stream.take(primes)(<span class="hljs-number">10</span>))
-              ).to.eql(
-                [ <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">7</span>, <span class="hljs-number">11</span>, <span class="hljs-number">13</span>, <span class="hljs-number">17</span>, <span class="hljs-number">19</span>, <span class="hljs-number">23</span>, <span class="hljs-number">29</span> ]
-              );
-              <span class="hljs-comment">/* #@range_end(infinite_primes) */</span>
-              next();
-            });
-          });
-          it(<span class="hljs-string">"代数的ストリーム型は不変ではない"</span>, (next) =&gt; {
-            <span class="hljs-keyword">var</span> stream = cons({key: <span class="hljs-number">1</span>}, (_) =&gt; {
-              <span class="hljs-keyword">return</span> cons(<span class="hljs-number">2</span>,(_) =&gt; {
-                <span class="hljs-keyword">return</span> empty();
-              });
-            });
-            expect(
-              head(stream).key
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            <span class="hljs-keyword">var</span> object = head(stream);
-            object.key = <span class="hljs-number">2</span>;
-            expect(
-              head(stream).key
-            ).to.eql(
-              <span class="hljs-number">2</span> <span class="hljs-comment">// 1が2に変更されている</span>
-            );
-            next();
-          });
-        });
-        describe(<span class="hljs-string">'不変なストリーム型'</span>, () =&gt; {
-          <span class="hljs-comment">/* #@range_begin(immutable_stream) */</span>
-          <span class="hljs-keyword">var</span> empty = (index) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          };
-          <span class="hljs-keyword">var</span> cons = (head,tailThunk) =&gt; {
-            <span class="hljs-keyword">return</span> (f) =&gt; {
-              <span class="hljs-keyword">return</span> f(head,tailThunk);
-            };
-          };
-          <span class="hljs-keyword">var</span> head = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> lazyList((head,tailThunk) =&gt; {
-              <span class="hljs-keyword">return</span> head;
-            });
-          };
-          <span class="hljs-keyword">var</span> tail = (lazyList) =&gt; {
-            <span class="hljs-keyword">return</span> lazyList((head,tailThunk) =&gt; {
-              <span class="hljs-keyword">return</span> tailThunk();
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(immutable_stream) */</span>
-          it(<span class="hljs-string">"関数的ストリーム型は不変である"</span>, (next) =&gt; {
-            <span class="hljs-keyword">var</span> stream = cons({key: <span class="hljs-number">1</span>}, (_) =&gt; {
-              <span class="hljs-keyword">return</span> cons(<span class="hljs-number">2</span>,(_) =&gt; {
-                <span class="hljs-keyword">return</span> empty();
-              });
-            });
-            expect(
-              head(stream).key
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            <span class="hljs-keyword">var</span> object = head(stream);
-            object.key = <span class="hljs-number">2</span>;
-            expect(
-              head(stream).key
-            ).to.eql(
-              <span class="hljs-number">2</span> <span class="hljs-comment">// 1が2に変更されている</span>
-            );
-            next();
-          });
-        });
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-58">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
-              </div>
-              <h4 id="-">クロージャーでジェネレーターを作る</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'クロージャーでジェネレーターを作る'</span>, () =&gt; {
-        it(<span class="hljs-string">'ECMAScript6 generator'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(es6_generator) */</span>
-          <span class="hljs-function"><span class="hljs-keyword">function</span>* <span class="hljs-title">genCounter</span>(<span class="hljs-params"></span>)</span>{
-            <span class="hljs-keyword">yield</span> <span class="hljs-number">1</span>;
-            <span class="hljs-keyword">yield</span> <span class="hljs-number">2</span>;
-            <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>;
-          };
-          <span class="hljs-keyword">var</span> counter = genCounter();
-          expect(
-            counter.next().value
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect(
-            counter.next().value
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          <span class="hljs-comment">/* #@range_end(es6_generator) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'リスト・ジェレネータ'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(list_generator_test) */</span>
-          <span class="hljs-keyword">var</span> generator = list.generate(list.cons(<span class="hljs-number">1</span>, list.cons(<span class="hljs-number">2</span>, list.empty())));
-          expect(
-            generator()
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect(
-            generator()
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          <span class="hljs-comment">/* #@range_end(list_generator_test) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'ストリーム・ジェレネータ'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(stream_generator_test) */</span>
-          <span class="hljs-keyword">var</span> generator = stream.generate(stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-            <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>, (_) =&gt; {
-              <span class="hljs-keyword">return</span> stream.empty();
-            });
-          }));
-          expect(
-            generator()
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect(
-            generator()
-          ).to.eql(
-            <span class="hljs-number">2</span>
-          );
-          <span class="hljs-comment">/* #@range_end(stream_generator_test) */</span>
-          next();
-        });
-        describe(<span class="hljs-string">'streamからジェネレータを作る'</span>, () =&gt; {
+            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'ストリームからジェネレータを作る'</span>, () =&gt; {
           <span class="hljs-comment">/* #@range_begin(generator_from_stream) */</span>
           <span class="hljs-keyword">var</span> generate = (aStream) =&gt; {
             <span class="hljs-comment">/* いったんローカル変数にストリームを格納する */</span>
@@ -3400,8 +2956,22 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
               });
             };
           };
-          <span class="hljs-comment">/* #@range_end(generator_from_stream) */</span>
-          it(<span class="hljs-string">'整数列のジェネレータ'</span>,(next) =&gt; {
+          <span class="hljs-comment">/* #@range_end(generator_from_stream) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>整数列のジェネレータ</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'整数列のジェネレータ'</span>,(next) =&gt; {
             <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
               <span class="hljs-keyword">return</span> stream.cons(from, (_) =&gt; {
                 <span class="hljs-keyword">return</span> enumFrom(from + <span class="hljs-number">1</span>);
@@ -3424,7 +2994,179 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
             <span class="hljs-comment">/* #@range_end(integer_generator) */</span>
             next();
           });
-          it(<span class="hljs-string">'無限の素数列'</span>,(next) =&gt; {
+          it(<span class="hljs-string">'無限の素数列を作る'</span>,(next) =&gt; {
+            <span class="hljs-keyword">var</span> stream = {
+              match: (data, pattern) =&gt; {
+                <span class="hljs-keyword">return</span> data.call(stream, pattern);
+              },
+              empty: (_) =&gt; {
+                <span class="hljs-keyword">return</span> (pattern) =&gt; {
+                  expect(pattern).to.an(<span class="hljs-string">'object'</span>);
+                  <span class="hljs-keyword">return</span> pattern.empty();
+                };
+              },
+              cons: (head,tailThunk) =&gt; {
+                expect(tailThunk).to.a(<span class="hljs-string">'function'</span>);
+                <span class="hljs-keyword">return</span> (pattern) =&gt; {
+                  expect(pattern).to.an(<span class="hljs-string">'object'</span>);
+                  <span class="hljs-keyword">return</span> pattern.cons(head,tailThunk);
+                };
+              },
+              <span class="hljs-comment">/* head:: STREAM -&gt; MAYBE[STREAM] */</span>
+              head: (lazyList) =&gt; {
+                <span class="hljs-keyword">return</span> match(lazyList,{
+                  empty: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+                  },
+                  cons: (value, tailThunk) =&gt; {
+                    <span class="hljs-keyword">return</span> value;
+                  }
+                });
+              },
+              <span class="hljs-comment">/* tail:: STREAM -&gt; MAYBE[STREAM] */</span>
+              tail: (lazyList) =&gt; {
+                <span class="hljs-keyword">return</span> match(lazyList,{
+                  empty: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+                  },
+                  cons: (head, tailThunk) =&gt; {
+                    <span class="hljs-keyword">return</span> tailThunk();
+                  }
+                });
+              },
+              toArray: (lazyList) =&gt; {
+                <span class="hljs-keyword">return</span> match(lazyList,{
+                  empty: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> [];
+                  },
+                  cons: (head,tailThunk) =&gt; {
+                    <span class="hljs-keyword">return</span> match(tailThunk(),{
+                      empty: (_) =&gt; {
+                        <span class="hljs-keyword">return</span> [head];
+                      },
+                      cons: (head_,tailThunk_) =&gt; {
+                        <span class="hljs-keyword">return</span> [head].concat(stream.toArray(tailThunk()));
+                      }
+                    });
+                  }
+                });
+              },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <h3 id="stream-take">stream#take</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-comment">/* take:: STREAM -&gt; NUMBER -&gt; STREAM */</span>
+              take: (lazyList) =&gt; {
+                <span class="hljs-keyword">return</span> (number) =&gt; {
+                  expect(number).to.a(<span class="hljs-string">'number'</span>);
+                  expect(number).to.be.greaterThan(-<span class="hljs-number">1</span>);
+                  <span class="hljs-keyword">return</span> match(lazyList,{
+                    empty: (_) =&gt; {
+                      <span class="hljs-keyword">return</span> stream.empty();
+                    },
+                    cons: (head,tailThunk) =&gt; {
+                      <span class="hljs-keyword">if</span>(number === <span class="hljs-number">0</span>) {
+                        <span class="hljs-keyword">return</span> stream.empty();
+                      } <span class="hljs-keyword">else</span> {
+                        <span class="hljs-keyword">return</span> stream.cons(head,(_) =&gt; {
+                          <span class="hljs-keyword">return</span> stream.take(tailThunk())(number -<span class="hljs-number">1</span>);
+                        });
+                      }
+                    }
+                  });
+                };
+              },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <h3 id="stream-filter">stream#filter</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
+              <span class="hljs-comment">/* filter:: FUN[T =&gt; BOOL] =&gt; STREAM[T] =&gt; STREAM[T] */</span>
+              filter: (predicate) =&gt; {
+                <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                  <span class="hljs-keyword">return</span> stream.match(aStream,{
+                    empty: (_) =&gt; {
+                      <span class="hljs-keyword">return</span> stream.empty();
+                    },
+                    cons: (head,tailThunk) =&gt; {
+                      <span class="hljs-keyword">if</span>(predicate(head)){ <span class="hljs-comment">// 条件に合致する場合</span>
+                        <span class="hljs-keyword">return</span> stream.cons(head,(_) =&gt; {
+                          <span class="hljs-keyword">return</span> stream.filter(predicate)(tailThunk());
+                        });
+                      } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// 条件に合致しない場合</span>
+                        <span class="hljs-keyword">return</span> stream.filter(predicate)(tailThunk());
+                      }
+                    }
+                  });
+                };
+              },
+              <span class="hljs-comment">/* #@range_end(stream_filter) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <h3 id="stream-remove">stream#remove</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-comment">/* #@range_begin(stream_remove) */</span>
+              <span class="hljs-comment">/* remove:: FUN[T =&gt; BOOL] =&gt; STREAM[T] =&gt; STREAM[T] */</span>
+              remove: (predicate) =&gt; {
+                <span class="hljs-keyword">return</span> (aStream) =&gt; {
+                  <span class="hljs-keyword">return</span> stream.filter(not(predicate))(aStream);
+                };
+              },
+              <span class="hljs-comment">/* #@range_end(stream_remove) */</span>
+              enumFrom: (from) =&gt; {
+                <span class="hljs-keyword">return</span> stream.cons(from, (_) =&gt; {
+                  <span class="hljs-keyword">return</span> stream.enumFrom(from + <span class="hljs-number">1</span>);
+                });
+              },
+              <span class="hljs-comment">/* #@range_begin(stream_generate) */</span>
+              generate: (astream) =&gt; {
+                <span class="hljs-keyword">var</span> theStream = astream;
+                <span class="hljs-keyword">return</span> (_) =&gt; {
+                  <span class="hljs-keyword">return</span> match(theStream,{
+                    empty: (_) =&gt; {
+                      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
+                    },
+                    cons: (head,tailThunk) =&gt; {
+                      theStream = tailThunk();
+                      <span class="hljs-keyword">return</span> head;
+                    }
+                  });
+                };
+              },
+              <span class="hljs-comment">/* #@range_end(stream_generate) */</span>
+
+            }; <span class="hljs-comment">// end of 'stream' module</span>
+
             <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">4000</span>);
             <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
               <span class="hljs-keyword">return</span> (m) =&gt; {
@@ -3439,11 +3181,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-59">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <h4 id="-">エラトステネスのふるいによる素数の生成</h4>
 <p><a href="http://www.youtube.com/watch?v=1NzrrU8BawA" title="エラトステネスのふるいの動画"><img src="http://img.youtube.com/vi/1NzrrU8BawA/0.jpg" alt="IMAGE ALT TEXT"></a></p>
@@ -3551,6 +3293,63 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
             next();
           });
         });
+        it(<span class="hljs-string">'ECMAScript6 generator'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(es6_generator) */</span>
+          <span class="hljs-function"><span class="hljs-keyword">function</span>* <span class="hljs-title">genCounter</span>(<span class="hljs-params"></span>)</span>{
+            <span class="hljs-keyword">yield</span> <span class="hljs-number">1</span>;
+            <span class="hljs-keyword">yield</span> <span class="hljs-number">2</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>;
+          };
+          <span class="hljs-keyword">var</span> counter = genCounter();
+          expect(
+            counter.next().value
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          expect(
+            counter.next().value
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(es6_generator) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'リスト・ジェレネータ'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(list_generator_test) */</span>
+          <span class="hljs-keyword">var</span> generator = list.generate(list.cons(<span class="hljs-number">1</span>, list.cons(<span class="hljs-number">2</span>, list.empty())));
+          expect(
+            generator()
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          expect(
+            generator()
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(list_generator_test) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'ストリーム・ジェレネータ'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(stream_generator_test) */</span>
+          <span class="hljs-keyword">var</span> generator = stream.generate(stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+            <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>, (_) =&gt; {
+              <span class="hljs-keyword">return</span> stream.empty();
+            });
+          }));
+          expect(
+            generator()
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          expect(
+            generator()
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          <span class="hljs-comment">/* #@range_end(stream_generator_test) */</span>
+          next();
+        });
         describe(<span class="hljs-string">'ジェネレータ・コンビネータ'</span>, () =&gt; {
           <span class="hljs-keyword">var</span> identity = (any) =&gt; { <span class="hljs-keyword">return</span> any; };
           <span class="hljs-keyword">var</span> succ = (n) =&gt; { <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>; };
@@ -3610,11 +3409,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-60">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <h3 id="-">関数を渡す</h3>
 
@@ -3625,11 +3424,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-61">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <h4 id="-">コールバックで処理をモジュール化する</h4>
 
@@ -3695,11 +3494,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-62">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>var map = (alist,callback) =&gt; {
   return match(alist,{
@@ -3722,11 +3521,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-63">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>var squareList = map(squareCallback)(numbers);</p>
 
@@ -4142,11 +3941,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-64">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <h4 id="-">非同期処理にコールバック関数を渡す</h4>
 
@@ -4178,11 +3977,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-65">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <h4 id="-">畳み込み関数に関数を渡す</h4>
 
@@ -4457,11 +4256,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-66">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <h3 id="-">継続で未来を渡す</h3>
 
@@ -4472,11 +4271,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-67">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <h4 id="-">継続とは何か</h4>
 
@@ -4650,11 +4449,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-68">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p>upto3変数は、1から3までの有限ストリーム</p>
 
@@ -4679,11 +4478,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-69">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>変数integersは、無限の整数ストリーム</p>
 
@@ -4734,11 +4533,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-70">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <h4 id="-">非決定計算機を作る</h4>
 
@@ -4772,11 +4571,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-71">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <section id='amb_calculate'>非決定性計算機の評価関数</section>
 
@@ -4814,11 +4613,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-72">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p>var calculateAmb = (choices, continuesOnSuccess, continuesOnFailure) =&gt; {</p>
 
@@ -4844,11 +4643,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-73">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p>return calculateAmb(tail, continuesOnSuccess, continuesOnFailure);</p>
 
@@ -4863,11 +4662,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-74">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p>return calculateAmb(choices, continuesOnSuccess, continuesOnFailure);</p>
 
@@ -5054,11 +4853,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-75">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <h2 id="-">モナドを作る</h2>
 
@@ -5098,11 +4897,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-76">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <h3 id="-">恒等モナド</h3>
 
@@ -5283,11 +5082,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-77">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <h3 id="maybe-">Maybeモナド</h3>
 
@@ -5301,11 +5100,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-78">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>var match = (exp, pattern) =&gt; {
   return exp.call(pattern, pattern);
@@ -5492,11 +5291,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-79">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <h3 id="io-">IOモナド</h3>
 
@@ -5588,11 +5387,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-80">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <h2 id="-io-monad-module">‘IO’ monad module</h2>
 
@@ -5682,11 +5481,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-81">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
 </code></pre>
@@ -5739,11 +5538,11 @@ describe(<span class="hljs-string">'streamのテスト'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-82">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap08.spec.html">次章に移る</a> </p>
 

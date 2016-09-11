@@ -58,8 +58,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-<span class="hljs-keyword">var</span> util = <span class="hljs-built_in">require</span>(<span class="hljs-string">'util'</span>);</pre></div></div>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
             
         </li>
         
@@ -69,6 +68,19 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>var util = require(‘util’);</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <h2 id="dry-">DRY原則</h2>
 
@@ -131,11 +143,11 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>times関数を利用してmultiply関数を定義する</p>
 
@@ -148,11 +160,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>times関数を利用してexponential関数を定義する</p>
 
@@ -184,11 +196,11 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="-">抽象化への指向</h2>
 
@@ -258,42 +270,17 @@
       );
       next();
     });
-    <span class="hljs-comment">/*
-      it('times関数によるsum', (next) =&gt; {
-      var times = (count, fun, arg, memo) =&gt; {
-      if(count &gt; 1) {
-      return times(count-1, fun, arg, fun(memo,arg));
-      } else {
-      return fun(memo,arg);
-      }
-      };
-
-      var sum = (seq) =&gt; {
-      var add = (seq) =&gt; {
-      return (index, memo)  =&gt; {
-      return seq[index] + memo;
-      };
-      return times(seq.length, add(seq), 0, 0);
-      };
-      expect(
-      sum(sequence)
-      ).to.eql(
-      41
-      );
-      next();
-      });
-    */</span>
   });
 });</pre></div></div>
             
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <h2 id="-">セマンティクスを意識する</h2>
 
@@ -343,11 +330,11 @@
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <h2 id="-">テストに親しむ</h2>
 
@@ -358,11 +345,11 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <h3 id="-">単体テストの仕組み</h3>
 
@@ -392,11 +379,11 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h3 id="-">単体テストの実践</h3>
 

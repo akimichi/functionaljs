@@ -1186,8 +1186,22 @@
         };
         <span class="hljs-keyword">return</span> addWithFreeVariable;
       };
-      <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span>
-      <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
+      <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>入れ子になった関数の適用</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
       expect(
         adder(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
       ).to.eql(
@@ -1196,65 +1210,23 @@
       <span class="hljs-comment">/* #@range_end(binding_in_closure_test) */</span>
       next();
     });
-    it(<span class="hljs-string">'スコープの入れ子'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(nested_scope) */</span>
-      <span class="hljs-keyword">var</span> outerScope = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> createScope = (_) =&gt;  {
-        <span class="hljs-keyword">var</span> innerScope = <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">return</span> innerScope + outerScope; <span class="hljs-comment">// 内側のスコープから外側のスコープにある outerScope変数にアクセスしている</span>
-      };
-      <span class="hljs-comment">/* #@range_end(nested_scope) */</span>
-      expect(
-        outerScope
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      expect(
-        createScope()
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">'ホイスティング'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(hoisting) */</span>
-      <span class="hljs-keyword">var</span> scope = <span class="hljs-string">"global"</span>;
-      <span class="hljs-keyword">var</span> f = (_) =&gt;  {
-        expect(
-          scope
-        ).to.be(
-          <span class="hljs-string">"global"</span>
-        );
-      };
-      <span class="hljs-comment">/* #@range_end(hoisting) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'クロージャーによるスコープの入れ子'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(nested_scope_in_closure) */</span>
-      <span class="hljs-keyword">var</span> outerFunction = (outerArgument) =&gt; {
-        <span class="hljs-keyword">var</span> innerFunction = (innerArgument) =&gt; {
-          <span class="hljs-keyword">return</span> outerArgument + innerArgument;
-        };
-        <span class="hljs-keyword">return</span> innerFunction;
-      };
-      <span class="hljs-comment">/* #@range_end(nested_scope_in_closure) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'内側のスコープから外側のスコープの参照'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(function_scope_nesting) */</span>
-      <span class="hljs-keyword">var</span> scope = <span class="hljs-string">"outer"</span>;
-      <span class="hljs-keyword">var</span> func = (_) =&gt;  {
-        <span class="hljs-keyword">return</span> scope;
-      };
-      expect(
-        func()
-      ).to.be(
-        <span class="hljs-string">"outer"</span>
-      );
-      <span class="hljs-comment">/* #@range_end(function_scope_nesting) */</span>
-      next();
-    });
   });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <h2 id="-">参照透過性の仕組み</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性の仕組み'</span>, () =&gt; {
   describe(<span class="hljs-string">'記憶域と参照'</span>, () =&gt; {
     it(<span class="hljs-string">'変数は参照を保持する'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(variables_hold_reference) */</span>
@@ -1284,75 +1256,37 @@
       <span class="hljs-comment">/* #@range_end(variables_hold_reference) */</span>
       next();
     });
-  });
-  describe(<span class="hljs-string">'代入の仕組み'</span>, () =&gt; {
-    it(<span class="hljs-string">'合成型への代入'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(assign_to_complex_value) */</span>
-      <span class="hljs-keyword">var</span> object = {one: <span class="hljs-number">1</span>, two: <span class="hljs-number">2</span>};
-      expect(
-        object.one
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      object.one = <span class="hljs-number">3</span>;
-      expect(
-        object.one
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(assign_to_complex_value) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'基本型への代入'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(assign_to_basic_value) */</span>
-      <span class="hljs-keyword">var</span> basic_value = <span class="hljs-number">1</span>;
-      expect(
-        basic_value
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      basic_value = <span class="hljs-number">3</span>;
-      expect(
-        basic_value
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(assign_to_basic_value) */</span>
-      next();
-    });
-  });
-});</pre></div></div>
+  });</pre></div></div>
             
         </li>
         
         
-        <li id="section-38">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <h2 id="-">参照透過性の仕組み</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性の仕組み'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-39">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <h3 id="-">不変なデータの仕組み</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'不変なデータの仕組み'</span>, () =&gt; {
-    it(<span class="hljs-string">'基本型は値である'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'不変なデータの仕組み'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>基本型は値としてのデータである</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'基本型は値としてのデータである'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(basic_type_is_value_type) */</span>
       <span class="hljs-keyword">var</span> n = <span class="hljs-number">1</span>;
       expect(
@@ -1384,60 +1318,6 @@
         </li>
         
         
-        <li id="section-40">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
-              </div>
-              <h3 id="-">可変なデータの仕組み</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'可変なデータの仕組み'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-41">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
-              </div>
-              <p>it(‘合成型は参照である’, (next) =&gt; {
-  /<em> #@range_begin(complex_type_is_reference) </em>/
-  var array = [0,1,2,3];
-  expect(
-    array
-  ).not.to.eql(
-    [0,1,2,3]
-  );
-  var object = { key: 1 };
-  expect(
-    object
-  ).not.to.eql(
-    {
-      key: 1
-    }
-  );
-  var func = (<em>) =&gt; { return 1; };
-  expect(
-    func
-  ).not.to.eql(
-    ((</em>) =&gt; { return 1; })
-  );
-  /<em> #@range_end(complex_type_is_reference) </em>/
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  });</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-42">
             <div class="annotation">
               
@@ -1448,8 +1328,22 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'代入の仕組みと効果'</span>, () =&gt; {
-    it(<span class="hljs-string">'変数への代入'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'代入の仕組みと効果'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>変数への代入</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'変数への代入'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(assign_to_variable) */</span>
       <span class="hljs-keyword">var</span> age = <span class="hljs-number">29</span>;
       expect(
@@ -1461,11 +1355,11 @@
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>この時点で誕生日を迎えた</p>
 
@@ -1492,48 +1386,6 @@
         z * z <span class="hljs-comment">// (x + y) を z に置きかえた</span>
       );
       <span class="hljs-comment">/* #@range_end(referential_transparency_counterexample_assignment) */</span>
-      next();
-    });
-  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-44">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
-              </div>
-              <h3 id="-">参照透過性を成立させる条件</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透過性を成立させる条件'</span>, () =&gt; {
-    it(<span class="hljs-string">'参照透過性がある場合'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(referential_transparency_example) */</span>
-      <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> y = <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">var</span> z = x + y;
-      expect(
-        (x + y) * (x + y)
-      ).to.be(
-        z * z <span class="hljs-comment">// (x + y) を z に置きかえた</span>
-      );
-      <span class="hljs-comment">/* #@range_end(referential_transparency_example) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'可変なデータによって参照透過性を失う場合'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(referential_transparency_counterexample_mutable) */</span>
-      <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> y = <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">var</span> z = [x,y];
-      expect(
-        [x,y]
-      ).not.to.be( <span class="hljs-comment">// notを使っている</span>
-        z <span class="hljs-comment">// [x,y] を z に置きかえた</span>
-      );
-      <span class="hljs-comment">/* #@range_end(referential_transparency_counterexample_mutable) */</span>
       next();
     });
   });

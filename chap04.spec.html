@@ -1008,8 +1008,140 @@
     );
     next();
   });
-  describe(<span class="hljs-string">'スコープ'</span>, () =&gt; {
-    it(<span class="hljs-string">'関数はスコープを分ける'</span>, (next) =&gt; {
+  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {
+    it(<span class="hljs-string">'関数本体での自由変数'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>関数本体での自由変数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(free_variable_in_function) */</span>
+      <span class="hljs-keyword">var</span> addWithFreeVariable = (x) =&gt; {
+        <span class="hljs-keyword">return</span> x + y;  <span class="hljs-comment">// xはバインド変数だが、yは自由変数</span>
+      };
+      <span class="hljs-comment">/* #@range_end(free_variable_in_function) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>関数本体での自由変数のテスト</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(free_variable_in_function_test) */</span>
+      expect(
+        (_) =&gt; {
+          <span class="hljs-keyword">return</span> addWithFreeVariable(<span class="hljs-number">1</span>);
+        }
+      ).to.throwException((exception)=&gt; {
+        expect(exception).to.be.a(
+          <span class="hljs-built_in">ReferenceError</span>
+        );
+      });
+      <span class="hljs-comment">/* #@range_end(free_variable_in_function_test) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'環境の実装'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(environment_implemented) */</span>
+      <span class="hljs-comment">/* 空の環境 */</span>
+      <span class="hljs-keyword">var</span> emptyEnv = (variable) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+      };
+      <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
+      <span class="hljs-keyword">var</span> lookupEnv = (variable, env) =&gt; {
+        <span class="hljs-keyword">return</span> env(variable);
+      };
+      <span class="hljs-comment">/* 環境を拡張する */</span>
+      <span class="hljs-keyword">var</span> extendEnv = (variable, value, env) =&gt; {
+        <span class="hljs-keyword">return</span> (queryVariable) =&gt; {
+          <span class="hljs-keyword">if</span>(variable === queryVariable) {
+            <span class="hljs-keyword">return</span> value;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> lookupEnv(queryVariable,env);
+          }
+        };
+      };
+      <span class="hljs-comment">/* #@range_end(environment_implemented) */</span>
+      <span class="hljs-comment">/* #@range_begin(environment_implemented_usage) */</span>
+      expect(((_) =&gt; {
+        <span class="hljs-comment">/* 空の辞書を作成する */</span>
+        <span class="hljs-keyword">var</span> initEnv = emptyEnv;
+        <span class="hljs-comment">/* var a = 1 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> firstEnv = extendEnv(<span class="hljs-string">"a"</span>, <span class="hljs-number">1</span>, initEnv);
+        <span class="hljs-comment">/* var b = 3 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> secondEnv = extendEnv(<span class="hljs-string">"b"</span>,<span class="hljs-number">3</span>, firstEnv);
+        <span class="hljs-comment">/* 辞書から b の値を参照する */</span>
+        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);
+      })()).to.eql(
+        <span class="hljs-number">3</span>
+      );
+      <span class="hljs-comment">/* #@range_end(environment_implemented_usage) */</span>
+      <span class="hljs-comment">/* #@range_begin(environment_implemented_shadowing_usage) */</span>
+      expect(((_) =&gt; {
+        <span class="hljs-comment">/* 空の辞書を作成する */</span>
+        <span class="hljs-keyword">var</span> initEnv = emptyEnv;
+        <span class="hljs-comment">/* var x = 1 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> xEnv = extendEnv(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, initEnv);
+        <span class="hljs-comment">/* var z = 2 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> zEnv = extendEnv(<span class="hljs-string">"z"</span>, <span class="hljs-number">2</span>, xEnv);
+        <span class="hljs-comment">/* 内部のスコープで var x = 3 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> xEnvInner = extendEnv(<span class="hljs-string">"x"</span>,<span class="hljs-number">3</span>, zEnv);
+        <span class="hljs-comment">/* 内部のスコープで var y = 4 を実行して、辞書を拡張する */</span>
+        <span class="hljs-keyword">var</span> innerMostEnv = extendEnv(<span class="hljs-string">"y"</span>,<span class="hljs-number">4</span>, xEnvInner);
+        <span class="hljs-comment">/* 一番内側のスコープを利用して x + y + z を計算する */</span>
+        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"x"</span>,innerMostEnv) + lookupEnv(<span class="hljs-string">"y"</span>,innerMostEnv) + lookupEnv(<span class="hljs-string">"z"</span>,innerMostEnv) ;
+      })()).to.eql(
+        <span class="hljs-number">3</span> + <span class="hljs-number">4</span> + <span class="hljs-number">2</span>
+      );
+      <span class="hljs-comment">/* #@range_end(environment_implemented_shadowing_usage) */</span>
+      next();
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <h4 id="-">変数のスコープ</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'変数のスコープ'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>関数とローカルスコープ</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'関数とローカルスコープ'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(function_creates_scope) */</span>
       <span class="hljs-keyword">var</span> createScope = (_) =&gt;  { <span class="hljs-comment">// ローカルスコープを作る</span>
         <span class="hljs-keyword">var</span> innerScope = <span class="hljs-string">"inner"</span>; 
@@ -1030,6 +1162,38 @@
       ).to.be(
         <span class="hljs-string">"inner"</span>
       );
+      next();
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>入れ子になった関数の変数バインド</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'入れ子になった関数の変数バインド'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(binding_in_closure) */</span>
+      <span class="hljs-keyword">var</span> adder = (y) =&gt; { <span class="hljs-comment">// 外側の関数</span>
+        <span class="hljs-keyword">var</span> addWithFreeVariable = (x) =&gt; { <span class="hljs-comment">// 内側の関数</span>
+          <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// 変数yはadder関数の引数yを参照できる</span>
+        };
+        <span class="hljs-keyword">return</span> addWithFreeVariable;
+      };
+      <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span>
+      <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
+      expect(
+        adder(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">5</span>
+      );
+      <span class="hljs-comment">/* #@range_end(binding_in_closure_test) */</span>
       next();
     });
     it(<span class="hljs-string">'スコープの入れ子'</span>, (next) =&gt; {
@@ -1088,100 +1252,6 @@
         <span class="hljs-string">"outer"</span>
       );
       <span class="hljs-comment">/* #@range_end(function_scope_nesting) */</span>
-      next();
-    });
-  });
-  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {
-    it(<span class="hljs-string">'関数本体での自由変数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(free_variable_in_function) */</span>
-      <span class="hljs-keyword">var</span> addWithFreeVariable = (x) =&gt; {
-        <span class="hljs-keyword">return</span> x + y;  <span class="hljs-comment">// xはバインド変数だが、yは自由変数</span>
-      };
-      <span class="hljs-comment">/* #@range_end(free_variable_in_function) */</span>
-      <span class="hljs-comment">/* #@range_begin(free_variable_in_function_test) */</span>
-      expect(
-        (_) =&gt; {
-          <span class="hljs-keyword">return</span> addWithFreeVariable(<span class="hljs-number">1</span>);
-        }
-      ).to.throwException((exception)=&gt; {
-        expect(exception).to.be.a(
-          <span class="hljs-built_in">ReferenceError</span>
-        );
-      });
-      <span class="hljs-comment">/* #@range_end(free_variable_in_function_test) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'クロージャーの変数バインディング'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(binding_in_closure) */</span>
-      <span class="hljs-keyword">var</span> adder = (y) =&gt; { <span class="hljs-comment">// 外側の関数</span>
-        <span class="hljs-keyword">var</span> addWithFreeVariable = (x) =&gt; { <span class="hljs-comment">// 内側の関数</span>
-          <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// 変数yはadder関数の引数yを参照できる</span>
-        };
-        <span class="hljs-keyword">return</span> addWithFreeVariable;
-      };
-      <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span>
-      <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
-      expect(
-        adder(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">5</span>
-      );
-      <span class="hljs-comment">/* #@range_end(binding_in_closure_test) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'環境の実装'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(environment_implemented) */</span>
-      <span class="hljs-comment">/* 空の環境 */</span>
-      <span class="hljs-keyword">var</span> emptyEnv = (variable) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-      };
-      <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
-      <span class="hljs-keyword">var</span> lookupEnv = (variable, env) =&gt; {
-        <span class="hljs-keyword">return</span> env(variable);
-      };
-      <span class="hljs-comment">/* 環境を拡張する */</span>
-      <span class="hljs-keyword">var</span> extendEnv = (variable, value, env) =&gt; {
-        <span class="hljs-keyword">return</span> (queryVariable) =&gt; {
-          <span class="hljs-keyword">if</span>(variable === queryVariable) {
-            <span class="hljs-keyword">return</span> value;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> lookupEnv(queryVariable,env);
-          }
-        };
-      };
-      <span class="hljs-comment">/* #@range_end(environment_implemented) */</span>
-      <span class="hljs-comment">/* #@range_begin(environment_implemented_usage) */</span>
-      expect(((_) =&gt; {
-        <span class="hljs-comment">/* 空の辞書を作成する */</span>
-        <span class="hljs-keyword">var</span> initEnv = emptyEnv;
-        <span class="hljs-comment">/* var a = 1 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> firstEnv = extendEnv(<span class="hljs-string">"a"</span>, <span class="hljs-number">1</span>, initEnv);
-        <span class="hljs-comment">/* var b = 3 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> secondEnv = extendEnv(<span class="hljs-string">"b"</span>,<span class="hljs-number">3</span>, firstEnv);
-        <span class="hljs-comment">/* 辞書から b の値を参照する */</span>
-        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"b"</span>,secondEnv);
-      })()).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(environment_implemented_usage) */</span>
-      <span class="hljs-comment">/* #@range_begin(environment_implemented_shadowing_usage) */</span>
-      expect(((_) =&gt; {
-        <span class="hljs-comment">/* 空の辞書を作成する */</span>
-        <span class="hljs-keyword">var</span> initEnv = emptyEnv;
-        <span class="hljs-comment">/* var x = 1 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> xEnv = extendEnv(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, initEnv);
-        <span class="hljs-comment">/* var z = 2 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> zEnv = extendEnv(<span class="hljs-string">"z"</span>, <span class="hljs-number">2</span>, xEnv);
-        <span class="hljs-comment">/* 内部のスコープで var x = 3 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> xEnvInner = extendEnv(<span class="hljs-string">"x"</span>,<span class="hljs-number">3</span>, zEnv);
-        <span class="hljs-comment">/* 内部のスコープで var y = 4 を実行して、辞書を拡張する */</span>
-        <span class="hljs-keyword">var</span> innerMostEnv = extendEnv(<span class="hljs-string">"y"</span>,<span class="hljs-number">4</span>, xEnvInner);
-        <span class="hljs-comment">/* 一番内側のスコープを利用して x + y + z を計算する */</span>
-        <span class="hljs-keyword">return</span> lookupEnv(<span class="hljs-string">"x"</span>,innerMostEnv) + lookupEnv(<span class="hljs-string">"y"</span>,innerMostEnv) + lookupEnv(<span class="hljs-string">"z"</span>,innerMostEnv) ;
-      })()).to.eql(
-        <span class="hljs-number">3</span> + <span class="hljs-number">4</span> + <span class="hljs-number">2</span>
-      );
-      <span class="hljs-comment">/* #@range_end(environment_implemented_shadowing_usage) */</span>
       next();
     });
   });
@@ -1256,11 +1326,11 @@
         </li>
         
         
-        <li id="section-33">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h2 id="-">参照透過性の仕組み</h2>
 
@@ -1271,11 +1341,11 @@
         </li>
         
         
-        <li id="section-34">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <h3 id="-">不変なデータの仕組み</h3>
 
@@ -1314,11 +1384,11 @@
         </li>
         
         
-        <li id="section-35">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <h3 id="-">可変なデータの仕組み</h3>
 
@@ -1329,11 +1399,11 @@
         </li>
         
         
-        <li id="section-36">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>it(‘合成型は参照である’, (next) =&gt; {
   /<em> #@range_begin(complex_type_is_reference) </em>/
@@ -1368,11 +1438,11 @@
         </li>
         
         
-        <li id="section-37">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <h3 id="-">代入の仕組みと効果</h3>
 
@@ -1391,11 +1461,11 @@
         </li>
         
         
-        <li id="section-38">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>この時点で誕生日を迎えた</p>
 
@@ -1429,11 +1499,11 @@
         </li>
         
         
-        <li id="section-39">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <h3 id="-">参照透過性を成立させる条件</h3>
 
@@ -1472,11 +1542,11 @@
         </li>
         
         
-        <li id="section-40">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap05.spec.html">次章に移る</a> </p>
 

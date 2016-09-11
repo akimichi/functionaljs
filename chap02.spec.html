@@ -280,7 +280,11 @@
             <span class="hljs-number">1</span>
           );
           next();
-        });</pre></div></div>
+        });
+      });
+    });
+  });
+});</pre></div></div>
             
         </li>
         
@@ -291,40 +295,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>it(‘reduceを定義する’, (next) =&gt; {
-  /<em> #@range_begin(reduce_definition) </em>/
-  var reduce = (init,glue) =&gt; {
-    return (array) =&gt; { // 関数が返る
-      if(array.length === 0){
-        return init;
-      } else {
-        var accumulator = glue(array[0], init);
-        var tail = array.slice(1,array.length);
-        return reduce(accumulator,glue)(tail);
-      }
-    };
-  };
-  /<em> #@range_end(reduce_definition) </em>/
-  /<em> #@range_begin(function_returning_function_test) </em>/
-  var adder = (x,y) =&gt; {
-    return x + y;
-  };
-  var sum = reduce(0,adder);
-  expect(
-    sum([1,2,3,4])
-  ).to.eql(
-    10
-  );
-  /<em> #@range_end(function_returning_function_test) </em>/
-  next();
-});</p>
+              <h2 id="-">参照透過性</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      });
-    });
-  });
-});</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -335,21 +310,6 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <h2 id="-">参照透過性</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
               <h3 id="-">参照透明性が成立する場面</h3>
 
             </div>
@@ -359,11 +319,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <h4 id="-">値の参照透過性</h4>
 
@@ -383,11 +343,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h4 id="-">変数の参照透過性</h4>
 
@@ -429,11 +389,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h4 id="-">関数の参照透過性</h4>
 
@@ -444,11 +404,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>succ関数は参照透明性を持つ</p>
 
@@ -462,11 +422,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <pre><code>node&gt; succ(<span class="hljs-number">1</span>) === succ(<span class="hljs-number">1</span>)
 <span class="hljs-literal">true</span>
@@ -490,7 +450,24 @@
         );
         next();
       });
-    });</pre></div></div>
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h3 id="-">参照透過性を破壊するもの</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性を破壊するもの'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -500,67 +477,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>describe(‘参照透明な関数では同値なものは置換可能である’, () =&gt; {
-  it(‘同じ引数のsquare関数は置換可能である’, (next) =&gt; {
-    /<em> #@range_begin(equals_replacement)  </em>/
-    var square = (n) =&gt; {
-      return n <em> n;
-    };
-    var b = 1;
-    var a = b;
-    expect(
-      square(a)
-    ).to.eql(
-      square(b)
-    );
-    expect(
-      square(b)
-    ).to.eql(
-      square(a)
-    );
-    expect(
-      square(a)
-    ).to.eql(
-      square(a)
-    );
-    expect(
-      square(b)
-    ).to.eql(
-      square(b)
-    );
-    /</em> #@range_end(equals_replacement)  */
-    next();
-  });</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    });
-  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-22">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
-              </div>
-              <h3 id="-">参照透過性を破壊するもの</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透過性を破壊するもの'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-23">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>可変なデータは参照透明性を破壊する</p>
 <pre><code>node&gt; <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
@@ -573,30 +489,30 @@ node&gt; array
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
-      expect(
-        array
-      ).to.eql(
-        [<span class="hljs-number">1</span>]
-      );
-      array.push(<span class="hljs-number">2</span>);
-      expect(
-        array
-      ).to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
-      );
-      next();
-    });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
+    expect(
+      array
+    ).to.eql(
+      [<span class="hljs-number">1</span>]
+    );
+    array.push(<span class="hljs-number">2</span>);
+    expect(
+      array
+    ).to.eql(
+      [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
+    );
+    next();
+  });</pre></div></div>
             
         </li>
         
         
-        <li id="section-24">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>代入操作は参照透明性を破壊する</p>
 <pre><code>node&gt; <span class="hljs-keyword">var</span> one = <span class="hljs-number">1</span>;
@@ -610,21 +526,134 @@ node&gt; ichi === one;
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
-      <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">var</span> add = (y) =&gt; {
-        x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
-        <span class="hljs-keyword">return</span> x + y;
-      };
-      <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
+    <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> add = (y) =&gt; {
+      x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
+      <span class="hljs-keyword">return</span> x + y;
+    };
+    <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
+    expect(
+      add(<span class="hljs-number">1</span>)
+    ).to.eql(
+      <span class="hljs-number">2</span>
+    );
+    next();
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>命令型な階乗関数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'命令型な階乗関数'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
+    <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+      <span class="hljs-comment">/* 変数resultに結果が入る */</span>
+      <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
+      <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
+      <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
+      <span class="hljs-comment">/* while文は反復を処理する */</span>
+      <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
+        <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
+        result = result * times;  
+        <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
+        times = times + <span class="hljs-number">1</span>;        
+      }
+      <span class="hljs-keyword">return</span> result;
+    };
+    <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
+    expect(
+      factorial(<span class="hljs-number">2</span>)
+    ).to.eql(
+      <span class="hljs-number">2</span>
+    );
+    expect(
+      factorial(<span class="hljs-number">3</span>)
+    ).to.eql(
+      <span class="hljs-number">6</span>
+    );
+    expect(
+      factorial(<span class="hljs-number">4</span>)
+    ).to.eql(
+      <span class="hljs-number">24</span>
+    );
+    next();
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>副作用と入出力</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
+  it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
+    <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+    <span class="hljs-keyword">var</span> read = (path) =&gt; {
+      <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
+    };
+    <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
+      fs.writeFileSync(path, n);
+      <span class="hljs-keyword">return</span> n;
+    };
+    <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
+    write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">1</span>);
+    expect(
+      read(<span class="hljs-string">'test/resources/io.txt'</span>)
+    ).to.eql(
+      <span class="hljs-number">1</span>
+    );
+    write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
+    expect(
+      read(<span class="hljs-string">'test/resources/io.txt'</span>)
+    ).to.eql(
+      <span class="hljs-number">2</span>
+    );
+    next();
+  });
+});
+describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
+  describe(<span class="hljs-string">'副作用としての代入'</span>, () =&gt; {
+    it(<span class="hljs-string">'配列は参照透明性を破壊する'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(array_destroys_referential_transparency) */</span>
+      <span class="hljs-keyword">var</span> array = [];
+      array.push(<span class="hljs-number">1</span>);
       expect(
-        add(<span class="hljs-number">1</span>)
+        array.pop()
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      array.push(<span class="hljs-number">2</span>);
+      expect(
+        array.pop()
       ).to.eql(
         <span class="hljs-number">2</span>
       );
+      <span class="hljs-comment">/* #@range_end(array_destroys_referential_transparency) */</span>
       next();
-    });</pre></div></div>
+    });
+  });
+});</pre></div></div>
             
         </li>
         
@@ -635,76 +664,11 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>it(‘参照不透明な関数では同値なものは置換できない’, (next) =&gt; {
-  /<em> #@range_begin(unequals_replacement)  </em>/
-  var wrapper = (f) =&gt; {
-    return (args) =&gt; {
-      return f.call(f, args);
-    };
-  };
-  var now = (_) =&gt; {
-    return Date.now();
-  };
-  var b = 1;
-  var a = b;
-  var aResult = wrapper(now)(a);
-  /<em> #@range_end(unequals_replacement)  </em>/
-  next();
-});
-it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
-  /<em> #@range_begin(datenow_is_not_transparent) </em>/
-  var a = Date.now();
-  /<em> 時間を1秒進める </em>/
-  var sleep = require(‘sleep-async’)();
-  sleep.sleep(2000, () =&gt; {
-    expect(
-      a
-    ).to.not.eql( /<em> 等しくないことをテストしている </em>/
-      Date.now()
-    );
-  });
-  /<em> #@range_end(datenow_is_not_transparent) </em>/
-  next();
-});
-命令型な階乗関数</p>
+              <h3 id="-">参照透明性を保証する</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'命令型な階乗関数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
-      <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-        <span class="hljs-comment">/* 変数resultに結果が入る */</span>
-        <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
-        <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
-        <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
-        <span class="hljs-comment">/* while文は反復を処理する */</span>
-        <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
-          <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
-          result = result * times;  
-          <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
-          times = times + <span class="hljs-number">1</span>;        
-        }
-        <span class="hljs-keyword">return</span> result;
-      };
-      <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
-      expect(
-        factorial(<span class="hljs-number">2</span>)
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      expect(
-        factorial(<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">6</span>
-      );
-      expect(
-        factorial(<span class="hljs-number">4</span>)
-      ).to.eql(
-        <span class="hljs-number">24</span>
-      );
-      next();
-    });
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透明性を保証する'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -715,58 +679,32 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>副作用と入出力</p>
+              <h4 id="-">値の参照透過性を保証する（可変なデータの排除）</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
-    it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
-      <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
-      <span class="hljs-keyword">var</span> read = (path) =&gt; {
-        <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'値の参照透過性を保証する（可変なデータの排除）'</span>, () =&gt;  {
+    it(<span class="hljs-string">'不変なデータ型'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(immutable_datatype) */</span>
+      <span class="hljs-keyword">var</span> empty =  (_) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
       };
-      <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
-        fs.writeFileSync(path, n);
-        <span class="hljs-keyword">return</span> n;
+      <span class="hljs-keyword">var</span> get = (key, obj) =&gt; {
+        <span class="hljs-keyword">return</span> obj(key);
       };
-      <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
-      write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">1</span>);
-      expect(
-        read(<span class="hljs-string">'test/resources/io.txt'</span>)
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
-      expect(
-        read(<span class="hljs-string">'test/resources/io.txt'</span>)
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
+      <span class="hljs-keyword">var</span> set = (key, value, obj) =&gt; {
+        <span class="hljs-keyword">return</span> (key2) =&gt; {
+          <span class="hljs-keyword">if</span>(key === key2) {
+            <span class="hljs-keyword">return</span> value;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> get(key2,obj);
+          }
+        };
+      };
+      <span class="hljs-comment">/* #@range_end(immutable_datatype) */</span>
       next();
     });
-  });
-  describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
-    describe(<span class="hljs-string">'副作用としての代入'</span>, () =&gt; {
-      it(<span class="hljs-string">'配列は参照透明性を破壊する'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(array_destroys_referential_transparency) */</span>
-        <span class="hljs-keyword">var</span> array = [];
-        array.push(<span class="hljs-number">1</span>);
-        expect(
-          array.pop()
-        ).to.eql(
-          <span class="hljs-number">1</span>
-        );
-        array.push(<span class="hljs-number">2</span>);
-        expect(
-          array.pop()
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        <span class="hljs-comment">/* #@range_end(array_destroys_referential_transparency) */</span>
-        next();
-      });</pre></div></div>
+  });</pre></div></div>
             
         </li>
         
@@ -777,33 +715,44 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p>it(‘配列の状態を表示する’, (next) =&gt; {
-  /<em> #@range_begin(array_destroys_referential_transparency_log) </em>/
-  var add = (n,m) =&gt; {
-    return n + m;
-  };
-  var array = [];
-  array.push(1);
-  console.log(array); // [ 1 ]
-  expect(
-    add(array.pop(),2)
-  ).to.eql(
-    3
-  );
-  array.push(2);
-  console.log(array); // [ 2 ]
-  expect(
-    add(array.pop(),2)
-  ).to.eql(
-    4
-  );
-  /<em> #@range_end(array_destroys_referential_transparency_log) </em>/
-  next();
-});</p>
+              <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    });
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'変数の参照透過性を保証する(代入の排除)'</span>, () =&gt; {
+    it(<span class="hljs-string">'命令型プログラミングによる乗算'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(imperative_addition) */</span>
+      <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
+        <span class="hljs-keyword">var</span> times = <span class="hljs-number">0</span>;          
+        <span class="hljs-keyword">var</span> result = x;         
+
+        <span class="hljs-comment">/* while文で反復を処理する */</span>
+        <span class="hljs-keyword">while</span>(times &lt; y){       
+          result = result + <span class="hljs-number">1</span>;
+          times = times + <span class="hljs-number">1</span>;    
+        };
+        <span class="hljs-keyword">return</span> result;
+      };
+      <span class="hljs-comment">/* #@range_end(imperative_addition) */</span>
+      expect(
+        add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">5</span>
+      );
+      <span class="hljs-keyword">var</span> x = <span class="hljs-number">4</span>;
+      <span class="hljs-keyword">var</span> y = <span class="hljs-number">5</span>;
+      expect(
+        add(x,y)
+      ).to.eql(
+        <span class="hljs-number">9</span>
+      );
+      expect(
+        x
+      ).to.eql(
+        <span class="hljs-number">4</span>
+      );
+      next();
+    });
   });</pre></div></div>
             
         </li>
@@ -815,11 +764,45 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <h3 id="-">参照透明性を保証する</h3>
+              <h4 id="-">関数の参照透過性を保証する（副作用の分離）</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透明性を保証する'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数の参照透過性を保証する（副作用の分離）'</span>, () =&gt;  {
+    it(<span class="hljs-string">'副作用が分離されていないコード'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(age_sideeffect) */</span>
+      <span class="hljs-keyword">var</span> age = (birthYear) =&gt; {
+        <span class="hljs-comment">/* todayは現時点の日付データ */</span>
+        <span class="hljs-keyword">var</span> today = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
+        <span class="hljs-comment">/* getFullYear関数は日付データにもとづいて現時点の西暦を返す */</span>
+        <span class="hljs-keyword">var</span> thisYear = today.getFullYear(); 
+        <span class="hljs-keyword">return</span> thisYear - birthYear;
+      };
+      <span class="hljs-comment">/* #@range_end(age_sideeffect) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'副作用が分離されているコード'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(age_without_sideeffect) */</span>
+      <span class="hljs-keyword">var</span> age = (birthYear, thisYear) =&gt; {
+        <span class="hljs-keyword">return</span> thisYear - birthYear;
+      };
+      <span class="hljs-comment">/* #@range_end(age_without_sideeffect) */</span>
+      next();
+    });
+    it(<span class="hljs-string">'画面出力を分離する'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(tap_console_log) */</span>
+      <span class="hljs-keyword">var</span> tap = (target, sideEffect) =&gt; {
+        sideEffect(target);
+        <span class="hljs-keyword">return</span> target;
+      };
+      <span class="hljs-keyword">var</span> logger = (value) =&gt;{
+        <span class="hljs-built_in">console</span>.log(value);
+      };
+      <span class="hljs-comment">/* #@range_end(tap_console_log) */</span>
+      next();
+    });
+  });
+});</pre></div></div>
             
         </li>
         
@@ -830,32 +813,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <h4 id="-">値の参照透過性を保証する（可変なデータの排除）</h4>
+              <h2 id="-">関数型プログラミングの利点</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'値の参照透過性を保証する（可変なデータの排除）'</span>, () =&gt;  {
-      it(<span class="hljs-string">'不変なデータ型'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(immutable_datatype) */</span>
-        <span class="hljs-keyword">var</span> empty =  (_) =&gt; {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-        };
-        <span class="hljs-keyword">var</span> get = (key, obj) =&gt; {
-          <span class="hljs-keyword">return</span> obj(key);
-        };
-        <span class="hljs-keyword">var</span> set = (key, value, obj) =&gt; {
-          <span class="hljs-keyword">return</span> (key2) =&gt; {
-            <span class="hljs-keyword">if</span>(key === key2) {
-              <span class="hljs-keyword">return</span> value;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> get(key2,obj);
-            }
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(immutable_datatype) */</span>
-        next();
-      });
-    });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'関数型プログラミングの利点'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -866,150 +828,6 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'変数の参照透過性を保証する(代入の排除)'</span>, () =&gt; {
-      it(<span class="hljs-string">'命令型プログラミングによる乗算'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(imperative_addition) */</span>
-        <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
-          <span class="hljs-keyword">var</span> times = <span class="hljs-number">0</span>;          
-          <span class="hljs-keyword">var</span> result = x;         
-
-          <span class="hljs-comment">/* while文で反復を処理する */</span>
-          <span class="hljs-keyword">while</span>(times &lt; y){       
-            result = result + <span class="hljs-number">1</span>;
-            times = times + <span class="hljs-number">1</span>;    
-          };
-          <span class="hljs-keyword">return</span> result;
-        };
-        <span class="hljs-comment">/* #@range_end(imperative_addition) */</span>
-        expect(
-          add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-        ).to.eql(
-          <span class="hljs-number">5</span>
-        );
-        <span class="hljs-keyword">var</span> x = <span class="hljs-number">4</span>;
-        <span class="hljs-keyword">var</span> y = <span class="hljs-number">5</span>;
-        expect(
-          add(x,y)
-        ).to.eql(
-          <span class="hljs-number">9</span>
-        );
-        expect(
-          x
-        ).to.eql(
-          <span class="hljs-number">4</span>
-        );
-        next();
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              <p>it(‘関数型プログラミングによる乗算’, (next) =&gt; {
-  /<em> #@range_begin(functional_addition) </em>/
-  var add = (x,y) =&gt; {
-    if(y &lt; 1){
-      return x;
-    } else {
-      /<em> 新しい引数でadd関数を再帰的に呼び出す </em>/
-      return add(x + 1, y - 1); 
-    }
-  };
-  /<em> #@range_end(functional_addition) </em>/
-  expect(add(2,1)).to.eql(3);
-  expect(add(2,2)).to.eql(4);
-  expect(add(3,2)).to.eql(5);
-  expect(add(12,5)).to.eql(17);
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <h4 id="-">関数の参照透過性を保証する（副作用の分離）</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数の参照透過性を保証する（副作用の分離）'</span>, () =&gt;  {
-      it(<span class="hljs-string">'副作用が分離されていないコード'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(age_sideeffect) */</span>
-        <span class="hljs-keyword">var</span> age = (birthYear) =&gt; {
-          <span class="hljs-comment">/* todayは現時点の日付データ */</span>
-          <span class="hljs-keyword">var</span> today = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>();
-          <span class="hljs-comment">/* getFullYear関数は日付データにもとづいて現時点の西暦を返す */</span>
-          <span class="hljs-keyword">var</span> thisYear = today.getFullYear(); 
-          <span class="hljs-keyword">return</span> thisYear - birthYear;
-        };
-        <span class="hljs-comment">/* #@range_end(age_sideeffect) */</span>
-        next();
-      });
-      it(<span class="hljs-string">'副作用が分離されているコード'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(age_without_sideeffect) */</span>
-        <span class="hljs-keyword">var</span> age = (birthYear, thisYear) =&gt; {
-          <span class="hljs-keyword">return</span> thisYear - birthYear;
-        };
-        <span class="hljs-comment">/* #@range_end(age_without_sideeffect) */</span>
-        next();
-      });
-      it(<span class="hljs-string">'画面出力を分離する'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(tap_console_log) */</span>
-        <span class="hljs-keyword">var</span> tap = (target, sideEffect) =&gt; {
-          sideEffect(target);
-          <span class="hljs-keyword">return</span> target;
-        };
-        <span class="hljs-keyword">var</span> logger = (value) =&gt;{
-          <span class="hljs-built_in">console</span>.log(value);
-        };
-        <span class="hljs-comment">/* #@range_end(tap_console_log) */</span>
-        next();
-      });
-    });
-  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
-              <p>});</p>
-<h2 id="-">関数型プログラミングの利点</h2>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'関数型プログラミングの利点'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
               <h3 id="-">高いモジュール性</h3>
 
             </div>
@@ -1019,11 +837,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-35">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h4 id="-">部品の独立性</h4>
 <h4 id="-">部品の汎用性</h4>
@@ -1036,11 +854,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-36">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>forEachメソッドによるsumの定義</p>
 
@@ -1078,11 +896,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-37">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>reduceメソッドによるsumの定義</p>
 
@@ -1108,11 +926,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-38">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>product関数の定義</p>
 
@@ -1202,11 +1020,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-39">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>map関数の定義</p>
 
@@ -1277,11 +1095,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-40">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <h3 id="-">部品を組み合わせる</h3>
 
@@ -1292,11 +1110,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-41">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <h4 id="-">関数適用で部品を組み合わせる</h4>
 
@@ -1319,11 +1137,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-42">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>constant関数</p>
 
@@ -1355,11 +1173,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-43">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>関数合成によるlength関数の定義</p>
 
@@ -1428,11 +1246,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-44">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <h4 id="-">関数合成による処理の合成</h4>
 
@@ -1443,11 +1261,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-45">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>compose関数の定義</p>
 
@@ -1492,11 +1310,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-46">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>関数合成によるlength関数の定義（ポイントフリースタイル）</p>
 
@@ -1517,11 +1335,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-47">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h4 id="-">関数による遅延評価</h4>
 
@@ -1532,11 +1350,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-48">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <h4 id="-">評価戦略の種類</h4>
 
@@ -1567,11 +1385,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-49">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>正格評価の例</p>
 
@@ -1590,11 +1408,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-50">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>遅延評価の例</p>
 
@@ -1615,11 +1433,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-51">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h4 id="-">遅延評価によるストリーム</h4>
 
@@ -1630,11 +1448,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-52">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>ストリームの例</p>
 
@@ -1685,11 +1503,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-53">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>無限ストリームの例</p>
 
@@ -1708,11 +1526,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-54">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>無限の偶数列</p>
 
@@ -1729,11 +1547,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-55">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -1744,11 +1562,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-56">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -1763,11 +1581,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-57">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>filter関数</p>
 
@@ -1823,11 +1641,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-58">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>無限の整数列</p>
 
@@ -1847,11 +1665,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-59">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>無限の偶数列を作る</p>
 
@@ -1905,11 +1723,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-60">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>elemAt関数</p>
 
@@ -1931,11 +1749,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-61">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>3番目の偶数を求める</p>
 
@@ -1958,11 +1776,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-62">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>filter関数で無限の偶数列を作る</p>
 
@@ -1990,11 +1808,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-63">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>配列に対するelemAt関数</p>
 
@@ -2027,11 +1845,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-64">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>4番目の偶数を求める</p>
 
@@ -2054,11 +1872,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-65">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -2069,11 +1887,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-66">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>単体テストの書き方の例</p>
 
@@ -2111,11 +1929,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-67">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>参照透過性のないコードのテスト</p>
 
@@ -2147,11 +1965,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-68">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>winner関数の分離</p>
 
@@ -2186,11 +2004,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-69">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>副作用のない関数のテスト</p>
 
@@ -2221,11 +2039,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-70">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -2236,11 +2054,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-71">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -2330,11 +2148,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-72">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>プロパティテストのための関数</p>
 
@@ -2384,11 +2202,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-73">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>succ関数のプロパティテスト</p>
 
@@ -2414,11 +2232,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-74">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

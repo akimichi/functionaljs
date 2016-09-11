@@ -415,24 +415,6 @@
         next();
       });
     });
-    it(<span class="hljs-string">'for in で反復処理する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* ##@range_begin(for_in_object) */</span>
-      <span class="hljs-keyword">var</span> obj = {
-        one: <span class="hljs-number">1</span>,
-        two: <span class="hljs-number">2</span>
-      };
-      <span class="hljs-keyword">var</span> results = [];
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> obj) {
-        results.push(obj[key])
-      }
-      expect(
-        results
-      ).to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
-      );
-      <span class="hljs-comment">/* ##@range_end(for_in_object)     */</span>
-      next();
-    });
   });</pre></div></div>
             
         </li>
@@ -626,8 +608,22 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数型'</span>, () =&gt; {
-    it(<span class="hljs-string">'関数はオブジェクト型である'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数型'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>関数はオブジェクト型である</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'関数はオブジェクト型である'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(function_is_object_type) */</span>
       <span class="hljs-keyword">var</span> func = (n) =&gt; {
         <span class="hljs-keyword">return</span> n;
@@ -657,8 +653,22 @@
       );
       <span class="hljs-comment">/* #@range_end(function_without_argument) */</span>
       next();
-    });
-    it(<span class="hljs-string">'関数と変数の類似性'</span>, (next) =&gt; {
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>関数と変数の類似</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'関数と変数の類似'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(function_resembles_variable) */</span>
       <span class="hljs-keyword">var</span> three = <span class="hljs-number">3</span>;
       expect(
@@ -679,51 +689,16 @@
       );
       next();
     });
-    it(<span class="hljs-string">'オブジェクトに関数をいれる'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* ##@range_begin(object_can_embed_function) */</span>
-      <span class="hljs-keyword">var</span> addressbook = [
-        {
-          name: <span class="hljs-string">"Alan Turing"</span>,
-          gender: <span class="hljs-string">"male"</span>,
-          birthDay: <span class="hljs-string">"1912/6/23"</span>,
-          age: (now) =&gt; {
-            expect(now).to.be.a(<span class="hljs-string">'object'</span>);
-            <span class="hljs-keyword">var</span> birthDayObject = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-keyword">this</span>.birthDay);
-            <span class="hljs-keyword">return</span> (now.getFullYear() - birthDayObject.getFullYear());
-          }
-        },
-        {
-          name: <span class="hljs-string">"Jane Austen"</span>,
-          gender: <span class="hljs-string">"female"</span>,
-          birthDay: <span class="hljs-string">"1775/12/16"</span>
-        },
-        {
-          name: <span class="hljs-string">"Fyodor Dostoyevsky"</span>,
-          gender: <span class="hljs-string">"male"</span>,
-          birthDay: <span class="hljs-string">"1821/11/11"</span>
-        },
-        {
-          name: <span class="hljs-string">"Ada Lovelace"</span>,
-          gender: <span class="hljs-string">"female"</span>,
-          birthDay: <span class="hljs-string">"1815/12/10"</span>
-        }
-      ];
-      expect(
-        addressbook[<span class="hljs-number">0</span>].age(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>())
-      ).to.be(<span class="hljs-number">104</span>);
-      <span class="hljs-comment">/* ##@range_end(object_can_embed_function) */</span>
-      next();
-    });
     it(<span class="hljs-string">'関数はデータと類似している'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
         
-        <li id="section-21">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <pre><code class="lang-scala"><span class="hljs-class"><span class="hljs-keyword">trait</span> <span class="hljs-title">env</span> <span class="hljs-keyword"><span class="hljs-keyword">extends</span></span> <span class="hljs-title">terms</span> {</span>
   <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Env</span> {</span>
@@ -753,7 +728,7 @@
           <span class="hljs-keyword">if</span>(key === key2) {
             <span class="hljs-keyword">return</span> value;
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> get(key2,obj)
+            <span class="hljs-keyword">return</span> get(key2,obj);
           }
         };
       };
@@ -780,11 +755,11 @@
         </li>
         
         
-        <li id="section-22">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <h4 id="-">抽象データ型</h4>
 
@@ -816,43 +791,37 @@
       <span class="hljs-comment">/* #@range_end(list_as_abstract_type) */</span>
       next();
     });
-    it(<span class="hljs-string">'抽象データ型としてのスタック'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> push = (n, stack) =&gt; {
-        <span class="hljs-keyword">return</span> [n].concat(stack);
-      };
-      <span class="hljs-keyword">var</span> top = (stack) =&gt; {
-        <span class="hljs-keyword">return</span> stack[<span class="hljs-number">0</span>];
-      };
-      <span class="hljs-keyword">var</span> pop = (stack) =&gt; {
-        <span class="hljs-keyword">return</span> stack.slice(<span class="hljs-number">1</span>,stack.length);
-      };
-      <span class="hljs-keyword">var</span> empty = [];
-      <span class="hljs-comment">/* #@range_begin(stack_as_abstract_type) */</span>
-      expect(
-        top(pop(pop(push(<span class="hljs-number">3</span>,push(<span class="hljs-number">2</span>,push(<span class="hljs-number">1</span>,empty))))))
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      <span class="hljs-comment">/* #@range_end(stack_as_abstract_type) */</span>
-      next();
-    });
   });</pre></div></div>
             
         </li>
         
         
-        <li id="section-23">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h4 id="javascript-">JavaScriptにおける合成型の可変性</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'合成型の可変性'</span>, () =&gt; {
-    it(<span class="hljs-string">'配列は可変である'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'合成型の可変性'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>配列型の可変性</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'配列型の可変性'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(array_is_mutable) */</span>
       <span class="hljs-keyword">var</span> array = [<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>];
       array[<span class="hljs-number">0</span>] = <span class="hljs-number">7</span>; <span class="hljs-comment">// 配列の一部を書きかえている</span>
@@ -863,8 +832,22 @@
       );
       <span class="hljs-comment">/* #@range_end(array_is_mutable) */</span>
       next();
-    });
-    it(<span class="hljs-string">'Array.reverseは破壊的操作である'</span>, (next) =&gt; {
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>配列の破壊的メソッド</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'配列の破壊的メソッド'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(destructive_reverse) */</span>
       <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>];
       expect(
@@ -880,8 +863,22 @@
       <span class="hljs-comment">/* #@range_end(destructive_reverse) */</span>
       next();
     });
-    it(<span class="hljs-string">'非破壊的なreverse関数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(immutable_reverse) */</span>
+    it(<span class="hljs-string">'非破壊的なreverse関数'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>非破壊的なreverse関数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(immutable_reverse) */</span>
       <span class="hljs-keyword">var</span> reverse = (array) =&gt; {
         <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
           <span class="hljs-keyword">return</span> [item].concat(accumulator);
@@ -899,8 +896,22 @@
         reverse(array)
       ).to.eql(
         [<span class="hljs-number">5</span>,<span class="hljs-number">4</span>,<span class="hljs-number">3</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]
-      );
-      <span class="hljs-comment">/* #@range_begin(immutable_reverse_is_not_immutable) */</span>
+      );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>非破壊的なreverse関数は完全には不変でない</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(immutable_reverse_is_not_immutable) */</span>
       <span class="hljs-keyword">var</span> reversed = reverse(array);
       reversed[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;
       expect(
@@ -917,19 +928,33 @@
         </li>
         
         
-        <li id="section-24">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h2 id="-">変数とデータの関係</h2>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'変数とデータの関係'</span>, () =&gt; {
-  it(<span class="hljs-string">'変数のバインディング'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(variable_binding_value) */</span>
+  it(<span class="hljs-string">'変数のバインド'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>バインド変数と自由変数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* #@range_begin(variable_binding_value) */</span>
     <span class="hljs-keyword">var</span> bound = <span class="hljs-string">"我思うゆえに我あり"</span>;
     expect(
       bound
@@ -946,6 +971,41 @@
       );
     });
     <span class="hljs-comment">/* #@range_end(variable_binding_value) */</span>
+    next();
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h4 id="-a-name-environment_demo-a-"><a name="environment_demo"> <strong>変数バインディングと環境</strong> </a></h4>
+<p><img src="images/environment.gif" alt="変数バインディングと環境"> </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'関数本体でのバインド変数'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(bound_variable_in_function) */</span>
+    <span class="hljs-keyword">var</span> add = (x,y) =&gt; { <span class="hljs-comment">// xとyは引数</span>
+      <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// それゆえに、xもyもバインド変数</span>
+    };
+    <span class="hljs-comment">/* #@range_end(bound_variable_in_function) */</span>
+    expect(
+      add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.be(
+      <span class="hljs-number">5</span>
+    );
+    expect(
+      add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    ).to.be(
+      ((x,y) =&gt; {
+        <span class="hljs-keyword">return</span> x + y;
+      })(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+    );
     next();
   });
   describe(<span class="hljs-string">'スコープ'</span>, () =&gt; {
@@ -1031,42 +1091,7 @@
       next();
     });
   });
-  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <h4 id="-a-name-environment_demo-a-"><a name="environment_demo"> <strong>変数バインディングと環境</strong> </a></h4>
-<p><img src="images/environment.gif" alt="変数バインディングと環境"> </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'関数本体でのバインド変数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(bound_variable_in_function) */</span>
-      <span class="hljs-keyword">var</span> add = (x,y) =&gt; { <span class="hljs-comment">// xとyは引数</span>
-        <span class="hljs-keyword">return</span> x + y; <span class="hljs-comment">// それゆえに、xもyもバインド変数</span>
-      };
-      <span class="hljs-comment">/* #@range_end(bound_variable_in_function) */</span>
-      expect(
-        add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.be(
-        <span class="hljs-number">5</span>
-      );
-      expect(
-        add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.be(
-        ((x,y) =&gt; {
-          <span class="hljs-keyword">return</span> x + y;
-        })(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      );
-      next();
-    });
+  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {
     it(<span class="hljs-string">'関数本体での自由変数'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(free_variable_in_function) */</span>
       <span class="hljs-keyword">var</span> addWithFreeVariable = (x) =&gt; {
@@ -1231,11 +1256,11 @@
         </li>
         
         
-        <li id="section-26">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h2 id="-">参照透過性の仕組み</h2>
 
@@ -1246,11 +1271,11 @@
         </li>
         
         
-        <li id="section-27">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <h3 id="-">不変なデータの仕組み</h3>
 
@@ -1289,11 +1314,11 @@
         </li>
         
         
-        <li id="section-28">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h3 id="-">可変なデータの仕組み</h3>
 
@@ -1304,11 +1329,11 @@
         </li>
         
         
-        <li id="section-29">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>it(‘合成型は参照である’, (next) =&gt; {
   /<em> #@range_begin(complex_type_is_reference) </em>/
@@ -1343,11 +1368,11 @@
         </li>
         
         
-        <li id="section-30">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <h3 id="-">代入の仕組みと効果</h3>
 
@@ -1366,11 +1391,11 @@
         </li>
         
         
-        <li id="section-31">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>この時点で誕生日を迎えた</p>
 
@@ -1404,11 +1429,11 @@
         </li>
         
         
-        <li id="section-32">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <h3 id="-">参照透過性を成立させる条件</h3>
 
@@ -1447,11 +1472,11 @@
         </li>
         
         
-        <li id="section-33">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap05.spec.html">次章に移る</a> </p>
 

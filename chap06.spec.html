@@ -578,8 +578,22 @@
           });
         }
       };
-      <span class="hljs-comment">/* #@range_end(stream_with_thunk) */</span>
-      it(<span class="hljs-string">"stream#cons"</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_end(stream_with_thunk) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>ストリーム型のテスト</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">"ストリーム型のテスト"</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(stream_with_thunk_test) */</span>
         <span class="hljs-keyword">var</span> theStream = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; { <span class="hljs-comment">// 第2引数にサンクを渡す</span>
           <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>,(_) =&gt; {         <span class="hljs-comment">// 第2引数にサンクを渡す</span>
@@ -648,11 +662,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>無限に連続する整数列</p>
 
@@ -711,11 +725,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>ストリームのtake関数</p>
 
@@ -811,11 +825,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>リストのtoArray関数</p>
 
@@ -842,11 +856,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>無限の整数列をテストする</p>
 
@@ -890,11 +904,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <h2 id="-">関数と参照透過性</h2>
 
@@ -905,11 +919,11 @@
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <h3 id="-">関数の純粋性</h3>
 <p>succ関数は参照透過性を持つ</p>
@@ -933,11 +947,11 @@
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>ファイル操作は参照透過性を破壊する</p>
 
@@ -985,11 +999,11 @@
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <h3 id="-">副作用への対処</h3>
 
@@ -1001,11 +1015,11 @@
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>tap関数</p>
 
@@ -1021,11 +1035,11 @@
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>tapコンビネーターによるconsole.logのテスト</p>
 
@@ -1056,8 +1070,22 @@
           tap(succ(<span class="hljs-number">2</span>), updateSideEffect)
         );
         next();
-      });
-      it(<span class="hljs-string">'tapコンビネーターによるファイル入出力のテストは失敗する'</span>, (next) =&gt; {
+      });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>tap関数によるファイル入出力のテスト</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'tap関数によるファイル入出力のテスト'</span>, (next) =&gt; {
         <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>); <span class="hljs-comment">// fsモジュールを変数fsにバインドする</span>
         <span class="hljs-comment">/* #@range_begin(tap_combinator_test_in_fileio) */</span>
         <span class="hljs-comment">/* あらかじめ文字列をファイルに書き込んでおく */</span>
@@ -1089,11 +1117,11 @@
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap07.spec.html">次章に移る</a> </p>
 

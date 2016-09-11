@@ -753,6 +753,23 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
       );
       next();
     });
+    it(<span class="hljs-string">'関数型プログラミングによる乗算'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(functional_addition) */</span>
+      <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
+        <span class="hljs-keyword">if</span>(y &lt; <span class="hljs-number">1</span>){
+          <span class="hljs-keyword">return</span> x;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-comment">/* 新しい引数でadd関数を再帰的に呼び出す */</span>
+          <span class="hljs-keyword">return</span> add(x + <span class="hljs-number">1</span>, y - <span class="hljs-number">1</span>); 
+        }
+      };
+      <span class="hljs-comment">/* #@range_end(functional_addition) */</span>
+      expect(add(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>)).to.eql(<span class="hljs-number">3</span>);
+      expect(add(<span class="hljs-number">2</span>,<span class="hljs-number">2</span>)).to.eql(<span class="hljs-number">4</span>);
+      expect(add(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>)).to.eql(<span class="hljs-number">5</span>);
+      expect(add(<span class="hljs-number">12</span>,<span class="hljs-number">5</span>)).to.eql(<span class="hljs-number">17</span>);
+      next();
+    });
   });</pre></div></div>
             
         </li>

@@ -4,13 +4,13 @@
 // ========
 
 var expect = require('expect.js');
-var util = require('util');
 
 // ## DRY原則
 describe('DRY原則', () => {
   var add = (x, y) => {
     return x + y;
   };
+  // ### 冗長なコード
   it('冗長なコードの例', (next) => {
     /* #@range_begin(redundant_code) */
     var timesForMultiply = (count, arg, memo) => {
@@ -47,6 +47,7 @@ describe('DRY原則', () => {
     next();
   });
   it('DRYを適用する', (next) => {
+    // DRYなtimes関数
     /* #@range_begin(dry_times) */
     var times = (count, arg, memo, fun) => { // 引数funを追加
       if(count > 1) {
@@ -56,6 +57,7 @@ describe('DRY原則', () => {
       }
     };
     /* #@range_end(dry_times) */
+    // DRYなかけ算とべき乗
     /* #@range_begin(dry_functions) */
     var add = (n, m) => {
       return n + m;
@@ -90,7 +92,8 @@ describe('DRY原則', () => {
 
 // ## 抽象化への指向
 describe('抽象化への指向', () => {
-  it('関数抽象の例としてのλ式', (next) => {
+  // 関数という抽象化
+  it('関数という抽象化', (next) => {
     /* #@range_begin(function_abstraction_example) */
     var succ = (n) => {
       return n + 1;
@@ -101,7 +104,8 @@ describe('抽象化への指向', () => {
   describe('関数抽象の例としての高階関数', () => {
     var anArray = [2,3,5,7,11,13];
 
-    it('for文によるsum', (next) => {
+    // for文によるsum関数
+    it('for文によるsum関数', (next) => {
       /* #@range_begin(sum_for) */
       var anArray = [2,3,5,7];
       var sum = (array) => {
@@ -120,7 +124,8 @@ describe('抽象化への指向', () => {
       );
       next();
     });
-    it('forEach関数によるsum', (next) => {
+    // forEachによるsum関数
+    it('forEachによるsum関数', (next) => {
       /* #@range_begin(sum_forEach) */
       var sum = (array) => {
         /* 結果を格納する変数result */
@@ -138,7 +143,8 @@ describe('抽象化への指向', () => {
       );
       next();
     });
-    it('reduce関数によるsum', (next) => {
+    // reduceによるsum関数
+    it('reduceによるsum関数', (next) => {
       /* #@range_begin(sum_reduce) */
       var sum = (array) => {
         return array.reduce((x, y) => {
@@ -153,37 +159,13 @@ describe('抽象化への指向', () => {
       );
       next();
     });
-    /*
-      it('times関数によるsum', (next) => {
-      var times = (count, fun, arg, memo) => {
-      if(count > 1) {
-      return times(count-1, fun, arg, fun(memo,arg));
-      } else {
-      return fun(memo,arg);
-      }
-      };
-
-      var sum = (seq) => {
-      var add = (seq) => {
-      return (index, memo)  => {
-      return seq[index] + memo;
-      };
-      return times(seq.length, add(seq), 0, 0);
-      };
-      expect(
-      sum(sequence)
-      ).to.eql(
-      41
-      );
-      next();
-      });
-    */
   });
 });
 
 // ## セマンティクスを意識する
 describe('セマンティクスを意識する', () => {
-  it('環境の例', (next) => {
+  // 環境という仕組み
+  it('環境という仕組み', (next) => {
     var merge = (obj1, obj2) => {
       var mergedObject = {};
       for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
@@ -204,6 +186,11 @@ describe('セマンティクスを意識する', () => {
       return env[name];
     };
     /* #@range_end(environment_example) */
+    // ~~~
+    // var a = 1;
+    // var b = 3;
+    // b
+    // ~~~
     expect(((_) => {
       /* #@range_begin(environment_example_usage) */
       /* 空の辞書を作成する */
@@ -244,383 +231,6 @@ describe('テストに親しむ', () => {
       );
       /* #@range_end(expect_assertion) */
       next();
-    });
-  });
-  // ### 単体テストの実践
-  describe('単体テストの実践', () => {
-    it('add, multiply, exponential関数再び', (next) => {
-      var succ = (n) => {
-        return n + 1;
-      };
-      var prev = (n) => {
-        return n - 1;
-      };
-      /* #@range_begin(arithmetic_again) */
-      var add = (x, y) => {
-        if(y < 1){
-          return x;
-        } else {
-          return add(succ(x), prev(y));
-        }
-      };
-      var times = (count, fun, arg, memo) => {
-        if(count > 1) {
-          return times(count-1, fun, arg, fun(memo,arg));
-        } else {
-          return fun(memo,arg);
-        }
-      };
-      var multiply = (n, m) => {
-        return times(m, add, n, 0);
-      };
-      var exponential = (n, m) => {
-        return times(m, multiply, n, 1);
-      };
-      /* #@range_end(arithmetic_again) */
-      /* #@range_begin(multiply_test_example) */
-      expect(
-        multiply(2, 3) // テストする式を書く
-      ).to.eql(
-        6             // 期待する値を書く
-      );
-      /* #@range_end(multiply_test_example) */
-      next();
-    });
-    describe('テストによるコードの改良', () => {
-      var succ = (n) => {
-        return n + 1;
-      };
-      var prev = (n) => {
-        return n - 1;
-      };
-      var add = (x, y) => {
-        if(y < 1){
-          return x;
-        } else {
-          return add(succ(x), prev(y));
-        }
-      };
-      var times = (count, fun, arg, memo) => {
-        if(count > 1) {
-          return times(count-1, fun, arg, fun(arg,memo));
-        } else {
-          return fun(arg,memo);
-        }
-      };
-      var multiply = (n, m) => {
-        return times(m, add, n, 0);
-      };
-      var exponential = (n, m) => {
-        return times(m, multiply, n, 1);
-      };
-      it('multiply関数が失敗する例', (next) => {
-        /* #@range_begin(multiply_failed_test) */
-        expect(
-          multiply(2, 3)
-        ).to.eql(
-          6
-        );
-        expect(
-          multiply(-2, 3)
-        ).to.not.eql(
-            -6  // -6になるはずが、-6ではない
-        );
-        expect(
-          multiply(2, -3)
-        ).to.not.eql(
-            -6 // -6になるはずが、-6ではない
-        );
-        expect(
-          multiply(-2, -3)
-        ).to.not.eql(
-          6 // 6になるはずが、6ではない
-        );
-        /* #@range_end(multiply_failed_test) */
-        next();
-      });
-      it('multiplyの改良後', (next) => {
-        var add = (x, y) => {
-          if(y === 0){
-            return x;
-          } else {
-            if(y < 0){
-              return add(prev(x), succ(y));
-            } else {
-              return add(succ(x), prev(y));
-            }
-          }
-        };
-        var times = (count, fun, arg, memo) => {
-          if(count > 1) {
-            return times(count-1, fun, arg, fun(memo,arg)); // times関数を再帰呼出し
-          } else {
-            return fun(memo, arg);
-          }
-        };
-        /* #@range_begin(multiply_improved) */
-        var subtract = (n, m) => {
-          return add(n, -m);
-        };
-        var multiply = (x, y) => {
-          if(y === 0) {
-            return 0;
-          } else if(y < 0) {
-            /* (0 - (x - (x - ... ))) */
-            return times(-y, subtract, x, 0); 
-          } else {
-            /* (0 + (x + (x + ... ))) */
-            return times(y, add, x, 0);       
-          }
-        };
-        /* #@range_end(multiply_improved) */
-        expect(
-          multiply(3, 0)
-        ).to.eql(
-          0
-        );
-        expect(
-          multiply(0, 3)
-        ).to.eql(
-          0
-        );
-        /* #@range_begin(multiply_improved_test) */
-        expect(
-          multiply(-2, -3)
-        ).to.eql(
-          6
-        );
-        expect(
-          multiply(2, -3)
-        ).to.eql(
-            -6
-        );
-        expect(
-          multiply(-2, 3)
-        ).to.eql(
-            -6
-        );
-        /* #@range_end(multiply_improved_test) */
-        next();
-      });
-    });
-    describe('add関数のリファクタリング', () => {
-      it('リファクタリング前', (next) => {
-        var succ = (n) => {
-          return n + 1;
-        };
-        var prev = (n) => {
-          return n - 1;
-        };
-        var add = (x, y) => { // add関数の定義
-          if(y < 1){
-            return x;
-          } else {
-            return add(succ(x), prev(y)); // add関数の再帰呼び出し
-          }
-        };
-        /* #@range_begin(add_failed_test) */
-        expect(
-          add(0, 2)
-        ).to.eql(
-          2
-        );
-        expect(
-          add(-1, 2)
-        ).to.eql(
-          1
-        );
-        expect(
-          add(1, -2)
-        ).to.not.eql(
-            -1 // -1 になるべきが、-1ではない
-        );
-        /* #@range_end(add_failed_test) */
-        next();
-      });
-      it('リファクタリング後', (next) => {
-        var succ = (n) => {
-          return n + 1;
-        };
-        var prev = (n) => {
-          return n - 1;
-        };
-        /* #@range_begin(add_improved) */
-        var add = (x, y) => {
-          if(y === 0){
-            return x;                       // yが0の場合
-          } else {
-            if(y < 0){
-              return add(prev(x), succ(y)); // yが負の場合
-            } else {
-              return add(succ(x), prev(y)); // yが正の場合
-            }
-          }
-        };
-        /* #@range_end(add_improved) */
-        /* #@range_begin(add_improved_test) */
-        expect(
-          add(-1, 2)
-        ).to.eql(
-          1
-        );
-        expect(
-          add(1, -2)
-        ).to.eql(
-            -1
-        );
-        expect(
-          add(-1, -2)
-        ).to.eql(
-            -3
-        );
-        /* #@range_end(add_improved_test) */
-        expect(
-          add(0, -2)
-        ).to.eql(
-            -2
-        );
-        expect(
-          add(-2, 0)
-        ).to.eql(
-            -2
-        );
-        expect(
-          add(0, 2)
-        ).to.eql(
-          2
-        );
-        expect(
-          add(0, 0)
-        ).to.eql(
-          0
-        );
-        next();
-      });
-    });
-    describe('multiply関数のリファクタリング', () => {
-      it('リファクタリング前', (next) => {
-        var succ = (n) => {
-          return n + 1;
-        };
-        var prev = (n) => {
-          return n - 1;
-        };
-        var add = (x, y) => {
-          if(y === 0){
-            return x;
-          } else {
-            if(y < 0){
-              return add(prev(x), succ(y));
-            } else {
-              return add(succ(x), prev(y));
-            }
-          }
-        };
-        var times = (count, fun, arg, memo) => {
-          if(count > 1) {
-            return times(count-1, fun, arg, fun(arg,memo)); // times関数を再帰呼出し
-          } else {
-            return fun(arg,memo);
-          }
-        };
-        var multiply = (n, m) => {
-          return times(m, add, n, 0); // 2番目の引数にadd関数を渡している
-        };
-        expect(
-          multiply(2, 3)
-        ).to.eql(
-          6
-        );
-        expect(
-          multiply(-2, 3)
-        ).to.eql(
-            -6
-        );
-        expect(
-          multiply(-2, -3)
-        ).to.not.eql(
-          6
-        );
-        expect(
-          multiply(2, -3)
-        ).to.not.eql(
-            -6
-        );
-        next();
-      });
-      it('リファクタリング後', (next) => {
-        var succ = (n) => {
-          return n + 1;
-        };
-        var prev = (n) => {
-          return n - 1;
-        };
-        var add = (x, y) => {
-          if(y === 0){
-            return x;
-          } else {
-            if(y < 0){
-              return add(prev(x), succ(y));
-            } else {
-              return add(succ(x), prev(y));
-            }
-          }
-        };
-        var subtract = (n, m) => {
-          return add(n, -m);
-        };
-        var times = (count, fun, arg, memo) => {
-          if(count > 1) {
-            return times(count-1, fun, arg, fun(memo,arg)); // times関数を再帰呼出し
-          } else {
-            return fun(memo, arg);
-          }
-        };
-        var multiply = (n, m) => {
-          if(m === 0) {
-            return 0;
-          } else {
-            if(m < 0) {
-              return times(-m, subtract, n, 0);
-            } else {
-              return times(m, add, n, 0);
-            }
-          }
-        };
-        expect(
-          multiply(3, 0)
-        ).to.eql(
-          0
-        );
-        expect(
-          multiply(0, 3)
-        ).to.eql(
-          0
-        );
-        /* -2 * -3 = ((0 - (-2)) - (-2)) - (-2) */
-        expect(
-          multiply(-2, -3)
-        ).to.eql(
-          6
-        );
-        /* 2 * -3 = ((0 - 2) - 2) -2 */
-        expect(
-          multiply(2, -3)
-        ).to.eql(
-            -6
-        );
-        expect(
-          multiply(2, 3)
-        ).to.eql(
-          6
-        );
-        expect(
-          multiply(-2, 3)
-        ).to.eql(
-            -6
-        );
-        next();
-      });
     });
   });
 });

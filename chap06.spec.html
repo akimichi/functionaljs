@@ -73,49 +73,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'関数の基本'</span>, () =&gt; {
-  <span class="hljs-keyword">var</span> seq = {
-    match: (data, pattern) =&gt; {
-      <span class="hljs-keyword">return</span> data(pattern);
-    },
-    empty: (_) =&gt; {
-      <span class="hljs-keyword">return</span> (pattern) =&gt; {
-        <span class="hljs-keyword">return</span> pattern.empty();
-      };
-    },
-    cons: (value, list) =&gt; {
-      <span class="hljs-keyword">return</span> (pattern) =&gt; {
-        <span class="hljs-keyword">return</span> pattern.cons(value, list);
-      };
-    },
-    isEmpty: (list) =&gt; {
-      <span class="hljs-keyword">return</span> match(list, { <span class="hljs-comment">// match関数で分岐する</span>
-        empty: <span class="hljs-literal">true</span>,
-        cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-        }
-      });
-    },
-    head: (list) =&gt; {
-      <span class="hljs-keyword">return</span> match(list, {
-        empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
-        cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> head;
-        }
-      });
-    },
-    tail: (list) =&gt; {
-      <span class="hljs-keyword">return</span> match(list, {
-        empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
-        cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> tail;
-        }
-      });
-    }
-  };
-  <span class="hljs-keyword">var</span> infiniteLoop = (_) =&gt; {
-    <span class="hljs-keyword">return</span> infiniteLoop(_);
-  };</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'関数の基本'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -126,7 +84,49 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h3 id="-">関数の定義</h3>
+              <p>var seq = {
+  match: (data, pattern) =&gt; {
+    return data(pattern);
+  },
+  empty: (<em>) =&gt; {
+    return (pattern) =&gt; {
+      return pattern.empty();
+    };
+  },
+  cons: (value, list) =&gt; {
+    return (pattern) =&gt; {
+      return pattern.cons(value, list);
+    };
+  },
+  isEmpty: (list) =&gt; {
+    return match(list, { // match関数で分岐する
+      empty: true,
+      cons: (head, tail) =&gt; { // headとtailにそれぞれ先頭要素、末尾要素が入る
+        return false;
+      }
+    });
+  },
+  head: (list) =&gt; {
+    return match(list, {
+      empty: null, // 空のリストには先頭要素はありません
+      cons: (head, tail) =&gt; {
+        return head;
+      }
+    });
+  },
+  tail: (list) =&gt; {
+    return match(list, {
+      empty: null,  // 空のリストには末尾要素はありません
+      cons: (head, tail) =&gt; {
+        return tail;
+      }
+    });
+  }
+};
+var infiniteLoop = (</em>) =&gt; {
+  return infiniteLoop(_);
+};</p>
+<h3 id="-">関数の定義</h3>
 
             </div>
             

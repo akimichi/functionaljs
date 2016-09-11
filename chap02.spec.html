@@ -1538,11 +1538,31 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
-              <h4 id="-">遅延評価によるストリーム</h4>
+              <h4 id="-">評価戦略の種類</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'遅延評価によるストリーム'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'評価戦略の種類'</span>, () =&gt; {
+          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+            <span class="hljs-keyword">return</span> (array) =&gt; {
+              <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
+                <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
+              },[]); 
+            };
+          };
+          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
+              <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
+            },<span class="hljs-number">0</span>); 
+          };
+          <span class="hljs-keyword">var</span> constant = (any) =&gt; {
+            <span class="hljs-keyword">return</span> (_) =&gt; {
+              <span class="hljs-keyword">return</span> any;
+            };
+          };
+          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
+          <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));
+          expect(</pre></div></div>
             
         </li>
         
@@ -1552,6 +1572,124 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>正格評価の例</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(strict_evaluation) */</span>
+            length([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>+<span class="hljs-number">1</span>])
+            <span class="hljs-comment">/* #@range_end(strict_evaluation) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(strict_evaluation_result) */</span>
+            <span class="hljs-number">2</span>
+            <span class="hljs-comment">/* #@range_end(strict_evaluation_result) */</span>
+          );
+          expect(</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>遅延評価の例</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(lazy_evaluation) */</span>
+            length([<span class="hljs-number">1</span>,(_) =&gt; {
+                         <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+<span class="hljs-number">1</span>; 
+                   }])
+            <span class="hljs-comment">/* #@range_end(lazy_evaluation) */</span>
+          ).to.eql(
+            <span class="hljs-comment">/* #@range_begin(lazy_evaluation_result) */</span>
+            <span class="hljs-number">2</span>
+            <span class="hljs-comment">/* #@range_end(lazy_evaluation_result) */</span>
+          );
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <h4 id="-">遅延評価によるストリーム</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'遅延評価によるストリーム'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <p>ストリームの例</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'ストリームの例'</span>, (next) =&gt; {
+            <span class="hljs-comment">/* #@range_begin(stream_example) */</span>
+            <span class="hljs-keyword">var</span> aStream = [<span class="hljs-number">1</span>, (_) =&gt; { <span class="hljs-comment">// 後尾は無名関数で表現する</span>
+              <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;
+            }];
+            <span class="hljs-comment">/* #@range_end(stream_example) */</span>
+            expect(
+              <span class="hljs-comment">/* #@range_begin(stream_head) */</span>
+              aStream[<span class="hljs-number">0</span>] <span class="hljs-comment">// ストリームの先頭要素を取得する</span>
+              <span class="hljs-comment">/* #@range_end(stream_head) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(stream_head_result) */</span>
+              <span class="hljs-number">1</span>
+              <span class="hljs-comment">/* #@range_end(stream_head_result) */</span>
+            );
+            expect(
+              <span class="hljs-comment">/* #@range_begin(stream_tail) */</span>
+              aStream[<span class="hljs-number">1</span>]() <span class="hljs-comment">// 関数適用でストリームの後尾を取り出す</span>
+              <span class="hljs-comment">/* #@range_end(stream_tail) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(stream_tail_result) */</span>
+              <span class="hljs-number">2</span>
+              <span class="hljs-comment">/* #@range_end(stream_tail_result) */</span>
+            );
+            <span class="hljs-comment">/* #@range_begin(stream_ones) */</span>
+            <span class="hljs-keyword">var</span> ones = [<span class="hljs-number">1</span>, (_) =&gt; {
+              <span class="hljs-keyword">return</span> ones;
+            }];
+            <span class="hljs-comment">/* #@range_end(stream_ones) */</span>
+            expect(
+              ones[<span class="hljs-number">0</span>]
+            ).to.eql(
+              <span class="hljs-number">1</span>
+            );
+            expect(
+              ones[<span class="hljs-number">1</span>]()[<span class="hljs-number">0</span>]
+            ).to.eql(
+              <span class="hljs-number">1</span>
+            );
+            next();
+          });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>無限ストリームの例</p>
 
@@ -1570,11 +1708,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-50">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>無限の偶数列</p>
 
@@ -1591,11 +1729,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-51">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -1606,11 +1744,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-52">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -1625,11 +1763,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-53">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>filter関数</p>
 
@@ -1685,11 +1823,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-54">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>無限の整数列</p>
 
@@ -1709,11 +1847,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-55">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>無限の偶数列を作る</p>
 
@@ -1767,11 +1905,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-56">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>elemAt関数</p>
 
@@ -1793,11 +1931,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-57">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>3番目の偶数を求める</p>
 
@@ -1820,11 +1958,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-58">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>filter関数で無限の偶数列を作る</p>
 
@@ -1852,94 +1990,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-59">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
-              </div>
-              <h4 id="-">評価戦略の種類</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'評価戦略の種類'</span>, () =&gt; {
-          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-            <span class="hljs-keyword">return</span> (array) =&gt; {
-              <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-                <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
-              },[]); 
-            };
-          };
-          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
-              <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
-            },<span class="hljs-number">0</span>); 
-          };
-          <span class="hljs-keyword">var</span> constant = (any) =&gt; {
-            <span class="hljs-keyword">return</span> (_) =&gt; {
-              <span class="hljs-keyword">return</span> any;
-            };
-          };
-          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
-          <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));
-          expect(</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-60">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
-              </div>
-              <p>正格評価の例</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(strict_evaluation) */</span>
-            length([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>+<span class="hljs-number">1</span>])
-            <span class="hljs-comment">/* #@range_end(strict_evaluation) */</span>
-          ).to.eql(
-            <span class="hljs-comment">/* #@range_begin(strict_evaluation_result) */</span>
-            <span class="hljs-number">2</span>
-            <span class="hljs-comment">/* #@range_end(strict_evaluation_result) */</span>
-          );
-          expect(</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-61">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
-              </div>
-              <p>遅延評価の例</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(lazy_evaluation) */</span>
-            length([<span class="hljs-number">1</span>,(_) =&gt; {
-                         <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+<span class="hljs-number">1</span>; 
-                   }])
-            <span class="hljs-comment">/* #@range_end(lazy_evaluation) */</span>
-          ).to.eql(
-            <span class="hljs-comment">/* #@range_begin(lazy_evaluation_result) */</span>
-            <span class="hljs-number">2</span>
-            <span class="hljs-comment">/* #@range_end(lazy_evaluation_result) */</span>
-          );
-        });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-62">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>配列に対するelemAt関数</p>
 
@@ -1972,11 +2027,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-63">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>4番目の偶数を求める</p>
 
@@ -1991,63 +2046,6 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
             <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray_result) */</span>
           );
           next();
-        });
-        describe(<span class="hljs-string">'ストリーム'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-64">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
-              </div>
-              <p>ストリームの例</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'ストリームの例'</span>, (next) =&gt; {
-            <span class="hljs-comment">/* #@range_begin(stream_example) */</span>
-            <span class="hljs-keyword">var</span> aStream = [<span class="hljs-number">1</span>, (_) =&gt; { <span class="hljs-comment">// 後尾は無名関数で表現する</span>
-              <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;
-            }];
-            <span class="hljs-comment">/* #@range_end(stream_example) */</span>
-            expect(
-              <span class="hljs-comment">/* #@range_begin(stream_head) */</span>
-              aStream[<span class="hljs-number">0</span>] <span class="hljs-comment">// ストリームの先頭要素を取得する</span>
-              <span class="hljs-comment">/* #@range_end(stream_head) */</span>
-            ).to.eql(
-              <span class="hljs-comment">/* #@range_begin(stream_head_result) */</span>
-              <span class="hljs-number">1</span>
-              <span class="hljs-comment">/* #@range_end(stream_head_result) */</span>
-            );
-            expect(
-              <span class="hljs-comment">/* #@range_begin(stream_tail) */</span>
-              aStream[<span class="hljs-number">1</span>]() <span class="hljs-comment">// 関数適用でストリームの後尾を取り出す</span>
-              <span class="hljs-comment">/* #@range_end(stream_tail) */</span>
-            ).to.eql(
-              <span class="hljs-comment">/* #@range_begin(stream_tail_result) */</span>
-              <span class="hljs-number">2</span>
-              <span class="hljs-comment">/* #@range_end(stream_tail_result) */</span>
-            );
-            <span class="hljs-comment">/* #@range_begin(stream_ones) */</span>
-            <span class="hljs-keyword">var</span> ones = [<span class="hljs-number">1</span>, (_) =&gt; {
-              <span class="hljs-keyword">return</span> ones;
-            }];
-            <span class="hljs-comment">/* #@range_end(stream_ones) */</span>
-            expect(
-              ones[<span class="hljs-number">0</span>]
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            expect(
-              ones[<span class="hljs-number">1</span>]()[<span class="hljs-number">0</span>]
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            next();
-          });
         });
       });
     });
@@ -2144,8 +2142,7 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
             score: <span class="hljs-number">20</span>
           };
           next();
-        });
-        it(<span class="hljs-string">"参照透過性のあるコードのテスト"</span>, (next) =&gt; {</pre></div></div>
+        });</pre></div></div>
             
         </li>
         
@@ -2160,7 +2157,8 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(winner_without_sideeffect) */</span>
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">"winner関数の分離"</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(winner_without_sideeffect) */</span>
           <span class="hljs-comment">/* 勝者を判定する */</span>
           <span class="hljs-keyword">var</span> judge = (playerL, playerR) =&gt; {
             <span class="hljs-keyword">if</span>(playerL.score &gt; playerR.score) {
@@ -2216,7 +2214,9 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
           <span class="hljs-comment">/* #@range_end(announce_winner) */</span>
           next();
         });
-      });</pre></div></div>
+      });
+    });
+  });</pre></div></div>
             
         </li>
         
@@ -2227,35 +2227,6 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
-              <p>it(‘数学モジュールの例’, (next) =&gt; {
-  var math = {
-    PI: 3.14
-  };
-  var area = (radius) =&gt; {
-    return radius <em> radius </em> math.PI;
-  };
-  expect(
-    area(1)
-  ).to.eql(
-    3.14
-  );
-  next();
-});</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    });
-  });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-71">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
-              </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
             </div>
@@ -2265,11 +2236,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-72">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -2359,11 +2330,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-73">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>プロパティテストのための関数</p>
 
@@ -2413,11 +2384,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-74">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p>succ関数のプロパティテスト</p>
 
@@ -2443,11 +2414,11 @@ it(‘Date.now関数は参照透明性を持たない’, (next) =&gt; {
         </li>
         
         
-        <li id="section-75">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

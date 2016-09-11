@@ -1201,67 +1201,7 @@
           <span class="hljs-keyword">return</span> tail;
         }
       });
-    };
-    it(<span class="hljs-string">'蓄積変数を持つlength関数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(recursive_length) */</span>
-      <span class="hljs-keyword">var</span> length = (list, accumulator) =&gt; {
-        <span class="hljs-keyword">return</span> match(list, {
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> accumulator;
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> length(tail, accumulator + <span class="hljs-number">1</span>); <span class="hljs-comment">// length関数を再帰的に呼び出す</span>
-          }
-        });
-      };
-      <span class="hljs-comment">/************************ テスト ************************/</span>
-      expect(
-        length(empty(), <span class="hljs-number">0</span>)                        <span class="hljs-comment">// []の長さは0</span>
-      ).to.eql(
-        <span class="hljs-number">0</span>
-      );
-      expect(
-        length(cons(<span class="hljs-number">1</span>,empty()), <span class="hljs-number">0</span>)                <span class="hljs-comment">// [1]の長さは1</span>
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      expect(
-        length(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))),<span class="hljs-number">0</span>) <span class="hljs-comment">// [1,2,3]の長さは3</span>
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(recursive_length) */</span>
-      <span class="hljs-comment">/* #@range_begin(recursive_sum) */</span>
-      <span class="hljs-keyword">var</span> sum = (alist, accumulator) =&gt; {
-        <span class="hljs-keyword">return</span> match(alist, {
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> accumulator;
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-comment">/* sumの再帰呼び出し */</span>
-            <span class="hljs-keyword">return</span> sum(tail, accumulator + head); 
-          }
-        });
-      };
-      <span class="hljs-comment">/* #@range_end(recursive_sum) */</span>
-      <span class="hljs-comment">/**** テスト ****/</span>
-      expect(
-        sum(empty(), <span class="hljs-number">0</span>)
-      ).to.eql(
-        <span class="hljs-number">0</span>
-      );
-      expect(
-        sum(cons(<span class="hljs-number">1</span>,empty()), <span class="hljs-number">0</span>)
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      expect(
-        sum(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,cons(<span class="hljs-number">3</span>,empty()))),<span class="hljs-number">0</span>)
-      ).to.eql(
-        <span class="hljs-number">6</span>
-      );
-      next();
-    });</pre></div></div>
+    };</pre></div></div>
             
         </li>
         

@@ -603,24 +603,6 @@
     );
     <span class="hljs-comment">/* #@range_end(exponential_uncurried) */</span>
     next();
-  });
-  it(<span class="hljs-string">'カリー化された関数の単純な例'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(simple_curried_function) */</span>
-    <span class="hljs-keyword">var</span> add = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">x,y</span>) </span>{
-      <span class="hljs-keyword">return</span> x + y ;
-    };
-    <span class="hljs-keyword">var</span> addCurried =  (x) =&gt; {
-      <span class="hljs-keyword">return</span> (y) =&gt; {
-        <span class="hljs-keyword">return</span> x + y ;
-      };
-    };
-    expect(
-      add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
-    ).to.eql(
-      addCurried(<span class="hljs-number">1</span>)(<span class="hljs-number">2</span>)
-    );
-    <span class="hljs-comment">/* #@range_end(simple_curried_function) */</span>
-    next();
   });</pre></div></div>
             
         </li>
@@ -692,57 +674,6 @@
     expect(add(one)(two)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">3</span>);
     expect(add(two)(three)(counter(<span class="hljs-number">0</span>))()).to.eql(<span class="hljs-number">5</span>);
     next();
-  });
-  describe(<span class="hljs-string">'通常の関数とカリー化関数の相互変換'</span>, () =&gt; {
-    it(<span class="hljs-string">'通常の関数をカリー化する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(curry_function_definition) */</span>
-      <span class="hljs-comment">/* カリー化する関数 */</span>
-      <span class="hljs-keyword">var</span> curry = (fun) =&gt; {
-        <span class="hljs-keyword">return</span> (x,optionalY) =&gt; {
-          <span class="hljs-keyword">if</span>(<span class="hljs-built_in">arguments</span>.length &gt; <span class="hljs-number">1</span>){ <span class="hljs-comment">// 引数が2個以上の場合</span>
-            <span class="hljs-keyword">return</span> fun(x, optionalY);
-          } <span class="hljs-keyword">else</span> {                  <span class="hljs-comment">// 引数が1個の場合</span>
-            <span class="hljs-keyword">return</span> (y) =&gt;  {
-              <span class="hljs-keyword">return</span> fun(x, y);
-            };
-          }
-        };
-      };
-      <span class="hljs-keyword">var</span> add = (x,y) =&gt; {
-        <span class="hljs-keyword">return</span> x + y;
-      };
-      expect(
-        curry(add)(<span class="hljs-number">1</span>)(<span class="hljs-number">2</span>)  <span class="hljs-comment">// add関数がカリー化されている</span>
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(curry_function_definition) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'カリー化を通常の関数に変換する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(uncurry_function_definition) */</span>
-      <span class="hljs-keyword">var</span> uncurry = (fun) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-          <span class="hljs-keyword">var</span> result = fun;
-          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">arguments</span>.length; i++)
-            result = result(<span class="hljs-built_in">arguments</span>[i]);
-          <span class="hljs-keyword">return</span> result;
-        };
-      };
-      <span class="hljs-keyword">var</span> addCurried = (x) =&gt; {
-        <span class="hljs-keyword">return</span> (y) =&gt; {
-          <span class="hljs-keyword">return</span> x + y;
-        };
-      };
-      <span class="hljs-keyword">var</span> add = uncurry(addCurried);
-      expect(
-        add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(uncurry_function_definition) */</span>
-      next();
-    });
   });
 });</pre></div></div>
             
@@ -1612,67 +1543,6 @@
           <span class="hljs-number">1</span>
         );
         <span class="hljs-comment">/* #@range_end(another_counter) */</span>
-        next();
-      });
-      describe(<span class="hljs-string">'関数とデータの類似性'</span>, (next) =&gt; {
-        it(<span class="hljs-string">'関数とリストの類似性'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
-            <span class="hljs-keyword">return</span> data(pattern);
-          };
-          <span class="hljs-keyword">var</span> empty = (pattern) =&gt; {
-            <span class="hljs-keyword">return</span> pattern.empty;
-          };
-          <span class="hljs-keyword">var</span> cons = (value, list) =&gt; {
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              <span class="hljs-keyword">return</span> pattern.cons(value, list);
-            };
-          };
-          <span class="hljs-keyword">var</span> isEmpty = (list) =&gt; {
-            <span class="hljs-keyword">return</span> match(list, { <span class="hljs-comment">// match関数で分岐する</span>
-              empty: <span class="hljs-literal">true</span>,
-              cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
-                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-              },
-            });
-          };
-          <span class="hljs-keyword">var</span> head = (list) =&gt; {
-            <span class="hljs-keyword">return</span> match(list, {
-              empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
-              cons: (head, tail) =&gt; {
-                <span class="hljs-keyword">return</span> head;
-              },
-            });
-          };
-          <span class="hljs-keyword">var</span> tail = (list) =&gt; {
-            <span class="hljs-keyword">return</span> match(list, {
-              empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
-              cons: (head, tail) =&gt; {
-                <span class="hljs-keyword">return</span> tail;
-              },
-            });
-          };
-          <span class="hljs-comment">/*
-           ~~~haskell
-           list2fct :: Eq a =&gt; [(a,b)] -&gt; a -&gt; b
-           list2fct [] _ = error "function not total"
-           list2fct ((u,v):uvs) x | x == u = v
-           | otherwise = list2fct uvs x
-           fct2list :: (a -&gt; b) -&gt; [a] -&gt; [(a,b)]
-           fct2list f xs = [ (x, f x) | x &lt;- xs ]
-           ~~~
-           */</span>
-          next();
-        });
-      });
-      it(<span class="hljs-string">'クロージャーの変数バインディング'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(free_variable_in_closure) */</span>
-        <span class="hljs-keyword">var</span> outerFunction = (outerArgument) =&gt; {
-          <span class="hljs-keyword">var</span> innerFunction = (innerArgument) =&gt; {
-            <span class="hljs-keyword">return</span> outerArgument + innerArgument;
-          };
-          <span class="hljs-keyword">return</span> innerFunction;
-        };
-        <span class="hljs-comment">/* #@range_end(free_variable_in_closure) */</span>
         next();
       });</pre></div></div>
             
@@ -4337,25 +4207,7 @@
           };
         }
       };
-      <span class="hljs-comment">/* #@range_end(maybe_monad_helper) */</span>
-      it(<span class="hljs-string">"map id == id"</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(maybe_monad_test) */</span>
-        <span class="hljs-keyword">var</span> justOne = maybe.just(<span class="hljs-number">1</span>);
-        expect(
-          MAYBE.isEqual(MAYBE.map(justOne)(id),
-                        id(justOne))
-        ).to.be(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          MAYBE.isEqual(MAYBE.map(maybe.nothing())(id),
-                        id(maybe.nothing()))
-        ).to.be(
-          <span class="hljs-literal">true</span>
-        );
-        <span class="hljs-comment">/* #@range_end(maybe_monad_test) */</span>
-        next();
-      });</pre></div></div>
+      <span class="hljs-comment">/* #@range_end(maybe_monad_helper) */</span></pre></div></div>
             
         </li>
         

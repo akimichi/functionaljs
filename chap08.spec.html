@@ -866,71 +866,21 @@ closure()
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'ログ出力評価器'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-26">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <p>「環境」モジュール</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> env = {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>empty:: STRING =&gt; VALUE </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    empty: (variable) =&gt; {                        <span class="hljs-comment">// 空の環境を作る</span>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'ログ出力評価器'</span>, () =&gt; {
+  <span class="hljs-comment">/* 「環境」モジュール */</span>
+  <span class="hljs-keyword">var</span> env = {
+    <span class="hljs-comment">/* empty:: STRING =&gt; VALUE  */</span>
+    empty: (variable) =&gt; {       
       <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>lookup:: (STRING, ENV) =&gt; VALUE</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    lookup : (name, environment) =&gt; {       <span class="hljs-comment">// 変数名に対応する値を環境から取りだす</span>
+    },
+    <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
+    <span class="hljs-comment">/* lookup:: (STRING, ENV) =&gt; VALUE */</span>
+    lookup : (name, environment) =&gt; {       
       <span class="hljs-keyword">return</span> environment(name);
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>extend:: (STRING, VALUE, ENV) =&gt; ENV </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    extend: (identifier, value, environment) =&gt; { <span class="hljs-comment">// 環境を拡張する</span>
+    },
+    <span class="hljs-comment">/* 環境を拡張する */</span>
+    <span class="hljs-comment">/* extend:: (STRING, VALUE, ENV) =&gt; ENV */</span>
+    extend: (identifier, value, environment) =&gt; { 
       <span class="hljs-keyword">return</span> (queryIdentifier) =&gt; {
         <span class="hljs-keyword">if</span>(identifier === queryIdentifier) {
           <span class="hljs-keyword">return</span> value;
@@ -945,11 +895,11 @@ closure()
         </li>
         
         
-        <li id="section-30">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>ログ出力評価器の式</p>
 
@@ -1005,11 +955,11 @@ closure()
         </li>
         
         
-        <li id="section-31">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>LOGモナドの定義</p>
 
@@ -1022,11 +972,11 @@ closure()
         </li>
         
         
-        <li id="section-32">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>unit:: VALUE =&gt; LOG[VALUE]</p>
 
@@ -1040,11 +990,11 @@ closure()
         </li>
         
         
-        <li id="section-33">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>flatMap:: LOG[T] =&gt; FUN[T =&gt; LOG[T]] =&gt; LOG[T]</p>
 
@@ -1069,11 +1019,11 @@ closure()
         </li>
         
         
-        <li id="section-34">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>output:: VALUE =&gt; LOG[()]</p>
 
@@ -1090,11 +1040,11 @@ closure()
         </li>
         
         
-        <li id="section-35">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>LOGモナド評価器</p>
 
@@ -1105,11 +1055,11 @@ closure()
         </li>
         
         
-        <li id="section-36">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>evaluate:: (EXP, ENV) =&gt; LOG[VALUE]</p>
 
@@ -1235,11 +1185,11 @@ closure()
         </li>
         
         
-        <li id="section-37">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>ログ出力評価器による評価戦略の確認</p>
 
@@ -1274,11 +1224,11 @@ closure()
         </li>
         
         
-        <li id="section-38">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <pre><code>\x.add(x,x)(<span class="hljs-number">2</span>)
 </code></pre>
@@ -1304,11 +1254,11 @@ closure()
         </li>
         
         
-        <li id="section-39">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <pre><code>(\x.
    \y.
@@ -1334,11 +1284,11 @@ closure()
         </li>
         
         
-        <li id="section-40">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> </p>
 

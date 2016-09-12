@@ -233,7 +233,7 @@
     <span class="hljs-comment">/* #@range_end(function_abstraction_example) */</span>
     next();
   });
-  describe(<span class="hljs-string">'関数抽象の例としての高階関数'</span>, () =&gt; {
+  describe(<span class="hljs-string">'高階関数による抽象化'</span>, () =&gt; {
     <span class="hljs-keyword">var</span> anArray = [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>];</pre></div></div>
             
         </li>
@@ -357,10 +357,17 @@
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>環境という仕組み</p>
+<ol>
+<li>空の環境</li>
+<li>環境に変数と値の対応を与えて、辞書を拡張する操作</li>
+<li>変数を指定して、環境に記憶されている値を取り出す操作</li>
+</ol>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'環境という仕組み'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>
+  it(<span class="hljs-string">'環境という仕組み'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* merge関数は、引数にわたされた2つのオブジェクトを併合する */</span>
     <span class="hljs-keyword">var</span> merge = (obj1, obj2) =&gt; {
       <span class="hljs-keyword">var</span> mergedObject = {};
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj1) { mergedObject[attrname] = obj1[attrname]; }

@@ -170,7 +170,6 @@
       });
     };
   },
-  <span class="hljs-comment">/* #@range_begin(list_reverse) */</span>
   reverse: (alist) =&gt; {
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">var</span> reverseAux = (alist, accumulator) =&gt; {
@@ -185,7 +184,6 @@
     };
     <span class="hljs-keyword">return</span> reverseAux(alist, list.empty());
   },
-  <span class="hljs-comment">/* #@range_end(list_reverse) */</span>
   toArray: (alist) =&gt; {
     <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
       <span class="hljs-keyword">return</span> match(alist, {
@@ -745,82 +743,6 @@
       <span class="hljs-comment">/* #@range_end(uncurry_function_definition) */</span>
       next();
     });
-  });
-  it(<span class="hljs-string">'リストの逆順を求める'</span>, (next) =&gt; {
-    <span class="hljs-keyword">var</span> list = {
-      match: (data, pattern) =&gt; {
-        <span class="hljs-keyword">return</span> data.call(list, pattern);
-      },
-      empty: (pattern) =&gt; {
-        <span class="hljs-keyword">return</span> pattern.empty();
-      },
-      cons: (value, list) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.cons(value, list);
-        };
-      },
-      isEmpty: (list) =&gt; {
-        <span class="hljs-keyword">return</span> match(list, { <span class="hljs-comment">// match関数で分岐する</span>
-          empty: <span class="hljs-literal">true</span>,
-          cons: (head, tail) =&gt; { <span class="hljs-comment">// headとtailにそれぞれ先頭要素、末尾要素が入る</span>
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        });
-      },
-      head: (list) =&gt; {
-        <span class="hljs-keyword">return</span> match(list, {
-          empty: <span class="hljs-literal">null</span>, <span class="hljs-comment">// 空のリストには先頭要素はありません</span>
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> head;
-          }
-        });
-      },
-      tail: (list) =&gt; {
-        <span class="hljs-keyword">return</span> match(list, {
-          empty: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// 空のリストには末尾要素はありません</span>
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> tail;
-          }
-        });
-      }
-    };
-    <span class="hljs-comment">/* #@range_begin(list_reverse) */</span>
-    <span class="hljs-keyword">var</span> reverse = (alist) =&gt; {
-      <span class="hljs-keyword">return</span> (accumulator) =&gt; {
-        <span class="hljs-keyword">return</span> list.match(alist, {
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> accumulator;  <span class="hljs-comment">// 空のリストの場合は終了</span>
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> reverse(tail)(list.cons(head, accumulator));
-          }
-        });
-      };
-    };
-    <span class="hljs-comment">/* toArray:: LIST -&gt; ARRAY -&gt; ARRAY */</span>
-    <span class="hljs-keyword">var</span> toArray = (alist) =&gt; {
-      <span class="hljs-keyword">var</span> toArrayAux = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> (accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> list.match(alist, {
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator;  <span class="hljs-comment">// 空のリストの場合は終了</span>
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> toArrayAux(tail)(accumulator.concat(head));
-            }
-          });
-        };
-      };
-      <span class="hljs-keyword">return</span> toArrayAux(alist)([]);
-    };
-    <span class="hljs-comment">/**************** テスト ****************/</span>
-    expect(
-      toArray(reverse(list.cons(<span class="hljs-number">1</span>, list.cons(<span class="hljs-number">2</span>,list.empty)))(list.empty))
-    ).to.eql(
-      [<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]
-    );
-    <span class="hljs-comment">/* #@range_end(list_reverse) */</span>
-    next();
   });
 });</pre></div></div>
             

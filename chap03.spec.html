@@ -360,8 +360,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-  it(<span class="hljs-string">'環境という仕組み'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'環境という仕組み'</span>, (next) =&gt; {
     <span class="hljs-comment">/* merge関数は、引数にわたされた2つのオブジェクトを併合する */</span>
     <span class="hljs-keyword">var</span> merge = (obj1, obj2) =&gt; {
       <span class="hljs-keyword">var</span> mergedObject = {};
@@ -383,9 +382,9 @@
   <dt>empty</dt>
   <dd>空の環境</dd>
   <dt>extendEnv </dt>
-  <dd>環境に変数と値の対応を与えて、辞書を拡張する操作</dd>
+  <dd>環境に変数と値の対応を与えて、辞書を拡張する</dd>
   <dt>lookupEnv</dt>
-  <dd>変数を指定して、環境に記憶されている値を取り出す操作</dd>
+  <dd>変数を指定して、環境に記憶されている値を取り出す</dd>
 </dl>
 
             </div>
@@ -467,15 +466,43 @@ b
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'単体テストの仕組み'</span>, () =&gt; {
-    it(<span class="hljs-string">'assertによる表明'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'単体テストの仕組み'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>assertによる表明</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'assertによる表明'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(assert_assertion) */</span>
       <span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">"assert"</span>);
       assert.equal(<span class="hljs-number">1</span> + <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
       <span class="hljs-comment">/* #@range_end(assert_assertion) */</span>
       next();
-    });
-    it(<span class="hljs-string">'expectによる表明'</span>, (next) =&gt; {
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>expectによる表明</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'expectによる表明'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(expect_assertion) */</span>
       <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
       expect(
@@ -492,11 +519,11 @@ b
         </li>
         
         
-        <li id="section-19">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap04.spec.html">次章に移る</a> </p>
 

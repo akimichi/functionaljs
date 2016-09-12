@@ -336,8 +336,7 @@
             }
           }
           <span class="hljs-comment">/* ##@range_end(object_can_embed_object_nested) */</span>
-        };
-        <span class="hljs-comment">/* hasOwnPropertyでプロパティの有無を調べる */</span></pre></div></div>
+        };</pre></div></div>
             
         </li>
         
@@ -364,6 +363,7 @@
           <span class="hljs-string">"Alan Turing"</span>
         );
         <span class="hljs-comment">/* #@range_end(object_access) */</span>
+        <span class="hljs-comment">/* hasOwnPropertyでプロパティの有無を調べる */</span>
         expect(
           addressbook.hasOwnProperty(<span class="hljs-string">"No1"</span>)
         ).to.eql(
@@ -374,46 +374,6 @@
         ).to.eql(
           <span class="hljs-literal">false</span>
         );
-        next();
-      });
-      it(<span class="hljs-string">'オブジェクト型によるアドレス帳の表現'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(addressbook_example) */</span>
-        <span class="hljs-keyword">var</span> addressbook = {
-          BMI: (weight, height) =&gt; {
-            expect(weight).to.be.a(<span class="hljs-string">'number'</span>);
-            expect(height).to.be.a(<span class="hljs-string">'number'</span>);
-            <span class="hljs-keyword">return</span> weight / ((height / <span class="hljs-number">100.0</span>) * (height / <span class="hljs-number">100.0</span>));
-          },
-          No1: {
-            name: <span class="hljs-string">"Alan Turing"</span>,
-            birthDay: <span class="hljs-string">"1912/6/23"</span>,
-            weight: <span class="hljs-number">62</span>,
-            height: <span class="hljs-number">175</span>
-          },
-          No2: {
-            name: <span class="hljs-string">"Haskell Curry"</span>,
-            birthDay: <span class="hljs-string">"1900/9/12"</span>,
-            weight: <span class="hljs-number">62</span>,
-            height: <span class="hljs-number">180</span>
-          },
-          No3: {
-            name: <span class="hljs-string">"Alonzo Church"</span>,
-            birthDay: <span class="hljs-string">"1903/6/14"</span>,
-            weight: <span class="hljs-number">75</span>,
-            height: <span class="hljs-number">168</span>
-          }
-        };
-        expect(
-          addressbook.No1.name
-        ).to.eql(
-          <span class="hljs-string">"Alan Turing"</span>
-        );
-        expect(
-          addressbook.BMI(
-            addressbook.No1.weight,
-            addressbook.No1.height)
-        ).to.be.within(<span class="hljs-number">20.0</span>,<span class="hljs-number">21.0</span>); <span class="hljs-comment">// within(A,B) は値が AとBのあいだにはいっていることをチェックする</span>
-        <span class="hljs-comment">/* #@range_end(addressbook_example) */</span>
         next();
       });
     });

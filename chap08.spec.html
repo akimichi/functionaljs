@@ -967,40 +967,14 @@ closure()
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(logger_monad) */</span>
   <span class="hljs-comment">/* LOG[T] = PAIR[T, LIST[STRING]] */</span>
-  <span class="hljs-keyword">var</span> LOG = {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>unit:: VALUE =&gt; LOG[VALUE]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    unit: (value) =&gt; {
+  <span class="hljs-keyword">var</span> LOG = {
+    <span class="hljs-comment">/* unit:: VALUE =&gt; LOG[VALUE] */</span>
+    unit: (value) =&gt; {
       <span class="hljs-comment">/* 値とログのPair型を作る */</span>
       <span class="hljs-keyword">return</span> pair.cons(value, list.empty()); 
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>flatMap:: LOG[T] =&gt; FUN[T =&gt; LOG[T]] =&gt; LOG[T]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    flatMap: (instanceM) =&gt; {
+    },
+    <span class="hljs-comment">/* flatMap:: LOG[T] =&gt; FUN[T =&gt; LOG[T]] =&gt; LOG[T] */</span>
+    flatMap: (instanceM) =&gt; {
       <span class="hljs-keyword">return</span> (transform) =&gt; {
         <span class="hljs-keyword">return</span> pair.match(instanceM,{
           <span class="hljs-comment">/* Pair型に格納されている値の対を取り出す */</span>
@@ -1014,22 +988,9 @@ closure()
           }
         });
       };
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>output:: VALUE =&gt; LOG[()]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* 引数 value をログに格納する */</span>
+    },
+    <span class="hljs-comment">/* 引数 value をログに格納する */</span>
+    <span class="hljs-comment">/* output:: VALUE =&gt; LOG[()] */</span>
     output: (value) =&gt; {
       <span class="hljs-keyword">return</span> pair.cons(<span class="hljs-literal">null</span>, 
                        list.cons(<span class="hljs-built_in">String</span>(value), list.empty()));
@@ -1040,32 +1001,19 @@ closure()
         </li>
         
         
-        <li id="section-31">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>LOGモナド評価器</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(logger_monad_evaluator) */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>evaluate:: (EXP, ENV) =&gt; LOG[VALUE]</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> evaluate = (anExp, environment) =&gt; {
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* #@range_begin(logger_monad_evaluator) */</span>
+  <span class="hljs-comment">/* evaluate:: (EXP, ENV) =&gt; LOG[VALUE] */</span>
+  <span class="hljs-keyword">var</span> evaluate = (anExp, environment) =&gt; {
     <span class="hljs-keyword">return</span> exp.match(anExp,{
       <span class="hljs-comment">/* log式の評価 */</span>
       log: (anExp) =&gt; {
@@ -1185,11 +1133,11 @@ closure()
         </li>
         
         
-        <li id="section-33">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>ログ出力評価器による評価戦略の確認</p>
 
@@ -1224,11 +1172,11 @@ closure()
         </li>
         
         
-        <li id="section-34">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <pre><code>\x.add(x,x)(<span class="hljs-number">2</span>)
 </code></pre>
@@ -1254,11 +1202,11 @@ closure()
         </li>
         
         
-        <li id="section-35">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <pre><code>(\x.
    \y.
@@ -1284,11 +1232,11 @@ closure()
         </li>
         
         
-        <li id="section-36">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> </p>
 

@@ -294,8 +294,7 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
         next();
       });
     });
-  });
-});</pre></div></div>
+  });</pre></div></div>
             
         </li>
         
@@ -306,11 +305,11 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <h2 id="-">参照透過性</h2>
+              <h3 id="-">参照透過性</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透過性'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -321,11 +320,11 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h3 id="-">参照透明性が成立する場面</h3>
+              <h4 id="-">参照透明性が成立する場面</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'参照透明性が成立する場面'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'参照透明性が成立する場面'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -340,16 +339,16 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'値の参照透過性'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(number_has_referential_transparency) */</span>
-      expect(
-        <span class="hljs-number">2</span>
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      <span class="hljs-comment">/* #@range_end(number_has_referential_transparency) */</span>
-      next();
-    });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'値の参照透過性'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(number_has_referential_transparency) */</span>
+        expect(
+          <span class="hljs-number">2</span>
+        ).to.eql(
+          <span class="hljs-number">2</span>
+        );
+        <span class="hljs-comment">/* #@range_end(number_has_referential_transparency) */</span>
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -364,38 +363,38 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'変数の参照透明性'</span>, () =&gt; {
-      it(<span class="hljs-string">'変数が参照透明性を持つ場合'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(variable_is_referential_transparent) */</span>
-        <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-        expect(
-          x 
-        ).to.eql(
-          x
-        );
-        <span class="hljs-keyword">var</span> y = x;
-        expect(
-          y
-        ).to.eql(
-          <span class="hljs-number">1</span>
-        );
-        <span class="hljs-comment">/* #@range_end(variable_is_referential_transparent) */</span>
-        next();
-      });
-      it(<span class="hljs-string">'変数は参照透明性を持つとは限らない'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(variable_isnt_referential_transparent) */</span>
-        <span class="hljs-keyword">var</span> foo = <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">var</span> bar = foo;
-        foo = <span class="hljs-number">3</span>;
-        expect(
-          foo
-        ).to.not.eql(
-          bar
-        );
-        <span class="hljs-comment">/* #@range_end(variable_isnt_referential_transparent) */</span>
-        next();
-      });
-    });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'変数の参照透明性'</span>, () =&gt; {
+        it(<span class="hljs-string">'変数が参照透明性を持つ場合'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(variable_is_referential_transparent) */</span>
+          <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
+          expect(
+            x 
+          ).to.eql(
+            x
+          );
+          <span class="hljs-keyword">var</span> y = x;
+          expect(
+            y
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          <span class="hljs-comment">/* #@range_end(variable_is_referential_transparent) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'変数は参照透明性を持つとは限らない'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(variable_isnt_referential_transparent) */</span>
+          <span class="hljs-keyword">var</span> foo = <span class="hljs-number">2</span>;
+          <span class="hljs-keyword">var</span> bar = foo;
+          foo = <span class="hljs-number">3</span>;
+          expect(
+            foo
+          ).to.not.eql(
+            bar
+          );
+          <span class="hljs-comment">/* #@range_end(variable_isnt_referential_transparent) */</span>
+          next();
+        });
+      });</pre></div></div>
             
         </li>
         
@@ -410,7 +409,7 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数の参照透明性'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'関数の参照透明性'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -425,10 +424,10 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'succ関数は参照透明性を持つ'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> succ = (x) =&gt; {
-          <span class="hljs-keyword">return</span> x + <span class="hljs-number">1</span>;
-        };</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'succ関数は参照透明性を持つ'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> succ = (x) =&gt; {
+            <span class="hljs-keyword">return</span> x + <span class="hljs-number">1</span>;
+          };</pre></div></div>
             
         </li>
         
@@ -444,26 +443,25 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>        expect(
-          succ(<span class="hljs-number">1</span>) === succ(<span class="hljs-number">1</span>)
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 1回目の実行</span>
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        expect(
-          succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 2回目の実行</span>
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        next();
+            <div class="content"><div class='highlight'><pre>          expect(
+            succ(<span class="hljs-number">1</span>) === succ(<span class="hljs-number">1</span>)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          expect(
+            succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 1回目の実行</span>
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          expect(
+            succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// 2回目の実行</span>
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          next();
+        });
       });
-    });
-  });
-});</pre></div></div>
+    });</pre></div></div>
             
         </li>
         
@@ -474,11 +472,11 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <h3 id="-">参照透過性を破壊するもの</h3>
+              <h4 id="-">参照透過性を破壊するもの</h4>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性を破壊するもの'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'参照透過性を破壊するもの'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -500,21 +498,21 @@ node&gt; array
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {
-    <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
-    expect(
-      array
-    ).to.eql(
-      [<span class="hljs-number">1</span>]
-    );
-    array.push(<span class="hljs-number">2</span>);
-    expect(
-      array
-    ).to.eql(
-      [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
-    );
-    next();
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> array = [<span class="hljs-number">1</span>];
+        expect(
+          array
+        ).to.eql(
+          [<span class="hljs-number">1</span>]
+        );
+        array.push(<span class="hljs-number">2</span>);
+        expect(
+          array
+        ).to.eql(
+          [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
+        );
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -537,21 +535,21 @@ node&gt; ichi === one;
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
-    <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">var</span> add = (y) =&gt; {
-      x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
-      <span class="hljs-keyword">return</span> x + y;
-    };
-    <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
-    expect(
-      add(<span class="hljs-number">1</span>)
-    ).to.eql(
-      <span class="hljs-number">2</span>
-    );
-    next();
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
+        <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">var</span> add = (y) =&gt; {
+          x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
+          <span class="hljs-keyword">return</span> x + y;
+        };
+        <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
+        expect(
+          add(<span class="hljs-number">1</span>)
+        ).to.eql(
+          <span class="hljs-number">2</span>
+        );
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -566,39 +564,41 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'命令型な階乗関数'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
-    <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
-      <span class="hljs-comment">/* 変数resultに結果が入る */</span>
-      <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
-      <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
-      <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
-      <span class="hljs-comment">/* while文は反復を処理する */</span>
-      <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
-        <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
-        result = result * times;  
-        <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
-        times = times + <span class="hljs-number">1</span>;        
-      }
-      <span class="hljs-keyword">return</span> result;
-    };
-    <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
-    expect(
-      factorial(<span class="hljs-number">2</span>)
-    ).to.eql(
-      <span class="hljs-number">2</span>
-    );
-    expect(
-      factorial(<span class="hljs-number">3</span>)
-    ).to.eql(
-      <span class="hljs-number">6</span>
-    );
-    expect(
-      factorial(<span class="hljs-number">4</span>)
-    ).to.eql(
-      <span class="hljs-number">24</span>
-    );
-    next();
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'命令型な階乗関数'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(imperative_factorial) */</span>
+        <span class="hljs-keyword">var</span> factorial = (n) =&gt; {
+          <span class="hljs-comment">/* 変数resultに結果が入る */</span>
+          <span class="hljs-keyword">var</span> result = <span class="hljs-number">1</span>;             
+          <span class="hljs-comment">/* 変数timesは反復の回数を数える */</span>
+          <span class="hljs-keyword">var</span> times = <span class="hljs-number">1</span>;              
+          <span class="hljs-comment">/* while文は反復を処理する */</span>
+          <span class="hljs-keyword">while</span>(times &lt; n + <span class="hljs-number">1</span>) {      
+            <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
+            result = result * times;  
+            <span class="hljs-comment">/* 変数timesを代入で更新する */</span>
+            times = times + <span class="hljs-number">1</span>;        
+          }
+          <span class="hljs-keyword">return</span> result;
+        };
+        <span class="hljs-comment">/* #@range_end(imperative_factorial) */</span>
+        expect(
+          factorial(<span class="hljs-number">2</span>)
+        ).to.eql(
+          <span class="hljs-number">2</span>
+        );
+        expect(
+          factorial(<span class="hljs-number">3</span>)
+        ).to.eql(
+          <span class="hljs-number">6</span>
+        );
+        expect(
+          factorial(<span class="hljs-number">4</span>)
+        ).to.eql(
+          <span class="hljs-number">24</span>
+        );
+        next();
+      });
+    });
   });
 });</pre></div></div>
             

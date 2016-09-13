@@ -1268,3 +1268,32 @@
       );
       next();
     });
+
+    it('ifの非正格性', (next) => {
+      /* ##@range_begin(if_nonstrict) */
+      var infiniteLoop = (_) => {
+        return infiniteLoop(_);     /* 同じ関数を実行するので無限ループになります */
+      };
+      var lessThanFive = (n) => {
+        if(n < 5) {
+          return true;
+        } else {
+          return infiniteLoop(); // ここが実行されると無限ループになります
+        }
+      };
+      /* テスト */
+      expect(
+        lessThanFive(1)
+      ).to.eql(
+        true
+      );
+      /* このテストは実行されると無限ループになるのでコメントアウトしています
+         expect(
+         lessThanFive(10)
+         ).to.eql(
+         false // 無限ループ
+         );
+      */
+      /* ##@range_end(if_nonstrict) */
+      next();
+    });

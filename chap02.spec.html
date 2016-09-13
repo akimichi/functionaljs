@@ -1300,7 +1300,7 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'関数合成でlength関数を作る(ポイントフリー版)'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'関数合成によるlength関数の定義（ポイントフリースタイル）'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> map = (transform) =&gt; {
             <span class="hljs-keyword">return</span> (array) =&gt; {
               <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
@@ -1341,7 +1341,7 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
-              <h4 id="-">関数による遅延評価</h4>
+              <h5 id="-">関数による遅延評価</h5>
 
             </div>
             
@@ -1356,7 +1356,7 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
-              <h4 id="-">評価戦略の種類</h4>
+              <p>評価戦略の種類</p>
 
             </div>
             
@@ -1369,8 +1369,8 @@ node&gt; ichi === one;
             };
           };
           <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
-              <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
+            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { 
+              <span class="hljs-keyword">return</span> accumulator + item;                
             },<span class="hljs-number">0</span>); 
           };
           <span class="hljs-keyword">var</span> constant = (any) =&gt; {
@@ -1379,8 +1379,7 @@ node&gt; ichi === one;
             };
           };
           <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
-          <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));
-          expect(</pre></div></div>
+          <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));</pre></div></div>
             
         </li>
         
@@ -1395,15 +1394,18 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(strict_evaluation) */</span>
-            length([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>+<span class="hljs-number">1</span>])
-            <span class="hljs-comment">/* #@range_end(strict_evaluation) */</span>
-          ).to.eql(
-            <span class="hljs-comment">/* #@range_begin(strict_evaluation_result) */</span>
-            <span class="hljs-number">2</span>
-            <span class="hljs-comment">/* #@range_end(strict_evaluation_result) */</span>
-          );
-          expect(</pre></div></div>
+            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'正格評価の例'</span>, (next) =&gt; {
+            expect(
+              <span class="hljs-comment">/* #@range_begin(strict_evaluation) */</span>
+              length([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>+<span class="hljs-number">1</span>])
+              <span class="hljs-comment">/* #@range_end(strict_evaluation) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(strict_evaluation_result) */</span>
+              <span class="hljs-number">2</span>
+              <span class="hljs-comment">/* #@range_end(strict_evaluation_result) */</span>
+            );
+            next();
+          });</pre></div></div>
             
         </li>
         
@@ -1418,16 +1420,20 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(lazy_evaluation) */</span>
-            length([<span class="hljs-number">1</span>,(_) =&gt; {
-                         <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+<span class="hljs-number">1</span>; 
-                   }])
-            <span class="hljs-comment">/* #@range_end(lazy_evaluation) */</span>
-          ).to.eql(
-            <span class="hljs-comment">/* #@range_begin(lazy_evaluation_result) */</span>
-            <span class="hljs-number">2</span>
-            <span class="hljs-comment">/* #@range_end(lazy_evaluation_result) */</span>
-          );
+            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'遅延評価の例'</span>, (next) =&gt; {
+            expect(
+              <span class="hljs-comment">/* #@range_begin(lazy_evaluation) */</span>
+              length([<span class="hljs-number">1</span>,(_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>+<span class="hljs-number">1</span>; 
+              }])
+              <span class="hljs-comment">/* #@range_end(lazy_evaluation) */</span>
+            ).to.eql(
+              <span class="hljs-comment">/* #@range_begin(lazy_evaluation_result) */</span>
+              <span class="hljs-number">2</span>
+              <span class="hljs-comment">/* #@range_end(lazy_evaluation_result) */</span>
+            );
+            next();
+          });
         });</pre></div></div>
             
         </li>

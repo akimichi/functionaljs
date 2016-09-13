@@ -1040,6 +1040,56 @@ node&gt; ichi === one;
         );
         <span class="hljs-comment">/* #@range_end(product_in_array_reduce_test)  */</span>
         next();
+      });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>map関数の定義
+<img src="http://www.cs.colorado.edu/~srirams/courses/csci2824/images/fig1.jpeg" alt=""></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'map関数の定義'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+        };
+        <span class="hljs-comment">/* #@range_begin(map_in_array_reduce) */</span>
+        <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+          <span class="hljs-keyword">return</span> (array) =&gt; {
+            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
+              <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
+            },[]); <span class="hljs-comment">// 蓄積変数の初期値として空の配列[]を指定する</span>
+          };
+        };
+        <span class="hljs-comment">/* #@range_end(map_in_array_reduce)  */</span>
+        expect(
+          map(succ)([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+        ).to.eql(
+          [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
+        );
+        <span class="hljs-keyword">var</span> constant = (any) =&gt; {
+          <span class="hljs-keyword">return</span> (_) =&gt; {
+            <span class="hljs-keyword">return</span> any;
+          };
+        };
+        <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
+        expect(
+          <span class="hljs-comment">/* #@range_begin(map_in_array_reduce_test) */</span>
+          map(succ)([<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>])
+          <span class="hljs-comment">/* #@range_end(map_in_array_reduce_test) */</span>
+        ).to.eql(
+          <span class="hljs-comment">/* #@range_begin(map_in_array_reduce_test_result) */</span>
+          [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
+          <span class="hljs-comment">/* #@range_end(map_in_array_reduce_test_result) */</span>
+        );
+        next();
       });
       it(<span class="hljs-string">'allの定義'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(all_in_array_reduce) */</span>
@@ -1102,55 +1152,6 @@ node&gt; ichi === one;
         };
         expect(reverse([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])).to.eql([<span class="hljs-number">4</span>,<span class="hljs-number">3</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]);
         <span class="hljs-comment">/* #@range_end(reverse_in_array_reduce)  */</span>
-        next();
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-43">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
-              </div>
-              <p>map関数の定義</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'map関数の定義'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> succ = (n) =&gt; {
-          <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
-        };
-        <span class="hljs-comment">/* #@range_begin(map_in_array_reduce) */</span>
-        <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-          <span class="hljs-keyword">return</span> (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
-            },[]); <span class="hljs-comment">// 蓄積変数の初期値として空の配列[]を指定する</span>
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(map_in_array_reduce)  */</span>
-        expect(
-          map(succ)([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
-        ).to.eql(
-          [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
-        );
-        <span class="hljs-keyword">var</span> constant = (any) =&gt; {
-          <span class="hljs-keyword">return</span> (_) =&gt; {
-            <span class="hljs-keyword">return</span> any;
-          };
-        };
-        <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
-        expect(
-          <span class="hljs-comment">/* #@range_begin(map_in_array_reduce_test) */</span>
-          map(succ)([<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>])
-          <span class="hljs-comment">/* #@range_end(map_in_array_reduce_test) */</span>
-        ).to.eql(
-          <span class="hljs-comment">/* #@range_begin(map_in_array_reduce_test_result) */</span>
-          [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
-          <span class="hljs-comment">/* #@range_end(map_in_array_reduce_test_result) */</span>
-        );
         next();
       });
       it(<span class="hljs-string">'reduceによるfilterの定義'</span>, (next) =&gt; {

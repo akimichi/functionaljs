@@ -58,13 +58,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
-
-<span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
-  <span class="hljs-keyword">return</span> (arg) =&gt; {
-    <span class="hljs-keyword">return</span> f(g(arg));
-  };
-};</pre></div></div>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
             
         </li>
         
@@ -834,7 +828,12 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'関数型プログラミングの利点'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'関数型プログラミングの利点'</span>, () =&gt; {
+  <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
+    <span class="hljs-keyword">return</span> (arg) =&gt; {
+      <span class="hljs-keyword">return</span> f(g(arg));
+    };
+  };</pre></div></div>
             
         </li>
         

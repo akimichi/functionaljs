@@ -37,21 +37,6 @@
     //   /* #@range_end(unequals_replacement)  */
     //   next();
     // });
-    // it('Date.now関数は参照透明性を持たない', (next) => {
-    //   /* #@range_begin(datenow_is_not_transparent) */
-    //   var a = Date.now();
-    //   /* 時間を1秒進める */
-    //   var sleep = require('sleep-async')();
-    //   sleep.sleep(2000, () => {
-    //     expect(
-    //       a
-    //     ).to.not.eql( /* 等しくないことをテストしている */
-    //       Date.now()
-    //     );
-    //   });
-    //   /* #@range_end(datenow_is_not_transparent) */
-    //   next();
-    // });
     // describe('参照透明な関数では同値なものは置換可能である', () => {
     //   it('同じ引数のsquare関数は置換可能である', (next) => {
     //     /* #@range_begin(equals_replacement)  */
@@ -665,3 +650,313 @@
     //   );
     //   next();
     // });
+
+      expect(
+        birthYear(birthday)
+      ).to.eql(
+        1999
+      );
+describe('副作用の種類', () => {
+  describe('副作用としての代入', () => {
+    it('配列は参照透明性を破壊する', (next) => {
+      /* #@range_begin(array_destroys_referential_transparency) */
+      var array = [];
+      array.push(1);
+      expect(
+        array.pop()
+      ).to.eql(
+        1
+      );
+      array.push(2);
+      expect(
+        array.pop()
+      ).to.eql(
+        2
+      );
+      /* #@range_end(array_destroys_referential_transparency) */
+      next();
+    });
+  });
+});
+        it('画面出力を分離する', (next) => {
+          /* #@range_begin(tap_console_log) */
+          var tap = (target, sideEffect) => {
+            sideEffect(target);
+            return target;
+          };
+          var logger = (value) =>{
+            console.log(value);
+          };
+          /* #@range_end(tap_console_log) */
+          next();
+        });
+        // var constant = (any) => {
+        //   return (_) => {
+        //     return any;
+        //   };
+        // };
+        // var alwaysOne = constant(1); 
+      it('allの定義', (next) => {
+        /* #@range_begin(all_in_array_reduce) */
+        var all = (array) => {
+          return array.reduce((accumulator, item) => {
+            return accumulator && item; /* 論理和を実行する */
+          }); /* 第2引数を指定していない場合は、
+                 配列の先頭要素が変数accumulatorの初期値になる */
+        };
+        /* #@range_end(all_in_array_reduce)  */
+        expect(
+          all([true,true,true])
+        ).to.eql(
+          true
+        );
+        expect(
+          /* #@range_begin(all_in_array_reduce_test) */
+          all([true,false,true])
+          /* #@range_end(all_in_array_reduce_test) */
+        ).to.eql(
+          /* #@range_begin(all_in_array_reduce_test_result) */
+          false
+          /* #@range_end(all_in_array_reduce_test_result) */
+        );
+        next();
+      });
+      it('maxの定義', (next) => {
+        /* #@range_begin(max_in_array_reduce) */
+        var max = (array) => {
+          var bigger = (n,m) => {
+            if(n > m) {
+              return n;
+            } else {
+              return m;
+            };
+          };
+          return array.reduce((accumulator, item) => {
+            return bigger(accumulator, item);
+          });
+        };
+        /* #@range_end(max_in_array_reduce)  */
+        expect(
+          max([1,2,3,4])
+        ).to.eql(
+          4
+        );
+        expect(
+          max([1,-2,3,-4])
+        ).to.eql(
+          3
+        );
+        next();
+      });
+      it('reverseの定義', (next) => {
+        /* #@range_begin(reverse_in_array_reduce) */
+        var reverse = (array) => {
+          return array.reduce((accumulator, currentValue) => {
+            return [currentValue].concat(accumulator);
+          },[]);
+        };
+        expect(reverse([1,2,3,4])).to.eql([4,3,2,1]);
+        /* #@range_end(reverse_in_array_reduce)  */
+        next();
+      });
+      it('reduceによるfilterの定義', (next) => {
+        var even = (n) => {
+          return n % 2 === 0;
+        };
+        /* #@range_begin(filter_in_array_reduce) */
+        var filter = (array) => {
+          return (predicate) => {
+            return array.reduce((accumulator, item) => {
+              if(predicate(item)) {
+                return accumulator.concat(item);
+              } else {
+                return accumulator;
+              }
+            },[]); // 蓄積変数の初期値として空の配列[]を指定する
+          };
+        };
+        /* #@range_end(filter_in_array_reduce)  */
+        expect(
+          filter([1,2,3])(even)
+        ).to.eql(
+          [2]
+        );
+        next();
+      });
+          // /* #@range_begin(flip_definition) */
+          // var flip = (fun) => {
+          //   return  (x) => {
+          //     return (y) => {
+          //       return fun(y)(x);
+          //     };
+          //   };
+          // };
+          // /* #@range_end(flip_definition) */
+
+            var ones = [1, (_) => {
+              return ones;
+            }];
+            expect(
+              ones[0]
+            ).to.eql(
+              1
+            );
+            expect(
+              ones[1]()[0]
+            ).to.eql(
+              1
+            );
+            it('ストリームのフィルタリング', (next) => {
+              var filter = (predicate) => {
+                return (aStream) => {
+                  var head = aStream[0]; // ストリームの先頭要素を取り出す
+                  if(predicate(head) === true) { // 先頭要素headが条件に合致している場合
+                    return [head, (_) => {
+                      return filter(predicate)(aStream[1]());
+                    }];
+                  } else {                       // 先頭要素headが条件に合致していない場合
+                    return filter(predicate)(aStream[1]());
+                  }
+                };
+              };
+              var multipleOf = (n) => {
+                return (m) => {
+                  if((n % m) === 0) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                };
+              };
+              /* #@range_begin(odd_stream) */
+              var odd = (n) => {
+                return (n % 2) === 1; 
+              };
+              var oddStream = filter(odd)(enumFrom(1));
+              /* #@range_end(odd_stream) */
+              expect(
+                take(5,filter(odd)(enumFrom(1)))
+              ).to.eql(
+                [ 1, 3, 5, 7, 9 ] 
+              );
+              next();
+            });
+
+            /* #@range_begin(oddStream_from_iterate) */
+            var twoStep = (n) => {
+              return n + 2;
+            };
+            var oddStream = iterate(1)(twoStep);
+            /* #@range_end(oddStream_from_iterate) */
+            expect(
+              take(3,oddStream)
+            ).to.eql(
+              [1,3,5]
+            );
+            expect(
+              // 3番目の偶数を求める
+              /* #@range_begin(third_element_of_odd_stream) */
+              elemAt(3)(oddStream)
+              /* #@range_end(third_element_of_odd_stream) */
+            ).to.eql(
+              /* #@range_begin(third_element_of_odd_stream_result) */
+              5
+              /* #@range_end(third_element_of_odd_stream_result) */
+            );
+            var even = (n) => {
+              var mod = (n,m) => {
+                return n % m;
+              };
+              return mod(n,2) === 0;
+            };
+            expect(
+              take(3,filter(even)(enumFrom(2)))
+            ).to.eql(
+              [2,4,6]
+            );
+          expect(
+            /* #@range_begin(third_element_of_evenArray) */
+            elemAt(3)([2,4,6])
+            /* #@range_end(third_element_of_evenArray) */
+          ).to.eql(
+            /* #@range_begin(third_element_of_eventArray_result) */
+            6
+            /* #@range_end(third_element_of_eventArray_result) */
+          );
+
+    it('参照透過性のあるコードはテストが容易である', (next) => {
+      var adder = (m) => {
+        return (n) => {
+          return m + n;
+        };
+      };
+      expect(
+        adder(1)(2)
+      ).to.eql(
+        3
+      );
+      next();
+    });
+
+        // var elemAt = (n) => {
+        //   return (aStream) => {
+        //     if(n === 1) {
+        //       return aStream[0];
+        //     } else {
+        //       return elemAt(n-1)(aStream[1]());
+        //     };
+        //   };
+        // };
+        // var scanl = (aStream) => {
+        //   return (glue) => {
+        //     var out = [aStream[0], (_) => {
+        //       return zipWith(glue)(aStream[1](), out);
+        //     }];
+        //     return out;
+        //   };
+        // };
+        // var conjunction = (x,y) => {
+        //   return x && y;  // 論理和をとる
+        // };
+        // var zipWith = (glue) => {
+        //   return (xs, ys) => {
+        //     if(xs.length === 0) {
+        //       return []; 
+        //     } 
+        //     if(ys.length === 0) {
+        //       return []; 
+        //     } 
+        //     return [glue(xs[0], ys[0]), (_) => {
+        //       return zipWith(glue)(xs[1](), ys[1]());
+        //     }];
+        //   };
+        // };
+        // var listAnd = (aStream) => {
+        //   var out = [aStream[0], (_) => {
+        //     return zipWith((x,y) => { 
+        //       return x && y;
+        //     })(aStream[1](), out);
+        //   }];
+        //   return out;
+        // };
+      // var take = (n) => {
+      //   return (aStream) => {
+      //     if(n === 0) {
+      //       return [];
+      //     } else {
+      //       return [aStream[0]].concat(take(n-1)(aStream[1]()));
+      //     }
+      //   };
+      // };
+      // var filter = (predicate) => {
+      //   return (aStream) => {
+      //     var head = aStream[0];
+      //     if(predicate(head) === true) {
+      //       return [head, (_) => {
+      //         return filter(predicate)(aStream[1]());
+      //       }];
+      //     } else {
+      //       return filter(predicate)(aStream[1]());
+      //     }
+      //   };
+      // };

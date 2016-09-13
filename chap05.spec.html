@@ -709,34 +709,6 @@ node&gt; resultExpression
       <span class="hljs-keyword">return</span> infiniteLoop(_);
     };
     <span class="hljs-comment">/* ##@range_end(infiniteLoop) */</span>
-    it(<span class="hljs-string">'ifの非正格性'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* ##@range_begin(if_nonstrict) */</span>
-      <span class="hljs-keyword">var</span> infiniteLoop = (_) =&gt; {
-        <span class="hljs-keyword">return</span> infiniteLoop(_);     <span class="hljs-comment">/* 同じ関数を実行するので無限ループになります */</span>
-      };
-      <span class="hljs-keyword">var</span> lessThanFive = (n) =&gt; {
-        <span class="hljs-keyword">if</span>(n &lt; <span class="hljs-number">5</span>) {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">return</span> infiniteLoop(); <span class="hljs-comment">// ここが実行されると無限ループになります</span>
-        }
-      };
-      <span class="hljs-comment">/* テスト */</span>
-      expect(
-        lessThanFive(<span class="hljs-number">1</span>)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-comment">/* このテストは実行されると無限ループになるのでコメントアウトしています
-         expect(
-         lessThanFive(10)
-         ).to.eql(
-         false // 無限ループ
-         );
-      */</span>
-      <span class="hljs-comment">/* ##@range_end(if_nonstrict) */</span>
-      next();
-    });
     it(<span class="hljs-string">'再帰によるmap関数'</span>, (next) =&gt; {
       <span class="hljs-comment">/* 第5章で紹介したリスト型 */</span>
       <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {

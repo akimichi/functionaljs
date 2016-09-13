@@ -1051,8 +1051,7 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
-              <p>map関数の定義
-<img src="http://www.cs.colorado.edu/~srirams/courses/csci2824/images/fig1.jpeg" alt=""></p>
+              <p>map関数の定義</p>
 
             </div>
             
@@ -1074,12 +1073,6 @@ node&gt; ichi === one;
         ).to.eql(
           [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
         );
-        <span class="hljs-keyword">var</span> constant = (any) =&gt; {
-          <span class="hljs-keyword">return</span> (_) =&gt; {
-            <span class="hljs-keyword">return</span> any;
-          };
-        };
-        <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
         expect(
           <span class="hljs-comment">/* #@range_begin(map_in_array_reduce_test) */</span>
           map(succ)([<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>])
@@ -1088,93 +1081,6 @@ node&gt; ichi === one;
           <span class="hljs-comment">/* #@range_begin(map_in_array_reduce_test_result) */</span>
           [<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>]
           <span class="hljs-comment">/* #@range_end(map_in_array_reduce_test_result) */</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'allの定義'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(all_in_array_reduce) */</span>
-        <span class="hljs-keyword">var</span> all = (array) =&gt; {
-          <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-            <span class="hljs-keyword">return</span> accumulator &amp;&amp; item; <span class="hljs-comment">/* 論理和を実行する */</span>
-          }); <span class="hljs-comment">/* 第2引数を指定していない場合は、
-                 配列の先頭要素が変数accumulatorの初期値になる */</span>
-        };
-        <span class="hljs-comment">/* #@range_end(all_in_array_reduce)  */</span>
-        expect(
-          all([<span class="hljs-literal">true</span>,<span class="hljs-literal">true</span>,<span class="hljs-literal">true</span>])
-        ).to.eql(
-          <span class="hljs-literal">true</span>
-        );
-        expect(
-          <span class="hljs-comment">/* #@range_begin(all_in_array_reduce_test) */</span>
-          all([<span class="hljs-literal">true</span>,<span class="hljs-literal">false</span>,<span class="hljs-literal">true</span>])
-          <span class="hljs-comment">/* #@range_end(all_in_array_reduce_test) */</span>
-        ).to.eql(
-          <span class="hljs-comment">/* #@range_begin(all_in_array_reduce_test_result) */</span>
-          <span class="hljs-literal">false</span>
-          <span class="hljs-comment">/* #@range_end(all_in_array_reduce_test_result) */</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'maxの定義'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(max_in_array_reduce) */</span>
-        <span class="hljs-keyword">var</span> max = (array) =&gt; {
-          <span class="hljs-keyword">var</span> bigger = (n,m) =&gt; {
-            <span class="hljs-keyword">if</span>(n &gt; m) {
-              <span class="hljs-keyword">return</span> n;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> m;
-            };
-          };
-          <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-            <span class="hljs-keyword">return</span> bigger(accumulator, item);
-          });
-        };
-        <span class="hljs-comment">/* #@range_end(max_in_array_reduce)  */</span>
-        expect(
-          max([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
-        ).to.eql(
-          <span class="hljs-number">4</span>
-        );
-        expect(
-          max([<span class="hljs-number">1</span>,-<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,-<span class="hljs-number">4</span>])
-        ).to.eql(
-          <span class="hljs-number">3</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'reverseの定義'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(reverse_in_array_reduce) */</span>
-        <span class="hljs-keyword">var</span> reverse = (array) =&gt; {
-          <span class="hljs-keyword">return</span> array.reduce((accumulator, currentValue) =&gt; {
-            <span class="hljs-keyword">return</span> [currentValue].concat(accumulator);
-          },[]);
-        };
-        expect(reverse([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])).to.eql([<span class="hljs-number">4</span>,<span class="hljs-number">3</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>]);
-        <span class="hljs-comment">/* #@range_end(reverse_in_array_reduce)  */</span>
-        next();
-      });
-      it(<span class="hljs-string">'reduceによるfilterの定義'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> even = (n) =&gt; {
-          <span class="hljs-keyword">return</span> n % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>;
-        };
-        <span class="hljs-comment">/* #@range_begin(filter_in_array_reduce) */</span>
-        <span class="hljs-keyword">var</span> filter = (array) =&gt; {
-          <span class="hljs-keyword">return</span> (predicate) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-              <span class="hljs-keyword">if</span>(predicate(item)) {
-                <span class="hljs-keyword">return</span> accumulator.concat(item);
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> accumulator;
-              }
-            },[]); <span class="hljs-comment">// 蓄積変数の初期値として空の配列[]を指定する</span>
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(filter_in_array_reduce)  */</span>
-        expect(
-          filter([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])(even)
-        ).to.eql(
-          [<span class="hljs-number">2</span>]
         );
         next();
       });

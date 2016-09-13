@@ -708,22 +708,7 @@ node&gt; resultExpression
     <span class="hljs-keyword">var</span> infiniteLoop = (_) =&gt; {
       <span class="hljs-keyword">return</span> infiniteLoop(_);
     };
-    <span class="hljs-comment">/* ##@range_end(infiniteLoop) */</span>
-    it(<span class="hljs-string">'再帰によるmap関数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* 第5章で紹介したリスト型 */</span>
-      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
-        <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
-      };
-      <span class="hljs-keyword">var</span> empty = (_) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.empty(_);
-        };
-      };
-      <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.cons(x, xs);
-        };
-      };</pre></div></div>
+    <span class="hljs-comment">/* ##@range_end(infiniteLoop) */</span></pre></div></div>
             
         </li>
         
@@ -738,7 +723,22 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(recursive_map) */</span>
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'再帰によるmap関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* 第5章で紹介したリスト型 */</span>
+      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
+        <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
+      };
+      <span class="hljs-keyword">var</span> empty = (_) =&gt; {
+        <span class="hljs-keyword">return</span> (pattern) =&gt; {
+          <span class="hljs-keyword">return</span> pattern.empty(_);
+        };
+      };
+      <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
+        <span class="hljs-keyword">return</span> (pattern) =&gt; {
+          <span class="hljs-keyword">return</span> pattern.cons(x, xs);
+        };
+      };
+      <span class="hljs-comment">/* #@range_begin(recursive_map) */</span>
       <span class="hljs-keyword">var</span> map = (alist,transform) =&gt; {
         <span class="hljs-keyword">return</span> match(alist,{
           empty: (_) =&gt; { <span class="hljs-keyword">return</span> empty(); },  <span class="hljs-comment">// 終了条件で再帰を抜ける</span>
@@ -860,9 +860,7 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'再帰処理と再帰的データ構造'</span>, () =&gt; {
-
-      describe(<span class="hljs-string">'再帰的データ構造としてのリスト'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'再帰処理と再帰的データ構造'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -872,6 +870,21 @@ node&gt; resultExpression
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h4 id="-">再帰的データ構造としてのリスト</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'再帰的データ構造としてのリスト'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>再帰によるlength関数</p>
 
@@ -904,11 +917,11 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>再帰によるappend関数</p>
 
@@ -969,11 +982,11 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>再帰によるreverse関数</p>
 
@@ -1007,17 +1020,31 @@ node&gt; resultExpression
           <span class="hljs-comment">/* #@range_end(list_reverse) */</span>
           next();
         });
-      });
-      describe(<span class="hljs-string">'再帰的データ構造としての数式'</span>, () =&gt; {</pre></div></div>
+      });</pre></div></div>
             
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <h4 id="-">再帰的データ構造としての数式</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'再帰的データ構造としての数式'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>代数的データ構造による数式</p>
 
@@ -1044,11 +1071,11 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-35">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>数式を再帰的に計算する</p>
 
@@ -1088,13 +1115,14 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-36">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h4 id="-">再帰処理と帰納法</h4>
+<p><a href="https://www.youtube.com/watch?v=sIiHx5zfTnM"><img src="http://img.youtube.com/vi/sIiHx5zfTnM/0.jpg" alt="IMAGE ALT TEXT"></a></p>
 
             </div>
             
@@ -1132,11 +1160,11 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-37">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <pre><code>命題P  length(append(xs, ys)) === length(xs) + length(ys)
 </code></pre>
@@ -1157,11 +1185,11 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-38">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>命題Pの単体テスト</p>
 
@@ -1188,11 +1216,11 @@ node&gt; resultExpression
         </li>
         
         
-        <li id="section-39">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap06.spec.html">次章に移る</a> </p>
 

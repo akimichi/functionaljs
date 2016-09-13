@@ -6,14 +6,14 @@
 
 var expect = require('expect.js');
 
-// ## DRY原則
+// ## 3.1 DRY原則
 // 
 // 参考 [DRY原則の利用: コードの重複と密結合の間](https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling)
 describe('DRY原則', () => {
   var add = (x, y) => {
     return x + y;
   };
-  // ### 冗長なコード
+  // 冗長なコード
   it('冗長なコード', (next) => {
     /* #@range_begin(redundant_code) */
     var timesForMultiply = (count, arg, memo) => {
@@ -60,6 +60,7 @@ describe('DRY原則', () => {
       }
     };
     /* #@range_end(dry_times) */
+
     // DRYなかけ算とべき乗
     /* #@range_begin(dry_functions) */
     var add = (n, m) => {
@@ -93,7 +94,7 @@ describe('DRY原則', () => {
   });
 });
 
-// ## 抽象化への指向
+// ## 3.2 抽象化への指向
 describe('抽象化への指向', () => {
   // 関数という抽象化
   it('関数という抽象化', (next) => {
@@ -165,7 +166,7 @@ describe('抽象化への指向', () => {
   });
 });
 
-// ## セマンティクスを意識する
+// ## 3.3 セマンティクスを意識する
 describe('セマンティクスを意識する', () => {
   // 環境という仕組み
   it('環境という仕組み', (next) => {
@@ -204,6 +205,7 @@ describe('セマンティクスを意識する', () => {
     // b
     // ~~~
     expect(((_) => {
+      // リスト 3.10のセマンティクス 
       /* #@range_begin(environment_example_usage) */
       /* 空の辞書を作成する */
       var initEnv = emptyEnv;                       
@@ -222,10 +224,10 @@ describe('セマンティクスを意識する', () => {
   });
 });
 
-// ## テストに親しむ
+// ## 3.4 テストに親しむ
 describe('テストに親しむ', () => {
   // ### 単体テストの仕組み
-  // 参考 [単体テスト](https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88)
+  // > 参考 [単体テスト](https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88)
   describe('単体テストの仕組み', () => {
     // assertによる表明
     it('assertによる表明', (next) => {
@@ -237,7 +239,7 @@ describe('テストに親しむ', () => {
     });
     // expectによる表明
     // 
-    // 参考 [expect.js](https://github.com/Automattic/expect.js)
+    // > 参考 https://github.com/Automattic/expect.js
     it('expectによる表明', (next) => {
       /* #@range_begin(expect_assertion) */
       var expect = require('expect.js');

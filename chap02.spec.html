@@ -550,7 +550,6 @@ node&gt; ichi === one;
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>命令型な階乗関数</p>
-<p>$$\left( \sum_{k=1}^n a_k b_k \right)^{!!2} \leq $$</p>
 
             </div>
             
@@ -587,10 +586,7 @@ node&gt; ichi === one;
           <span class="hljs-number">24</span>
         );
         next();
-      });
-    });
-  });
-});</pre></div></div>
+      });</pre></div></div>
             
         </li>
         
@@ -605,32 +601,36 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
-  it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
-    <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
-    <span class="hljs-keyword">var</span> read = (path) =&gt; {
-      <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
-      <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
-    };
-    <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
-      fs.writeFileSync(path, n);
-      <span class="hljs-keyword">return</span> n;
-    };
-    <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
-    write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">1</span>);
-    expect(
-      read(<span class="hljs-string">'test/resources/io.txt'</span>)
-    ).to.eql(
-      <span class="hljs-number">1</span>
-    );
-    write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
-    expect(
-      read(<span class="hljs-string">'test/resources/io.txt'</span>)
-    ).to.eql(
-      <span class="hljs-number">2</span>
-    );
-    next();
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
+        it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
+          <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+          <span class="hljs-keyword">var</span> read = (path) =&gt; {
+            <span class="hljs-keyword">var</span> readValue = fs.readFileSync(path);
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(readValue);
+          };
+          <span class="hljs-keyword">var</span> write = (path, n) =&gt; {
+            fs.writeFileSync(path, n);
+            <span class="hljs-keyword">return</span> n;
+          };
+          <span class="hljs-comment">/* #@range_end(fileio_breaks_referential_transparency)  */</span>
+          write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">1</span>);
+          expect(
+            read(<span class="hljs-string">'test/resources/io.txt'</span>)
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          write(<span class="hljs-string">'test/resources/io.txt'</span>, <span class="hljs-number">2</span>); <span class="hljs-comment">// ここでファイルに値を書きこむ</span>
+          expect(
+            read(<span class="hljs-string">'test/resources/io.txt'</span>)
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
+          next();
+        });
+      });
+
+    });
   });
 });
 describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {

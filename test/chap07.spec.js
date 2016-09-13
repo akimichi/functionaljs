@@ -962,9 +962,9 @@ describe('クロージャーを使う', () => {
       var bar = "a string"; 
       /* #@range_end(variable_binding_in_environment) */
       // 環境からバインディングを参照する
-      /* 環境 <foo |-> 1, bar |-> "a string"> のもとで評価する */
-      /* #@range_begin(variable_binding_in_environment_test) */
       /* 環境 <foo ↦ 1, bar ↦ "a string"> のもとで評価する */
+      /* #@range_begin(variable_binding_in_environment_test) */
+      /* 環境 <foo |-> 1, bar |-> "a string"> のもとで評価する */
       expect(
         foo  // 上記環境から変数fooの値を取り出す
       ).to.eql(

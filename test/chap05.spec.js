@@ -636,8 +636,8 @@ describe('再帰による反復処理', () => {
         ).to.eql(
           7
         );
-      });
       /* #@range_end(expression_algebraic_datatype_recursion) */
+      });
     });
   });
   // #### 再帰処理と帰納法

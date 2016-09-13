@@ -1971,72 +1971,10 @@ node&gt; ichi === one;
           }];
         };
       };
-      <span class="hljs-keyword">var</span> take = (n) =&gt; {
-        <span class="hljs-keyword">return</span> (aStream) =&gt; {
-          <span class="hljs-keyword">if</span>(n === <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> [];
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> [aStream[<span class="hljs-number">0</span>]].concat(take(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]()));
-          }
-        };
-      };
       <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
         <span class="hljs-keyword">return</span> iterate(succ)(from);
       };
-      <span class="hljs-keyword">var</span> filter = (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> (aStream) =&gt; {
-          <span class="hljs-keyword">var</span> head = aStream[<span class="hljs-number">0</span>];
-          <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) {
-            <span class="hljs-keyword">return</span> [head, (_) =&gt; {
-              <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-            }];
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> filter(predicate)(aStream[<span class="hljs-number">1</span>]());
-          }
-        };
-      };
-      it(<span class="hljs-string">'succ関数の性質テスト'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
-          <span class="hljs-keyword">return</span> (aStream) =&gt; {
-            <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-              <span class="hljs-keyword">return</span> aStream[<span class="hljs-number">0</span>];
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(aStream[<span class="hljs-number">1</span>]());
-            };
-          };
-        };
-        <span class="hljs-keyword">var</span> scanl = (aStream) =&gt; {
-          <span class="hljs-keyword">return</span> (glue) =&gt; {
-            <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
-              <span class="hljs-keyword">return</span> zipWith(glue)(aStream[<span class="hljs-number">1</span>](), out);
-            }];
-            <span class="hljs-keyword">return</span> out;
-          };
-        };
-        <span class="hljs-keyword">var</span> conjunction = (x,y) =&gt; {
-          <span class="hljs-keyword">return</span> x &amp;&amp; y;  <span class="hljs-comment">// 論理和をとる</span>
-        };
-        <span class="hljs-keyword">var</span> zipWith = (glue) =&gt; {
-          <span class="hljs-keyword">return</span> (xs, ys) =&gt; {
-            <span class="hljs-keyword">if</span>(xs.length === <span class="hljs-number">0</span>) {
-              <span class="hljs-keyword">return</span> []; 
-            } 
-            <span class="hljs-keyword">if</span>(ys.length === <span class="hljs-number">0</span>) {
-              <span class="hljs-keyword">return</span> []; 
-            } 
-            <span class="hljs-keyword">return</span> [glue(xs[<span class="hljs-number">0</span>], ys[<span class="hljs-number">0</span>]), (_) =&gt; {
-              <span class="hljs-keyword">return</span> zipWith(glue)(xs[<span class="hljs-number">1</span>](), ys[<span class="hljs-number">1</span>]());
-            }];
-          };
-        };
-        <span class="hljs-keyword">var</span> listAnd = (aStream) =&gt; {
-          <span class="hljs-keyword">var</span> out = [aStream[<span class="hljs-number">0</span>], (_) =&gt; {
-            <span class="hljs-keyword">return</span> zipWith((x,y) =&gt; { 
-              <span class="hljs-keyword">return</span> x &amp;&amp; y;
-            })(aStream[<span class="hljs-number">1</span>](), out);
-          }];
-          <span class="hljs-keyword">return</span> out;
-        };</pre></div></div>
+      it(<span class="hljs-string">'succ関数の性質テスト'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         

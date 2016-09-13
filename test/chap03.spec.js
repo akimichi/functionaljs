@@ -1,17 +1,20 @@
 "use strict";
 
+
 // 心の準備
 // ========
 
 var expect = require('expect.js');
 
 // ## DRY原則
+// 
+// 参考 [DRY原則の利用: コードの重複と密結合の間](https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling)
 describe('DRY原則', () => {
   var add = (x, y) => {
     return x + y;
   };
   // ### 冗長なコード
-  it('冗長なコードの例', (next) => {
+  it('冗長なコード', (next) => {
     /* #@range_begin(redundant_code) */
     var timesForMultiply = (count, arg, memo) => {
       if(count > 1) {
@@ -62,11 +65,11 @@ describe('DRY原則', () => {
     var add = (n, m) => {
       return n + m;
     };
-    // times関数を利用してmultiply関数を定義する
+    /* times関数を利用してmultiply関数を定義する */
     var multiply = (n, m) => {
       return times(m, n, 0, add);
     };
-    // times関数を利用してexponential関数を定義する
+    /* times関数を利用してexponential関数を定義する */
     var exponential = (n, m) => {
       return times(m, n, 1, multiply);
     };
@@ -101,7 +104,7 @@ describe('抽象化への指向', () => {
     /* #@range_end(function_abstraction_example) */
     next();
   });
-  describe('関数抽象の例としての高階関数', () => {
+  describe('高階関数による抽象化', () => {
     var anArray = [2,3,5,7,11,13];
 
     // for文によるsum関数
@@ -166,12 +169,21 @@ describe('抽象化への指向', () => {
 describe('セマンティクスを意識する', () => {
   // 環境という仕組み
   it('環境という仕組み', (next) => {
+    /* merge関数は、引数にわたされた2つのオブジェクトを併合する */
     var merge = (obj1, obj2) => {
       var mergedObject = {};
       for (var attrname in obj1) { mergedObject[attrname] = obj1[attrname]; }
       for (var attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
       return mergedObject;
     };
+    // <dl>
+    //   <dt>empty</dt>
+    //   <dd>空の環境</dd>
+    //   <dt>extendEnv </dt>
+    //   <dd>環境に変数と値の対応を与えて、辞書を拡張する</dd>
+    //   <dt>lookupEnv</dt>
+    //   <dd>変数を指定して、環境に記憶されている値を取り出す</dd>
+    // </dl>
     /* #@range_begin(environment_example) */
     /* 空の環境 */
     var emptyEnv = {};
@@ -213,7 +225,9 @@ describe('セマンティクスを意識する', () => {
 // ## テストに親しむ
 describe('テストに親しむ', () => {
   // ### 単体テストの仕組み
+  // 参考 [単体テスト](https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88)
   describe('単体テストの仕組み', () => {
+    // assertによる表明
     it('assertによる表明', (next) => {
       /* #@range_begin(assert_assertion) */
       var assert = require("assert");
@@ -221,6 +235,9 @@ describe('テストに親しむ', () => {
       /* #@range_end(assert_assertion) */
       next();
     });
+    // expectによる表明
+    // 
+    // 参考 [expect.js](https://github.com/Automattic/expect.js)
     it('expectによる表明', (next) => {
       /* #@range_begin(expect_assertion) */
       var expect = require('expect.js');

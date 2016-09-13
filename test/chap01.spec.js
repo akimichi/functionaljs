@@ -5,7 +5,6 @@
 
 // アサートライブラリー expect.js の読み込み
 var expect = require('expect.js');
-// var util = require('util');
 
 // ## 1.2 命令型モデル
 describe('命令型モデル', () => {

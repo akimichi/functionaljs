@@ -6,7 +6,7 @@
 var expect = require('expect.js');
 
 
-// ## 条文分岐の種類と特徴
+// ## 5.1 条文分岐の種類と特徴
 describe('条文分岐の種類と特徴', () => {
   // ### 条文分岐としてのif文
   describe('条件分岐としてのif文', () => {
@@ -104,6 +104,19 @@ describe('条文分岐の種類と特徴', () => {
       next();
     });
     // #### if文の問題点
+    //
+    // JavaScriptのifは、結果を返さない
+    // ~~~
+    // node> var resultStatement = console.log("This is a test")
+    // This is a test
+    // undefined
+    // node> resultStatement
+    // undefined
+    // node> var resultExpression = 1 + 2;
+    // undefined
+    // node> resultExpression
+    // 3
+    // ~~~
     describe('if文の問題点', () => {
       // returnで関数を抜ける
       it('returnで関数を抜ける', (next) => {
@@ -255,28 +268,27 @@ describe('条文分岐の種類と特徴', () => {
     });
   });
 });
-// ## 反復処理の種類と特徴
+
+// ## 5.2 反復処理の種類と特徴
 describe("反復処理の種類と特徴", () => {
-  describe("while文", () => {
-    // while文の例
-    it("while文の例", (next) => {
-      /* #@range_begin(while_counter) */
-      var counter = 0;         // 変数の初期化
-      while (counter < 10) {   // 反復の条件
-        counter = counter + 1; // 変数の更新
-      }
-      /* テスト */
-      expect(
-        counter
-      ).to.eql(
-        10
-      );
-      /* #@range_end(while_counter) */
-      next();
-    });
+  // while文の例
+  it("while文の例", (next) => {
+    /* #@range_begin(while_counter) */
+    var counter = 0;         // 変数の初期化
+    while (counter < 10) {   // 反復の条件
+      counter = counter + 1; // 変数の更新
+    }
+    /* テスト */
+    expect(
+      counter
+    ).to.eql(
+      10
+    );
+    /* #@range_end(while_counter) */
+    next();
   });
-  it("for文", (next) => {
-    // for文の例
+  // for文の例
+  it("for文の例", (next) => {
     /* #@range_begin(for_example) */
     for (var counter = 0; counter < 10; counter += 1) {
       ;
@@ -290,34 +302,33 @@ describe("反復処理の種類と特徴", () => {
     /* #@range_end(for_example) */
     next();
   });
-  describe('forEach文', () => {
-    // forEachメソッドの例
-    it("forEach文によるlength", (next) => {
-      /* #@range_begin(forEach_length) */
-      var length = (array) => {
-        var result = 0;
-        array.forEach((element) => {
-          result += 1;
-        });
-        return result;
-      };
-      /* テスト */
-      expect(
-        length([1,2,3,4,5])
-      ).to.eql(
-        5
-      );
-      /* #@range_end(forEach_length) */
-      next();
-    });
+  // forEachメソッドの例
+  it("forEach文によるlength", (next) => {
+    /* #@range_begin(forEach_length) */
+    var length = (array) => {
+      var result = 0;
+      array.forEach((element) => {
+        result += 1;
+      });
+      return result;
+    };
+    /* テスト */
+    expect(
+      length([1,2,3,4,5])
+    ).to.eql(
+      5
+    );
+    /* #@range_end(forEach_length) */
+    next();
   });
 });
 
-// ## 再帰による反復処理
+// ## 5.3 再帰による反復処理
 describe('再帰による反復処理', () => {
   describe('複利法の例', () => {
+    // 複利の計算
+    // [![IMAGE ALT TEXT](http://img.youtube.com/vi/tviCjVufyTU/0.jpg)](https://www.youtube.com/watch?v=tviCjVufyTU "複利計算の公式")
     it("複利の計算", (next) => {
-      // 複利の計算
       /* #@range_begin(compound_interest) */
       var compoundInterest = (a, r, n) => {
         if (n === 0) { // 初年度は利率がつかないので元金がそのまま返る
@@ -354,34 +365,7 @@ describe('再帰による反復処理', () => {
       return infiniteLoop(_);
     };
     /* ##@range_end(infiniteLoop) */
-    it('ifの非正格性', (next) => {
-      /* ##@range_begin(if_nonstrict) */
-      var infiniteLoop = (_) => {
-        return infiniteLoop(_);     /* 同じ関数を実行するので無限ループになります */
-      };
-      var lessThanFive = (n) => {
-        if(n < 5) {
-          return true;
-        } else {
-          return infiniteLoop(); // ここが実行されると無限ループになります
-        }
-      };
-      /* テスト */
-      expect(
-        lessThanFive(1)
-      ).to.eql(
-        true
-      );
-      /* このテストは実行されると無限ループになるのでコメントアウトしています
-         expect(
-         lessThanFive(10)
-         ).to.eql(
-         false // 無限ループ
-         );
-      */
-      /* ##@range_end(if_nonstrict) */
-      next();
-    });
+    // 再帰によるmap関数
     it('再帰によるmap関数', (next) => {
       /* 第5章で紹介したリスト型 */
       var match = (exp, pattern) => {
@@ -397,7 +381,6 @@ describe('再帰による反復処理', () => {
           return pattern.cons(x, xs);
         };
       };
-      // 再帰によるmap関数
       /* #@range_begin(recursive_map) */
       var map = (alist,transform) => {
         return match(alist,{
@@ -482,7 +465,7 @@ describe('再帰による反復処理', () => {
     };
     // #### 再帰処理と再帰的データ構造
     describe('再帰処理と再帰的データ構造', () => {
-
+      // #### 再帰的データ構造としてのリスト
       describe('再帰的データ構造としてのリスト', () => {
         // 再帰によるlength関数
         it('再帰によるlength関数', (next) => {
@@ -590,6 +573,7 @@ describe('再帰による反復処理', () => {
           next();
         });
       });
+      // #### 再帰的データ構造としての数式
       describe('再帰的データ構造としての数式', () => {
         // 代数的データ構造による数式
         /* #@range_begin(expression_algebraic_datatype) */
@@ -641,6 +625,7 @@ describe('再帰による反復処理', () => {
     });
   });
   // #### 再帰処理と帰納法
+  // [![IMAGE ALT TEXT](http://img.youtube.com/vi/sIiHx5zfTnM/0.jpg)](https://www.youtube.com/watch?v=sIiHx5zfTnM)
   describe('再帰処理と帰納法', () => {
     var match = (data, pattern) => {
       return data.call(pattern, pattern);
@@ -686,6 +671,7 @@ describe('再帰による反復処理', () => {
         };
       };
       // 命題Pの単体テスト
+      // > 命題Pの帰納法による証明は、本書を参照してください
       /* #@range_begin(statement_p_test) */
       var xs = cons(1,
                     cons(2,

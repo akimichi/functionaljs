@@ -1445,7 +1445,7 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
-              <h4 id="-">遅延評価によるストリーム</h4>
+              <p>遅延評価によるストリーム</p>
 
             </div>
             
@@ -1471,28 +1471,18 @@ node&gt; ichi === one;
             }];
             <span class="hljs-comment">/* #@range_end(stream_example) */</span>
             expect(
-              <span class="hljs-comment">/* #@range_begin(stream_head) */</span>
               aStream[<span class="hljs-number">0</span>] <span class="hljs-comment">// ストリームの先頭要素を取得する</span>
-              <span class="hljs-comment">/* #@range_end(stream_head) */</span>
             ).to.eql(
-              <span class="hljs-comment">/* #@range_begin(stream_head_result) */</span>
               <span class="hljs-number">1</span>
-              <span class="hljs-comment">/* #@range_end(stream_head_result) */</span>
             );
             expect(
-              <span class="hljs-comment">/* #@range_begin(stream_tail) */</span>
               aStream[<span class="hljs-number">1</span>]() <span class="hljs-comment">// 関数適用でストリームの後尾を取り出す</span>
-              <span class="hljs-comment">/* #@range_end(stream_tail) */</span>
             ).to.eql(
-              <span class="hljs-comment">/* #@range_begin(stream_tail_result) */</span>
               <span class="hljs-number">2</span>
-              <span class="hljs-comment">/* #@range_end(stream_tail_result) */</span>
             );
-            <span class="hljs-comment">/* #@range_begin(stream_ones) */</span>
             <span class="hljs-keyword">var</span> ones = [<span class="hljs-number">1</span>, (_) =&gt; {
               <span class="hljs-keyword">return</span> ones;
             }];
-            <span class="hljs-comment">/* #@range_end(stream_ones) */</span>
             expect(
               ones[<span class="hljs-number">0</span>]
             ).to.eql(

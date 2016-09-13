@@ -1854,8 +1854,7 @@ node&gt; ichi === one;
       };
       next();
     });
-    describe(<span class="hljs-string">'参照透過性のないコードはテストが困難である'</span>, () =&gt; {
-      describe(<span class="hljs-string">'ゲームの勝敗の例'</span>, () =&gt; {</pre></div></div>
+    describe(<span class="hljs-string">'副作用を分離する'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -1870,31 +1869,31 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">"winner関数の分離"</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(winner_without_sideeffect) */</span>
-          <span class="hljs-comment">/* 勝者を判定する */</span>
-          <span class="hljs-keyword">var</span> judge = (playerL, playerR) =&gt; {
-            <span class="hljs-keyword">if</span>(playerL.score &gt; playerR.score) {
-              <span class="hljs-keyword">return</span> playerL;
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(playerL.score &lt; playerR.score) {
-              <span class="hljs-keyword">return</span> playerR;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-            }
-          }; 
-          <span class="hljs-comment">/* 勝者を告げる文字列を生成する */</span>
-          <span class="hljs-keyword">var</span> announce = (winner) =&gt; {
-            <span class="hljs-keyword">if</span>(winner) {
-              <span class="hljs-keyword">return</span> winner.name + <span class="hljs-string">"が勝者です"</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> <span class="hljs-string">"引き分けです"</span>;
-            }
-          };
-          <span class="hljs-comment">/* 勝者を表示する */</span>
-          <span class="hljs-keyword">var</span> displayWinner = (winner) =&gt; {
-            <span class="hljs-built_in">console</span>.log(announce(winner));
-          };
-          <span class="hljs-comment">/* #@range_end(winner_without_sideeffect) */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">"winner関数の分離"</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(winner_without_sideeffect) */</span>
+        <span class="hljs-comment">/* 勝者を判定する */</span>
+        <span class="hljs-keyword">var</span> judge = (playerL, playerR) =&gt; {
+          <span class="hljs-keyword">if</span>(playerL.score &gt; playerR.score) {
+            <span class="hljs-keyword">return</span> playerL;
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(playerL.score &lt; playerR.score) {
+            <span class="hljs-keyword">return</span> playerR;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+          }
+        }; 
+        <span class="hljs-comment">/* 勝者を告げる文字列を生成する */</span>
+        <span class="hljs-keyword">var</span> announce = (winner) =&gt; {
+          <span class="hljs-keyword">if</span>(winner) {
+            <span class="hljs-keyword">return</span> winner.name + <span class="hljs-string">"が勝者です"</span>;
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"引き分けです"</span>;
+          }
+        };
+        <span class="hljs-comment">/* 勝者を表示する */</span>
+        <span class="hljs-keyword">var</span> displayWinner = (winner) =&gt; {
+          <span class="hljs-built_in">console</span>.log(announce(winner));
+        };
+        <span class="hljs-comment">/* #@range_end(winner_without_sideeffect) */</span></pre></div></div>
             
         </li>
         
@@ -1909,24 +1908,23 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(announce_winner) */</span>
-          <span class="hljs-keyword">var</span> socrates = {
-            name: <span class="hljs-string">'ソクラテス'</span>,
-            score: <span class="hljs-number">10</span>
-          };
-          <span class="hljs-keyword">var</span> plato = {
-            name: <span class="hljs-string">'プラトン'</span>,
-            score: <span class="hljs-number">20</span>
-          };
-          <span class="hljs-comment">/* 純粋な関数をテストする */</span>
-          expect(
-            announce(judge(socrates, plato))
-          ).to.eql(
-            <span class="hljs-string">"プラトンが勝者です"</span>
-          );
-          <span class="hljs-comment">/* #@range_end(announce_winner) */</span>
-          next();
-        });
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(announce_winner) */</span>
+        <span class="hljs-keyword">var</span> socrates = {
+          name: <span class="hljs-string">'ソクラテス'</span>,
+          score: <span class="hljs-number">10</span>
+        };
+        <span class="hljs-keyword">var</span> plato = {
+          name: <span class="hljs-string">'プラトン'</span>,
+          score: <span class="hljs-number">20</span>
+        };
+        <span class="hljs-comment">/* 純粋な関数をテストする */</span>
+        expect(
+          announce(judge(socrates, plato))
+        ).to.eql(
+          <span class="hljs-string">"プラトンが勝者です"</span>
+        );
+        <span class="hljs-comment">/* #@range_end(announce_winner) */</span>
+        next();
       });
     });
   });</pre></div></div>

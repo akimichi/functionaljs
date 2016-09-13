@@ -1125,37 +1125,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性の仕組み'</span>, () =&gt; {
-  describe(<span class="hljs-string">'記憶域と参照'</span>, () =&gt; {
-    it(<span class="hljs-string">'変数は参照を保持する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(variables_hold_reference) */</span>
-      expect((() =&gt; {
-        <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">var</span> y = x;
-        y = <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">return</span> x;
-      })()).to.be(
-        <span class="hljs-number">1</span>
-      );
-      expect((() =&gt; {
-        <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-        <span class="hljs-keyword">var</span> y = x;
-        x = <span class="hljs-number">2</span>;
-        <span class="hljs-keyword">return</span> y;
-      })()).to.be(
-        <span class="hljs-number">1</span>
-      );
-      expect((() =&gt; {
-        <span class="hljs-keyword">var</span> x = [<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>];
-        <span class="hljs-keyword">var</span> y = x;
-        <span class="hljs-keyword">return</span> x === y;
-      })()).to.be(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-comment">/* #@range_end(variables_hold_reference) */</span>
-      next();
-    });
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'参照透過性の仕組み'</span>, () =&gt; {</pre></div></div>
             
         </li>
         

@@ -602,6 +602,19 @@ node&gt; ichi === one;
             </div>
             
             <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
+        it(<span class="hljs-string">'Date.now関数は参照透明性を持たない'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> a = <span class="hljs-built_in">Date</span>.now();
+          <span class="hljs-comment">/* 時間を1秒進める */</span>
+          <span class="hljs-keyword">var</span> sleep = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sleep-async'</span>)();
+          sleep.sleep(<span class="hljs-number">2000</span>, () =&gt; {
+            expect(
+              a
+            ).to.not.eql( <span class="hljs-comment">/* 等しくないことをテストしている */</span>
+              <span class="hljs-built_in">Date</span>.now()
+            );
+          });
+          next();
+        });
         it(<span class="hljs-string">'ファイル入出力が参照透明性を破壊する例'</span>, (next) =&gt; {
           <span class="hljs-comment">/* #@range_begin(fileio_breaks_referential_transparency)  */</span>
           <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);

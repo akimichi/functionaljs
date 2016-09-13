@@ -1480,19 +1480,6 @@ node&gt; ichi === one;
             ).to.eql(
               <span class="hljs-number">2</span>
             );
-            <span class="hljs-keyword">var</span> ones = [<span class="hljs-number">1</span>, (_) =&gt; {
-              <span class="hljs-keyword">return</span> ones;
-            }];
-            expect(
-              ones[<span class="hljs-number">0</span>]
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
-            expect(
-              ones[<span class="hljs-number">1</span>]()[<span class="hljs-number">0</span>]
-            ).to.eql(
-              <span class="hljs-number">1</span>
-            );
             next();
           });</pre></div></div>
             

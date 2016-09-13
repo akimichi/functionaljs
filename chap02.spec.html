@@ -763,23 +763,9 @@ node&gt; ichi === one;
             <span class="hljs-keyword">return</span> result;
           };
           <span class="hljs-comment">/* #@range_end(imperative_addition) */</span>
-          expect(
-            add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-          ).to.eql(
-            <span class="hljs-number">5</span>
-          );
-          <span class="hljs-keyword">var</span> x = <span class="hljs-number">4</span>;
-          <span class="hljs-keyword">var</span> y = <span class="hljs-number">5</span>;
-          expect(
-            add(x,y)
-          ).to.eql(
-            <span class="hljs-number">9</span>
-          );
-          expect(
-            x
-          ).to.eql(
-            <span class="hljs-number">4</span>
-          );
+          expect(add(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>)).to.eql(<span class="hljs-number">3</span>);
+          expect(add(<span class="hljs-number">2</span>,<span class="hljs-number">2</span>)).to.eql(<span class="hljs-number">4</span>);
+          expect(add(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>)).to.eql(<span class="hljs-number">5</span>);
           next();
         });</pre></div></div>
             
@@ -846,23 +832,15 @@ node&gt; ichi === one;
             <span class="hljs-keyword">return</span> thisYear - birthYear;
           };
           <span class="hljs-comment">/* #@range_end(age_without_sideeffect) */</span>
-          next();
-        });
-        it(<span class="hljs-string">'画面出力を分離する'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(tap_console_log) */</span>
-          <span class="hljs-keyword">var</span> tap = (target, sideEffect) =&gt; {
-            sideEffect(target);
-            <span class="hljs-keyword">return</span> target;
-          };
-          <span class="hljs-keyword">var</span> logger = (value) =&gt;{
-            <span class="hljs-built_in">console</span>.log(value);
-          };
-          <span class="hljs-comment">/* #@range_end(tap_console_log) */</span>
+          expect(
+            age(<span class="hljs-number">1999</span>, (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getFullYear())
+          ).to.eql(
+            <span class="hljs-number">17</span>
+          );
           next();
         });
       });
     });
-
   });
 });</pre></div></div>
             

@@ -1219,7 +1219,19 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         age
       ).to.eql(
         <span class="hljs-number">29</span>
-      );</pre></div></div>
+      );
+      <span class="hljs-comment">/* この時点で誕生日を迎えた */</span>
+      age = <span class="hljs-number">30</span>;
+      expect(
+        age
+      ).to.eql(
+        <span class="hljs-number">30</span>
+      );
+      <span class="hljs-comment">/* #@range_end(assign_to_variable) */</span>
+      next();
+    });
+  });
+});</pre></div></div>
             
         </li>
         
@@ -1229,45 +1241,6 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-49">&#182;</a>
-              </div>
-              <p>この時点で誕生日を迎えた</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      age = <span class="hljs-number">30</span>;
-      expect(
-        age
-      ).to.eql(
-        <span class="hljs-number">30</span>
-      );
-      <span class="hljs-comment">/* #@range_end(assign_to_variable) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'代入によって参照透過性を失う場合'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(referential_transparency_counterexample_assignment) */</span>
-      <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
-      <span class="hljs-keyword">var</span> y = <span class="hljs-number">2</span>;
-      <span class="hljs-keyword">var</span> z = x + y;
-      x = <span class="hljs-number">3</span>;
-      expect(
-        (x + y) * (x + y)
-      ).not.to.be(
-        z * z <span class="hljs-comment">// (x + y) を z に置きかえた</span>
-      );
-      <span class="hljs-comment">/* #@range_end(referential_transparency_counterexample_assignment) */</span>
-      next();
-    });
-  });
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-50">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap05.spec.html">次章に移る</a> </p>
 

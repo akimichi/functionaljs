@@ -1958,23 +1958,13 @@ node&gt; ichi === one;
             </div>
             
             <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'プロパティテストで正しさを検証する'</span>, () =&gt; {
-      <span class="hljs-keyword">var</span> adder = (m) =&gt; {
-        <span class="hljs-keyword">return</span> (n) =&gt; {
-          <span class="hljs-keyword">return</span> m + n;
+      it(<span class="hljs-string">'succ関数の性質テスト'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> adder = (m) =&gt; {
+          <span class="hljs-keyword">return</span> (n) =&gt; {
+            <span class="hljs-keyword">return</span> m + n;
+          };
         };
-      };
-      <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);
-      <span class="hljs-keyword">var</span> iterate = (step) =&gt; {
-        <span class="hljs-keyword">return</span> (init) =&gt; {
-          <span class="hljs-keyword">return</span> [init, (_) =&gt; {
-            <span class="hljs-keyword">return</span> iterate(step)(step(init));
-          }];
-        };
-      };
-      <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
-        <span class="hljs-keyword">return</span> iterate(succ)(from);
-      };
-      it(<span class="hljs-string">'succ関数の性質テスト'</span>, (next) =&gt; {</pre></div></div>
+        <span class="hljs-keyword">var</span> succ = adder(<span class="hljs-number">1</span>);</pre></div></div>
             
         </li>
         
@@ -2028,7 +2018,18 @@ node&gt; ichi === one;
         <span class="hljs-keyword">var</span> proposition = (n) =&gt; {
           <span class="hljs-keyword">return</span> succ(<span class="hljs-number">0</span>) + succ(n) === succ(succ(n));
         };
-        <span class="hljs-comment">/* #@range_end(succ_property) */</span></pre></div></div>
+        <span class="hljs-comment">/* #@range_end(succ_property) */</span>
+
+        <span class="hljs-keyword">var</span> iterate = (step) =&gt; {
+          <span class="hljs-keyword">return</span> (init) =&gt; {
+            <span class="hljs-keyword">return</span> [init, (_) =&gt; {
+              <span class="hljs-keyword">return</span> iterate(step)(step(init));
+            }];
+          };
+        };
+        <span class="hljs-keyword">var</span> enumFrom = (from) =&gt; {
+          <span class="hljs-keyword">return</span> iterate(succ)(from);
+        };</pre></div></div>
             
         </li>
         

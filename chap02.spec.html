@@ -335,18 +335,16 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <h4 id="-">値の参照透過性</h4>
+              <p>値の参照透過性</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'値の参照透過性'</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(number_has_referential_transparency) */</span>
         expect(
-          <span class="hljs-number">2</span>
+          <span class="hljs-number">2</span> === <span class="hljs-number">2</span>
         ).to.eql(
-          <span class="hljs-number">2</span>
+          <span class="hljs-literal">true</span>
         );
-        <span class="hljs-comment">/* #@range_end(number_has_referential_transparency) */</span>
         next();
       });</pre></div></div>
             
@@ -359,30 +357,21 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h4 id="-">変数の参照透過性</h4>
+              <p>変数の参照透過性</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'変数の参照透明性'</span>, () =&gt; {
         it(<span class="hljs-string">'変数が参照透明性を持つ場合'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(variable_is_referential_transparent) */</span>
           <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
           expect(
-            x 
+            x === x
           ).to.eql(
             x
           );
-          <span class="hljs-keyword">var</span> y = x;
-          expect(
-            y
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          <span class="hljs-comment">/* #@range_end(variable_is_referential_transparent) */</span>
           next();
         });
-        it(<span class="hljs-string">'変数は参照透明性を持つとは限らない'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(variable_isnt_referential_transparent) */</span>
+        it(<span class="hljs-string">'代入は変数の参照透明性を破壊する'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> foo = <span class="hljs-number">2</span>;
           <span class="hljs-keyword">var</span> bar = foo;
           foo = <span class="hljs-number">3</span>;
@@ -391,7 +380,6 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
           ).to.not.eql(
             bar
           );
-          <span class="hljs-comment">/* #@range_end(variable_isnt_referential_transparent) */</span>
           next();
         });
       });</pre></div></div>
@@ -405,7 +393,7 @@ node&gt; <span class="hljs-built_in">Math</span>.sqrt(<span class="hljs-number">
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <h4 id="-">関数の参照透過性</h4>
+              <p>関数の参照透過性</p>
 
             </div>
             
@@ -495,7 +483,8 @@ node&gt; array.push(<span class="hljs-number">2</span>);
 <span class="hljs-number">2</span>
 node&gt; array
 [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
-</code></pre>
+</code></pre><p>可変なデータは参照透明性を破壊する</p>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {
@@ -523,7 +512,7 @@ node&gt; array
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>代入操作は参照透明性を破壊する</p>
+              <p>代入は参照透明性を破壊する</p>
 <pre><code>node&gt; <span class="hljs-keyword">var</span> one = <span class="hljs-number">1</span>;
 node&gt; <span class="hljs-keyword">var</span> ichi = one;
 node&gt; ichi === one;
@@ -535,7 +524,7 @@ node&gt; ichi === one;
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'代入操作は参照透明性を破壊する'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'代入は参照透明性を破壊する'</span>, (next) =&gt; {
         <span class="hljs-comment">/* #@range_begin(assignment_breaks_referential_transparency) */</span>
         <span class="hljs-keyword">var</span> x = <span class="hljs-number">0</span>;
         <span class="hljs-keyword">var</span> add = (y) =&gt; {
@@ -561,6 +550,8 @@ node&gt; ichi === one;
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>命令型な階乗関数</p>
+<pre><code class="lang-math">\left( \sum_{k=1}^n a_k b_k \right)^{!!2} \leq
+</code></pre>
 
             </div>
             

@@ -1792,7 +1792,7 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'テスト'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'テストが容易である'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -1817,24 +1817,7 @@ node&gt; ichi === one;
         <span class="hljs-number">2</span>       <span class="hljs-comment">// 期待する結果を書く</span>
       );
       next();
-    });
-    it(<span class="hljs-string">'参照透過性のあるコードはテストが容易である'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> adder = (m) =&gt; {
-        <span class="hljs-keyword">return</span> (n) =&gt; {
-          <span class="hljs-keyword">return</span> m + n;
-        };
-      };
-      <span class="hljs-comment">/* #@range_begin(adder_test) */</span>
-      expect(
-        adder(<span class="hljs-number">1</span>)(<span class="hljs-number">2</span>)
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(adder_test) */</span>
-      next();
-    });
-    describe(<span class="hljs-string">'参照透過性のないコードはテストが困難である'</span>, () =&gt; {
-      describe(<span class="hljs-string">'ゲームの勝敗の例'</span>, () =&gt; {</pre></div></div>
+    });</pre></div></div>
             
         </li>
         
@@ -1845,32 +1828,34 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
-              <p>参照透過性のないコードのテスト</p>
+              <p>参照透過性のない関数の単体テスト</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">"参照透過性のないコードのテスト"</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(winner_with_sideeffect) */</span>
-          <span class="hljs-keyword">var</span> winner = (playerL, playerR) =&gt; {
-            <span class="hljs-keyword">if</span>(playerR.score &gt; playerL.score) {
-              <span class="hljs-built_in">console</span>.log(playerR.name + <span class="hljs-string">"が勝者です"</span>);
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(playerR.score &lt; playerL.score) {
-              <span class="hljs-built_in">console</span>.log(playerL.name + <span class="hljs-string">"が勝者です"</span>);
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"引き分けです"</span>);
-            }
-          }; 
-          <span class="hljs-comment">/* #@range_end(winner_with_sideeffect) */</span>
-          <span class="hljs-keyword">var</span> playerA = {
-            name: <span class="hljs-string">'a'</span>,
-            score: <span class="hljs-number">10</span>
-          };
-          <span class="hljs-keyword">var</span> playerB = {
-            name: <span class="hljs-string">'b'</span>,
-            score: <span class="hljs-number">20</span>
-          };
-          next();
-        });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"参照透過性のない関数の単体テスト"</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(winner_with_sideeffect) */</span>
+      <span class="hljs-keyword">var</span> winner = (playerL, playerR) =&gt; {
+        <span class="hljs-keyword">if</span>(playerR.score &gt; playerL.score) {
+          <span class="hljs-built_in">console</span>.log(playerR.name + <span class="hljs-string">"が勝者です"</span>);
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(playerR.score &lt; playerL.score) {
+          <span class="hljs-built_in">console</span>.log(playerL.name + <span class="hljs-string">"が勝者です"</span>);
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"引き分けです"</span>);
+        }
+      }; 
+      <span class="hljs-comment">/* #@range_end(winner_with_sideeffect) */</span>
+      <span class="hljs-keyword">var</span> playerA = {
+        name: <span class="hljs-string">'a'</span>,
+        score: <span class="hljs-number">10</span>
+      };
+      <span class="hljs-keyword">var</span> playerB = {
+        name: <span class="hljs-string">'b'</span>,
+        score: <span class="hljs-number">20</span>
+      };
+      next();
+    });
+    describe(<span class="hljs-string">'参照透過性のないコードはテストが困難である'</span>, () =&gt; {
+      describe(<span class="hljs-string">'ゲームの勝敗の例'</span>, () =&gt; {</pre></div></div>
             
         </li>
         

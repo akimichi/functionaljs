@@ -998,7 +998,13 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
-              <p>関数本体での自由変数のテスト</p>
+              <p>関数本体での自由変数のテスト
+例外が発生する場合は、無名関数で包みこみ、発生した例外を以下のように捕捉する。</p>
+<blockquote>
+<p>expect(exception).to.be.a(
+  ReferenceError
+);</p>
+</blockquote>
 
             </div>
             

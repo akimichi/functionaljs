@@ -601,14 +601,28 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {
-        it(<span class="hljs-string">'Date.now関数は参照透明性を持たない'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> a = <span class="hljs-built_in">Date</span>.now();
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'副作用と入出力'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Date.now関数は参照透明性を持たない</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'Date.now関数は参照透明性を持たない'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> onceUponATime = <span class="hljs-built_in">Date</span>.now();
           <span class="hljs-comment">/* 時間を1秒進める */</span>
           <span class="hljs-keyword">var</span> sleep = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sleep-async'</span>)();
-          sleep.sleep(<span class="hljs-number">2000</span>, () =&gt; {
+          sleep.sleep(<span class="hljs-number">1000</span>, () =&gt; {
             expect(
-              a
+              onceUponATime
             ).to.not.eql( <span class="hljs-comment">/* 等しくないことをテストしている */</span>
               <span class="hljs-built_in">Date</span>.now()
             );
@@ -672,11 +686,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <h3 id="-">参照透明性を保証する</h3>
 
@@ -687,11 +701,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <h4 id="-">値の参照透過性を保証する（可変なデータの排除）</h4>
 
@@ -723,11 +737,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <h4 id="-">変数の参照透過性を保証する(代入の排除)</h4>
 
@@ -789,11 +803,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h4 id="-">関数の参照透過性を保証する（副作用の分離）</h4>
 
@@ -838,11 +852,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-30">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h2 id="-">関数型プログラミングの利点</h2>
 
@@ -858,11 +872,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-31">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h3 id="-">高いモジュール性</h3>
 
@@ -873,11 +887,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h4 id="-">部品の独立性</h4>
 <h4 id="-">部品の汎用性</h4>
@@ -890,11 +904,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>forEachメソッドによるsumの定義</p>
 
@@ -932,11 +946,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>reduceメソッドによるsumの定義</p>
 
@@ -962,11 +976,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>product関数の定義</p>
 
@@ -1056,11 +1070,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>map関数の定義</p>
 
@@ -1131,11 +1145,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h3 id="-">部品を組み合わせる</h3>
 
@@ -1146,11 +1160,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <h4 id="-">関数適用で部品を組み合わせる</h4>
 
@@ -1173,11 +1187,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>constant関数</p>
 
@@ -1209,11 +1223,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>関数合成によるlength関数の定義</p>
 
@@ -1282,11 +1296,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <h4 id="-">関数合成による処理の合成</h4>
 
@@ -1297,11 +1311,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>compose関数の定義</p>
 
@@ -1346,11 +1360,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>関数合成によるlength関数の定義（ポイントフリースタイル）</p>
 
@@ -1371,11 +1385,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h4 id="-">関数による遅延評価</h4>
 
@@ -1386,11 +1400,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h4 id="-">評価戦略の種類</h4>
 
@@ -1421,11 +1435,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>正格評価の例</p>
 
@@ -1444,11 +1458,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>遅延評価の例</p>
 
@@ -1469,11 +1483,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-48">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <h4 id="-">遅延評価によるストリーム</h4>
 
@@ -1484,11 +1498,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-49">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>ストリームの例</p>
 
@@ -1539,11 +1553,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-50">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>無限ストリームの例</p>
 
@@ -1562,11 +1576,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-51">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>無限の偶数列</p>
 
@@ -1583,11 +1597,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-52">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -1598,11 +1612,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-53">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -1617,11 +1631,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-54">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>filter関数</p>
 
@@ -1677,11 +1691,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-55">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>無限の整数列</p>
 
@@ -1701,11 +1715,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-56">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>無限の偶数列を作る</p>
 
@@ -1759,11 +1773,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-57">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>elemAt関数</p>
 
@@ -1785,11 +1799,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-58">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>3番目の偶数を求める</p>
 
@@ -1812,11 +1826,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-59">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p>filter関数で無限の偶数列を作る</p>
 
@@ -1844,11 +1858,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-60">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>配列に対するelemAt関数</p>
 
@@ -1881,11 +1895,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-61">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>4番目の偶数を求める</p>
 
@@ -1908,11 +1922,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-62">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -1923,11 +1937,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-63">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>単体テストの書き方の例</p>
 
@@ -1965,11 +1979,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-64">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>参照透過性のないコードのテスト</p>
 
@@ -2001,11 +2015,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-65">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>winner関数の分離</p>
 
@@ -2040,11 +2054,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-66">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>副作用のない関数のテスト</p>
 
@@ -2075,11 +2089,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-67">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -2090,11 +2104,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-68">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -2184,11 +2198,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-69">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p>プロパティテストのための関数</p>
 
@@ -2238,11 +2252,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-70">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>succ関数のプロパティテスト</p>
 
@@ -2269,11 +2283,11 @@ describe(<span class="hljs-string">'副作用の種類'</span>, () =&gt; {
         </li>
         
         
-        <li id="section-71">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

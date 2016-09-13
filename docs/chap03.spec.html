@@ -70,6 +70,7 @@
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <h2 id="dry-">DRY原則</h2>
+<p>参考 <a href="https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling">DRY原則の利用: コードの重複と密結合の間</a></p>
 
             </div>
             
@@ -91,7 +92,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'冗長なコードの例'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'冗長なコード'</span>, (next) =&gt; {
     <span class="hljs-comment">/* #@range_begin(redundant_code) */</span>
     <span class="hljs-keyword">var</span> timesForMultiply = (count, arg, memo) =&gt; {
       <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
@@ -167,39 +168,13 @@
             <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* #@range_begin(dry_functions) */</span>
     <span class="hljs-keyword">var</span> add = (n, m) =&gt; {
       <span class="hljs-keyword">return</span> n + m;
-    };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>times関数を利用してmultiply関数を定義する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> multiply = (n, m) =&gt; {
+    };
+    <span class="hljs-comment">/* times関数を利用してmultiply関数を定義する */</span>
+    <span class="hljs-keyword">var</span> multiply = (n, m) =&gt; {
       <span class="hljs-keyword">return</span> times(m, n, <span class="hljs-number">0</span>, add);
-    };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>times関数を利用してexponential関数を定義する</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> exponential = (n, m) =&gt; {
+    };
+    <span class="hljs-comment">/* times関数を利用してexponential関数を定義する */</span>
+    <span class="hljs-keyword">var</span> exponential = (n, m) =&gt; {
       <span class="hljs-keyword">return</span> times(m, n, <span class="hljs-number">1</span>, multiply);
     };
     <span class="hljs-comment">/* #@range_end(dry_functions) */</span>
@@ -225,11 +200,11 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="-">抽象化への指向</h2>
 
@@ -240,11 +215,11 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>関数という抽象化</p>
 
@@ -258,17 +233,17 @@
     <span class="hljs-comment">/* #@range_end(function_abstraction_example) */</span>
     next();
   });
-  describe(<span class="hljs-string">'関数抽象の例としての高階関数'</span>, () =&gt; {
+  describe(<span class="hljs-string">'高階関数による抽象化'</span>, () =&gt; {
     <span class="hljs-keyword">var</span> anArray = [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>,<span class="hljs-number">11</span>,<span class="hljs-number">13</span>];</pre></div></div>
             
         </li>
         
         
-        <li id="section-12">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>for文によるsum関数</p>
 
@@ -297,11 +272,11 @@
         </li>
         
         
-        <li id="section-13">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>forEachによるsum関数</p>
 
@@ -329,11 +304,11 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>reduceによるsum関数</p>
 
@@ -360,11 +335,11 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <h2 id="-">セマンティクスを意識する</h2>
 
@@ -375,24 +350,46 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>環境という仕組み</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'環境という仕組み'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* merge関数は、引数にわたされた2つのオブジェクトを併合する */</span>
     <span class="hljs-keyword">var</span> merge = (obj1, obj2) =&gt; {
       <span class="hljs-keyword">var</span> mergedObject = {};
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj1) { mergedObject[attrname] = obj1[attrname]; }
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attrname <span class="hljs-keyword">in</span> obj2) { mergedObject[attrname] = obj2[attrname]; }
       <span class="hljs-keyword">return</span> mergedObject;
-    };
-    <span class="hljs-comment">/* #@range_begin(environment_example) */</span>
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <dl>
+  <dt>empty</dt>
+  <dd>空の環境</dd>
+  <dt>extendEnv </dt>
+  <dd>環境に変数と値の対応を与えて、辞書を拡張する</dd>
+  <dt>lookupEnv</dt>
+  <dd>変数を指定して、環境に記憶されている値を取り出す</dd>
+</dl>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* #@range_begin(environment_example) */</span>
     <span class="hljs-comment">/* 空の環境 */</span>
     <span class="hljs-keyword">var</span> emptyEnv = {};
     <span class="hljs-comment">/* 環境を拡張する */</span>
@@ -410,11 +407,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <pre><code><span class="hljs-keyword">var</span> a = <span class="hljs-number">1</span>;
 <span class="hljs-keyword">var</span> b = <span class="hljs-number">3</span>;
@@ -444,11 +441,11 @@ b
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h2 id="-">テストに親しむ</h2>
 
@@ -459,25 +456,55 @@ b
         </li>
         
         
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="-">単体テストの仕組み</h3>
+<p>参考 <a href="https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88">単体テスト</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'単体テストの仕組み'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <h3 id="-">単体テストの仕組み</h3>
+              <p>assertによる表明</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'単体テストの仕組み'</span>, () =&gt; {
-    it(<span class="hljs-string">'assertによる表明'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'assertによる表明'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(assert_assertion) */</span>
       <span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">"assert"</span>);
       assert.equal(<span class="hljs-number">1</span> + <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
       <span class="hljs-comment">/* #@range_end(assert_assertion) */</span>
       next();
-    });
-    it(<span class="hljs-string">'expectによる表明'</span>, (next) =&gt; {
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>expectによる表明</p>
+<p>参考 <a href="https://github.com/Automattic/expect.js">expect.js</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'expectによる表明'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(expect_assertion) */</span>
       <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
       expect(
@@ -494,11 +521,11 @@ b
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap04.spec.html">次章に移る</a> </p>
 

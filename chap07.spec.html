@@ -4432,23 +4432,8 @@ $$</p>
             <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
           };
         };
-        <span class="hljs-comment">/* IO.puts:: LIST[CHAR] =&gt; IO[] */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-127">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
-              </div>
-              <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
-</code></pre>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        IO.puts = (alist) =&gt; {
+        <span class="hljs-comment">/* IO.puts:: LIST[CHAR] =&gt; IO[] */</span>
+        IO.puts = (alist) =&gt; {
           <span class="hljs-keyword">return</span> match(alist, {
             empty: () =&gt; {
               <span class="hljs-keyword">return</span> IO.done();
@@ -4472,11 +4457,11 @@ $$</p>
         </li>
         
         
-        <li id="section-128">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <p>stringモジュール</p>
 
@@ -4525,11 +4510,11 @@ $$</p>
         </li>
         
         
-        <li id="section-129">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>IOモナドで参照透過性を確保する</p>
 
@@ -4558,11 +4543,11 @@ $$</p>
         </li>
         
         
-        <li id="section-130">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap08.spec.html">次章に移る</a> </p>
 

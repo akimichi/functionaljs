@@ -1686,18 +1686,6 @@
 //   ).to.eql(
 //     4
 //   );
-//   /* init = reverse . tail . reverse */
-//   var init = (alist) => {
-//     var self = this;
-//     return compose(list.reverse,
-//                    compose(list.tail,list.reverse))(alist);
-//   };
-//   var seq = list.cons(1, list.cons(2,list.cons(3,list.empty())));
-//   expect(
-//     list.toArray(init(seq))
-//   ).to.eql(
-//     [1,2]
-//   );
 //   // expect(
 //   //   list.toArray(list.fromString("abc"))
 //   // ).to.eql(
@@ -1794,38 +1782,6 @@ var list  = {
   //   };
   // },
   /* #@range_end(list_filter) */
-  /* list#length */
-  // length: (alist) => {
-  //   return match(alist,{
-  //     empty: (_) => {
-  //       return 0;
-  //     },
-  //     cons: (head,tail) => {
-  //       return list.foldr(alist)(0)((item) => {
-  //         return (accumulator) => {
-  //           return 1 + accumulator;
-  //         };
-  //       });
-  //     }
-  //   });
-  // },
-  // any: (alist) => {
-  //   return (predicate) => {
-  //     expect(predicate).to.a('function');
-  //     return match(alist,{
-  //       empty: (_) => {
-  //         return false;
-  //       },
-  //       cons: (head,tail) => {
-  //         if(truthy(predicate(head))) {
-  //           return true;
-  //         } else {
-  //           return list.any(tail)(predicate);
-  //         }
-  //       }
-  //     });
-  //   };
-  // },
   // at: (alist) => {
   //   return (index) => {
   //     expect(index).to.a('number');
@@ -2327,15 +2283,6 @@ describe('streamのテスト', () => {
   //     return flip.call(self,
   //                      compose)(fun);
   //   };
-  //   var last = (alist) => {
-  //     return pipe(list.reverse)(list.head)(alist);
-  //   };
-  //   var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-  //   expect(
-  //     last(sequence)
-  //   ).to.eql(
-  //     4
-  //   );
   //   /* #@range_end(last_with_pipe) */
   //   next();
   // });
@@ -2554,3 +2501,425 @@ describe('streamのテスト', () => {
       //   /* #@range_end(maybe_monad_test) */
       //   next();
       // });
+
+  it('カリー化されていない指数関数', (next) => {
+    /* #@range_begin(exponential_uncurried) */
+    var exponential = (base,index) => {
+      if(index === 0){
+        return 1;
+      } else {
+        return base * exponential(base,index - 1);
+      }
+    };
+    expect(
+      exponential(2,2) // 2 * 2 = 4
+    ).to.eql(
+      4
+    );
+    expect(
+      exponential(2,3) // 2 * 2 * 2 = 8
+    ).to.eql(
+      8
+    );
+    /* #@range_end(exponential_uncurried) */
+    next();
+  });
+
+    // it('関数合成による様々な関数の定義', (next) => {
+    //   var alist = list.cons(1,
+    //                         list.cons(2,
+    //                                   list.cons(3,
+    //                                             list.empty())));
+    //   var alwaysOne = (x) => {
+    //     return 1;
+    //   };
+    //   var sum = (alist) => {
+    //     var sumHelper = (alist, accumulator) => {
+    //       return match(alist,{
+    //         empty: (_) => {
+    //           return accumulator;
+    //         },
+    //         cons: (head, tail) => {
+    //           return sumHelper(tail, accumulator + head);
+    //         }
+    //       });
+    //     };
+    //     return sumHelper(alist,0);
+    //   };
+    //   var not = (predicate) => { // predicate::FUN[NUM => BOOL]
+    //     return (arg) => { // FUN[NUM => BOOL]型を返す
+    //       return ! predicate(arg); // !演算子で論理を反転させる
+    //     };
+    //   };
+    //   var multipleOf = (n) => {
+    //     return (m) => {
+    //       if(m % n === 0) {
+    //         return true;
+    //       } else {
+    //         return false;
+    //       }
+    //     };
+    //   };
+    //   var even = multipleOf(2);
+    //   var odd = not(even);
+    //   expect(
+    //     odd(2)
+    //   ).to.eql(
+    //     false
+    //   );
+    //   expect(
+    //     odd(3)
+    //   ).to.eql(
+    //     true
+    //   );
+    //   var map = (alist) => {
+    //     return (transform) => {
+    //       return match(alist,{
+    //         empty: (_) => {
+    //           return list.empty();
+    //         },
+    //         cons: (head,tail) => {
+    //           return list.cons(transform(head),
+    //                            list.map(tail)(transform));
+    //         }
+    //       });
+    //     };
+    //   };
+    //   var allTrueList = list.cons(true,
+    //                               list.cons(true,
+    //                                         list.cons(true,
+    //                                                   list.empty())));
+    //   var and = (alist) => {
+    //     return list.match(alist, {
+    //       empty: (_) => {
+    //         return true;
+    //       },
+    //       cons: (head, tail) => {
+    //         return head && and(tail);
+    //       }
+    //     });
+    //   };
+    //   expect(
+    //     and(allTrueList)
+    //   ).to.eql(
+    //     true
+    //   );
+    //   var or = (alist) => {
+    //     return list.match(alist, {
+    //       empty: (_) => {
+    //         return false;
+    //       },
+    //       cons: (head, tail) => {
+    //         return head || or(tail);
+    //       }
+    //     });
+    //   };
+    //   var someTrueList = list.cons(true,
+    //                                list.cons(false,
+    //                                          list.cons(true,
+    //                                                    list.empty())));
+    //   var allFalseList = list.cons(false,
+    //                                list.cons(false,
+    //                                          list.cons(false,
+    //                                                    list.empty())));
+    //   expect(
+    //     or(someTrueList)
+    //   ).to.eql(
+    //     true
+    //   );
+    //   expect(
+    //     or(allFalseList)
+    //   ).to.eql(
+    //     false
+    //   );
+    //   next();
+    // });
+
+        /* #@range_begin(another_counter) */
+        var anoterCounterFromZero = counter(0);
+        expect(
+          anoterCounterFromZero()
+        ).to.eql( 
+          1
+        );
+        /* #@range_end(another_counter) */
+
+      // var squareCallback = (n) => { // 要素を2乗する関数を渡す
+      //   return n * n;
+      // };
+      // /* 要素を2倍する関数を渡す */
+      // var doubleCallback = (n) => { 
+      //   return n * 2;
+      // };
+
+      // it('リストのproduct', (next) => {
+      //   var productWithCallback = (alist) => {
+      //     return (accumulator) => {
+      //       return (CALLBACK) => {
+      //         return match(alist,{
+      //           empty: (_) => {
+      //             return accumulator;
+      //           },
+      //           cons: (head, tail) => {
+      //             return CALLBACK(head)(productWithCallback(tail)(accumulator)(CALLBACK));
+      //           }
+      //         });
+      //       };
+      //     };
+      //   };
+      //   var callback = (n) => {  
+      //     return (m) => {
+      //       return n * m;
+      //     };
+      //   };
+      //   var numbers = list.cons(1, 
+      //                           list.cons(2,
+      //                                     list.cons(3,
+      //                                               list.empty())));
+      //   expect(
+      //     productWithCallback(numbers)(1)(callback)
+      //   ).to.eql(
+      //     6
+      //   );
+      //   next();
+      // });
+      // it('リストのreverse', (next) => {
+      //   var reverserWithCallback = (alist) => {
+      //     return (accumulator) => {
+      //       return (CALLBACK) => {
+      //         return match(alist,{
+      //           empty: (_) => {
+      //             return accumulator;
+      //           },
+      //           cons: (head, tail) => {
+      //             return CALLBACK(head)(reverserWithCallback(tail)(accumulator)(CALLBACK));
+      //           }
+      //         });
+      //       };
+      //     };
+      //   };
+      //   var callback = (x) => {
+      //     return (xs) => {
+      //       return list.match(xs, {
+      //         empty: (_) => {
+      //           return list.cons(x, list.empty());
+      //         },
+      //         cons: (head, tail) => {
+      //           return list.cons(head, callback(x)(tail)); 
+      //         }
+      //       });
+      //     };
+      //   };
+      //   var numbers = list.cons(1, 
+      //                           list.cons(2,
+      //                                     list.cons(3,
+      //                                               list.empty())));
+      //   expect(
+      //     list.toArray(reverserWithCallback(numbers)(list.empty())(callback))
+      //   ).to.eql(
+      //     [3,2,1]
+      //   );
+      //   next();
+      // });
+      // it('リストのall', (next) => {
+      //   var allWithCallback = (alist) => {
+      //     return (accumulator) => {
+      //       return (CALLBACK) => {
+      //         return match(alist,{
+      //           empty: (_) => {
+      //             return accumulator;
+      //           },
+      //           cons: (head, tail) => {
+      //             return CALLBACK(head)(allWithCallback(tail)(accumulator)(CALLBACK));
+      //           }
+      //         });
+      //       };
+      //     };
+      //   };
+      //   var callback = (n) => {  
+      //     return (m) => {
+      //       return n && m;
+      //     };
+      //   };
+      //   var allTrueList = list.cons(true, 
+      //                               list.cons(true,
+      //                                         list.cons(true,
+      //                                                   list.empty())));
+      //   expect(
+      //     allWithCallback(allTrueList)(true)(callback)
+      //   ).to.eql(
+      //     true
+      //   );
+      //   var notAllTrueList = list.cons(true, 
+      //                                  list.cons(true,
+      //                                            list.cons(false,
+      //                                                      list.empty())));
+      //   expect(
+      //     allWithCallback(notAllTrueList)(true)(callback)
+      //   ).to.eql(
+      //     false
+      //   );
+      //   next();
+      // });
+
+      it("foldrでtoArray関数を作る", (next) => {
+        /* #@range_begin(foldr_toarray) */
+        var toArray = (alist) => {
+          return foldr(alist)([])((item) => {
+            return (accumulator) => {
+              return [item].concat(accumulator);
+            };
+          });
+        };
+        var seq = list.cons(true,list.cons(1,list.cons(null,list.cons("a",list.empty()))));
+        expect(
+          toArray(seq)
+        ).to.eql(
+          [ true, 1, null, 'a' ]
+        );
+        /* #@range_end(foldr_toarray) */
+        next();
+      });
+
+      it("継続としての蓄積変数", (next) => {
+        /* #@range_begin(accumulator_as_continuation) */
+        var succCPS = (n, accumulator) => {
+          return n + 1 + accumulator;
+        };
+        expect(
+          succCPS(1, 0)
+        ).to.eql(
+          2
+        );
+        var multiplyCPS = (n,m, accumulator) => {
+          return n * m * accumulator;
+        };
+        expect(
+          multiplyCPS(succCPS(1, 0), 3, 1) // 蓄積変数を渡す
+        ).to.eql(
+          6
+        );
+        expect(
+          multiplyCPS(succCPS(1, 0), succCPS(3, 0), 1) // 蓄積変数を渡す
+        ).to.eql(
+          8
+        );
+        /* #@range_end(accumulator_as_continuation) */
+        next();
+      });
+
+      it("find関数", (next) => {
+        var identity = (any) => {
+          return any;
+        };
+        /* #@range_begin(list_find) */
+        var find = (alist,init, predicate) => {
+          var continuesOnRecursion = (alist) => { // 反復処理を続ける継続
+            return find(alist, init, predicate);  // find関数を再帰的に呼び出す
+          };
+          var escapesFromRecursion = identity; // 反復処理を脱出する継続
+
+          return list.match(alist, {
+            empty: () => {
+              return escapesFromRecursion(init); // 反復処理を抜ける
+            },
+            cons: (head, tail) => { 
+              if(predicate(head) === true) {
+                return escapesFromRecursion(head); // escapesFromRecursionで反復処理を脱出する
+              } else {
+                return continuesOnRecursion(tail); // continuesOnRecursionで次の反復処理を続ける
+              };
+            }
+          });
+        };
+        /* #@range_end(list_find) */
+        /* #@range_begin(list_find_test) */
+        var theList = list.fromArray([0,1,2,3]);
+        expect(
+          find(theList,null, (item) => {
+            return (item === 4);
+          })
+        ).to.eql(
+          null
+        );
+        expect(
+          find(theList,null, (item) => {
+            return (item === 2);
+          })
+        ).to.eql(
+          2
+        );
+        /* #@range_end(list_find_test) */
+        next();
+      }); 
+
+    it("identity#flatMap", (next) => {
+      /* #@range_begin(identity_monad_test) */
+      var instance = ID.unit(1);
+      expect(
+        ID.flatMap(instance)((n) => {
+          return ID.unit(n * 2);
+        })
+      ).to.eql(
+        ID.unit(2)
+      );
+      expect(
+        ID.flatMap(instance)((n) => {
+          return ID.flatMap(ID.unit(n * 2))((m) => {
+            return ID.unit(m * 3);
+          });
+        })
+      ).to.eql(
+        ID.unit(6)
+      );
+      expect(
+        ID.flatMap(instance)((n) => {
+          return ID.flatMap(ID.unit(n))((m) => {
+            return ID.unit(m * n);
+          });
+        })
+      ).to.eql(
+        ID.unit(1)
+      );
+      /* #@range_end(identity_monad_test) */
+      next();
+    });
+
+        /* #@range_begin(maybe_monad_helper) */
+        // isEqual: (maybeA,maybeB) => {
+        //   return maybe.match(maybeA,{
+        //     just: (valueA) => {
+        //       return maybe.match(maybeB,{
+        //         just: (valueB) => {
+        //           return (valueA === valueB);
+        //         },
+        //         nothing: (_) => {
+        //           return false;
+        //         }
+        //       });
+        //     },
+        //     nothing: (_) => {
+        //       return maybe.match(maybeB,{
+        //         just: (_) => {
+        //           return false;
+        //         },
+        //         nothing: (_) => {
+        //           return true;
+        //         }
+        //       });
+        //     }
+        //   });
+        // },
+        // map: (maybeInstance) => {
+        //   return (transform) => {
+        //     return maybe.match(maybeInstance,{
+        //       just: (value) => {
+        //         return MAYBE.unit(transform(value));
+        //       },
+        //       nothing: (_) => {
+        //         return maybe.nothing(_);
+        //       }
+        //     });
+        //   };
+        // }
+      /* #@range_end(maybe_monad_helper) */

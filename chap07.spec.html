@@ -2922,24 +2922,6 @@ $$</p>
         );
         next();
       });
-      it(<span class="hljs-string">"foldrでtoArray関数を作る"</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(foldr_toarray) */</span>
-        <span class="hljs-keyword">var</span> toArray = (alist) =&gt; {
-          <span class="hljs-keyword">return</span> foldr(alist)([])((item) =&gt; {
-            <span class="hljs-keyword">return</span> (accumulator) =&gt; {
-              <span class="hljs-keyword">return</span> [item].concat(accumulator);
-            };
-          });
-        };
-        <span class="hljs-keyword">var</span> seq = list.cons(<span class="hljs-literal">true</span>,list.cons(<span class="hljs-number">1</span>,list.cons(<span class="hljs-literal">null</span>,list.cons(<span class="hljs-string">"a"</span>,list.empty()))));
-        expect(
-          toArray(seq)
-        ).to.eql(
-          [ <span class="hljs-literal">true</span>, <span class="hljs-number">1</span>, <span class="hljs-literal">null</span>, <span class="hljs-string">'a'</span> ]
-        );
-        <span class="hljs-comment">/* #@range_end(foldr_toarray) */</span>
-        next();
-      });
       it(<span class="hljs-string">"foldrで map関数を作る"</span>, (next) =&gt; {
         <span class="hljs-keyword">var</span> double = (number) =&gt; {
           <span class="hljs-keyword">return</span> number * <span class="hljs-number">2</span>;

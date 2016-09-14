@@ -1097,39 +1097,32 @@
 <tr>
 <th>関数名</th>
 <th>関数合成による定義</th>
-<th>関数の機能</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>length</td>
 <td>(sum . map(alwaysOne))</td>
-<td>リストの長さ</td>
 </tr>
 <tr>
 <td>last</td>
 <td>(head . reverse)</td>
-<td>リストの最末尾要素</td>
 </tr>
 <tr>
 <td>init</td>
 <td>(reverse . tail . reverse)</td>
-<td>リストの最末尾要素以外の並び</td>
 </tr>
 <tr>
 <td>all(predicate)</td>
 <td>(and . map(predicate))</td>
-<td>リストの全要素がtrueか？</td>
 </tr>
 <tr>
 <td>any(predicate)</td>
 <td>(or . map(predicate))</td>
-<td>リストの要素にtrueがあるか？</td>
 </tr>
 <tr>
 <td>none(predicate)</td>
 <td>(and . map(not(predicate)))</td>
-<td>リストの全要素がfalseか？</td>
 </tr>
 </tbody>
 </table>

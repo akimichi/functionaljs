@@ -880,14 +880,7 @@
         <span class="hljs-keyword">return</span> f(g(arg));
       };
     };
-    <span class="hljs-comment">/* #@range_end(compose_definition) */</span>
-    <span class="hljs-keyword">var</span> flip = (fun) =&gt; {
-      <span class="hljs-keyword">return</span>  (f) =&gt; {
-        <span class="hljs-keyword">return</span> (g) =&gt; {
-          <span class="hljs-keyword">return</span> fun(g)(f);
-        };
-      };
-    };</pre></div></div>
+    <span class="hljs-comment">/* #@range_end(compose_definition) */</span></pre></div></div>
             
         </li>
         
@@ -994,7 +987,14 @@
           next();
         });
       });
-    });</pre></div></div>
+    });
+    <span class="hljs-keyword">var</span> flip = (fun) =&gt; {
+      <span class="hljs-keyword">return</span>  (f) =&gt; {
+        <span class="hljs-keyword">return</span> (g) =&gt; {
+          <span class="hljs-keyword">return</span> fun(g)(f);
+        };
+      };
+    };</pre></div></div>
             
         </li>
         

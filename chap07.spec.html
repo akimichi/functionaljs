@@ -3168,32 +3168,6 @@ $$</p>
         <span class="hljs-comment">/* #@range_end(continuation_in_arithmetic) */</span>
         next();
       });
-      it(<span class="hljs-string">"継続としての蓄積変数"</span>, (next) =&gt; {
-        <span class="hljs-comment">/* #@range_begin(accumulator_as_continuation) */</span>
-        <span class="hljs-keyword">var</span> succCPS = (n, accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span> + accumulator;
-        };
-        expect(
-          succCPS(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>)
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        <span class="hljs-keyword">var</span> multiplyCPS = (n,m, accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> n * m * accumulator;
-        };
-        expect(
-          multiplyCPS(succCPS(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>), <span class="hljs-number">3</span>, <span class="hljs-number">1</span>) <span class="hljs-comment">// 蓄積変数を渡す</span>
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        expect(
-          multiplyCPS(succCPS(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>), succCPS(<span class="hljs-number">3</span>, <span class="hljs-number">0</span>), <span class="hljs-number">1</span>) <span class="hljs-comment">// 蓄積変数を渡す</span>
-        ).to.eql(
-          <span class="hljs-number">8</span>
-        );
-        <span class="hljs-comment">/* #@range_end(accumulator_as_continuation) */</span>
-        next();
-      });
     });
     describe(<span class="hljs-string">"継続で未来を選ぶ"</span>, () =&gt; {
       it(<span class="hljs-string">"find関数"</span>, (next) =&gt; {

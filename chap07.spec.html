@@ -3892,12 +3892,7 @@ $$</p>
       );
       <span class="hljs-comment">/* #@range_end(flatMap_and_composition) */</span>
       next();
-    });
-    describe(<span class="hljs-string">"恒等モナドのモナド則"</span>, () =&gt; {
-      <span class="hljs-comment">/* #@range_begin(identity_monad_laws) */</span>
-      it(<span class="hljs-string">"flatMap(instanceM)(unit) === instanceM"</span>, (next) =&gt; {
-        <span class="hljs-comment">/* flatMap(instanceM)(unit) === instanceM の一例 */</span>
-        <span class="hljs-keyword">var</span> instanceM = ID.unit(<span class="hljs-number">1</span>);</pre></div></div>
+    });</pre></div></div>
             
         </li>
         
@@ -3907,6 +3902,25 @@ $$</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-110">&#182;</a>
+              </div>
+              <h4 id="-">恒等モナドのモナド則</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">"恒等モナドのモナド則"</span>, () =&gt; {
+      <span class="hljs-comment">/* #@range_begin(identity_monad_laws) */</span>
+      it(<span class="hljs-string">"flatMap(instanceM)(unit) === instanceM"</span>, (next) =&gt; {
+        <span class="hljs-comment">/* flatMap(instanceM)(unit) === instanceM の一例 */</span>
+        <span class="hljs-keyword">var</span> instanceM = ID.unit(<span class="hljs-number">1</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-111">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>右単位元則</p>
 
@@ -3930,11 +3944,11 @@ $$</p>
         </li>
         
         
-        <li id="section-111">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <p>左単位元則</p>
 
@@ -3968,11 +3982,11 @@ $$</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>結合法則</p>
 
@@ -3996,30 +4010,27 @@ $$</p>
         </li>
         
         
-        <li id="section-113">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
-              </div>
-              <h3 id="maybe-">Maybeモナド</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'Maybeモナドを作る'</span>, () =&gt; {
-    <span class="hljs-keyword">var</span> id = (any) =&gt; {
-      <span class="hljs-keyword">return</span> any;
-    };
-    describe(<span class="hljs-string">'Maybeモナドを作る'</span>, () =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-114">&#182;</a>
+              </div>
+              <h3 id="maybe-">Maybeモナドでエラーを処理する</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'Maybeモナドでエラーを処理する'</span>, () =&gt; {
+    describe(<span class="hljs-string">'Maybeモナドを作る'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-115">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <p>Maybeの代数的構造</p>
 
@@ -4046,11 +4057,11 @@ $$</p>
         </li>
         
         
-        <li id="section-115">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <p>Maybeモナドの定義</p>
 
@@ -4091,54 +4102,16 @@ $$</p>
           };
         },
         <span class="hljs-comment">/* #@range_end(maybe_monad) */</span>
-        <span class="hljs-comment">/* #@range_begin(maybe_monad_helper) */</span>
-        isEqual: (maybeA,maybeB) =&gt; {
-          <span class="hljs-keyword">return</span> maybe.match(maybeA,{
-            just: (valueA) =&gt; {
-              <span class="hljs-keyword">return</span> maybe.match(maybeB,{
-                just: (valueB) =&gt; {
-                  <span class="hljs-keyword">return</span> (valueA === valueB);
-                },
-                nothing: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-                }
-              });
-            },
-            nothing: (_) =&gt; {
-              <span class="hljs-keyword">return</span> maybe.match(maybeB,{
-                just: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-                },
-                nothing: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-                }
-              });
-            }
-          });
-        },
-        map: (maybeInstance) =&gt; {
-          <span class="hljs-keyword">return</span> (transform) =&gt; {
-            <span class="hljs-keyword">return</span> maybe.match(maybeInstance,{
-              just: (value) =&gt; {
-                <span class="hljs-keyword">return</span> MAYBE.unit(transform(value));
-              },
-              nothing: (_) =&gt; {
-                <span class="hljs-keyword">return</span> maybe.nothing(_);
-              }
-            });
-          };
-        }
-      };
-      <span class="hljs-comment">/* #@range_end(maybe_monad_helper) */</span></pre></div></div>
+      };</pre></div></div>
             
         </li>
         
         
-        <li id="section-116">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>Maybeモナドの利用法</p>
 
@@ -4176,11 +4149,11 @@ $$</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <h3 id="io-">IOモナドで副作用を閉じ込める</h3>
 
@@ -4191,11 +4164,11 @@ $$</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <p>Pair型の定義</p>
 
@@ -4274,11 +4247,11 @@ $$</p>
         </li>
         
         
-        <li id="section-119">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>run関数の利用法</p>
 
@@ -4300,11 +4273,11 @@ $$</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <h2 id="-io-monad-module">‘IO’ monad module</h2>
 
@@ -4362,11 +4335,11 @@ $$</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>run関数の利用法</p>
 
@@ -4387,11 +4360,11 @@ $$</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <h4 id="io-">IOアクションを合成する</h4>
 
@@ -4425,11 +4398,11 @@ $$</p>
         </li>
         
         
-        <li id="section-123">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
 </code></pre>
@@ -4460,11 +4433,11 @@ $$</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>stringモジュール</p>
 
@@ -4533,11 +4506,11 @@ $$</p>
         </li>
         
         
-        <li id="section-125">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap08.spec.html">次章に移る</a> </p>
 

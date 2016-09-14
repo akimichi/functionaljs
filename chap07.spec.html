@@ -158,7 +158,6 @@
   },
   <span class="hljs-comment">/* map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T] */</span>
   map: (alist) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (transform) =&gt; {
       <span class="hljs-keyword">return</span> match(alist,{
         empty: (_) =&gt; {
@@ -1042,12 +1041,12 @@
           });
         };
         <span class="hljs-comment">/* #@range_end(list_last_recursive) */</span>
-        <span class="hljs-keyword">var</span> numbers = list.cons(<span class="hljs-number">1</span>,
+        <span class="hljs-keyword">var</span> aList = list.cons(<span class="hljs-number">1</span>,
                                 list.cons(<span class="hljs-number">2</span>,
                                           list.cons(<span class="hljs-number">3</span>,
                                                     list.empty())));
         expect(
-          last(numbers)
+          last(aList)
         ).to.eql(
           <span class="hljs-number">3</span>
         );
@@ -1082,7 +1081,166 @@
         );
         next();
       });
-      it(<span class="hljs-string">'Y combinator'</span>, (next) =&gt; {</pre></div></div>
+      describe(<span class="hljs-string">'関数合成による様々な関数定義'</span>, () =&gt; {
+        <span class="hljs-keyword">var</span> alwaysOne = (x) =&gt; {
+          <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        };
+        <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">1</span>,
+                              list.cons(<span class="hljs-number">2</span>,
+                                        list.cons(<span class="hljs-number">3</span>,
+                                                  list.empty())));
+        it(<span class="hljs-string">'length関数の抽象的な定義'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> alwaysOne = (x) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+          };
+          <span class="hljs-keyword">var</span> sum = (alist) =&gt; {
+            <span class="hljs-keyword">var</span> sumHelper = (alist, accumulator) =&gt; {
+              <span class="hljs-keyword">return</span> match(alist,{
+                empty: (_) =&gt; {
+                  <span class="hljs-keyword">return</span> accumulator;
+                },
+                cons: (head, tail) =&gt; {
+                  <span class="hljs-keyword">return</span> sumHelper(tail, accumulator + head);
+                }
+              });
+            };
+            <span class="hljs-keyword">return</span> sumHelper(alist,<span class="hljs-number">0</span>);
+          };
+          <span class="hljs-keyword">var</span> length = (alist) =&gt; {
+            <span class="hljs-keyword">return</span> compose(sum,
+                           flip(list.map)(alwaysOne))(alist);
+          };
+          <span class="hljs-comment">/****** テスト *******/</span>
+          expect(
+            length(alist)
+          ).to.eql(
+            <span class="hljs-number">3</span>
+          );
+          <span class="hljs-comment">/* #@range_end(abstract_length) */</span>
+          next();
+        });
+        it(<span class="hljs-string">'last関数の抽象的な定義'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> last = (alist) =&gt; {
+            <span class="hljs-keyword">return</span> compose(list.head,
+                           list.reverse)(alist);
+          };
+          expect(
+            last(alist)
+          ).to.eql(
+            <span class="hljs-number">3</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'any関数の抽象的な定義'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> or = (alist) =&gt; {
+            <span class="hljs-keyword">return</span> list.match(alist, {
+              empty: (_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              },
+              cons: (head, tail) =&gt; {
+                <span class="hljs-keyword">return</span> head || or(tail);
+              }
+            });
+          };
+          <span class="hljs-keyword">var</span> any = (predicate) =&gt; {
+            <span class="hljs-keyword">return</span> (alist) =&gt; {
+              <span class="hljs-keyword">return</span> compose(or,
+                             flip(list.map)(predicate))(alist);
+            };
+          };
+          expect(
+            any((x) =&gt; {
+              <span class="hljs-keyword">return</span> x &lt; <span class="hljs-number">2</span>;
+            })(alist)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          expect(
+            any((x) =&gt; {
+              <span class="hljs-keyword">return</span> x &lt; <span class="hljs-number">1</span>;
+            })(alist)
+          ).to.eql(
+            <span class="hljs-literal">false</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'none関数の抽象的な定義'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> and = (alist) =&gt; {
+            <span class="hljs-keyword">return</span> list.match(alist, {
+              empty: (_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+              },
+              cons: (head, tail) =&gt; {
+                <span class="hljs-keyword">return</span> head &amp;&amp; and(tail);
+              }
+            });
+          };
+          <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicate::FUN[NUM =&gt; BOOL]</span>
+            <span class="hljs-keyword">return</span> (arg) =&gt; { <span class="hljs-comment">// FUN[NUM =&gt; BOOL]型を返す</span>
+              <span class="hljs-keyword">return</span> ! predicate(arg); <span class="hljs-comment">// !演算子で論理を反転させる</span>
+            };
+          };
+          <span class="hljs-keyword">var</span> none = (predicate) =&gt; {
+            <span class="hljs-keyword">return</span> (alist) =&gt; {
+              <span class="hljs-keyword">return</span> compose(and,
+                             flip(list.map)(not(predicate)))(alist);
+            };
+          };
+          expect(
+            none((x) =&gt; {
+              <span class="hljs-keyword">return</span> x &lt; <span class="hljs-number">0</span>;
+            })(alist)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'all関数の抽象的な定義'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> and = (alist) =&gt; {
+            <span class="hljs-keyword">return</span> list.match(alist, {
+              empty: (_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+              },
+              cons: (head, tail) =&gt; {
+                <span class="hljs-keyword">return</span> head &amp;&amp; and(tail);
+              }
+            });
+          };
+          <span class="hljs-keyword">var</span> all = (predicate) =&gt; {
+            <span class="hljs-keyword">return</span> (alist) =&gt; {
+              <span class="hljs-keyword">return</span> compose(and,
+                             flip(list.map)(predicate))(alist);
+            };
+          };
+          expect(
+            all((x) =&gt; {
+              <span class="hljs-keyword">return</span> x &gt; <span class="hljs-number">0</span>;
+            })(alist)
+          ).to.eql(
+            <span class="hljs-literal">true</span>
+          );
+          next();
+        });
+        it(<span class="hljs-string">'init関数の抽象的な定義'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* init = reverse . tail . reverse  */</span>
+          <span class="hljs-comment">/* init = reverse . tail . reverse  */</span>
+          <span class="hljs-keyword">var</span> init = (alist) =&gt; {
+            <span class="hljs-keyword">return</span> compose(list.reverse,
+                           compose(list.tail,
+                                   list.reverse)
+                          )(alist);
+          };
+          <span class="hljs-comment">/****** テスト *******/</span>
+          expect(
+            list.toArray(init(alist))
+          ).to.eql(
+            [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
+          );
+          next();
+        });
+      });
+    });
+    it(<span class="hljs-string">'Y combinator'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -1097,279 +1255,35 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(Y_combinator) */</span>
-        <span class="hljs-keyword">var</span> Y = (F) =&gt; {
-          <span class="hljs-keyword">return</span> ((x) =&gt; {
-            <span class="hljs-keyword">return</span> F((y) =&gt; {
-              <span class="hljs-keyword">return</span> x(x)(y);
-            }) ;
-          })((x) =&gt;  {
-            <span class="hljs-keyword">return</span> F((y) =&gt; {
-              <span class="hljs-keyword">return</span> x(x)(y);
-            }) ;
-          });
-        };
-        <span class="hljs-comment">/* #@range_end(Y_combinator)  */</span>
-        <span class="hljs-comment">/* #@range_begin(Y_combinator_test) */</span>
-        <span class="hljs-keyword">var</span> factorial = Y((fact) =&gt; {
-          <span class="hljs-keyword">return</span> (n) =&gt; {
-            <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) {
-              <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-            } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> n * fact(n - <span class="hljs-number">1</span>);
-            }
-          };
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(Y_combinator) */</span>
+      <span class="hljs-keyword">var</span> Y = (F) =&gt; {
+        <span class="hljs-keyword">return</span> ((x) =&gt; {
+          <span class="hljs-keyword">return</span> F((y) =&gt; {
+            <span class="hljs-keyword">return</span> x(x)(y);
+          }) ;
+        })((x) =&gt;  {
+          <span class="hljs-keyword">return</span> F((y) =&gt; {
+            <span class="hljs-keyword">return</span> x(x)(y);
+          }) ;
         });
-        expect(
-          factorial(<span class="hljs-number">3</span>) <span class="hljs-comment">// 3 * 2 * 1 = 6</span>
-        ).to.eql(
-          <span class="hljs-number">6</span>
-        );
-        <span class="hljs-comment">/* #@range_end(Y_combinator_test) */</span>
-        next();
-      });
-    });
-    it(<span class="hljs-string">'length関数の抽象的な定義'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> alwaysOne = (x) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
       };
-      <span class="hljs-keyword">var</span> sum = (alist) =&gt; {
-        <span class="hljs-keyword">var</span> sumHelper = (alist, accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> match(alist,{
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> sumHelper(tail, accumulator + head);
-            }
-          });
-        };
-        <span class="hljs-keyword">return</span> sumHelper(alist,<span class="hljs-number">0</span>);
-      };
-      <span class="hljs-comment">/* #@range_begin(abstract_length) */</span>
-      <span class="hljs-keyword">var</span> length = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> compose(sum,
-                       flip(list.map)(alwaysOne))(alist);
-      };
-      <span class="hljs-comment">/****** テスト *******/</span>
-      <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">1</span>,
-                            list.cons(<span class="hljs-number">2</span>,
-                                      list.cons(<span class="hljs-number">3</span>,
-                                                list.empty())));
-      expect(
-        length(alist)
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* #@range_end(abstract_length) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'init関数の抽象的な定義'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(abstract_init) */</span>
-      <span class="hljs-comment">/* init = reverse . tail . reverse  */</span>
-      <span class="hljs-keyword">var</span> init = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> compose(list.reverse,
-                       compose(list.tail,list.reverse)
-                      )(alist);
-      };
-      <span class="hljs-comment">/****** テスト *******/</span>
-      <span class="hljs-keyword">var</span> sequence = list.cons(<span class="hljs-number">1</span>,
-                               list.cons(<span class="hljs-number">2</span>,
-                                         list.cons(<span class="hljs-number">3</span>,
-                                                   list.empty())));
-      expect(
-        list.toArray(init(sequence))
-      ).to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
-      );
-      <span class="hljs-comment">/* #@range_end(abstract_init) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'関数合成による様々な関数の定義'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> alist = list.cons(<span class="hljs-number">1</span>,
-                            list.cons(<span class="hljs-number">2</span>,
-                                      list.cons(<span class="hljs-number">3</span>,
-                                                list.empty())));
-      <span class="hljs-keyword">var</span> alwaysOne = (x) =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-      };
-      <span class="hljs-keyword">var</span> sum = (alist) =&gt; {
-        <span class="hljs-keyword">var</span> sumHelper = (alist, accumulator) =&gt; {
-          <span class="hljs-keyword">return</span> match(alist,{
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator;
-            },
-            cons: (head, tail) =&gt; {
-              <span class="hljs-keyword">return</span> sumHelper(tail, accumulator + head);
-            }
-          });
-        };
-        <span class="hljs-keyword">return</span> sumHelper(alist,<span class="hljs-number">0</span>);
-      };
-      <span class="hljs-keyword">var</span> length = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> compose(sum,
-                       flip(list.map)(alwaysOne))(alist);
-      };
-      <span class="hljs-comment">/****** テスト *******/</span>
-      expect(
-        length(alist)
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-keyword">var</span> last = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> compose(list.head,
-                       list.reverse)(alist);
-      };
-      expect(
-        last(alist)
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      <span class="hljs-comment">/* init = reverse . tail . reverse  */</span>
-      <span class="hljs-keyword">var</span> init = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> compose(list.reverse,
-                       compose(list.tail,
-                               list.reverse)
-                      )(alist);
-      };
-      <span class="hljs-comment">/****** テスト *******/</span>
-      expect(
-        list.toArray(init(alist))
-      ).to.eql(
-        [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]
-      );
-      <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicate::FUN[NUM =&gt; BOOL]</span>
-        <span class="hljs-keyword">return</span> (arg) =&gt; { <span class="hljs-comment">// FUN[NUM =&gt; BOOL]型を返す</span>
-          <span class="hljs-keyword">return</span> ! predicate(arg); <span class="hljs-comment">// !演算子で論理を反転させる</span>
-        };
-      };
-      <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
-        <span class="hljs-keyword">return</span> (m) =&gt; {
-          <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      <span class="hljs-comment">/* #@range_end(Y_combinator)  */</span>
+      <span class="hljs-comment">/* #@range_begin(Y_combinator_test) */</span>
+      <span class="hljs-keyword">var</span> factorial = Y((fact) =&gt; {
+        <span class="hljs-keyword">return</span> (n) =&gt; {
+          <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            <span class="hljs-keyword">return</span> n * fact(n - <span class="hljs-number">1</span>);
           }
         };
-      };
-      <span class="hljs-keyword">var</span> even = multipleOf(<span class="hljs-number">2</span>);
-      <span class="hljs-keyword">var</span> odd = not(even);
+      });
       expect(
-        odd(<span class="hljs-number">2</span>)
+        factorial(<span class="hljs-number">3</span>) <span class="hljs-comment">// 3 * 2 * 1 = 6</span>
       ).to.eql(
-        <span class="hljs-literal">false</span>
+        <span class="hljs-number">6</span>
       );
-      expect(
-        odd(<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-keyword">var</span> map = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> (transform) =&gt; {
-          <span class="hljs-keyword">return</span> match(alist,{
-            empty: (_) =&gt; {
-              <span class="hljs-keyword">return</span> list.empty();
-            },
-            cons: (head,tail) =&gt; {
-              <span class="hljs-keyword">return</span> list.cons(transform(head),
-                               list.map(tail)(transform));
-            }
-          });
-        };
-      };
-      <span class="hljs-keyword">var</span> allTrueList = list.cons(<span class="hljs-literal">true</span>,
-                                  list.cons(<span class="hljs-literal">true</span>,
-                                            list.cons(<span class="hljs-literal">true</span>,
-                                                      list.empty())));
-      <span class="hljs-keyword">var</span> and = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> list.match(alist, {
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> head &amp;&amp; and(tail);
-          }
-        });
-      };
-      expect(
-        and(allTrueList)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-keyword">var</span> or = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> list.match(alist, {
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> head || or(tail);
-          }
-        });
-      };
-      <span class="hljs-keyword">var</span> someTrueList = list.cons(<span class="hljs-literal">true</span>,
-                                   list.cons(<span class="hljs-literal">false</span>,
-                                             list.cons(<span class="hljs-literal">true</span>,
-                                                       list.empty())));
-      <span class="hljs-keyword">var</span> allFalseList = list.cons(<span class="hljs-literal">false</span>,
-                                   list.cons(<span class="hljs-literal">false</span>,
-                                             list.cons(<span class="hljs-literal">false</span>,
-                                                       list.empty())));
-      expect(
-        or(someTrueList)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      expect(
-        or(allFalseList)
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      <span class="hljs-keyword">var</span> all = (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> (alist) =&gt; {
-          <span class="hljs-keyword">return</span> compose(and,
-                         flip(map)(predicate))(alist);
-        };
-      };
-      expect(
-        all((x) =&gt; {
-          <span class="hljs-keyword">return</span> x &gt; <span class="hljs-number">0</span>;
-        })(alist)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-keyword">var</span> any = (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> (alist) =&gt; {
-          <span class="hljs-keyword">return</span> compose(or,
-                         flip(map)(predicate))(alist);
-        };
-      };
-      expect(
-        any((x) =&gt; {
-          <span class="hljs-keyword">return</span> x &lt; <span class="hljs-number">2</span>;
-        })(alist)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      expect(
-        any((x) =&gt; {
-          <span class="hljs-keyword">return</span> x &lt; <span class="hljs-number">1</span>;
-        })(alist)
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      <span class="hljs-keyword">var</span> none = (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> (alist) =&gt; {
-          <span class="hljs-keyword">return</span> compose(and,
-                         flip(map)(not(predicate)))(alist);
-        };
-      };
-      expect(
-        none((x) =&gt; {
-          <span class="hljs-keyword">return</span> x &lt; <span class="hljs-number">0</span>;
-        })(alist)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
+      <span class="hljs-comment">/* #@range_end(Y_combinator_test) */</span>
       next();
     });
   }); <span class="hljs-comment">// 関数を合成する</span>

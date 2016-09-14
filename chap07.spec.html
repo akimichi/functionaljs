@@ -1102,33 +1102,33 @@
 </thead>
 <tbody>
 <tr>
-<td>length(list)</td>
-<td>(sum . map(alwaysOne))(list)</td>
+<td>length</td>
+<td>(sum . map(alwaysOne))</td>
 <td>リストの長さ</td>
 </tr>
 <tr>
-<td>last(list)</td>
-<td>(head . reverse)(list)</td>
+<td>last</td>
+<td>(head . reverse)</td>
 <td>リストの最末尾要素</td>
 </tr>
 <tr>
-<td>init(list)</td>
-<td>(reverse . tail . reverse)(list)</td>
+<td>init</td>
+<td>(reverse . tail . reverse)</td>
 <td>リストの最末尾要素以外の並び</td>
 </tr>
 <tr>
-<td>all(predicate)(list)</td>
-<td>(and . map(predicate))(list)</td>
+<td>all(predicate)</td>
+<td>(and . map(predicate))</td>
 <td>リストの全要素がtrueか？</td>
 </tr>
 <tr>
-<td>any(predicate)(list)</td>
-<td>(or . map(predicate))(list)</td>
+<td>any(predicate)</td>
+<td>(or . map(predicate))</td>
 <td>リストの要素にtrueがあるか？</td>
 </tr>
 <tr>
-<td>none(predicate)(list)</td>
-<td>(and . map(not(predicate)))(list)</td>
+<td>none(predicate)</td>
+<td>(and . map(not(predicate)))</td>
 <td>リストの全要素がfalseか？</td>
 </tr>
 </tbody>

@@ -476,20 +476,12 @@ closure()
             <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'評価器を作る'</span>, () =&gt; {
   <span class="hljs-comment">/* 「環境」モジュール */</span>
   <span class="hljs-keyword">var</span> env = {
-    <span class="hljs-comment">/* empty:: STRING =&gt; VALUE */</span> 
-    <span class="hljs-comment">/* 空の環境を作る */</span>
     empty: (variable) =&gt; {                        
       <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
     },
-    <span class="hljs-comment">/* lookup:: (STRING, ENV) =&gt; VALUE
-       変数名に対応する値を環境から取りだす
-    */</span>
     lookup : (name, environment) =&gt; {       
       <span class="hljs-keyword">return</span> environment(name);
     },
-    <span class="hljs-comment">/* extend:: (STRING, VALUE, ENV) =&gt; ENV 
-       環境を拡張する
-    */</span>
     extend: (identifier, value, environment) =&gt; { 
       <span class="hljs-keyword">return</span> (queryIdentifier) =&gt; {
         <span class="hljs-keyword">if</span>(identifier === queryIdentifier) {
@@ -500,7 +492,6 @@ closure()
       };
     }
   };
-  <span class="hljs-comment">/* 空の環境 */</span>
   <span class="hljs-keyword">var</span> emptyEnv = env.empty;</pre></div></div>
             
         </li>
@@ -1046,75 +1037,7 @@ closure()
           });
         }
       });
-    };
-    it(<span class="hljs-string">'LOG評価器で数値を評価する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(log_interpreter_number) */</span>
-      pair.match(evaluate(exp.log(exp.num(<span class="hljs-number">2</span>)), env.empty),{
-        cons: (value, log) =&gt; {
-          expect( <span class="hljs-comment">// 結果の値をテストする</span>
-            value
-          ).to.be(
-            <span class="hljs-number">2</span>
-          );
-          expect( <span class="hljs-comment">// 保存されたログを見る</span>
-            list.toArray(log)
-          ).to.eql(
-            [<span class="hljs-number">2</span>]
-          );
-        }
-      });
-      <span class="hljs-comment">/* #@range_end(log_interpreter_number) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'LOG評価器で変数を評価する'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(log_interpreter_variable) */</span>
-      <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, env.empty);
-      pair.match(evaluate(exp.log(exp.variable(<span class="hljs-string">"x"</span>)), newEnv), {
-        cons: (value, log) =&gt; {
-          expect( <span class="hljs-comment">// 結果の値をテストする</span>
-            value
-          ).to.eql(
-            <span class="hljs-number">1</span>
-          );
-          expect( <span class="hljs-comment">// 保存されたログを見る</span>
-            list.toArray(log)
-          ).to.eql(
-            [<span class="hljs-number">1</span>]
-          );
-        }
-      });
-      <span class="hljs-comment">/* #@range_end(log_interpreter_variable) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'LOG評価器で演算を評価する'</span>, (next) =&gt; {
-      pair.match(evaluate(exp.log(exp.add(exp.num(<span class="hljs-number">1</span>),exp.num(<span class="hljs-number">2</span>))), env.empty),{
-        cons: (value, log) =&gt; {
-          expect(
-            value
-          ).to.be(
-            <span class="hljs-number">3</span>
-          );
-          expect(
-            list.toArray(log)
-          ).to.eql(
-            [<span class="hljs-number">3</span>]
-          );
-        }
-      });
-      pair.match(evaluate(exp.log(exp.add(exp.log(exp.num(<span class="hljs-number">1</span>)),exp.log(exp.num(<span class="hljs-number">2</span>)))), env.empty),{
-        cons: (value, log) =&gt; {
-          expect(
-            value
-          ).to.be(
-            <span class="hljs-number">3</span> <span class="hljs-comment">// 1 + 2 = 3</span>
-          );
-          expect(
-            list.toArray(log)
-          ).to.eql(
-            [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]
-          );
-        }
-      });</pre></div></div>
+    };</pre></div></div>
             
         </li>
         
@@ -1125,35 +1048,79 @@ closure()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>ログ出力評価器による評価戦略の確認</p>
+              <h3 id="-">ログ出力評価器のテスト</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(log_interpreter_evaluation_strategy) */</span>
-      <span class="hljs-comment">/* ((n) =&gt; { return 1 + n})(2) の評価 */</span>
-      <span class="hljs-keyword">var</span> theExp = exp.log(exp.app(exp.lambda(exp.variable(<span class="hljs-string">"n"</span>),
-                                              exp.add(exp.log(exp.num(<span class="hljs-number">1</span>)), 
-                                                      exp.variable(<span class="hljs-string">"n"</span>))),
-                                   exp.log(exp.num(<span class="hljs-number">2</span>))));
-      pair.match(evaluate(theExp, env.empty),{
-        <span class="hljs-comment">/* パターンマッチで結果を取り出す */</span>
-        cons: (value, log) =&gt; {
-          expect(
-            value
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          expect(
-            list.toArray(log)
-          ).to.eql(
-            [<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,<span class="hljs-number">3</span>]
-          );
-        }
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'ログ出力評価器のテスト'</span>, () =&gt; {
+      it(<span class="hljs-string">'LOG評価器で数値を評価する'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(log_interpreter_number) */</span>
+        pair.match(evaluate(exp.log(exp.num(<span class="hljs-number">2</span>)), env.empty),{
+          cons: (value, log) =&gt; {
+            expect( <span class="hljs-comment">// 結果の値をテストする</span>
+              value
+            ).to.be(
+              <span class="hljs-number">2</span>
+            );
+            expect( <span class="hljs-comment">// 保存されたログを見る</span>
+              list.toArray(log)
+            ).to.eql(
+              [<span class="hljs-number">2</span>]
+            );
+          }
+        });
+        <span class="hljs-comment">/* #@range_end(log_interpreter_number) */</span>
+        next();
       });
-      <span class="hljs-comment">/* #@range_end(log_interpreter_evaluation_strategy) */</span>
-      next();
-    });
-    it(<span class="hljs-string">'LOG評価器で関数適用を評価する'</span>, (next) =&gt; {</pre></div></div>
+      it(<span class="hljs-string">'LOG評価器で変数を評価する'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(log_interpreter_variable) */</span>
+        <span class="hljs-keyword">var</span> newEnv = env.extend(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, env.empty);
+        pair.match(evaluate(exp.log(exp.variable(<span class="hljs-string">"x"</span>)), newEnv), {
+          cons: (value, log) =&gt; {
+            expect( <span class="hljs-comment">// 結果の値をテストする</span>
+              value
+            ).to.eql(
+              <span class="hljs-number">1</span>
+            );
+            expect( <span class="hljs-comment">// 保存されたログを見る</span>
+              list.toArray(log)
+            ).to.eql(
+              [<span class="hljs-number">1</span>]
+            );
+          }
+        });
+        <span class="hljs-comment">/* #@range_end(log_interpreter_variable) */</span>
+        next();
+      });
+      it(<span class="hljs-string">'LOG評価器で演算を評価する'</span>, (next) =&gt; {
+        pair.match(evaluate(exp.log(exp.add(exp.num(<span class="hljs-number">1</span>),exp.num(<span class="hljs-number">2</span>))), env.empty),{
+          cons: (value, log) =&gt; {
+            expect(
+              value
+            ).to.be(
+              <span class="hljs-number">3</span>
+            );
+            expect(
+              list.toArray(log)
+            ).to.eql(
+              [<span class="hljs-number">3</span>]
+            );
+          }
+        });
+        pair.match(evaluate(exp.log(exp.add(exp.log(exp.num(<span class="hljs-number">1</span>)),exp.log(exp.num(<span class="hljs-number">2</span>)))), env.empty),{
+          cons: (value, log) =&gt; {
+            expect(
+              value
+            ).to.be(
+              <span class="hljs-number">3</span> <span class="hljs-comment">// 1 + 2 = 3</span>
+            );
+            expect(
+              list.toArray(log)
+            ).to.eql(
+              [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]
+            );
+          }
+        });</pre></div></div>
             
         </li>
         
@@ -1164,26 +1131,35 @@ closure()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <pre><code>\x.add(x,x)(<span class="hljs-number">2</span>)
-</code></pre>
+              <p>ログ出力評価器による評価戦略の確認</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> expression = exp.app(exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
-                                          exp.add(exp.variable(<span class="hljs-string">"x"</span>),exp.variable(<span class="hljs-string">"x"</span>))),
-                               exp.num(<span class="hljs-number">2</span>));
-      expect(
-        pair.left(evaluate(expression, env.empty))
-      ).to.eql(
-        <span class="hljs-number">4</span>
-      );
-      expect(
-        list.toArray(pair.right(evaluate(expression, env.empty)))
-      ).to.eql(
-        []
-      );
-      next();
-    });
-    it(<span class="hljs-string">'LOG評価器でカリー化関数を評価する'</span>, (next) =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(log_interpreter_evaluation_strategy) */</span>
+        <span class="hljs-comment">/* ((n) =&gt; { return 1 + n})(2) の評価 */</span>
+        <span class="hljs-keyword">var</span> theExp = exp.log(exp.app(exp.lambda(exp.variable(<span class="hljs-string">"n"</span>),
+                                                exp.add(exp.log(exp.num(<span class="hljs-number">1</span>)), 
+                                                        exp.variable(<span class="hljs-string">"n"</span>))),
+                                     exp.log(exp.num(<span class="hljs-number">2</span>))));
+        pair.match(evaluate(theExp, env.empty),{
+          <span class="hljs-comment">/* パターンマッチで結果を取り出す */</span>
+          cons: (value, log) =&gt; {
+            expect(
+              value
+            ).to.eql(
+              <span class="hljs-number">3</span>
+            );
+            expect(
+              list.toArray(log)
+            ).to.eql(
+              [<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,<span class="hljs-number">3</span>]
+            );
+          }
+        });
+        <span class="hljs-comment">/* #@range_end(log_interpreter_evaluation_strategy) */</span>
+        next();
+      });
+      it(<span class="hljs-string">'LOG評価器で関数適用を評価する'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -1194,27 +1170,26 @@ closure()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <pre><code>(\x.
-   \y.
-      x+y)(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
+              <pre><code>\x.add(x,x)(<span class="hljs-number">2</span>)
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> expression = exp.app(
-        exp.app(exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
-                           exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),
-                                      exp.add(exp.variable(<span class="hljs-string">"x"</span>),exp.variable(<span class="hljs-string">"y"</span>)))),
-                exp.num(<span class="hljs-number">2</span>)),
-        exp.num(<span class="hljs-number">3</span>));
-      expect(
-        pair.left(evaluate(expression, emptyEnv))
-      ).to.be(
-        <span class="hljs-number">5</span>
-      );
-      next();
-    });
-  });
-});</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> expression = exp.app(exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
+                                            exp.add(exp.variable(<span class="hljs-string">"x"</span>),exp.variable(<span class="hljs-string">"x"</span>))),
+                                 exp.num(<span class="hljs-number">2</span>));
+        expect(
+          pair.left(evaluate(expression, env.empty))
+        ).to.eql(
+          <span class="hljs-number">4</span>
+        );
+        expect(
+          list.toArray(pair.right(evaluate(expression, env.empty)))
+        ).to.eql(
+          []
+        );
+        next();
+      });
+      it(<span class="hljs-string">'LOG評価器でカリー化関数を評価する'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -1224,6 +1199,38 @@ closure()
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <pre><code>(\x.
+   \y.
+      x+y)(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> expression = exp.app(
+          exp.app(exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
+                             exp.lambda(exp.variable(<span class="hljs-string">"y"</span>),
+                                        exp.add(exp.variable(<span class="hljs-string">"x"</span>),exp.variable(<span class="hljs-string">"y"</span>)))),
+                  exp.num(<span class="hljs-number">2</span>)),
+          exp.num(<span class="hljs-number">3</span>));
+        expect(
+          pair.left(evaluate(expression, emptyEnv))
+        ).to.be(
+          <span class="hljs-number">5</span>
+        );
+        next();
+      });
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> </p>
 

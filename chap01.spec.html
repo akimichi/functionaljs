@@ -310,11 +310,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <h4 id="-add">再帰関数としてのadd</h4>
+              <p>add関数</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'再帰関数としてのadd'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'add関数'</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(recursive_add) */</span>
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
@@ -342,8 +342,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <h4 id="-a-name-add_reduction_demo-add-3-2-a-"><a name="add_reduction_demo"> <strong>add(3,2)の簡約</strong> </a></h4>
-<p><img src="images/add_reduction.gif" alt="add関数の簡約"> </p>
+              <p><a name="add_reduction_demo"> add(3,2)の簡約 </a>
+<img src="images/add_reduction.gif" alt="add関数の簡約"> </p>
 
             </div>
             
@@ -351,22 +351,6 @@
         add(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>)
       ).to.eql(
         <span class="hljs-number">3</span>
-      );
-      next();
-    });
-    it(<span class="hljs-string">'sumsquaresとsquareの簡約'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(sumsquares) */</span>
-      <span class="hljs-keyword">var</span> sumsquares = (x,y) =&gt; {
-        <span class="hljs-keyword">return</span> square(x) + square(y);
-      };
-      <span class="hljs-keyword">var</span> square = (x) =&gt; {
-        <span class="hljs-keyword">return</span> x * x;
-      };
-      <span class="hljs-comment">/* #@range_end(sumsquares) */</span>
-      expect(
-        sumsquares(<span class="hljs-number">3</span>,<span class="hljs-number">4</span>)
-      ).to.eql(
-        <span class="hljs-number">25</span>
       );
       next();
     });</pre></div></div>
@@ -379,48 +363,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <h4 id="-add-">命令的なadd関数</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'命令的なadd関数'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* add関数の定義 */</span>
-      <span class="hljs-comment">/* #@range_begin(imperative_add) */</span>
-      <span class="hljs-keyword">var</span> add = (x,y) =&gt; { 
-        <span class="hljs-keyword">while</span>(y &gt; <span class="hljs-number">0</span>) {  <span class="hljs-comment">// yが0より大きい間、反復処理を実行する</span>
-          x = x + <span class="hljs-number">1</span>;    <span class="hljs-comment">// 変数xを更新する </span>
-          y = y - <span class="hljs-number">1</span>;    <span class="hljs-comment">// 変数yを更新する</span>
-        }
-        <span class="hljs-keyword">return</span> x;
-      };
-      <span class="hljs-comment">/* #@range_end(imperative_add) */</span>
-      expect(
-        add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
-      ).to.eql(
-        <span class="hljs-number">3</span>
-      );
-      expect(
-        add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-number">5</span>
-      );
-      expect(
-        add(<span class="hljs-number">0</span>,<span class="hljs-number">2</span>)
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      next();
-    });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h4 id="-">コラム 再帰と漸化式</h4>
 
@@ -457,51 +399,41 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <h4 id="-">変数の置換ルール</h4>
+              <p>while文を利用したadd関数</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'変数の置換ルール'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(variable_and_function) */</span>
-      <span class="hljs-keyword">var</span> foo = () =&gt; {
-        <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>;
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'while文を利用したadd関数'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* add関数の定義 */</span>
+      <span class="hljs-comment">/* #@range_begin(imperative_add) */</span>
+      <span class="hljs-keyword">var</span> add = (x,y) =&gt; { 
+        <span class="hljs-keyword">while</span>(y &gt; <span class="hljs-number">0</span>) {  <span class="hljs-comment">// yが0より大きい間、反復処理を実行する</span>
+          x = x + <span class="hljs-number">1</span>;    <span class="hljs-comment">// 変数xを更新する </span>
+          y = y - <span class="hljs-number">1</span>;    <span class="hljs-comment">// 変数yを更新する</span>
+        }
+        <span class="hljs-keyword">return</span> x;
       };
+      <span class="hljs-comment">/* #@range_end(imperative_add) */</span>
       expect(
-        foo()
+        add(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
       ).to.eql(
         <span class="hljs-number">3</span>
       );
-      <span class="hljs-comment">/* #@range_end(variable_and_function) */</span>
-      <span class="hljs-comment">/* #@range_begin(local_variable_usage_example) */</span>
-      <span class="hljs-keyword">var</span> bar = () =&gt; {
-        <span class="hljs-keyword">var</span> foo = <span class="hljs-number">3</span>;     <span class="hljs-comment">// 変数fooに値3をバインドする</span>
-        <span class="hljs-keyword">return</span> foo * <span class="hljs-number">10</span>; <span class="hljs-comment">// 変数fooの値を10倍にする</span>
-      };
-      <span class="hljs-comment">/* #@range_end(local_variable_usage_example) */</span>
       expect(
-        bar()
+        add(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
       ).to.eql(
-        <span class="hljs-number">30</span>
+        <span class="hljs-number">5</span>
       );
-      <span class="hljs-comment">/* #@range_begin(variable_and_closure) */</span>
-      <span class="hljs-keyword">var</span> bar = () =&gt; {
-        <span class="hljs-keyword">var</span> foo = <span class="hljs-number">3</span>;
-        <span class="hljs-keyword">return</span> foo * <span class="hljs-number">10</span>;
-      };
-      <span class="hljs-keyword">var</span> baz = ((foo) =&gt; {
-        <span class="hljs-keyword">return</span> foo * <span class="hljs-number">10</span>;
-      });
-      <span class="hljs-comment">/* #@range_end(variable_and_closure) */</span>
       expect(
-        bar()
+        add(<span class="hljs-number">0</span>,<span class="hljs-number">2</span>)
       ).to.eql(
-        baz(<span class="hljs-number">3</span>)          <span class="hljs-comment">// 仮引数fooに値3をバインドする</span>
+        <span class="hljs-number">2</span>
       );
       next();
     });
@@ -510,11 +442,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h3 id="-section-id-function_definition-section-"><section id='function_definition'>関数の定義</section></h3>
 
@@ -539,11 +471,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h4 id="-">かけ算の定義</h4>
 
@@ -567,11 +499,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <h4 id="-a-name-multiply_reduction_demo-multiply-2-3-a-"><a name="multiply_reduction_demo"> <strong>multiply(2,3)の簡約</strong> </a></h4>
 <p><img src="images/multiply_reduction.gif" alt="multiply関数の簡約"> </p>
@@ -609,11 +541,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h4 id="-">べき乗の定義</h4>
 
@@ -661,11 +593,11 @@
         </li>
         
         
-        <li id="section-22">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap02.spec.html">次章に移る</a> </p>
 

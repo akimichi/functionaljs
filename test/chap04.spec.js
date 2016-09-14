@@ -1,6 +1,6 @@
 "use strict";
 
-// データの種類と特徴
+// 第4章 データの種類と特徴
 // ========
 
 var expect = require('expect.js');

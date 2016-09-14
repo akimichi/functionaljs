@@ -1,6 +1,6 @@
 "use strict";
 
-// 関数型言語を作る
+// 第8章 関数型言語を作る
 // ========
 var expect = require('expect.js');
 

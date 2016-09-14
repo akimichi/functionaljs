@@ -1,7 +1,7 @@
 "use strict";
 
 
-// 心の準備
+// 第3章 心の準備
 // ========
 
 var expect = require('expect.js');

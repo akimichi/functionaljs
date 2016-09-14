@@ -3,7 +3,7 @@
 // 第1章 「計算」とは
 // ========
 
-// アサートライブラリー expect.js の読み込み
+/* アサートライブラリー expect.js の読み込み */
 var expect = require('expect.js');
 
 // ## 1.2 命令型モデル
@@ -11,7 +11,7 @@ describe('命令型モデル', () => {
   // ### チューリング機械
   describe('チューリング機械 turing machine', () => {
     // c.f. [A turing machine in 133 bytes of javascript](http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069) 
-    // [![IMAGE ALT TEXT](http://img.youtube.com/vi/lf1KZmYOG_g/0.jpg)](https://www.youtube.com/watch?v=lf1KZmYOG_g "チューリングマシンの動画")
+    // [![IMAGE ALT TEXT](http://img.youtube.com/vi/E3keLeMwfHY/0.jpg)](https://www.youtube.com/watch?v=E3keLeMwfHY "チューリングマシンの動画")
     /* #@range_begin(turing) */
     var machine = (program,tape,initState, endState) => {
       /* ヘッドの位置 */

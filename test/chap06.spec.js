@@ -1,6 +1,6 @@
 "use strict";
 
-// 関数を利用する
+// 第6章 関数を利用する
 // ========
 
 var expect = require('expect.js');

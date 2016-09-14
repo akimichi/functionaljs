@@ -1,19 +1,11 @@
 "use strict";
 
-// 高階関数を活用する
+// 第7章 高階関数を活用する
 // =======
 
 var expect = require('expect.js');
 
-var compose = (f,g) => {
-  return (arg) => {
-    return f(g(arg));
-  };
-};
-
-var match = (data, pattern) => {
-  return data.call(pattern, pattern);
-};
+// テストで利用されるlistモジュールとstreamモジュールを定義しておく
 
 // listモジュール
 var list  = {
@@ -31,7 +23,7 @@ var list  = {
     };
   },
   head: (alist) => {
-    return match(alist, {
+    return list.match(alist, {
       empty: (_) => {
         return null;
       },
@@ -41,7 +33,7 @@ var list  = {
     });
   },
   tail: (alist) => {
-    return match(alist, {
+    return list.match(alist, {
       empty: (_) => {
         return null;
       },
@@ -51,7 +43,7 @@ var list  = {
     });
   },
   isEmpty: (alist) => {
-    return match(alist, {
+    return list.match(alist, {
       empty: (_) => {
         return true;
       },
@@ -61,13 +53,9 @@ var list  = {
     });
   },
   /* append:: LIST[T] -> LIST[T] -> LIST[T] */
-  // ~~~haskell
-  // append [] ys = ys
-  // append (x:xs) ys = x : (xs ++ ys)
-  // ~~~
   append: (xs) => {
     return (ys) => {
-      return match(xs, {
+      return list.match(xs, {
         empty: (_) => {
           return ys;
         },
@@ -79,9 +67,8 @@ var list  = {
   },
   /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
   map: (alist) => {
-    var self = this;
     return (transform) => {
-      return match(alist,{
+      return list.match(alist,{
         empty: (_) => {
           return list.empty();
         },
@@ -92,9 +79,8 @@ var list  = {
     };
   },
   reverse: (alist) => {
-    var self = this;
     var reverseAux = (alist, accumulator) => {
-      return match(alist, {
+      return list.match(alist, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -107,7 +93,7 @@ var list  = {
   },
   toArray: (alist) => {
     var toArrayAux = (alist,accumulator) => {
-      return match(alist, {
+      return list.match(alist, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -146,7 +132,7 @@ var stream = {
   },
   /* head:: STREAM -> MAYBE[STREAM] */
   head: (lazyList) => {
-    return match(lazyList,{
+    return stream.match(lazyList,{
       empty: (_) => {
         return null;
       },
@@ -157,7 +143,7 @@ var stream = {
   },
   /* tail:: STREAM -> MAYBE[STREAM] */
   tail: (lazyList) => {
-    return match(lazyList,{
+    return stream.match(lazyList,{
       empty: (_) => {
         return null;
       },
@@ -167,7 +153,7 @@ var stream = {
     });
   },
   isEmpty: (lazyList) => {
-    return match(lazyList,{
+    return stream.match(lazyList,{
       empty: (_) => {
         return true;
       },
@@ -176,7 +162,6 @@ var stream = {
       }
     });
   },
-  /* ### stream#map */
   map: (lazyList) => {
     return (transform) => {
       return match(lazyList,{
@@ -191,13 +176,12 @@ var stream = {
       });
     };
   },
-  // ### stream#take
   /* take:: STREAM -> NUMBER -> STREAM */
   take: (lazyList) => {
     return (number) => {
       expect(number).to.a('number');
       expect(number).to.be.greaterThan(-1);
-      return match(lazyList,{
+      return stream.match(lazyList,{
         empty: (_) => {
           return stream.empty();
         },
@@ -220,8 +204,8 @@ var stream = {
   },
   forAll: (astream) => {
     return (predicate) => {
-      var forAllHelper = (astream) => { // 補助関数
-        return match(astream,{
+      var forAllHelper = (astream) => {
+        return stream.match(astream,{
           empty: (_) => {
             return true; 
           },
@@ -230,7 +214,7 @@ var stream = {
           }
         });
       };
-      return match(astream,{
+      return stream.match(astream,{
         empty: (_) => {
           return false; // 空のストリームの場合は、必ず false が返る
         },
@@ -243,9 +227,10 @@ var stream = {
 }; // end of 'stream' module
 
 
-// ## カリー化で関数を渡す
+// ## 7.2 カリー化で関数を渡す
 describe('カリー化で関数を渡す', () => {
   // multipleOf関数の定義
+  // > multipleOf(n,m)でnの倍数がmかどうかを判定する
   it('multipleOf関数の定義', (next) => {
     /* #@range_begin(multipleOf_uncurried) */
     var multipleOf = (n,m) => {
@@ -271,8 +256,8 @@ describe('カリー化で関数を渡す', () => {
     );
     next();
   });
+  // カリー化されたmultipleOf関数の定義
   it('カリー化されたmultipleOf関数', (next) => {
-    // カリー化されたmultipleOf関数の定義
     /* #@range_begin(multipleOf_curried) */
     var multipleOf = (n) => { // 外側の関数定義
       return (m) => {         // 内側の関数定義
@@ -310,6 +295,7 @@ describe('カリー化で関数を渡す', () => {
   });
   it('カリー化された指数関数', (next) => {
     // 指数関数の例
+    // > exponential(b)(n)でbのn乗を計算する
     /* #@range_begin(exponential_curried) */
     var exponential = (base) => {
       return (index) => {
@@ -333,6 +319,7 @@ describe('カリー化で関数を渡す', () => {
       4
     );
     // flip関数の定義
+    // > flip(fun)(x)(y)とすれば、fun(y)(x)を実行する
     /* #@range_begin(flip_definition) */
     var flip = (fun) => {
       return  (x) => {
@@ -364,89 +351,70 @@ describe('カリー化で関数を渡す', () => {
     /* #@range_end(flipped_exponential_test) */
     next();
   });
-  it('カリー化されていない指数関数', (next) => {
-    /* #@range_begin(exponential_uncurried) */
-    var exponential = (base,index) => {
-      if(index === 0){
-        return 1;
-      } else {
-        return base * exponential(base,index - 1);
-      }
-    };
-    expect(
-      exponential(2,2) // 2 * 2 = 4
-    ).to.eql(
-      4
-    );
-    expect(
-      exponential(2,3) // 2 * 2 * 2 = 8
-    ).to.eql(
-      8
-    );
-    /* #@range_end(exponential_uncurried) */
-    next();
-  });
-  // チャーチによる自然数の定義
-  it('チャーチによる自然数の定義', (next) => {
-    /* #@range_begin(church_numeral) */
-    var zero = (f) => {
-      return (x) => {
-        return x;           // 関数を0回適用する
+  // ### コラム： チャーチ数
+  describe('コラム： チャーチ数', () => {
+    // チャーチによる自然数の定義
+    it('チャーチによる自然数の定義', (next) => {
+      /* #@range_begin(church_numeral) */
+      var zero = (f) => {
+        return (x) => {
+          return x;           // 関数を0回適用する
+        };
       };
-    };
-    var one = (f) => {
-      return (x) => {
-        return f(x);        // 関数を1回適用する
+      var one = (f) => {
+        return (x) => {
+          return f(x);        // 関数を1回適用する
+        };
       };
-    };
-    var two = (f) => {
-      return (x) => {
-        return f(f(x));     // 関数を2回適用する
+      var two = (f) => {
+        return (x) => {
+          return f(f(x));     // 関数を2回適用する
+        };
       };
-    };
-    var three = (f) => {
-      return (x) => {
-        return f(f(f(x)));  // 関数を3回適用する
+      var three = (f) => {
+        return (x) => {
+          return f(f(f(x)));  // 関数を3回適用する
+        };
       };
-    };
-    /*#@range_end(church_numeral) */
-    var add = (m) => {
-      return (n) => {
-        return (f) => {
-          return (x) => {
-            return m(f)(n(f)(x));
+      /*#@range_end(church_numeral) */
+      var add = (m) => {
+        return (n) => {
+          return (f) => {
+            return (x) => {
+              return m(f)(n(f)(x));
+            };
           };
         };
       };
-    };
-    var succ = (n) => {
-      return (f) => {
-        return (x) => {
-          return f(n(f)(x));
+      var succ = (n) => {
+        return (f) => {
+          return (x) => {
+            return f(n(f)(x));
+          };
         };
       };
-    };
-    var counter = (init) => {
-      var _init = init;
-      return (dummy) => {
-        _init = _init + 1;
-        return _init;
+      var counter = (init) => {
+        var _init = init;
+        return (_) => {
+          _init = _init + 1;
+          return _init;
+        };
       };
-    };
-    expect(one(counter(0))()).to.eql(1);
-    expect(two(counter(0))()).to.eql(2);
-    expect(three(counter(0))()).to.eql(3);
-    expect(succ(one)(counter(0))()).to.eql(2);
-    expect(succ(two)(counter(0))()).to.eql(3);
-    expect(add(zero)(one)(counter(0))()).to.eql(1);
-    expect(add(one)(one)(counter(0))()).to.eql(2);
-    expect(add(one)(two)(counter(0))()).to.eql(3);
-    expect(add(two)(three)(counter(0))()).to.eql(5);
-    next();
+      expect(one(counter(0))()).to.eql(1);
+      expect(two(counter(0))()).to.eql(2);
+      expect(three(counter(0))()).to.eql(3);
+      expect(succ(one)(counter(0))()).to.eql(2);
+      expect(succ(two)(counter(0))()).to.eql(3);
+      expect(add(zero)(one)(counter(0))()).to.eql(1);
+      expect(add(one)(one)(counter(0))()).to.eql(2);
+      expect(add(one)(two)(counter(0))()).to.eql(3);
+      expect(add(two)(three)(counter(0))()).to.eql(5);
+      next();
+    });
   });
 });
 
-// ## コンビネータで関数を組み合わせる
+// ## 7.3 コンビネータで関数を組み合わせる
 describe('コンビネータで関数を組み合わせる', () => {
   // ### コンビネータの作り方
   describe('コンビネータの作り方', () => {
@@ -472,7 +440,7 @@ describe('コンビネータで関数を組み合わせる', () => {
       /* #@range_end(multipleOf_combinator) */
       next();
     }); 
-    it('論理コンビネータ', (next) => {
+    describe('論理コンビネータ', () => {
       var multipleOf = (n) => {
         return (m) => {
           if(m % n === 0) {
@@ -484,101 +452,96 @@ describe('コンビネータで関数を組み合わせる', () => {
       };
       var even = multipleOf(2);
       // notコンビネータ
-      /* #@range_begin(not_combinator) */
-      /* not:: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
-      var not = (predicate) => { // predicateの型はFUN[NUM => BOOL]
-        /* 全体として、FUN[NUM => BOOL]型を返す */
-        return (arg) => { // argの型はNUM
-          return ! predicate(arg); // !演算子で論理を反転させて、BOOLを返す
+      it('notコンビネータ', (next) => {
+        /* #@range_begin(not_combinator) */
+        /* not:: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
+        var not = (predicate) => { // predicateの型はFUN[NUM => BOOL]
+          /* 全体として、FUN[NUM => BOOL]型を返す */
+          return (arg) => { // argの型はNUM
+            return ! predicate(arg); // !演算子で論理を反転させて、BOOLを返す
+          };
         };
-      };
-      /* #@range_end(not_combinator) */
-      // notコンビネータによるodd関数の定義
-      /* #@range_begin(not_combinator_test) */
-      var odd = not(even); // notコンビネータでodd関数を定義する
-      /******** テスト ********/
-      expect(
-        odd(3) // 3は奇数である
-      ).to.eql(
-        true
-      );
-      expect(
-        odd(2) // 2は奇数でない 
-      ).to.eql(
-        false
-      );
-      /* #@range_end(not_combinator_test) */
-      /* #@range_begin(and_or_combinator) */
-      /* 「もしくは」を表す論理和  */
-      /* or:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
-      var or = (f,g) => {
-        return (arg) => {
-          return f(arg) || g(arg);
+        /* #@range_end(not_combinator) */
+        // notコンビネータによるodd関数の定義
+        /* #@range_begin(not_combinator_test) */
+        var odd = not(even); // notコンビネータでodd関数を定義する
+        /******** テスト ********/
+        expect(
+          odd(3) // 3は奇数である
+        ).to.eql(
+          true
+        );
+        expect(
+          odd(2) // 2は奇数でない 
+        ).to.eql(
+          false
+        );
+        /* #@range_end(not_combinator_test) */
+        next();
+      });
+      /* 本書では割愛したが、論理和や論理積を実行するコンビネータも同様に定義できる */
+      it('他の論理コンビネータ', (next) => {
+        var not = (predicate) => { 
+          return (arg) => {
+            return ! predicate(arg); 
+          };
         };
-      };
-      /* 「かつ」を表す論理積  */
-      /* and:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
-      var and = (f,g) => {
-        return (arg) => {
-          return f(arg) && g(arg);
+        /* 「もしくは」を表す論理和  */
+        /* or:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
+        var or = (f,g) => {
+          return (arg) => {
+            return f(arg) || g(arg);
+          };
         };
-      };
-      /* #@range_end(and_or_combinator) */
-      var positive = (n) => {
-        return n > 0;
-      };
-      var zero = (n) => {
-        return n === 0;
-      };
-      var negative = or(positive, not(zero));
-      expect(
-        negative(-3)
-      ).to.eql(
-        true
-      );
-      expect(
-        negative(0)
-      ).to.eql(
-        false
-      );
-      next();
+        /* 「かつ」を表す論理積  */
+        /* and:: (NUMBER->BOOL, NUMBER->BOOL) -> (NUMBER->BOOL) */
+        var and = (f,g) => {
+          return (arg) => {
+            return f(arg) && g(arg);
+          };
+        };
+        var positive = (n) => {
+          return n > 0;
+        };
+        var zero = (n) => {
+          return n === 0;
+        };
+        /* negativeは、0より小さな数値かどうかを判定する */
+        var negative = and(not(positive), not(zero));
+        expect(negative(-3)).to.eql(true);
+        expect(negative(3)).to.eql(false);
+        expect(negative(0)).to.eql(false);
+        next();
+      });
     });
   });
-}); // コンビネータ
-
-// ### 関数を合成する
-describe('関数を合成する', () => {
-  // 関数合成の定義
-  /* #@range_begin(compose_definition) */
-  var compose = (f,g) => {
-    return (arg) => {
-      return f(g(arg));
-    };
-  };
-  /* #@range_end(compose_definition) */
-  var flip = (fun) => {
-    return  (f) => {
-      return (g) => {
-        return fun(g)(f);
+  // ### 関数を合成する
+  // $$ 
+  //    f \circ g 
+  // $$
+  describe('関数を合成する', () => {
+    // 関数合成の定義
+    /* #@range_begin(compose_definition) */
+    var compose = (f,g) => {
+      return (arg) => {
+        return f(g(arg));
       };
     };
-  };
-
-  // 関数合成のテスト
-  /* #@range_begin(compose_test) */
-  var f = (x) => {
-    return x * x + 1; 
-  };
-  var g = (x) => {
-    return x - 2;
-  };
-  expect(
-    compose(f,g)(2) // f◦g で合成された関数
-  ).to.eql(
-    f(g(2))         // 合成せずに順次実行した場合
-  );
-  /* #@range_end(compose_test) */
-  describe('カリー化による関数の合成', () => {
+    /* #@range_end(compose_definition) */
+    // 関数合成のテスト
+    /* #@range_begin(compose_test) */
+    var f = (x) => {
+      return x * x + 1; 
+    };
+    var g = (x) => {
+      return x - 2;
+    };
+    expect(
+      compose(f,g)(2) // f◦g で合成された関数
+    ).to.eql(
+      f(g(2))         // 合成せずに順次実行した場合
+    );
+    /* #@range_end(compose_test) */
     // #### 関数合成の条件
     describe('関数合成の条件', () => {
       // 反数関数の合成
@@ -618,60 +581,239 @@ describe('関数を合成する', () => {
         next();
       });
     });
-  });
-  // #### 関数合成による抽象化
-  describe('関数合成による抽象化', () => {
-    it('再帰によるlast', (next) => {
-      /* #@range_begin(list_last_recursive) */
-      var last = (alist) => {
-        return match(alist, {
-          empty: (_) => { // alistが空の場合
-            return null;
-          },
-          cons: (head, tail) => { // alistが空でない場合
-            return match(tail, {
-              empty: (_) => { // alistの要素がただ1個の場合
-                return head;
-              },
-              cons: (_, __) => {
-                return last(tail);
-              }
-            });
-          }
-        });
+    var flip = (fun) => {
+      return  (f) => {
+        return (g) => {
+          return fun(g)(f);
+        };
       };
-      /* #@range_end(list_last_recursive) */
-      /* #@range_begin(list_last_test) */
-      var numbers = list.cons(1,
+    };
+    // #### 関数合成による抽象化
+    describe('関数合成による抽象化', () => {
+      // 具体的なlast関数
+      it('具体的なlast関数', (next) => {
+        /* #@range_begin(list_last_recursive) */
+        var last = (alist) => {
+          return list.match(alist, {
+            empty: (_) => { // alistが空の場合
+              return null;
+            },
+            cons: (head, tail) => { // alistが空でない場合
+              return list.match(tail, {
+                empty: (_) => { // alistの要素がただ1個の場合
+                  return head;
+                },
+                cons: (_, __) => {
+                  return last(tail);
+                }
+              });
+            }
+          });
+        };
+        /* #@range_end(list_last_recursive) */
+        var aList = list.cons(1,
+                                list.cons(2,
+                                          list.cons(3,
+                                                    list.empty())));
+        expect(
+          last(aList)
+        ).to.eql(
+          3
+        );
+        next();
+      });
+      // 抽象的なlast関数
+      it('抽象的なlast関数', (next) => {
+        /* #@range_begin(list_last_compose) */
+        var last = (alist) => {
+          return compose(list.head,
+                         list.reverse)(alist);
+        };
+        /* #@range_end(list_last_compose) */
+        var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          last(sequence)
+        ).to.eql(
+          4
+        );
+        next();
+      });
+      // 関数合成による様々な関数定義
+      // 
+      // |関数名	   ||関数合成による定義	               |
+      // |:------------||------------------------------:|
+      // |length      ||sum . map(alwaysOne)             |
+      // |last        ||head . reverse                   |
+      // |init        ||reverse . tail . reverse            |
+      // |all(predicate) ||and . map(predicate)          |
+      // |any(predicate) ||or . map(predicate)           |
+      // |none(predicate)||and . map(not(predicate))     |
+      describe('関数合成による様々な関数定義', () => {
+        var alwaysOne = (x) => {
+          return 1;
+        };
+        var alist = list.cons(1,
                               list.cons(2,
                                         list.cons(3,
                                                   list.empty())));
-      expect(
-        last(numbers)
-      ).to.eql(
-        3
-      );
-      /* #@range_end(list_last_test) */
-      next();
+        // length関数の抽象的な定義
+        it('length関数の抽象的な定義', (next) => {
+          var alwaysOne = (x) => {
+            return 1;
+          };
+          var sum = (alist) => {
+            var sumHelper = (alist, accumulator) => {
+              return list.match(alist,{
+                empty: (_) => {
+                  return accumulator;
+                },
+                cons: (head, tail) => {
+                  return sumHelper(tail, accumulator + head);
+                }
+              });
+            };
+            return sumHelper(alist,0);
+          };
+          var length = (alist) => {
+            return compose(sum,
+                           flip(list.map)(alwaysOne))(alist);
+          };
+          /****** テスト *******/
+          expect(
+            length(alist)
+          ).to.eql(
+            3
+          );
+          next();
+        });
+        // last関数の抽象的な定義
+        it('last関数の抽象的な定義', (next) => {
+          var last = (alist) => {
+            return compose(list.head,
+                           list.reverse)(alist);
+          };
+          expect(
+            last(alist)
+          ).to.eql(
+            3
+          );
+          next();
+        });
+        // init関数の抽象的な定義
+        it('init関数の抽象的な定義', (next) => {
+          /* init = reverse . tail . reverse  */
+          var init = (alist) => {
+            return compose(list.reverse,
+                           compose(list.tail,
+                                   list.reverse)
+                          )(alist);
+          };
+          /****** テスト *******/
+          expect(
+            list.toArray(init(alist))
+          ).to.eql(
+            [1,2]
+          );
+          next();
+        });
+        // all関数の抽象的な定義
+        it('all関数の抽象的な定義', (next) => {
+          var and = (alist) => {
+            return list.match(alist, {
+              empty: (_) => {
+                return true;
+              },
+              cons: (head, tail) => {
+                return head && and(tail);
+              }
+            });
+          };
+          var all = (predicate) => {
+            return (alist) => {
+              return compose(and,
+                             flip(list.map)(predicate))(alist);
+            };
+          };
+          expect(
+            all((x) => {
+              return x > 0;
+            })(alist)
+          ).to.eql(
+            true
+          );
+          next();
+        });
+        // any関数の抽象的な定義
+        it('any関数の抽象的な定義', (next) => {
+          var or = (alist) => {
+            return list.match(alist, {
+              empty: (_) => {
+                return false;
+              },
+              cons: (head, tail) => {
+                return head || or(tail);
+              }
+            });
+          };
+          var any = (predicate) => {
+            return (alist) => {
+              return compose(or,
+                             flip(list.map)(predicate))(alist);
+            };
+          };
+          expect(
+            any((x) => {
+              return x < 2;
+            })(alist)
+          ).to.eql(
+            true
+          );
+          expect(
+            any((x) => {
+              return x < 1;
+            })(alist)
+          ).to.eql(
+            false
+          );
+          next();
+        });
+        // none関数の抽象的な定義
+        it('none関数の抽象的な定義', (next) => {
+          var and = (alist) => {
+            return list.match(alist, {
+              empty: (_) => {
+                return true;
+              },
+              cons: (head, tail) => {
+                return head && and(tail);
+              }
+            });
+          };
+          var not = (predicate) => { // predicate::FUN[NUM => BOOL]
+            return (arg) => { // FUN[NUM => BOOL]型を返す
+              return ! predicate(arg); // !演算子で論理を反転させる
+            };
+          };
+          var none = (predicate) => {
+            return (alist) => {
+              return compose(and,
+                             flip(list.map)(not(predicate)))(alist);
+            };
+          };
+          expect(
+            none((x) => {
+              return x < 0;
+            })(alist)
+          ).to.eql(
+            true
+          );
+          next();
+        });
+      });
     });
-    // 抽象的なlast関数
-    it('抽象的なlast関数', (next) => {
-      /* #@range_begin(list_last_compose) */
-      var last = (alist) => {
-        return compose(list.head,
-                       list.reverse)(alist);
-      };
-      /* #@range_end(list_last_compose) */
-      var sequence = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-      expect(
-        last(sequence)
-      ).to.eql(
-        4
-      );
-      next();
-    });
+    // ### コラム: Yコンビネータ
+    // [![IMAGE ALT TEXT](http://img.youtube.com/vi/FITJMJjASUs/0.jpg)](https://www.youtube.com/watch?v=FITJMJjASUs "Ruby Conf 12 - Y Not- Adventures in Functional Programming by Jim Weirich")
     it('Y combinator', (next) => {
-      // Yコンビネータ
       /* #@range_begin(Y_combinator) */
       var Y = (F) => {
         return ((x) => {
@@ -703,255 +845,18 @@ describe('関数を合成する', () => {
       /* #@range_end(Y_combinator_test) */
       next();
     });
-  });
-  it('length関数の抽象的な定義', (next) => {
-    var alwaysOne = (x) => {
-      return 1;
-    };
-    var sum = (alist) => {
-      var sumHelper = (alist, accumulator) => {
-        return match(alist,{
-          empty: (_) => {
-            return accumulator;
-          },
-          cons: (head, tail) => {
-            return sumHelper(tail, accumulator + head);
-          }
-        });
-      };
-      return sumHelper(alist,0);
-    };
-    /* #@range_begin(abstract_length) */
-    var length = (alist) => {
-      return compose(sum,
-                     flip(list.map)(alwaysOne))(alist);
-    };
-    /****** テスト *******/
-    var alist = list.cons(1,
-                          list.cons(2,
-                                    list.cons(3,
-                                              list.empty())));
-    expect(
-      length(alist)
-    ).to.eql(
-      3
-    );
-    /* #@range_end(abstract_length) */
-    next();
-  });
-  it('init関数の抽象的な定義', (next) => {
-    /* #@range_begin(abstract_init) */
-    /* init = reverse . tail . reverse  */
-    var init = (alist) => {
-      return compose(list.reverse,
-                     compose(list.tail,list.reverse)
-                    )(alist);
-    };
-    /****** テスト *******/
-    var sequence = list.cons(1,
-                             list.cons(2,
-                                       list.cons(3,
-                                                 list.empty())));
-    expect(
-      list.toArray(init(sequence))
-    ).to.eql(
-      [1,2]
-    );
-    /* #@range_end(abstract_init) */
-    next();
-  });
-  it('関数合成による様々な関数の定義', (next) => {
-    var alist = list.cons(1,
-                          list.cons(2,
-                                    list.cons(3,
-                                              list.empty())));
-    var alwaysOne = (x) => {
-      return 1;
-    };
-    var sum = (alist) => {
-      var sumHelper = (alist, accumulator) => {
-        return match(alist,{
-          empty: (_) => {
-            return accumulator;
-          },
-          cons: (head, tail) => {
-            return sumHelper(tail, accumulator + head);
-          }
-        });
-      };
-      return sumHelper(alist,0);
-    };
-    var length = (alist) => {
-      return compose(sum,
-                     flip(list.map)(alwaysOne))(alist);
-    };
-    /****** テスト *******/
-    expect(
-      length(alist)
-    ).to.eql(
-      3
-    );
-    var last = (alist) => {
-      return compose(list.head,
-                     list.reverse)(alist);
-    };
-    expect(
-      last(alist)
-    ).to.eql(
-      3
-    );
-    /* init = reverse . tail . reverse  */
-    var init = (alist) => {
-      return compose(list.reverse,
-                     compose(list.tail,
-                             list.reverse)
-                    )(alist);
-    };
-    /****** テスト *******/
-    expect(
-      list.toArray(init(alist))
-    ).to.eql(
-      [1,2]
-    );
-    var not = (predicate) => { // predicate::FUN[NUM => BOOL]
-      return (arg) => { // FUN[NUM => BOOL]型を返す
-        return ! predicate(arg); // !演算子で論理を反転させる
-      };
-    };
-    var multipleOf = (n) => {
-      return (m) => {
-        if(m % n === 0) {
-          return true;
-        } else {
-          return false;
-        }
-      };
-    };
-    var even = multipleOf(2);
-    var odd = not(even);
-    expect(
-      odd(2)
-    ).to.eql(
-      false
-    );
-    expect(
-      odd(3)
-    ).to.eql(
-      true
-    );
-    var map = (alist) => {
-      return (transform) => {
-        return match(alist,{
-          empty: (_) => {
-            return list.empty();
-          },
-          cons: (head,tail) => {
-            return list.cons(transform(head),
-                             list.map(tail)(transform));
-          }
-        });
-      };
-    };
-    var allTrueList = list.cons(true,
-                                list.cons(true,
-                                          list.cons(true,
-                                                    list.empty())));
-    var and = (alist) => {
-      return list.match(alist, {
-        empty: (_) => {
-          return true;
-        },
-        cons: (head, tail) => {
-          return head && and(tail);
-        }
-      });
-    };
-    expect(
-      and(allTrueList)
-    ).to.eql(
-      true
-    );
-    var or = (alist) => {
-      return list.match(alist, {
-        empty: (_) => {
-          return false;
-        },
-        cons: (head, tail) => {
-          return head || or(tail);
-        }
-      });
-    };
-    var someTrueList = list.cons(true,
-                                 list.cons(false,
-                                           list.cons(true,
-                                                     list.empty())));
-    var allFalseList = list.cons(false,
-                                 list.cons(false,
-                                           list.cons(false,
-                                                     list.empty())));
-    expect(
-      or(someTrueList)
-    ).to.eql(
-      true
-    );
-    expect(
-      or(allFalseList)
-    ).to.eql(
-      false
-    );
-    var all = (predicate) => {
-      return (alist) => {
-        return compose(and,
-                       flip(map)(predicate))(alist);
-      };
-    };
-    expect(
-      all((x) => {
-        return x > 0;
-      })(alist)
-    ).to.eql(
-      true
-    );
-    var any = (predicate) => {
-      return (alist) => {
-        return compose(or,
-                       flip(map)(predicate))(alist);
-      };
-    };
-    expect(
-      any((x) => {
-        return x < 2;
-      })(alist)
-    ).to.eql(
-      true
-    );
-    expect(
-      any((x) => {
-        return x < 1;
-      })(alist)
-    ).to.eql(
-      false
-    );
-    var none = (predicate) => {
-      return (alist) => {
-        return compose(and,
-                       flip(map)(not(predicate)))(alist);
-      };
-    };
-    expect(
-      none((x) => {
-        return x < 0;
-      })(alist)
-    ).to.eql(
-      true
-    );
-    next();
-  });
-}); // 関数を合成する
+  }); // 関数を合成する
+}); // コンビネータ
+
 
 // ## クロージャーを使う
 describe('クロージャーを使う', () => {
   // ### クロージャーの仕組み
+  var compose = (f,g) => {
+    return (arg) => {
+      return f(g(arg));
+    };
+  };
   describe('クロージャーの仕組み', () => {
     // 環境における変数のバインディング
     it('環境における変数のバインディング', (next) => {
@@ -1022,14 +927,6 @@ describe('クロージャーを使う', () => {
           2
         );
         /* #@range_end(counter_as_closure_test) */
-        /* #@range_begin(another_counter) */
-        var anoterCounterFromZero = counter(0);
-        expect(
-          anoterCounterFromZero()
-        ).to.eql( 
-          1
-        );
-        /* #@range_end(another_counter) */
         next();
       });
       // #### クロージャーで不変なデータ型を作る
@@ -1147,9 +1044,8 @@ describe('クロージャーを使う', () => {
                   return pattern.cons(head,tailThunk);
                 };
               },
-              /* head:: STREAM -> MAYBE[STREAM] */
               head: (lazyList) => {
-                return match(lazyList,{
+                return stream.match(lazyList,{
                   empty: (_) => {
                     return null;
                   },
@@ -1158,9 +1054,8 @@ describe('クロージャーを使う', () => {
                   }
                 });
               },
-              /* tail:: STREAM -> MAYBE[STREAM] */
               tail: (lazyList) => {
-                return match(lazyList,{
+                return stream.match(lazyList,{
                   empty: (_) => {
                     return null;
                   },
@@ -1170,12 +1065,12 @@ describe('クロージャーを使う', () => {
                 });
               },
               toArray: (lazyList) => {
-                return match(lazyList,{
+                return stream.match(lazyList,{
                   empty: (_) => {
                     return [];
                   },
                   cons: (head,tailThunk) => {
-                    return match(tailThunk(),{
+                    return stream.match(tailThunk(),{
                       empty: (_) => {
                         return [head];
                       },
@@ -1186,13 +1081,11 @@ describe('クロージャーを使う', () => {
                   }
                 });
               },
-              // ### stream#take
-              /* take:: STREAM -> NUMBER -> STREAM */
               take: (lazyList) => {
                 return (number) => {
                   expect(number).to.a('number');
                   expect(number).to.be.greaterThan(-1);
-                  return match(lazyList,{
+                  return stream.match(lazyList,{
                     empty: (_) => {
                       return stream.empty();
                     },
@@ -1208,7 +1101,6 @@ describe('クロージャーを使う', () => {
                   });
                 };
               },
-              // ### stream#filter
               /* #@range_begin(stream_filter) */
               /* filter:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
               filter: (predicate) => {
@@ -1230,7 +1122,6 @@ describe('クロージャーを使う', () => {
                 };
               },
               /* #@range_end(stream_filter) */
-              // ### stream#remove
               /* #@range_begin(stream_remove) */
               /* remove:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
               remove: (predicate) => {
@@ -1248,7 +1139,7 @@ describe('クロージャーを使う', () => {
               generate: (astream) => {
                 var theStream = astream;
                 return (_) => {
-                  return match(theStream,{
+                  return stream.match(theStream,{
                     empty: (_) => {
                       return null; 
                     },
@@ -1258,9 +1149,8 @@ describe('クロージャーを使う', () => {
                     }
                   });
                 };
-              },
+              }
               /* #@range_end(stream_generate) */
-
             }; // end of 'stream' module
 
             var multipleOf = (n) => {
@@ -1320,8 +1210,8 @@ describe('クロージャーを使う', () => {
             next();
           });
         });
-        // ECMAScript2015のジェネレータ
-        it('ECMAScript2015のジェネレータ', (next) => {
+        // #### コラム：ECMAScript2015（ES6）におけるジェネレータ
+        it('ECMAScript2015（ES6）におけるジェネレータ', (next) => {
           /* #@range_begin(es6_generator) */
           function* genCounter(){
             yield 1;
@@ -1461,8 +1351,13 @@ describe('クロージャーを使う', () => {
   });
 });
 
-// ## 関数を渡す
+// ## 7.5 関数を渡す
 describe('関数を渡す', () => {
+  var compose = (f,g) => {
+    return (arg) => {
+      return f(g(arg));
+    };
+  };
   // ### コールバックで処理をモジュール化する
   describe('コールバックで処理をモジュール化する', () => {
     // 直接的な呼び出しの例
@@ -1510,7 +1405,7 @@ describe('関数を渡す', () => {
       /* map:: FUN[T => T] => LIST[T] =>  LIST[T] */
       var map = (callback) => {
         return (alist) => {
-          return match(alist,{
+          return list.match(alist,{
             empty: (_) => {
               return list.empty();
             },
@@ -1523,13 +1418,6 @@ describe('関数を渡す', () => {
         };
       };
       /* #@range_end(list_map) */
-      var squareCallback = (n) => { // 要素を2乗する関数を渡す
-        return n * n;
-      };
-      /* 要素を2倍する関数を渡す */
-      var doubleCallback = (n) => { 
-        return n * 2;
-      };
 
       // map関数のテスト
       /* #@range_begin(list_map_test) */
@@ -1566,6 +1454,9 @@ describe('関数を渡す', () => {
       // sum関数の定義
       it('sum関数の定義', (next) => {
         var list = {
+          match : (data, pattern) => {
+            return data.call(list, pattern);
+          },
           empty: (_) => {
             return (pattern) => {
               return pattern.empty();
@@ -1579,7 +1470,7 @@ describe('関数を渡す', () => {
           /* #@range_begin(list_sum) */
           sum: (alist) => {
             return (accumulator) => {
-              return match(alist,{
+              return list.match(alist,{
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1595,7 +1486,7 @@ describe('関数を渡す', () => {
           sumWithCallback: (alist) => {
             return (accumulator) => {
               return (CALLBACK) => { // コールバック関数を受け取る
-                return match(alist,{
+                return list.match(alist,{
                   empty: (_) => {
                     return accumulator;
                   },
@@ -1639,6 +1530,9 @@ describe('関数を渡す', () => {
       // length関数の定義
       it('length関数の定義', (next) => {
         var list = {
+          match : (data, pattern) => {
+            return data.call(list, pattern);
+          },
           empty: (_) => {
             return (pattern) => {
               return pattern.empty();
@@ -1652,7 +1546,7 @@ describe('関数を渡す', () => {
           /* #@range_begin(list_length) */
           length: (alist) => {
             return (accumulator) => {
-              return match(alist,{
+              return list.match(alist,{
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1668,7 +1562,7 @@ describe('関数を渡す', () => {
           lengthWithCallback: (alist) => {
             return (accumulator) => {
               return (CALLBACK) => { // コールバック関数を受け取る
-                return match(alist,{
+                return list.match(alist,{
                   empty: (_) => {
                     return accumulator;
                   },
@@ -1708,373 +1602,311 @@ describe('関数を渡す', () => {
         /* #@range_end(list_length_callback_test) */
         next();
       });
-      it('リストのproduct', (next) => {
-        var productWithCallback = (alist) => {
-          return (accumulator) => {
-            return (CALLBACK) => {
-              return match(alist,{
-                empty: (_) => {
-                  return accumulator;
-                },
-                cons: (head, tail) => {
-                  return CALLBACK(head)(productWithCallback(tail)(accumulator)(CALLBACK));
-                }
-              });
-            };
-          };
-        };
-        var callback = (n) => {  
-          return (m) => {
-            return n * m;
-          };
-        };
-        var numbers = list.cons(1, 
-                                list.cons(2,
-                                          list.cons(3,
-                                                    list.empty())));
-        expect(
-          productWithCallback(numbers)(1)(callback)
-        ).to.eql(
-          6
-        );
-        next();
-      });
-      it('リストのreverse', (next) => {
-        var reverserWithCallback = (alist) => {
-          return (accumulator) => {
-            return (CALLBACK) => {
-              return match(alist,{
-                empty: (_) => {
-                  return accumulator;
-                },
-                cons: (head, tail) => {
-                  return CALLBACK(head)(reverserWithCallback(tail)(accumulator)(CALLBACK));
-                }
-              });
-            };
-          };
-        };
-        var callback = (x) => {
-          return (xs) => {
-            return list.match(xs, {
+    });
+    describe('畳み込み関数', () => {
+      // リストの畳み込み関数
+      /* #@range_begin(list_foldr) */
+      var foldr = (alist) => {
+        return (accumulator) => {
+          return (callback) => {
+            return list.match(alist,{
               empty: (_) => {
-                return list.cons(x, list.empty());
+                return accumulator;
               },
               cons: (head, tail) => {
-                return list.cons(head, callback(x)(tail)); 
+                return callback(head)(foldr(tail)(accumulator)(callback));
               }
             });
           };
         };
-        var numbers = list.cons(1, 
-                                list.cons(2,
-                                          list.cons(3,
-                                                    list.empty())));
+      };
+      /* #@range_end(list_foldr) */
+      // foldr関数によるsum関数
+      it("foldr関数によるsum関数", (next) => {
+        /* #@range_begin(foldr_sum) */
+        var sum = (alist) => {
+          return foldr(alist)(0)((item) => {
+            return (accumulator) => {
+              return accumulator + item;
+            };
+          });
+        };
+        /* #@range_end(foldr_sum) */
+        /* list = [1,2,3,4] */
+        var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
         expect(
-          list.toArray(reverserWithCallback(numbers)(list.empty())(callback))
+          sum(seq)
         ).to.eql(
-          [3,2,1]
+          10  // 1 + 2 + 3 + 4 = 10
         );
         next();
       });
-      it('リストのall', (next) => {
-        var allWithCallback = (alist) => {
-          return (accumulator) => {
-            return (CALLBACK) => {
-              return match(alist,{
-                empty: (_) => {
-                  return accumulator;
-                },
-                cons: (head, tail) => {
-                  return CALLBACK(head)(allWithCallback(tail)(accumulator)(CALLBACK));
-                }
-              });
+      // foldr関数によるlength関数
+      it("foldrでlength関数を作る", (next) => {
+        /* #@range_begin(foldr_length) */
+        var length = (alist) => {
+          return foldr(alist)(0)((item) => {
+            return (accumulator) => {
+              return accumulator + 1;
             };
-          };
+          });
         };
-        var callback = (n) => {  
-          return (m) => {
-            return n && m;
-          };
+        /* #@range_end(foldr_length) */
+        /* list = [1,2,3,4] */
+        var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
+        expect(
+          length(seq)
+        ).to.eql(
+          4
+        );
+        next();
+      });
+      it("foldrでproductを作る", (next) => {
+        /* #@range_begin(foldr_product) */
+        var product = (alist) => {
+          return foldr(alist)(1)((item) => {
+            return (accumulator) => {
+              return accumulator * item;
+            };
+          });
         };
-        var allTrueList = list.cons(true, 
+        /********* テスト **********/
+        /* list = [1,2,3] */
+        var seq = list.cons(1,
+                            list.cons(2,
+                                      list.cons(3,
+                                                list.empty())));
+        expect(
+          product(seq)
+        ).to.eql(
+          6 // 1 * 2 * 3 = 6
+        );
+        /* #@range_end(foldr_product) */
+        next();
+      });
+      it("foldrでallを作る", (next) => {
+        var all = (alist) => {
+          return foldr(alist)(true)((item) => {
+            return (accumulator) => {
+              return accumulator && item;
+            };
+          });
+        };
+        /********* テスト **********/
+        var allTrueList = list.cons(true,
                                     list.cons(true,
                                               list.cons(true,
                                                         list.empty())));
         expect(
-          allWithCallback(allTrueList)(true)(callback)
+          all(allTrueList)
         ).to.eql(
           true
         );
-        var notAllTrueList = list.cons(true, 
-                                       list.cons(true,
-                                                 list.cons(false,
-                                                           list.empty())));
+        var someFalseList = list.cons(true,
+                                    list.cons(false,
+                                              list.cons(true,
+                                                        list.empty())));
         expect(
-          allWithCallback(notAllTrueList)(true)(callback)
+          all(someFalseList)
         ).to.eql(
           false
         );
         next();
       });
-    });
-
-    // リストの畳み込み関数
-    /* #@range_begin(list_foldr) */
-    var foldr = (alist) => {
-      return (accumulator) => {
-        return (callback) => {
-          return match(alist,{
-            empty: (_) => {
-              return accumulator;
-            },
-            cons: (head, tail) => {
-              return callback(head)(foldr(tail)(accumulator)(callback));
-            }
-          });
-        };
-      };
-    };
-    /* #@range_end(list_foldr) */
-    it("foldrでsumを作る", (next) => {
-      // foldr関数によるsum関数
-      /* #@range_begin(foldr_sum) */
-      var sum = (alist) => {
-        return foldr(alist)(0)((item) => {
-          return (accumulator) => {
-            return accumulator + item;
-          };
-        });
-      };
-      /* #@range_end(foldr_sum) */
-      /* list = [1,2,3,4] */
-      var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-      expect(
-        sum(seq)
-      ).to.eql(
-        10  // 1 + 2 + 3 + 4 = 10
-      );
-      next();
-    });
-    it("foldrでlength関数を作る", (next) => {
-      // foldr関数によるlength関数
-      /* #@range_begin(foldr_length) */
-      var length = (alist) => {
-        return foldr(alist)(0)((item) => {
-          return (accumulator) => {
-            return accumulator + 1;
-          };
-        });
-      };
-      /* #@range_end(foldr_length) */
-      /* list = [1,2,3,4] */
-      var seq = list.cons(1,list.cons(2,list.cons(3,list.cons(4,list.empty()))));
-      expect(
-        length(seq)
-      ).to.eql(
-        4
-      );
-      next();
-    });
-    it("foldrでproductを作る", (next) => {
-      /* #@range_begin(foldr_product) */
-      var product = (alist) => {
-        return foldr(alist)(1)((item) => {
-          return (accumulator) => {
-            return accumulator * item;
-          };
-        });
-      };
-      /********* テスト **********/
-      /* list = [1,2,3] */
-      var seq = list.cons(1,
-                          list.cons(2,
-                                    list.cons(3,
-                                              list.empty())));
-      expect(
-        product(seq)
-      ).to.eql(
-        6 // 1 * 2 * 3 = 6
-      );
-      /* #@range_end(foldr_product) */
-      next();
-    });
-    // foldr関数によるreverse関数の定義
-    it("foldr関数によるreverse関数の定義", (next) => {
-      var list = {
-        empty: (_) => {
-          return (pattern) => {
-            return pattern.empty();
-          };
-        },
-        cons: (value, alist) => {
-          return (pattern) => {
-            return pattern.cons(value, alist);
-          };
-        },
-        toArray: (alist) => {
-          var toArrayAux = (alist,accumulator) => {
-            return match(alist, {
-              empty: (_) => {
-                return accumulator;  
-              },
-              cons: (head, tail) => {
-                return toArrayAux(tail, accumulator.concat(head));
-              }
-            });
-          };
-          return toArrayAux(alist, []);
-        },
-        /* #@range_begin(foldr_reverse) */
-        /* listのappend関数は、2つのリストを連結する */
-        append: (xs) => {
-          return (ys) => {
-            return match(xs, {
-              empty: (_) => {
-                return ys;
-              },
-              cons: (head, tail) => {
-                return list.cons(head, list.append(tail)(ys)); 
-              }
-            });
-          };
-        },
-        /* list.reverse関数は、リストを逆転する */
-        reverse: (alist) => {
-          return foldr(alist)(list.empty(0))((item) => {
+      it("foldrでanyを作る", (next) => {
+        var any = (alist) => {
+          return foldr(alist)(false)((item) => {
             return (accumulator) => {
-              return list.append(accumulator)(list.cons(item,
-                                                        list.empty()));
+              return accumulator || item;
             };
           });
-        }
-        /* #@range_end(foldr_reverse) */
-      };
-      /* list = [1,2,3,4] */
-      var seq = list.cons(1,
-                          list.cons(2,
-                                    list.cons(3,
-                                              list.cons(4,
-                                                        list.empty()))));
-      expect(
-        list.toArray(list.reverse(seq))
-      ).to.eql(
-        [ 4, 3, 2, 1]
-      );
-      next();
-    });
-    // foldr関数によるfind関数の定義
-    it("foldr関数によるfind関数の定義", (next) => {
-      var even = (n) => {
-        return (n % 2) === 0;
-      };
-      var list = {
-        empty: (_) => {
-          return (pattern) => {
-            return pattern.empty();
-          };
-        },
-        cons: (value, alist) => {
-          return (pattern) => {
-            return pattern.cons(value, alist);
-          };
-        },
-        /* #@range_begin(foldr_find) */
-        /* list.find関数は、条件に合致した要素をリストから探す */
-        find:  (alist) => {
-          return (predicate) => { // 要素を判定する述語関数
-            return foldr(alist)(null)((item) => { // foldrを利用する
+        };
+        /********* テスト **********/
+        var allTrueList = list.cons(true,
+                                    list.cons(true,
+                                              list.cons(true,
+                                                        list.empty())));
+        expect(
+          any(allTrueList)
+        ).to.eql(
+          true
+        );
+        var someFalseList = list.cons(true,
+                                    list.cons(false,
+                                              list.cons(true,
+                                                        list.empty())));
+        expect(
+          any(someFalseList)
+        ).to.eql(
+          true
+        );
+        next();
+      });
+      // foldr関数によるreverse関数の定義
+      it("foldr関数によるreverse関数の定義", (next) => {
+        var list = {
+          match : (data, pattern) => {
+            return data.call(list, pattern);
+          },
+          empty: (_) => {
+            return (pattern) => {
+              return pattern.empty();
+            };
+          },
+          cons: (value, alist) => {
+            return (pattern) => {
+              return pattern.cons(value, alist);
+            };
+          },
+          toArray: (alist) => {
+            var toArrayAux = (alist,accumulator) => {
+              return list.match(alist, {
+                empty: (_) => {
+                  return accumulator;  
+                },
+                cons: (head, tail) => {
+                  return toArrayAux(tail, accumulator.concat(head));
+                }
+              });
+            };
+            return toArrayAux(alist, []);
+          },
+          /* #@range_begin(foldr_reverse) */
+          /* listのappend関数は、2つのリストを連結する */
+          append: (xs) => {
+            return (ys) => {
+              return list.match(xs, {
+                empty: (_) => {
+                  return ys;
+                },
+                cons: (head, tail) => {
+                  return list.cons(head, list.append(tail)(ys)); 
+                }
+              });
+            };
+          },
+          /* list.reverse関数は、リストを逆転する */
+          reverse: (alist) => {
+            return foldr(alist)(list.empty(0))((item) => {
               return (accumulator) => {
-                /* 要素が見つかった場合、その要素を返す */
-                if(predicate(item) === true) { 
-                  return item;
-                } else {
-                  return accumulator;
+                return list.append(accumulator)(list.cons(item,
+                                                          list.empty()));
+              };
+            });
+          }
+          /* #@range_end(foldr_reverse) */
+        };
+        /* list = [1,2,3,4] */
+        var seq = list.cons(1,
+                            list.cons(2,
+                                      list.cons(3,
+                                                list.cons(4,
+                                                          list.empty()))));
+        expect(
+          list.toArray(list.reverse(seq))
+        ).to.eql(
+          [ 4, 3, 2, 1]
+        );
+        next();
+      });
+      // foldr関数によるfind関数の定義
+      it("foldr関数によるfind関数の定義", (next) => {
+        var even = (n) => {
+          return (n % 2) === 0;
+        };
+        var list = {
+          empty: (_) => {
+            return (pattern) => {
+              return pattern.empty();
+            };
+          },
+          cons: (value, alist) => {
+            return (pattern) => {
+              return pattern.cons(value, alist);
+            };
+          },
+          /* #@range_begin(foldr_find) */
+          /* list.find関数は、条件に合致した要素をリストから探す */
+          find:  (alist) => {
+            return (predicate) => { // 要素を判定する述語関数
+              return foldr(alist)(null)((item) => { // foldrを利用する
+                return (accumulator) => {
+                  /* 要素が見つかった場合、その要素を返す */
+                  if(predicate(item) === true) { 
+                    return item;
+                  } else {
+                    return accumulator;
+                  };
                 };
+              });
+            };
+          }
+          /* #@range_end(foldr_find) */
+        };
+        /******** テスト *********/
+        var numbers = list.cons(1,
+                                list.cons(2,
+                                          list.cons(3,
+                                                    list.empty())));
+        expect(
+          list.find(numbers)(even) // 最初に登場する偶数の要素を探す
+        ).to.eql(
+          2
+        );
+        next();
+      });
+      it("foldrで map関数を作る", (next) => {
+        var double = (number) => {
+          return number * 2;
+        };
+        /* #@range_begin(foldr_map) */
+        var map = (alist) => {
+          return (callback) => { // 個々の要素を変換するコールバック関数
+            return foldr(alist)(list.empty())((item) => {
+              return (accumulator) => {
+                return list.cons(callback(item), accumulator);
               };
             });
           };
-        }
-        /* #@range_end(foldr_find) */
-      };
-      /******** テスト *********/
-      var numbers = list.cons(1,
-                              list.cons(2,
-                                        list.cons(3,
-                                                  list.empty())));
-      expect(
-        list.find(numbers)(even) // 最初に登場する偶数の要素を探す
-      ).to.eql(
-        2
-      );
-      next();
-    });
-    it("foldrでtoArray関数を作る", (next) => {
-      /* #@range_begin(foldr_toarray) */
-      var toArray = (alist) => {
-        return foldr(alist)([])((item) => {
-          return (accumulator) => {
-            return [item].concat(accumulator);
-          };
-        });
-      };
-      var seq = list.cons(true,list.cons(1,list.cons(null,list.cons("a",list.empty()))));
-      expect(
-        toArray(seq)
-      ).to.eql(
-        [ true, 1, null, 'a' ]
-      );
-      /* #@range_end(foldr_toarray) */
-      next();
-    });
-    it("foldrで map関数を作る", (next) => {
-      var double = (number) => {
-        return number * 2;
-      };
-      /* #@range_begin(foldr_map) */
-      var map = (alist) => {
-        return (callback) => { // 個々の要素を変換するコールバック関数
-          return foldr(alist)(list.empty())((item) => {
-            return (accumulator) => {
-              return list.cons(callback(item), accumulator);
-            };
-          });
         };
-      };
-      /****** テスト ******/
-      /* list = [1,2,3] */
-      var seq = list.cons(1,
-                          list.cons(2,
-                                    list.cons(3,
-                                              list.empty())));
-      expect(
-        list.toArray(map(seq)(double))
-      ).to.eql(
-        [ 2, 4, 6] // 2 * [1,2,3] = [2,4,6]
-      );
-      /* #@range_end(foldr_map) */
-      next();
+        /****** テスト ******/
+        /* list = [1,2,3] */
+        var seq = list.cons(1,
+                            list.cons(2,
+                                      list.cons(3,
+                                                list.empty())));
+        expect(
+          list.toArray(map(seq)(double))
+        ).to.eql(
+          [ 2, 4, 6] // 2 * [1,2,3] = [2,4,6]
+        );
+        /* #@range_end(foldr_map) */
+        next();
+      });
     });
-    // reduceメソッドによるfromArray関数
-    it("reduceメソッドによるfromArray関数", (next) => {
-      /* #@range_begin(list_fromArray) */
-      var fromArray = (array) => {
-        return array.reduce((accumulator, item) => {
-          return list.append(accumulator)(list.cons(item, list.empty()));
-        }, list.empty());
-      };
-      /******* テスト *******/
-      var theList = fromArray([0,1,2,3]);
-      expect(
-        list.toArray(theList)
-      ).to.eql(
-        [0,1,2,3]
-      );
-      /* #@range_end(list_fromArray) */
-      next();
+    // #### コラム：配列の畳み込み関数
+    describe("コラム：配列の畳み込み関数", () => {
+      // reduceメソッドによるfromArray関数
+      it("reduceメソッドによるfromArray関数", (next) => {
+        /* #@range_begin(list_fromArray) */
+        var fromArray = (array) => {
+          return array.reduce((accumulator, item) => {
+            return list.append(accumulator)(list.cons(item, list.empty()));
+          }, list.empty());
+        };
+        /******* テスト *******/
+        var theList = fromArray([0,1,2,3]);
+        expect(
+          list.toArray(theList)
+        ).to.eql(
+          [0,1,2,3]
+        );
+        /* #@range_end(list_fromArray) */
+        next();
+      });
     });
   });
-  // #### 非同期処理にコールバック関数を渡す 
+  // ### 非同期処理にコールバック関数を渡す 
   describe('非同期処理にコールバック関数を渡す', () => {
     // tarai関数の定義
     it("tarai関数の定義", (next) => {
@@ -2099,6 +1931,7 @@ describe('関数を渡す', () => {
     });
   });
   // ### 継続で未来を渡す
+  // > https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A
   describe('継続で未来を渡す', () => {
     // #### 継続とは何か
     describe('継続とは何か', () => {
@@ -2110,6 +1943,7 @@ describe('関数を渡す', () => {
           return continues(n + 1);
         };
         /* #@range_end(succ_cps) */
+
         // 継続渡しのsucc関数をテストする
         var identity = (any) => {
           return any;
@@ -2152,78 +1986,8 @@ describe('関数を渡す', () => {
         /* #@range_end(continuation_in_arithmetic) */
         next();
       });
-      it("継続としての蓄積変数", (next) => {
-        /* #@range_begin(accumulator_as_continuation) */
-        var succCPS = (n, accumulator) => {
-          return n + 1 + accumulator;
-        };
-        expect(
-          succCPS(1, 0)
-        ).to.eql(
-          2
-        );
-        var multiplyCPS = (n,m, accumulator) => {
-          return n * m * accumulator;
-        };
-        expect(
-          multiplyCPS(succCPS(1, 0), 3, 1) // 蓄積変数を渡す
-        ).to.eql(
-          6
-        );
-        expect(
-          multiplyCPS(succCPS(1, 0), succCPS(3, 0), 1) // 蓄積変数を渡す
-        ).to.eql(
-          8
-        );
-        /* #@range_end(accumulator_as_continuation) */
-        next();
-      });
     });
     describe("継続で未来を選ぶ", () => {
-      it("find関数", (next) => {
-        var identity = (any) => {
-          return any;
-        };
-        /* #@range_begin(list_find) */
-        var find = (alist,init, predicate) => {
-          var continuesOnRecursion = (alist) => { // 反復処理を続ける継続
-            return find(alist, init, predicate);  // find関数を再帰的に呼び出す
-          };
-          var escapesFromRecursion = identity; // 反復処理を脱出する継続
-
-          return list.match(alist, {
-            empty: () => {
-              return escapesFromRecursion(init); // 反復処理を抜ける
-            },
-            cons: (head, tail) => { 
-              if(predicate(head) === true) {
-                return escapesFromRecursion(head); // escapesFromRecursionで反復処理を脱出する
-              } else {
-                return continuesOnRecursion(tail); // continuesOnRecursionで次の反復処理を続ける
-              };
-            }
-          });
-        };
-        /* #@range_end(list_find) */
-        /* #@range_begin(list_find_test) */
-        var theList = list.fromArray([0,1,2,3]);
-        expect(
-          find(theList,null, (item) => {
-            return (item === 4);
-          })
-        ).to.eql(
-          null
-        );
-        expect(
-          find(theList,null, (item) => {
-            return (item === 2);
-          })
-        ).to.eql(
-          2
-        );
-        /* #@range_end(list_find_test) */
-        next();
-      }); 
       // 継続による反復処理からの脱出
       it("継続による反復処理からの脱出", (next) => {
         /* #@range_begin(stream_find_cps) */
@@ -2259,6 +2023,7 @@ describe('関数を渡す', () => {
         var identity = (any) => {
           return any;
         };
+        // find関数に渡す2つの継続
         /* #@range_begin(stream_find_continuations) */
         /* 成功継続では、反復処理を脱出する */
         var continuesOnSuccess = identity; 
@@ -2277,7 +2042,8 @@ describe('関数を渡す', () => {
                                     );  
                                   };
         /* #@range_end(stream_find_continuations) */
-        // upto3変数は、1から3までの有限ストリーム
+        // find関数のテスト
+        /* upto3変数は、1から3までの有限ストリーム */
         var upto3 = stream.cons(1,(_) => {
           return stream.cons(2, (_) => {
             return stream.cons(3, (_) => {
@@ -2292,7 +2058,6 @@ describe('関数を渡す', () => {
         ).to.eql(
           null // リスト中に4の要素はないので、nullになります
         );
-        // find関数のテスト
         /* #@range_begin(stream_find_cps_test) */
         /* 変数integersは、無限の整数ストリーム */
         var integers = stream.enumFrom(0);
@@ -2310,6 +2075,39 @@ describe('関数を渡す', () => {
       }); 
     }); 
     // #### 非決定計算機を作る
+    // > SICPの非決定計算の章は、http://sicp.iijlab.net/fulltext/x430.html 
+
+    // 決定性計算機
+    // > 非決定性計算機の前に、決定性計算機を復習
+    describe("決定計算機", () => {
+      // 式の代数的データ構造
+      var exp = {
+        match : (anExp, pattern) => { // 代数的データ構造のパターンマッチ
+          return anExp.call(exp, pattern);
+        },
+        num: (n) => {             // 数値の式
+          return (pattern) => {
+            return pattern.num(n);
+          };
+        }, 
+        add: (exp1, exp2) => {    // 足し算の式
+          return (pattern) => {
+            return pattern.add(exp1, exp2);
+          };
+        }
+      };
+      // 式の評価関数
+      var calculate = (anExp) => {
+        return match(anExp, { 
+          num: (n) => {           // 数値を評価する
+            return n;
+          }, 
+          add: (exp1, exp2) => {  // 足し算の式を評価する
+            return calculate(exp1) + calculate(exp2); 
+          }
+        });
+      };
+    }); 
     describe("非決定計算機を作る", () => {
       var exp = {
         match : (anExp, pattern) => {
@@ -2393,6 +2191,7 @@ describe('関数を渡す', () => {
                          });
                        };
       /* #@range_end(amb_calculate) */
+
       // 非決定計算機の駆動関数
       /* #@range_begin(amb_driver) */
       var driver = (expression) =>{
@@ -2569,8 +2368,13 @@ describe('関数を渡す', () => {
   }); // 継続を渡す
 }); // 関数を渡す
 
-// ## モナドを作る
+// ## 7.6 モナドを作る
 describe('モナドを作る', () => {
+  var compose = (f,g) => {
+    return (arg) => {
+      return f(g(arg));
+    };
+  };
   // ### 恒等モナド
   describe('恒等モナド', () => {
     // 恒等モナドの定義
@@ -2593,8 +2397,8 @@ describe('モナドを作る', () => {
         };
       }
     };
-    // 恒等モナドのunit関数のテスト
-    it("恒等モナドのunit関数のテスト", (next) => {
+    // 恒等モナドunit関数のテスト
+    it("恒等モナドunit関数のテスト", (next) => {
       /* #@range_begin(identity_monad_unit_test) */
       expect(
         ID.unit(1)
@@ -2604,8 +2408,8 @@ describe('モナドを作る', () => {
       /* #@range_end(identity_monad_unit_test) */
       next();
     });
-    // 恒等モナドのflatMap関数のテスト
-    it("恒等モナドのflatMap関数のテスト", (next) => {
+    // 恒等モナドflatMap関数のテスト
+    it("恒等モナドflatMap関数のテスト", (next) => {
       var succ = (n) => {
         return n + 1;
       };
@@ -2618,9 +2422,6 @@ describe('モナドを作る', () => {
         succ(1)
       );
       /* #@range_end(identity_monad_flatMap_test) */
-      var succ = (n) => {
-        return n + 1;
-      };
       var double = (m) => {
         return m * 2;
       };
@@ -2640,6 +2441,7 @@ describe('モナドを作る', () => {
       /* #@range_end(flatMap_and_composition) */
       next();
     });
+    // #### 恒等モナドのモナド則
     describe("恒等モナドのモナド則", () => {
       /* #@range_begin(identity_monad_laws) */
       it("flatMap(instanceM)(unit) === instanceM", (next) => {
@@ -2699,43 +2501,9 @@ describe('モナドを作る', () => {
         next();
       });
     });
-    it("identity#flatMap", (next) => {
-      /* #@range_begin(identity_monad_test) */
-      var instance = ID.unit(1);
-      expect(
-        ID.flatMap(instance)((n) => {
-          return ID.unit(n * 2);
-        })
-      ).to.eql(
-        ID.unit(2)
-      );
-      expect(
-        ID.flatMap(instance)((n) => {
-          return ID.flatMap(ID.unit(n * 2))((m) => {
-            return ID.unit(m * 3);
-          });
-        })
-      ).to.eql(
-        ID.unit(6)
-      );
-      expect(
-        ID.flatMap(instance)((n) => {
-          return ID.flatMap(ID.unit(n))((m) => {
-            return ID.unit(m * n);
-          });
-        })
-      ).to.eql(
-        ID.unit(1)
-      );
-      /* #@range_end(identity_monad_test) */
-      next();
-    });
   });
-  // ### Maybeモナド
-  describe('Maybeモナドを作る', () => {
-    var id = (any) => {
-      return any;
-    };
+  // ### Maybeモナドでエラーを処理する
+  describe('Maybeモナドでエラーを処理する', () => {
     describe('Maybeモナドを作る', () => {
       // Maybeの代数的構造
       /* #@range_begin(algebraic_type_maybe) */
@@ -2791,45 +2559,7 @@ describe('モナドを作る', () => {
           };
         },
         /* #@range_end(maybe_monad) */
-        /* #@range_begin(maybe_monad_helper) */
-        isEqual: (maybeA,maybeB) => {
-          return maybe.match(maybeA,{
-            just: (valueA) => {
-              return maybe.match(maybeB,{
-                just: (valueB) => {
-                  return (valueA === valueB);
-                },
-                nothing: (_) => {
-                  return false;
-                }
-              });
-            },
-            nothing: (_) => {
-              return maybe.match(maybeB,{
-                just: (_) => {
-                  return false;
-                },
-                nothing: (_) => {
-                  return true;
-                }
-              });
-            }
-          });
-        },
-        map: (maybeInstance) => {
-          return (transform) => {
-            return maybe.match(maybeInstance,{
-              just: (value) => {
-                return MAYBE.unit(transform(value));
-              },
-              nothing: (_) => {
-                return maybe.nothing(_);
-              }
-            });
-          };
-        }
       };
-      /* #@range_end(maybe_monad_helper) */
       // Maybeモナドの利用法
       it("Maybeモナドの利用法", (next) => {
         /* #@range_begin(maybe_monad_add_test) */
@@ -2861,6 +2591,9 @@ describe('モナドを作る', () => {
   });
   // ### IOモナドで副作用を閉じ込める
   describe('IOモナドで副作用を閉じ込める', () => {
+    var match = (data, pattern) => {
+      return data.call(pattern, pattern);
+    };
     // Pair型の定義
     /* #@range_begin(pair_datatype) */
     var pair = {
@@ -2888,7 +2621,8 @@ describe('モナドを作る', () => {
       }
     };
     /* #@range_end(pair_datatype) */
-    describe('外界を引数に持つIOモナド', () => {
+    // 外界を明示したIOモナドの定義
+    describe('外界を明示したIOモナドの定義', () => {
       var IO = {
         /* #@range_begin(io_monad_definition_with_world) */
         /* unit:: T => IO[T] */
@@ -2911,6 +2645,7 @@ describe('モナドを作る', () => {
           };
         },
         /* #@range_end(io_monad_definition_with_world) */
+        // IOモナドの補助関数
         /* #@range_begin(io_monad_definition_with_world_helper_function) */
         /* done:: T => IO[T] */
         done: (any) => {
@@ -2944,7 +2679,7 @@ describe('モナドを作る', () => {
     });
     describe('外界を引数に持たないIOモナド', () => {
       var fs = require('fs');
-      // ## 'IO' monad module
+      // IOモナドの定義（ 外界を引数に持たない）
       /* #@range_begin(io_monad_definition) */
       var IO = {
         /* unit:: T => IO[T] */
@@ -3007,10 +2742,8 @@ describe('モナドを作る', () => {
       });
       // #### IOアクションを合成する
       describe('IOアクションを合成する', () => {
-        
-
-
         /* #@range_begin(io_monad_is_composable) */
+        // seq関数の定義
         /* IO.seq:: IO[a] => IO[b] => IO[b] */
         IO.seq = (instanceA) => {
           return (instanceB) => {
@@ -3030,9 +2763,6 @@ describe('モナドを作る', () => {
           };
         };
         /* IO.puts:: LIST[CHAR] => IO[] */
-        // ~~~haskell
-        // puts list = seqs (map putc list)
-        // ~~~
         IO.puts = (alist) => {
           return match(alist, {
             empty: () => {
@@ -3044,7 +2774,7 @@ describe('モナドを作る', () => {
           });
         };
         /* IO.getc:: IO[CHAR] */
-        IO.getc =  () => {
+        IO.getc = () => {
           var continuation = () => {
             var chunk = process.stdin.read();
             return chunk;
@@ -3080,7 +2810,6 @@ describe('モナドを作る', () => {
           }
         };
         /* #@range_end(string_module) */
-
         it('stringのテスト', (next) => {
           expect(
             string.head("abc")
@@ -3095,6 +2824,7 @@ describe('モナドを作る', () => {
           next();
         });
       });
+      // IOモナドで参照透過性を確保する
       it('IOモナドで参照透過性を確保する', (next) => {
         expect(
           IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {

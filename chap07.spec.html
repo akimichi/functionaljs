@@ -3060,6 +3060,9 @@ $$</p>
                 <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <h3 id="-">継続で未来を渡す</h3>
+<blockquote>
+<p><a href="https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A">https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A</a></p>
+</blockquote>
 
             </div>
             
@@ -3229,8 +3232,22 @@ $$</p>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> identity = (any) =&gt; {
           <span class="hljs-keyword">return</span> any;
-        };
-        <span class="hljs-comment">/* #@range_begin(stream_find_continuations) */</span>
+        };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-91">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-91">&#182;</a>
+              </div>
+              <p>find関数に渡す2つの継続</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(stream_find_continuations) */</span>
         <span class="hljs-comment">/* 成功継続では、反復処理を脱出する */</span>
         <span class="hljs-keyword">var</span> continuesOnSuccess = identity; 
 
@@ -3252,17 +3269,18 @@ $$</p>
         </li>
         
         
-        <li id="section-91">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
-              <p>upto3変数は、1から3までの有限ストリーム</p>
+              <p>find関数のテスト</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> upto3 = stream.cons(<span class="hljs-number">1</span>,(_) =&gt; {
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* upto3変数は、1から3までの有限ストリーム */</span>
+        <span class="hljs-keyword">var</span> upto3 = stream.cons(<span class="hljs-number">1</span>,(_) =&gt; {
           <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">2</span>, (_) =&gt; {
             <span class="hljs-keyword">return</span> stream.cons(<span class="hljs-number">3</span>, (_) =&gt; {
               <span class="hljs-keyword">return</span> stream.empty();
@@ -3275,22 +3293,8 @@ $$</p>
           }, continuesOnFailure, continuesOnSuccess)
         ).to.eql(
           <span class="hljs-literal">null</span> <span class="hljs-comment">// リスト中に4の要素はないので、nullになります</span>
-        );</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-92">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
-              </div>
-              <p>find関数のテスト</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(stream_find_cps_test) */</span>
+        );
+        <span class="hljs-comment">/* #@range_begin(stream_find_cps_test) */</span>
         <span class="hljs-comment">/* 変数integersは、無限の整数ストリーム */</span>
         <span class="hljs-keyword">var</span> integers = stream.enumFrom(<span class="hljs-number">0</span>);
         
@@ -3317,6 +3321,9 @@ $$</p>
                 <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <h4 id="-">非決定計算機を作る</h4>
+<blockquote>
+<p>SICPの非決定計算の章は、<a href="http://sicp.iijlab.net/fulltext/x430.html">http://sicp.iijlab.net/fulltext/x430.html</a> </p>
+</blockquote>
 
             </div>
             

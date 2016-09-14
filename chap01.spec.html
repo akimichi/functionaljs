@@ -54,6 +54,7 @@
 <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#functional_model">関数型モデル</a><ul>
 <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#substitution_model">置換ルール</a></li>
 <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#function_definition">関数の定義</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#advantages_of_functional_model">関数型モデルを使うメリット</a></li>
 </ul>
 </li>
 </ul>
@@ -452,8 +453,22 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数の定義'</span>, () =&gt; {
-    it(<span class="hljs-string">'かけ算の定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数の定義'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>かけ算の定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'かけ算の定義'</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
       };
@@ -466,22 +481,8 @@
         } <span class="hljs-keyword">else</span> {
           <span class="hljs-keyword">return</span> add(succ(x),prev(y)); <span class="hljs-comment">// add関数の再帰呼び出し</span>
         }
-      };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <h4 id="-">かけ算の定義</h4>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(multiply) */</span>
+      };
+      <span class="hljs-comment">/* #@range_begin(multiply) */</span>
       <span class="hljs-keyword">var</span> times = (count,fun,arg, memo) =&gt; {
         <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
           <span class="hljs-comment">/* times関数を再帰呼び出し */</span>
@@ -536,7 +537,8 @@
         <span class="hljs-number">0</span>
       );
       next();
-    });</pre></div></div>
+    });
+  });</pre></div></div>
             
         </li>
         
@@ -546,6 +548,21 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h3 id="-section-id-advantages_of_functional_model-section-"><section id='advantages_of_functional_model'>関数型モデルを使うメリット</section></h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数型モデルを使うメリット'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <h4 id="-">べき乗の定義</h4>
 
@@ -593,11 +610,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap02.spec.html">次章に移る</a> </p>
 

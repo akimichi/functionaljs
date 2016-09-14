@@ -3820,11 +3820,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
-              <p>恒等モナドのunit関数のテスト</p>
+              <p>恒等モナドunit関数のテスト</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"恒等モナドのunit関数のテスト"</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"恒等モナドunit関数のテスト"</span>, (next) =&gt; {
       <span class="hljs-comment">/* #@range_begin(identity_monad_unit_test) */</span>
       expect(
         ID.unit(<span class="hljs-number">1</span>)
@@ -3844,11 +3844,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
-              <p>恒等モナドのflatMap関数のテスト</p>
+              <p>恒等モナドflatMap関数のテスト</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"恒等モナドのflatMap関数のテスト"</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"恒等モナドflatMap関数のテスト"</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
       };
@@ -3861,9 +3861,6 @@ $$</p>
         succ(<span class="hljs-number">1</span>)
       );
       <span class="hljs-comment">/* #@range_end(identity_monad_flatMap_test) */</span>
-      <span class="hljs-keyword">var</span> succ = (n) =&gt; {
-        <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
-      };
       <span class="hljs-keyword">var</span> double = (m) =&gt; {
         <span class="hljs-keyword">return</span> m * <span class="hljs-number">2</span>;
       };</pre></div></div>
@@ -3993,37 +3990,6 @@ $$</p>
         <span class="hljs-comment">/* #@range_end(identity_monad_laws) */</span>
         next();
       });
-    });
-    it(<span class="hljs-string">"identity#flatMap"</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(identity_monad_test) */</span>
-      <span class="hljs-keyword">var</span> instance = ID.unit(<span class="hljs-number">1</span>);
-      expect(
-        ID.flatMap(instance)((n) =&gt; {
-          <span class="hljs-keyword">return</span> ID.unit(n * <span class="hljs-number">2</span>);
-        })
-      ).to.eql(
-        ID.unit(<span class="hljs-number">2</span>)
-      );
-      expect(
-        ID.flatMap(instance)((n) =&gt; {
-          <span class="hljs-keyword">return</span> ID.flatMap(ID.unit(n * <span class="hljs-number">2</span>))((m) =&gt; {
-            <span class="hljs-keyword">return</span> ID.unit(m * <span class="hljs-number">3</span>);
-          });
-        })
-      ).to.eql(
-        ID.unit(<span class="hljs-number">6</span>)
-      );
-      expect(
-        ID.flatMap(instance)((n) =&gt; {
-          <span class="hljs-keyword">return</span> ID.flatMap(ID.unit(n))((m) =&gt; {
-            <span class="hljs-keyword">return</span> ID.unit(m * n);
-          });
-        })
-      ).to.eql(
-        ID.unit(<span class="hljs-number">1</span>)
-      );
-      <span class="hljs-comment">/* #@range_end(identity_monad_test) */</span>
-      next();
     });
   });</pre></div></div>
             

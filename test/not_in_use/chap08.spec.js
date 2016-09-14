@@ -233,3 +233,57 @@
       });
       }
     */
+
+    // /* 「環境」モジュール */
+    // var env = {
+    //   /* empty:: STRING => VALUE  */
+    //   empty: (variable) => {       
+    //     return undefined;
+    //   },
+    //   /* 変数名に対応する値を環境から取りだす */
+    //   /* lookup:: (STRING, ENV) => VALUE */
+    //   lookup : (name, environment) => {       
+    //     return environment(name);
+    //   },
+    //   /* 環境を拡張する */
+    //   /* extend:: (STRING, VALUE, ENV) => ENV */
+    //   extend: (identifier, value, environment) => { 
+    //     return (queryIdentifier) => {
+    //       if(identifier === queryIdentifier) {
+    //         return value;
+    //       } else {
+    //         return env.lookup(queryIdentifier,environment);
+    //       }
+    //     };
+    //   }
+    // };
+    // var emptyEnv = env.empty;
+
+  /* list#concat */
+  // concat: (xss) => {
+  //   return list.match(xss,{
+  //     empty: (_) => {
+  //       return list.empty();
+  //     },
+  //     cons: (xs,xss) => {
+  //       return list.append(xs,xss);
+  //     }
+  //   });
+  // },
+  /* join:: LIST[LIST[T]] -> LIST[T] */
+  // join: (list_of_list) => {
+  //   return list.concat(list_of_list);
+  // },
+  /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
+  // map: (alist) => {
+  //   return (transform) => {
+  //     return list.match(alist,{
+  //       empty: (_) => {
+  //         return list.empty();
+  //       },
+  //       cons: (head,tail) => {
+  //         return list.cons(transform(head),list.map(tail)(transform));
+  //       }
+  //     });
+  //   };
+  // },

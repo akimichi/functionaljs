@@ -1170,8 +1170,11 @@ closure()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <pre><code>\x.add(x,x)(<span class="hljs-number">2</span>)
+              <pre><code class="lang-js">((x) =&gt; {
+   <span class="hljs-keyword">return</span> add(x)(x)
+})(<span class="hljs-number">2</span>);
 </code></pre>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> expression = exp.app(exp.lambda(exp.variable(<span class="hljs-string">"x"</span>),
@@ -1200,10 +1203,13 @@ closure()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <pre><code>(\x.
-   \y.
-      x+y)(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
+              <pre><code class="lang-js">((x) =&gt; {
+  <span class="hljs-keyword">return</span> (y) =&gt; {
+      <span class="hljs-keyword">return</span> add(x)(y)
+  };
+})(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>);
 </code></pre>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> expression = exp.app(

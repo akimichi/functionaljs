@@ -1096,36 +1096,44 @@
 <thead>
 <tr>
 <th style="text-align:left">関数名</th>
+<th></th>
 <th style="text-align:right">関数合成による定義</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left">:————</td>
+<td></td>
 <td style="text-align:right">——————————:</td>
 </tr>
 <tr>
 <td style="text-align:left">length</td>
+<td></td>
 <td style="text-align:right">sum . map(alwaysOne)</td>
 </tr>
 <tr>
 <td style="text-align:left">last</td>
+<td></td>
 <td style="text-align:right">head . reverse</td>
 </tr>
 <tr>
 <td style="text-align:left">init</td>
+<td></td>
 <td style="text-align:right">reverse . tail . reverse</td>
 </tr>
 <tr>
 <td style="text-align:left">all(predicate)</td>
+<td></td>
 <td style="text-align:right">and . map(predicate)</td>
 </tr>
 <tr>
 <td style="text-align:left">any(predicate)</td>
+<td></td>
 <td style="text-align:right">or . map(predicate)</td>
 </tr>
 <tr>
 <td style="text-align:left">none(predicate)</td>
+<td></td>
 <td style="text-align:right">and . map(not(predicate))</td>
 </tr>
 </tbody>

@@ -163,34 +163,6 @@
       });
     };
   },
-  <span class="hljs-comment">/* list#concat */</span>
-  concat: (xss) =&gt; {
-    <span class="hljs-keyword">return</span> list.match(xss,{
-      empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> list.empty();
-      },
-      cons: (xs,xss) =&gt; {
-        <span class="hljs-keyword">return</span> list.append(xs,xss);
-      }
-    });
-  },
-  <span class="hljs-comment">/* join:: LIST[LIST[T]] -&gt; LIST[T] */</span>
-  join: (list_of_list) =&gt; {
-    <span class="hljs-keyword">return</span> list.concat(list_of_list);
-  },
-  <span class="hljs-comment">/* map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T] */</span>
-  map: (alist) =&gt; {
-    <span class="hljs-keyword">return</span> (transform) =&gt; {
-      <span class="hljs-keyword">return</span> list.match(alist,{
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> list.empty();
-        },
-        cons: (head,tail) =&gt; {
-          <span class="hljs-keyword">return</span> list.cons(transform(head),list.map(tail)(transform));
-        }
-      });
-    };
-  },
   <span class="hljs-comment">/* foldr:: LIST[T] -&gt; T -&gt; FUNC[T -&gt; LIST] -&gt; T */</span>
   foldr: (alist) =&gt; {
     <span class="hljs-keyword">return</span> (accumulator) =&gt; {

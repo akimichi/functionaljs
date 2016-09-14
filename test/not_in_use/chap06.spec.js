@@ -714,3 +714,57 @@
         next();
       });
     }); // 関数を合成する
+
+          // take: (astream, n) => {
+          //   return match(astream,{
+          //     empty: (_) => {
+          //       return list.empty();
+          //     },
+          //     cons: (head,tailThunk) => {
+          //       if(n === 0) {
+          //         return list.empty();
+          //       } else {
+          //         return list.cons(head,stream.take(tailThunk(),(n -1)));
+          //       }
+          //     }
+          //   });
+          // }
+            /* #@range_begin(stream_filter) */
+            // /* filter :: (STREAM[T], FUN[T => BOOL]) => STREAM[T] */
+            // filter: (astream,predicate) => {
+            //   return match(astream,{
+            //     empty: (_) => {
+            //       return stream.empty();
+            //     },
+            //     cons: (head,tailThunk) => {
+            //       if(predicate(head)){ // 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する
+            //         return stream.cons(head,(_) => {
+            //           return stream.filter(tailThunk(),predicate);
+            //         });
+            //       } else { // 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す
+            //         return stream.filter(tailThunk(),predicate);
+            //       }
+            //     }
+            //   });
+            // }
+            // /* #@range_end(stream_filter) */
+          // /* #@range_begin(infinite_even_integer) */
+          // var even = (n) => {
+          //   return 0 === (n % 2);
+          // };
+          // var evenIntegers = stream.filter(enumFrom(1),even);
+          // expect(
+          //   list.toArray(stream.take(evenIntegers, 4))
+          // ).to.eql(
+          //   [ 2, 4, 6, 8 ]
+          // );
+          // /* #@range_end(infinite_even_integer) */
+        var updateSideEffect = (n) => {
+          n = n + 1;
+          return n;
+        };
+        expect(
+          tap(succ(2), updateSideEffect)
+        ).to.eql(
+          tap(succ(2), updateSideEffect)
+        );

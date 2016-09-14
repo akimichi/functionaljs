@@ -6,10 +6,10 @@
 var expect = require('expect.js');
 
 
-// ## 関数の基本
+// ## 6.1 関数の基本
 describe('関数の基本', () => {
-  // ### 関数の定義
-  describe('関数の定義', () => {
+  // ### 関数を定義する
+  describe('関数を定義する', () => {
     // 恒等関数
     it('恒等関数', (next) => {
       /* #@range_begin(identity_function_definition) */
@@ -17,7 +17,6 @@ describe('関数の基本', () => {
         return any;
       };
       /* #@range_end(identity_function_definition) */
-      /* #@range_begin(identity_function_test) */
       expect(
         identity(1)
       ).to.eql(
@@ -28,7 +27,6 @@ describe('関数の基本', () => {
       ).to.eql(
         "a"
       );
-      /* #@range_end(identity_function_test) */
       next();
     });
     // succ関数
@@ -49,9 +47,21 @@ describe('関数の基本', () => {
       ).to.eql(
         2
       );
+      // ~~~
+      // node> var succ = (n) => { return n + 1; }; 
+      // undefined
+      // node> succ("abc")
+      // abc1
+      // ~~~
+      expect(
+        succ("abc")
+      ).to.eql(
+        "abc1"
+      );
       next();
     });
-    it('複数の引数を持つ関数', (next) => {
+    // add関数
+    it('add関数', (next) => {
       /* #@range_begin(add_function_definition) */
       /* add:: (NUM, NUM) => NUM */
       var add = (n, m) => {
@@ -64,6 +74,15 @@ describe('関数の基本', () => {
       ).to.eql(
         1
       );
+      next();
+    });
+    // 関数の変数へのバインド
+    it('関数の変数へのバインド', (next) => {
+      /* #@range_begin(function_bound_to_variable) */
+      var succ = (x) => {
+        return x + 1;
+      };
+      /* #@range_end(function_bound_to_variable) */
       next();
     });
     it('引数を参照しない関数', (next) => {
@@ -94,15 +113,6 @@ describe('関数の基本', () => {
       ).to.eql(
         1
       );
-      next();
-    });
-    // 関数の変数へのバインド
-    it('関数の変数へのバインド', (next) => {
-      /* #@range_begin(function_bound_to_variable) */
-      var succ = (x) => {
-        return x + 1;
-      };
-      /* #@range_end(function_bound_to_variable) */
       next();
     });
   });
@@ -264,7 +274,7 @@ describe('関数の基本', () => {
         /* #@range_end(stream_with_thunk_test) */
         next();
       });
-      describe("無限ストリーム", () => {
+      describe("無限ストリームを作る", () => {
         var match = (data, pattern) => {
           return data(pattern);
         };
@@ -295,50 +305,45 @@ describe('関数の基本', () => {
                 return tailThunk();  // ここで初めてサンクを評価する
               }
             });
-          },
-          take: (astream, n) => {
-            return match(astream,{
-              empty: (_) => {
-                return list.empty();
-              },
-              cons: (head,tailThunk) => {
-                if(n === 0) {
-                  return list.empty();
-                } else {
-                  return list.cons(head,stream.take(tailThunk(),(n -1)));
-                }
-              }
-            });
           }
         };
-        /* #@range_begin(infinite_ones) */
-        /* ones = 1,1,1,1,... */
-        var ones = stream.cons(1, (_) => {
-          return ones; // onesを再帰的に呼び出す
-        });
-        /* #@range_end(infinite_ones) */
-        // 無限に連続する整数列
-        /* #@range_begin(infinite_integer) */
-        var enumFrom = (n) => {
-          return stream.cons(n, (_) => {
-            return enumFrom(n + 1);
+        it("無限の整数列を作る", (next) => {
+          // 無限に1が続く数列
+          /* #@range_begin(infinite_ones) */
+          /* ones = 1,1,1,1,... */
+          var ones = stream.cons(1, (_) => {
+            return ones; // onesを再帰的に呼び出す
           });
-        };
-        /* #@range_end(infinite_integer) */
-        /* #@range_begin(infinite_ones_test) */
-        expect(
-          stream.head(ones) // 最初の要素を取りだす
-        ).to.eql(
-          1
-        );
-        expect(
-          stream.head(stream.tail(ones))  // 2番目の要素を取りだす
-        ).to.eql(
-          1
-        );
-        /* #@range_end(infinite_ones_test) */
+          /* #@range_end(infinite_ones) */
+          // 無限に連続する整数列を生成するenumFrom関数
+          /* #@range_begin(infinite_integer) */
+          var enumFrom = (n) => {
+            return stream.cons(n, (_) => {
+              return enumFrom(n + 1);
+            });
+          };
+          /* #@range_end(infinite_integer) */
+          /* #@range_begin(infinite_ones_test) */
+          expect(
+            stream.head(ones) // 最初の要素を取りだす
+          ).to.eql(
+            1
+          );
+          expect(
+            stream.head(stream.tail(ones))  // 2番目の要素を取りだす
+          ).to.eql(
+            1
+          );
+          /* #@range_end(infinite_ones_test) */
+          next();
+        });
         it("無限の整数列をテストする", (next) => {
           this.timeout(3000);
+          var enumFrom = (n) => {
+            return stream.cons(n, (_) => {
+              return enumFrom(n + 1);
+            });
+          };
           var stream = {
             match: (data, pattern) => {
               return data(pattern);
@@ -363,7 +368,7 @@ describe('関数の基本', () => {
               return match(astream,{
                 empty: (_) => { return null; },
                 cons: (head, tailThunk) => {
-                  return tailThunk();  // ここで初めてサンクを評価する
+                  return tailThunk();  
                 }
               });
             },
@@ -384,27 +389,8 @@ describe('関数の基本', () => {
                   }
                 }
               });
-            },
-            /* #@range_end(stream_take) */
-            /* #@range_begin(stream_filter) */
-            /* filter :: (STREAM[T], FUN[T => BOOL]) => STREAM[T] */
-            filter: (astream,predicate) => {
-              return match(astream,{
-                empty: (_) => {
-                  return stream.empty();
-                },
-                cons: (head,tailThunk) => {
-                  if(predicate(head)){ // 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する
-                    return stream.cons(head,(_) => {
-                      return stream.filter(tailThunk(),predicate);
-                    });
-                  } else { // 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す
-                    return stream.filter(tailThunk(),predicate);
-                  }
-                }
-              });
             }
-            /* #@range_end(stream_filter) */
+            /* #@range_end(stream_take) */
           };
           expect(
             stream.head(enumFrom(1))
@@ -431,16 +417,16 @@ describe('関数の基本', () => {
               };
             },
             isEmpty: (alist) => {
-              return match(alist, { // match関数で分岐する
+              return match(alist, { 
                 empty: true,
-                cons: (head, tail) => { // headとtailにそれぞれ先頭要素、末尾要素が入る
+                cons: (head, tail) => { 
                   return false;
                 }
               });
             },
             head: (alist) => {
               return match(alist, {
-                empty: null, // 空のリストには先頭要素はありません
+                empty: null, 
                 cons: (head, tail) => {
                   return head;
                 }
@@ -448,7 +434,7 @@ describe('関数の基本', () => {
             },
             tail: (alist) => {
               return match(alist, {
-                empty: null,  // 空のリストには末尾要素はありません
+                empty: null,
                 cons: (head, tail) => {
                   return tail;
                 }
@@ -490,17 +476,6 @@ describe('関数の基本', () => {
             [1,2,3,4]
           );
           /* #@range_end(stream_filter_test) */
-          /* #@range_begin(infinite_even_integer) */
-          var even = (n) => {
-            return 0 === (n % 2);
-          };
-          var evenIntegers = stream.filter(enumFrom(1),even);
-          expect(
-            list.toArray(stream.take(evenIntegers, 4))
-          ).to.eql(
-            [ 2, 4, 6, 8 ]
-          );
-          /* #@range_end(infinite_even_integer) */
           next();
         });
       });
@@ -508,7 +483,7 @@ describe('関数の基本', () => {
   }); // 関数の適用
 }); // 関数の基本
 
-// ## 関数と参照透過性
+// ## 6.2 関数と参照透過性
 describe('関数と参照透過性', () => {
   // ### 関数の純粋性
   // succ関数は参照透過性を持つ
@@ -590,15 +565,6 @@ describe('関数と参照透過性', () => {
           tap(succ(1), consoleSideEffect)
         );
         /* #@range_end(tap_combinator_test_in_console) */
-        var updateSideEffect = (n) => {
-          n = n + 1;
-          return n;
-        };
-        expect(
-          tap(succ(2), updateSideEffect)
-        ).to.eql(
-          tap(succ(2), updateSideEffect)
-        );
         next();
       });
       // tap関数によるファイル入出力のテスト

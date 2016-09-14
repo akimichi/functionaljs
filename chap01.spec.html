@@ -50,7 +50,11 @@
 <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#turing_machine">チューリング機械</a></li>
 </ul>
 </li>
-<li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#functional_model">関数型モデル</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#functional_model">関数型モデル</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#substitution_model">置換ルール</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#function_definition">関数の定義</a></li>
+</ul>
+</li>
 </ul>
 
             </div>
@@ -295,7 +299,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <h3 id="-">置換ルール</h3>
+              <h3 id="-section-id-substitution_model-section-"><section id='substitution_model'>置換ルール</section></h3>
 
             </div>
             
@@ -517,7 +521,8 @@
         baz(<span class="hljs-number">3</span>)          <span class="hljs-comment">// 仮引数fooに値3をバインドする</span>
       );
       next();
-    });</pre></div></div>
+    });
+  });</pre></div></div>
             
         </li>
         
@@ -528,11 +533,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h4 id="-">関数の置換ルール</h4>
+              <h3 id="-section-id-functional_definition-section-"><section id='functional_definition'>関数の定義</section></h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'関数の置換ルール'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'関数の定義'</span>, () =&gt; {
+    it(<span class="hljs-string">'かけ算の定義'</span>, (next) =&gt; {
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
       };
@@ -615,8 +621,7 @@
         <span class="hljs-number">0</span>
       );
       next();
-    });
-  });</pre></div></div>
+    });</pre></div></div>
             
         </li>
         
@@ -631,41 +636,42 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'べき乗の定義'</span>, (next) =&gt; {
-    <span class="hljs-keyword">var</span> succ = (n) =&gt; {
-      <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
-    };
-    <span class="hljs-keyword">var</span> prev = (n) =&gt; {
-      <span class="hljs-keyword">return</span> n - <span class="hljs-number">1</span>;
-    };
-    <span class="hljs-keyword">var</span> add = (x, y) =&gt; {
-      <span class="hljs-keyword">if</span>(y &lt; <span class="hljs-number">1</span>){
-        <span class="hljs-keyword">return</span> x;
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> add(succ(x),prev(y));
-      }
-    };
-    <span class="hljs-keyword">var</span> times = (count,fun,arg, memo) =&gt; {
-      <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
-        <span class="hljs-keyword">return</span> times(count-<span class="hljs-number">1</span>,fun,arg, fun(arg,memo));
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> fun(arg,memo);
-      }
-    };
-    <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> times(m, add, n, <span class="hljs-number">0</span>);
-    };
-    <span class="hljs-comment">/* #@range_begin(exponential) */</span>
-    <span class="hljs-keyword">var</span> exponential = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> times(m, multiply, n, <span class="hljs-number">1</span>);
-    };
-    <span class="hljs-comment">/* #@range_end(exponential) */</span>
-    expect(
-      exponential(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
-    ).to.eql(
-      <span class="hljs-number">8</span>
-    );
-    next();
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'べき乗の定義'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+        <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+      };
+      <span class="hljs-keyword">var</span> prev = (n) =&gt; {
+        <span class="hljs-keyword">return</span> n - <span class="hljs-number">1</span>;
+      };
+      <span class="hljs-keyword">var</span> add = (x, y) =&gt; {
+        <span class="hljs-keyword">if</span>(y &lt; <span class="hljs-number">1</span>){
+          <span class="hljs-keyword">return</span> x;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> add(succ(x),prev(y));
+        }
+      };
+      <span class="hljs-keyword">var</span> times = (count,fun,arg, memo) =&gt; {
+        <span class="hljs-keyword">if</span>(count &gt; <span class="hljs-number">1</span>) {
+          <span class="hljs-keyword">return</span> times(count-<span class="hljs-number">1</span>,fun,arg, fun(arg,memo));
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> fun(arg,memo);
+        }
+      };
+      <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
+        <span class="hljs-keyword">return</span> times(m, add, n, <span class="hljs-number">0</span>);
+      };
+      <span class="hljs-comment">/* #@range_begin(exponential) */</span>
+      <span class="hljs-keyword">var</span> exponential = (n,m) =&gt; {
+        <span class="hljs-keyword">return</span> times(m, multiply, n, <span class="hljs-number">1</span>);
+      };
+      <span class="hljs-comment">/* #@range_end(exponential) */</span>
+      expect(
+        exponential(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
+      ).to.eql(
+        <span class="hljs-number">8</span>
+      );
+      next();
+    });
   });
 });</pre></div></div>
             

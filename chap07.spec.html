@@ -907,8 +907,7 @@
     ).to.eql(
       f(g(<span class="hljs-number">2</span>))         <span class="hljs-comment">// 合成せずに順次実行した場合</span>
     );
-    <span class="hljs-comment">/* #@range_end(compose_test) */</span>
-    describe(<span class="hljs-string">'カリー化による関数の合成'</span>, () =&gt; {</pre></div></div>
+    <span class="hljs-comment">/* #@range_end(compose_test) */</span></pre></div></div>
             
         </li>
         
@@ -923,7 +922,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'関数合成の条件'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'関数合成の条件'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -938,21 +937,21 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'反数関数の合成'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(composition_example_opposite_twice) */</span>
-          <span class="hljs-comment">/* 反数の定義 */</span>
-          <span class="hljs-keyword">var</span> opposite = (n) =&gt; { 
-            <span class="hljs-keyword">return</span> - n;
-          };
-          expect(
-            <span class="hljs-comment">/* 反数同士の合成は成功する */</span>
-            compose(opposite,opposite)(<span class="hljs-number">2</span>) 
-          ).to.eql(
-            <span class="hljs-number">2</span> <span class="hljs-comment">// -(-2) === 2</span>
-          );
-          <span class="hljs-comment">/* #@range_end(composition_example_opposite_twice) */</span>
-          next();
-        });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'反数関数の合成'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(composition_example_opposite_twice) */</span>
+        <span class="hljs-comment">/* 反数の定義 */</span>
+        <span class="hljs-keyword">var</span> opposite = (n) =&gt; { 
+          <span class="hljs-keyword">return</span> - n;
+        };
+        expect(
+          <span class="hljs-comment">/* 反数同士の合成は成功する */</span>
+          compose(opposite,opposite)(<span class="hljs-number">2</span>) 
+        ).to.eql(
+          <span class="hljs-number">2</span> <span class="hljs-comment">// -(-2) === 2</span>
+        );
+        <span class="hljs-comment">/* #@range_end(composition_example_opposite_twice) */</span>
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -967,25 +966,24 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'カリー化による合成'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(compose_opposite_add_successful) */</span>
-          <span class="hljs-keyword">var</span> opposite = (x) =&gt; {
-            <span class="hljs-keyword">return</span> - x;
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'カリー化による合成'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(compose_opposite_add_successful) */</span>
+        <span class="hljs-keyword">var</span> opposite = (x) =&gt; {
+          <span class="hljs-keyword">return</span> - x;
+        };
+        <span class="hljs-keyword">var</span> addCurried = (x) =&gt; { <span class="hljs-comment">// カリー化されたadd関数</span>
+          <span class="hljs-keyword">return</span> (y) =&gt; {
+            <span class="hljs-keyword">return</span> x + y;
           };
-          <span class="hljs-keyword">var</span> addCurried = (x) =&gt; { <span class="hljs-comment">// カリー化されたadd関数</span>
-            <span class="hljs-keyword">return</span> (y) =&gt; {
-              <span class="hljs-keyword">return</span> x + y;
-            };
-          };
-          expect(
-            compose(opposite,
-                    addCurried(<span class="hljs-number">2</span>))(<span class="hljs-number">3</span>)
-          ).to.eql(
-            -<span class="hljs-number">5</span>
-          );
-          <span class="hljs-comment">/* #@range_end(compose_opposite_add_successful) */</span>
-          next();
-        });
+        };
+        expect(
+          compose(opposite,
+                  addCurried(<span class="hljs-number">2</span>))(<span class="hljs-number">3</span>)
+        ).to.eql(
+          -<span class="hljs-number">5</span>
+        );
+        <span class="hljs-comment">/* #@range_end(compose_opposite_add_successful) */</span>
+        next();
       });
     });
     <span class="hljs-keyword">var</span> flip = (fun) =&gt; {

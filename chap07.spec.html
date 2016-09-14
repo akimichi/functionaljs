@@ -3169,51 +3169,7 @@ $$</p>
         next();
       });
     });
-    describe(<span class="hljs-string">"継続で未来を選ぶ"</span>, () =&gt; {
-      it(<span class="hljs-string">"find関数"</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> identity = (any) =&gt; {
-          <span class="hljs-keyword">return</span> any;
-        };
-        <span class="hljs-comment">/* #@range_begin(list_find) */</span>
-        <span class="hljs-keyword">var</span> find = (alist,init, predicate) =&gt; {
-          <span class="hljs-keyword">var</span> continuesOnRecursion = (alist) =&gt; { <span class="hljs-comment">// 反復処理を続ける継続</span>
-            <span class="hljs-keyword">return</span> find(alist, init, predicate);  <span class="hljs-comment">// find関数を再帰的に呼び出す</span>
-          };
-          <span class="hljs-keyword">var</span> escapesFromRecursion = identity; <span class="hljs-comment">// 反復処理を脱出する継続</span>
-
-          <span class="hljs-keyword">return</span> list.match(alist, {
-            empty: () =&gt; {
-              <span class="hljs-keyword">return</span> escapesFromRecursion(init); <span class="hljs-comment">// 反復処理を抜ける</span>
-            },
-            cons: (head, tail) =&gt; { 
-              <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>) {
-                <span class="hljs-keyword">return</span> escapesFromRecursion(head); <span class="hljs-comment">// escapesFromRecursionで反復処理を脱出する</span>
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> continuesOnRecursion(tail); <span class="hljs-comment">// continuesOnRecursionで次の反復処理を続ける</span>
-              };
-            }
-          });
-        };
-        <span class="hljs-comment">/* #@range_end(list_find) */</span>
-        <span class="hljs-comment">/* #@range_begin(list_find_test) */</span>
-        <span class="hljs-keyword">var</span> theList = list.fromArray([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]);
-        expect(
-          find(theList,<span class="hljs-literal">null</span>, (item) =&gt; {
-            <span class="hljs-keyword">return</span> (item === <span class="hljs-number">4</span>);
-          })
-        ).to.eql(
-          <span class="hljs-literal">null</span>
-        );
-        expect(
-          find(theList,<span class="hljs-literal">null</span>, (item) =&gt; {
-            <span class="hljs-keyword">return</span> (item === <span class="hljs-number">2</span>);
-          })
-        ).to.eql(
-          <span class="hljs-number">2</span>
-        );
-        <span class="hljs-comment">/* #@range_end(list_find_test) */</span>
-        next();
-      });</pre></div></div>
+    describe(<span class="hljs-string">"継続で未来を選ぶ"</span>, () =&gt; {</pre></div></div>
             
         </li>
         

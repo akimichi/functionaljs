@@ -543,13 +543,7 @@ closure()
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <pre><code class="lang-haskell"><span class="hljs-title">eval</span> :: <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">Exp</span> -&gt; m <span class="hljs-type">Int</span>
-<span class="hljs-title">eval</span> (<span class="hljs-type">Const</span> x) = return x
-<span class="hljs-title">eval</span> (<span class="hljs-type">Div</span> t u) = <span class="hljs-keyword">do</span> { x &lt;- eval t
-                      y &lt;- eval u
-                      return (x div y)}
-</code></pre>
-<h3 id="-">恒等モナド</h3>
+              <h3 id="-">恒等モナド</h3>
 
             </div>
             
@@ -868,31 +862,7 @@ closure()
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'ログ出力評価器'</span>, () =&gt; {
-    <span class="hljs-comment">/* 「環境」モジュール */</span>
-    <span class="hljs-keyword">var</span> env = {
-      <span class="hljs-comment">/* empty:: STRING =&gt; VALUE  */</span>
-      empty: (variable) =&gt; {       
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
-      },
-      <span class="hljs-comment">/* 変数名に対応する値を環境から取りだす */</span>
-      <span class="hljs-comment">/* lookup:: (STRING, ENV) =&gt; VALUE */</span>
-      lookup : (name, environment) =&gt; {       
-        <span class="hljs-keyword">return</span> environment(name);
-      },
-      <span class="hljs-comment">/* 環境を拡張する */</span>
-      <span class="hljs-comment">/* extend:: (STRING, VALUE, ENV) =&gt; ENV */</span>
-      extend: (identifier, value, environment) =&gt; { 
-        <span class="hljs-keyword">return</span> (queryIdentifier) =&gt; {
-          <span class="hljs-keyword">if</span>(identifier === queryIdentifier) {
-            <span class="hljs-keyword">return</span> value;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> env.lookup(queryIdentifier,environment);
-          }
-        };
-      }
-    };
-    <span class="hljs-keyword">var</span> emptyEnv = env.empty;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'ログ出力評価器'</span>, () =&gt; {</pre></div></div>
             
         </li>
         

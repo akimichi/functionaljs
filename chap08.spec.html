@@ -1135,9 +1135,25 @@ closure()
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(log_interpreter_evaluation_strategy) */</span>
-        <span class="hljs-comment">/* ((n) =&gt; { return 1 + n})(2) の評価 */</span>
-        <span class="hljs-keyword">var</span> theExp = exp.log(exp.app(exp.lambda(exp.variable(<span class="hljs-string">"n"</span>),
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(log_interpreter_evaluation_strategy) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <pre><code class="lang-js">((n) =&gt; {
+   <span class="hljs-keyword">return</span> add(<span class="hljs-number">1</span>)(n)
+})(<span class="hljs-number">2</span>);
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> theExp = exp.log(exp.app(exp.lambda(exp.variable(<span class="hljs-string">"n"</span>),
                                                 exp.add(exp.log(exp.num(<span class="hljs-number">1</span>)), 
                                                         exp.variable(<span class="hljs-string">"n"</span>))),
                                      exp.log(exp.num(<span class="hljs-number">2</span>))));
@@ -1164,11 +1180,11 @@ closure()
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <pre><code class="lang-js">((x) =&gt; {
    <span class="hljs-keyword">return</span> add(x)(x)
@@ -1197,11 +1213,11 @@ closure()
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <pre><code class="lang-js">((x) =&gt; {
   <span class="hljs-keyword">return</span> (y) =&gt; {
@@ -1232,11 +1248,11 @@ closure()
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> </p>
 

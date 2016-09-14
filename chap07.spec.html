@@ -744,7 +744,7 @@
       <span class="hljs-comment">/* #@range_end(multipleOf_combinator) */</span>
       next();
     }); 
-    it(<span class="hljs-string">'論理コンビネータ'</span>, (next) =&gt; {
+    describe(<span class="hljs-string">'論理コンビネータ'</span>, () =&gt; {
       <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; {
         <span class="hljs-keyword">return</span> (m) =&gt; {
           <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
@@ -769,15 +769,16 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(not_combinator) */</span>
-      <span class="hljs-comment">/* not:: FUN[NUM =&gt; BOOL] =&gt; FUN[NUM =&gt; BOOL] */</span>
-      <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicateの型はFUN[NUM =&gt; BOOL]</span>
-        <span class="hljs-comment">/* 全体として、FUN[NUM =&gt; BOOL]型を返す */</span>
-        <span class="hljs-keyword">return</span> (arg) =&gt; { <span class="hljs-comment">// argの型はNUM</span>
-          <span class="hljs-keyword">return</span> ! predicate(arg); <span class="hljs-comment">// !演算子で論理を反転させて、BOOLを返す</span>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'notコンビネータ'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(not_combinator) */</span>
+        <span class="hljs-comment">/* not:: FUN[NUM =&gt; BOOL] =&gt; FUN[NUM =&gt; BOOL] */</span>
+        <span class="hljs-keyword">var</span> not = (predicate) =&gt; { <span class="hljs-comment">// predicateの型はFUN[NUM =&gt; BOOL]</span>
+          <span class="hljs-comment">/* 全体として、FUN[NUM =&gt; BOOL]型を返す */</span>
+          <span class="hljs-keyword">return</span> (arg) =&gt; { <span class="hljs-comment">// argの型はNUM</span>
+            <span class="hljs-keyword">return</span> ! predicate(arg); <span class="hljs-comment">// !演算子で論理を反転させて、BOOLを返す</span>
+          };
         };
-      };
-      <span class="hljs-comment">/* #@range_end(not_combinator) */</span></pre></div></div>
+        <span class="hljs-comment">/* #@range_end(not_combinator) */</span></pre></div></div>
             
         </li>
         
@@ -792,48 +793,56 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(not_combinator_test) */</span>
-      <span class="hljs-keyword">var</span> odd = not(even); <span class="hljs-comment">// notコンビネータでodd関数を定義する</span>
-      <span class="hljs-comment">/******** テスト ********/</span>
-      expect(
-        odd(<span class="hljs-number">3</span>) <span class="hljs-comment">// 3は奇数である</span>
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      expect(
-        odd(<span class="hljs-number">2</span>) <span class="hljs-comment">// 2は奇数でない </span>
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      <span class="hljs-comment">/* #@range_end(not_combinator_test) */</span>
-
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(not_combinator_test) */</span>
+        <span class="hljs-keyword">var</span> odd = not(even); <span class="hljs-comment">// notコンビネータでodd関数を定義する</span>
+        <span class="hljs-comment">/******** テスト ********/</span>
+        expect(
+          odd(<span class="hljs-number">3</span>) <span class="hljs-comment">// 3は奇数である</span>
+        ).to.eql(
+          <span class="hljs-literal">true</span>
+        );
+        expect(
+          odd(<span class="hljs-number">2</span>) <span class="hljs-comment">// 2は奇数でない </span>
+        ).to.eql(
+          <span class="hljs-literal">false</span>
+        );
+        <span class="hljs-comment">/* #@range_end(not_combinator_test) */</span>
+        next();
+      });
       <span class="hljs-comment">/* 本書では割愛したが、論理和や論理積を実行するコンビネータも同様に定義できる */</span>
-      <span class="hljs-comment">/* 「もしくは」を表す論理和  */</span>
-      <span class="hljs-comment">/* or:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
-      <span class="hljs-keyword">var</span> or = (f,g) =&gt; {
-        <span class="hljs-keyword">return</span> (arg) =&gt; {
-          <span class="hljs-keyword">return</span> f(arg) || g(arg);
+      it(<span class="hljs-string">'他の論理コンビネータ'</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> not = (predicate) =&gt; { 
+          <span class="hljs-keyword">return</span> (arg) =&gt; {
+            <span class="hljs-keyword">return</span> ! predicate(arg); 
+          };
         };
-      };
-      <span class="hljs-comment">/* 「かつ」を表す論理積  */</span>
-      <span class="hljs-comment">/* and:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
-      <span class="hljs-keyword">var</span> and = (f,g) =&gt; {
-        <span class="hljs-keyword">return</span> (arg) =&gt; {
-          <span class="hljs-keyword">return</span> f(arg) &amp;&amp; g(arg);
+        <span class="hljs-comment">/* 「もしくは」を表す論理和  */</span>
+        <span class="hljs-comment">/* or:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
+        <span class="hljs-keyword">var</span> or = (f,g) =&gt; {
+          <span class="hljs-keyword">return</span> (arg) =&gt; {
+            <span class="hljs-keyword">return</span> f(arg) || g(arg);
+          };
         };
-      };
-      <span class="hljs-keyword">var</span> positive = (n) =&gt; {
-        <span class="hljs-keyword">return</span> n &gt; <span class="hljs-number">0</span>;
-      };
-      <span class="hljs-keyword">var</span> zero = (n) =&gt; {
-        <span class="hljs-keyword">return</span> n === <span class="hljs-number">0</span>;
-      };
-      <span class="hljs-comment">/* negativeは、0より小さな数値かどうかを判定する */</span>
-      <span class="hljs-keyword">var</span> negative = and(not(positive), not(zero));
-      expect(negative(-<span class="hljs-number">3</span>)).to.eql(<span class="hljs-literal">true</span>);
-      expect(negative(<span class="hljs-number">3</span>)).to.eql(<span class="hljs-literal">false</span>);
-      expect(negative(<span class="hljs-number">0</span>)).to.eql(<span class="hljs-literal">false</span>);
-      next();
+        <span class="hljs-comment">/* 「かつ」を表す論理積  */</span>
+        <span class="hljs-comment">/* and:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
+        <span class="hljs-keyword">var</span> and = (f,g) =&gt; {
+          <span class="hljs-keyword">return</span> (arg) =&gt; {
+            <span class="hljs-keyword">return</span> f(arg) &amp;&amp; g(arg);
+          };
+        };
+        <span class="hljs-keyword">var</span> positive = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n &gt; <span class="hljs-number">0</span>;
+        };
+        <span class="hljs-keyword">var</span> zero = (n) =&gt; {
+          <span class="hljs-keyword">return</span> n === <span class="hljs-number">0</span>;
+        };
+        <span class="hljs-comment">/* negativeは、0より小さな数値かどうかを判定する */</span>
+        <span class="hljs-keyword">var</span> negative = and(not(positive), not(zero));
+        expect(negative(-<span class="hljs-number">3</span>)).to.eql(<span class="hljs-literal">true</span>);
+        expect(negative(<span class="hljs-number">3</span>)).to.eql(<span class="hljs-literal">false</span>);
+        expect(negative(<span class="hljs-number">0</span>)).to.eql(<span class="hljs-literal">false</span>);
+        next();
+      });
     });
   });</pre></div></div>
             

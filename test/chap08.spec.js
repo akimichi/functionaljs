@@ -45,9 +45,6 @@ var list  = {
       return pattern.cons(head, tail);
     };
   },
-  unit : (value) => {
-    return list.cons(value, list.empty());
-  },
   head: (alist) => {
     return list.match(alist, {
       empty: (_) => {
@@ -81,35 +78,7 @@ var list  = {
       });
     };
   },
-  /* list#concat */
-  concat: (xss) => {
-    return list.match(xss,{
-      empty: (_) => {
-        return list.empty();
-      },
-      cons: (xs,xss) => {
-        return list.append(xs,xss);
-      }
-    });
-  },
-  /* join:: LIST[LIST[T]] -> LIST[T] */
-  join: (list_of_list) => {
-    return list.concat(list_of_list);
-  },
-  /* map:: LIST[T] -> FUNC[T -> T] -> LIST[T] */
-  map: (alist) => {
-    return (transform) => {
-      return list.match(alist,{
-        empty: (_) => {
-          return list.empty();
-        },
-        cons: (head,tail) => {
-          return list.cons(transform(head),list.map(tail)(transform));
-        }
-      });
-    };
-  },
-  /* foldr:: LIST[T] -> T -> FUNC[T -> LIST] -> T */
+  /* foldr:: LIST[T] -> T -> FUN[T -> LIST] -> T */
   foldr: (alist) => {
     return (accumulator) => {
       return (glue) => {
@@ -134,7 +103,7 @@ var list  = {
   }
 };
 
-// ## 抽象構文木を作る
+// ## 8.2 抽象構文木を作る
 describe('抽象構文木を作る', () => {
   // 式の代数的データ構造
   describe('式の代数的データ構造', () => {
@@ -169,6 +138,7 @@ describe('抽象構文木を作る', () => {
         };
       },
       /* #@range_end(expression_algebraic_datatype) */
+
       // 演算の定義
       /* #@range_begin(expression_arithmetic) */
       /* 足し算の式 */
@@ -196,7 +166,7 @@ describe('抽象構文木を作る', () => {
 
 });
 
-// ## 環境を作る
+// ## 8.3 環境を作る
 describe('環境を作る', () => {
   // クロージャーによる「環境」の定義
   /* #@range_begin(environment) */
@@ -225,6 +195,11 @@ describe('環境を作る', () => {
   };
   /* #@range_end(environment) */
   // 変数バインディングにおける環境のセマンティクス
+
+  // ~~~
+  // var a = 1;
+  // a;
+  // ~~~
   it('変数バインディングにおける環境のセマンティクス', (next) => {
     /* #@range_begin(environment_code_test) */
     expect(((_) => {
@@ -276,24 +251,16 @@ describe('環境を作る', () => {
   });
 });
 
-// ## 評価器を作る
+// ## 8.4 評価器を作る
 describe('評価器を作る', () => {
   /* 「環境」モジュール */
   var env = {
-    /* empty:: STRING => VALUE */ 
-    /* 空の環境を作る */
     empty: (variable) => {                        
       return undefined;
     },
-    /* lookup:: (STRING, ENV) => VALUE
-       変数名に対応する値を環境から取りだす
-    */
     lookup : (name, environment) => {       
       return environment(name);
     },
-    /* extend:: (STRING, VALUE, ENV) => ENV 
-       環境を拡張する
-    */
     extend: (identifier, value, environment) => { 
       return (queryIdentifier) => {
         if(identifier === queryIdentifier) {
@@ -304,7 +271,6 @@ describe('評価器を作る', () => {
       };
     }
   };
-  /* 空の環境 */
   var emptyEnv = env.empty;
 
   // ### 恒等モナドによる評価器
@@ -339,13 +305,6 @@ describe('評価器を作る', () => {
         };
       }
     };
-    // ~~~haskell
-    // eval :: Monad m => Exp -> m Int
-    // eval (Const x) = return x
-    // eval (Div t u) = do { x <- eval t
-    //                       y <- eval u
-    //                       return (x div y)}
-    // ~~~
     // ### 恒等モナド
     /* #@range_begin(identity_monad) */
     var ID = {
@@ -536,298 +495,284 @@ describe('評価器を作る', () => {
       next();
     });
   });
-});
-
-// ### ログ出力評価器
-describe('ログ出力評価器', () => {
-  /* 「環境」モジュール */
-  var env = {
-    /* empty:: STRING => VALUE  */
-    empty: (variable) => {       
-      return undefined;
-    },
-    /* 変数名に対応する値を環境から取りだす */
-    /* lookup:: (STRING, ENV) => VALUE */
-    lookup : (name, environment) => {       
-      return environment(name);
-    },
-    /* 環境を拡張する */
-    /* extend:: (STRING, VALUE, ENV) => ENV */
-    extend: (identifier, value, environment) => { 
-      return (queryIdentifier) => {
-        if(identifier === queryIdentifier) {
-          return value;
-        } else {
-          return env.lookup(queryIdentifier,environment);
-        }
-      };
-    }
-  };
-  var emptyEnv = env.empty;
-
-  // ログ出力評価器の式
-  /* #@range_begin(expression_logger_interpreter) */
-  var exp = {
-    log: (anExp) => { // ログ出力用の式
-      return (pattern) => {
-        return pattern.log(anExp);
-      };
-    },
-    /* #@range_end(expression_logger_interpreter) */
-    match : (data, pattern) => {
-      return data.call(exp, pattern);
-    },
-    num : (value) => {
-      expect(value).to.a('number');
-      return (pattern) => {
-        return pattern.num(value);
-      };
-    },
-    variable : (name) => {
-      expect(name).to.a('string');
-      return (pattern) => {
-        return pattern.variable(name);
-      };
-    },
-    lambda : (variable, body) => {
-      expect(variable).to.a('function');
-      expect(body).to.a('function');
-      return (pattern) => {
-        return pattern.lambda(variable, body);
-      };
-    },
-    app : (variable, arg) => {
-      return (pattern) => {
-        return pattern.app(variable, arg);
-      };
-    },
-    add : (exp1,exp2) => {
-      return (pattern) => {
-        return pattern.add(exp1, exp2);
-      };
-    },
-    mul : (exp1,exp2) => {
-      return (pattern) => {
-        return pattern.mul(exp1, exp2);
-      };
-    }
-  };
-  // LOGモナドの定義
-  /* #@range_begin(logger_monad) */
-  /* LOG[T] = PAIR[T, LIST[STRING]] */
-  var LOG = {
-    /* unit:: VALUE => LOG[VALUE] */
-    unit: (value) => {
-      /* 値とログのPair型を作る */
-      return pair.cons(value, list.empty()); 
-    },
-    /* flatMap:: LOG[T] => FUN[T => LOG[T]] => LOG[T] */
-    flatMap: (instanceM) => {
-      return (transform) => {
-        return pair.match(instanceM,{
-          /* Pair型に格納されている値の対を取り出す */
-          cons: (value, log) => {
-            /* 取り出した値で計算する */
-            var newInstance = transform(value); 
-            /* 計算の結果をPairの左側に格納し、
-               新しいログをPairの右側に格納する */
-            return pair.cons(pair.left(newInstance),
-                             list.append(log)(pair.right(newInstance)));
-          }
-        });
-      };
-    },
-    /* 引数 value をログに格納する */
-    /* output:: VALUE => LOG[()] */
-    output: (value) => {
-      return pair.cons(null, 
-                       list.cons(String(value), list.empty()));
-    }
-  };
-  /* #@range_end(logger_monad) */
-  // LOGモナド評価器
-  /* #@range_begin(logger_monad_evaluator) */
-  /* evaluate:: (EXP, ENV) => LOG[VALUE] */
-  var evaluate = (anExp, environment) => {
-    return exp.match(anExp,{
-      /* log式の評価 */
-      log: (anExp) => {
-        /* 式を評価する */
-        return LOG.flatMap(evaluate(anExp, environment))((value) => {
-          /* value をログに格納する */
-          return LOG.flatMap(LOG.output(value))((_) => { 
-            return LOG.unit(value); 
+  // ### ログ出力評価器
+  describe('ログ出力評価器', () => {
+    // ログ出力評価器の式
+    /* #@range_begin(expression_logger_interpreter) */
+    var exp = {
+      log: (anExp) => { // ログ出力用の式
+        return (pattern) => {
+          return pattern.log(anExp);
+        };
+      },
+      /* #@range_end(expression_logger_interpreter) */
+      match : (data, pattern) => {
+        return data.call(exp, pattern);
+      },
+      num : (value) => {
+        expect(value).to.a('number');
+        return (pattern) => {
+          return pattern.num(value);
+        };
+      },
+      variable : (name) => {
+        expect(name).to.a('string');
+        return (pattern) => {
+          return pattern.variable(name);
+        };
+      },
+      lambda : (variable, body) => {
+        expect(variable).to.a('function');
+        expect(body).to.a('function');
+        return (pattern) => {
+          return pattern.lambda(variable, body);
+        };
+      },
+      app : (variable, arg) => {
+        return (pattern) => {
+          return pattern.app(variable, arg);
+        };
+      },
+      add : (exp1,exp2) => {
+        return (pattern) => {
+          return pattern.add(exp1, exp2);
+        };
+      },
+      mul : (exp1,exp2) => {
+        return (pattern) => {
+          return pattern.mul(exp1, exp2);
+        };
+      }
+    };
+    // LOGモナドの定義
+    /* #@range_begin(logger_monad) */
+    /* LOG[T] = PAIR[T, LIST[STRING]] */
+    var LOG = {
+      /* unit:: VALUE => LOG[VALUE] */
+      unit: (value) => {
+        /* 値とログのPair型を作る */
+        return pair.cons(value, list.empty()); 
+      },
+      /* flatMap:: LOG[T] => FUN[T => LOG[T]] => LOG[T] */
+      flatMap: (instanceM) => {
+        return (transform) => {
+          return pair.match(instanceM,{
+            /* Pair型に格納されている値の対を取り出す */
+            cons: (value, log) => {
+              /* 取り出した値で計算する */
+              var newInstance = transform(value); 
+              /* 計算の結果をPairの左側に格納し、
+                 新しいログをPairの右側に格納する */
+              return pair.cons(pair.left(newInstance),
+                               list.append(log)(pair.right(newInstance)));
+            }
           });
-        });
+        };
       },
-      /* #@range_end(logger_monad_evaluator) */
-      /* 数値の評価 */
-      num: (value) => {
-        return LOG.unit(value);
-      },
-      /* 変数の評価 */
-      variable: (name) => {
-        return LOG.unit(env.lookup(name, environment));
-      },
-      /* λ式の評価 */
-      lambda: (variable, body) => {
-        return exp.match(variable,{
-          variable: (name) => {
-            return LOG.unit((actualArg) => {
-              return evaluate(body, env.extend(name, actualArg, environment));
+      /* 引数 value をログに格納する */
+      /* output:: VALUE => LOG[()] */
+      output: (value) => {
+        return pair.cons(null, 
+                         list.cons(String(value), list.empty()));
+      }
+    };
+    /* #@range_end(logger_monad) */
+    // LOGモナド評価器
+    /* #@range_begin(logger_monad_evaluator) */
+    /* evaluate:: (EXP, ENV) => LOG[VALUE] */
+    var evaluate = (anExp, environment) => {
+      return exp.match(anExp,{
+        /* log式の評価 */
+        log: (anExp) => {
+          /* 式を評価する */
+          return LOG.flatMap(evaluate(anExp, environment))((value) => {
+            /* value をログに格納する */
+            return LOG.flatMap(LOG.output(value))((_) => { 
+              return LOG.unit(value); 
             });
+          });
+        },
+        /* #@range_end(logger_monad_evaluator) */
+        /* 数値の評価 */
+        num: (value) => {
+          return LOG.unit(value);
+        },
+        /* 変数の評価 */
+        variable: (name) => {
+          return LOG.unit(env.lookup(name, environment));
+        },
+        /* λ式の評価 */
+        lambda: (variable, body) => {
+          return exp.match(variable,{
+            variable: (name) => {
+              return LOG.unit((actualArg) => {
+                return evaluate(body, env.extend(name, actualArg, environment));
+              });
+            }
+          });
+        },
+        /* 関数適用の評価 */
+        app: (lambda, arg) => {         // 関数適用の評価
+          return LOG.flatMap(evaluate(lambda, environment))((closure) => {
+            return LOG.flatMap(evaluate(arg, environment))((actualArg) => {
+              return closure(actualArg); 
+            });
+          });
+        },
+        add: (expL, expR) => {
+          return LOG.flatMap(evaluate(expL, environment))((valueL) => {
+            return LOG.flatMap(evaluate(expR, environment))((valueR) => {
+              return LOG.unit(valueL + valueR); 
+            });
+          });
+        }
+      });
+    };
+    // ### ログ出力評価器のテスト
+    describe('ログ出力評価器のテスト', () => {
+      it('LOG評価器で数値を評価する', (next) => {
+        /* #@range_begin(log_interpreter_number) */
+        pair.match(evaluate(exp.log(exp.num(2)), env.empty),{
+          cons: (value, log) => {
+            expect( // 結果の値をテストする
+              value
+            ).to.be(
+              2
+            );
+            expect( // 保存されたログを見る
+              list.toArray(log)
+            ).to.eql(
+              [2]
+            );
           }
         });
-      },
-      /* 関数適用の評価 */
-      app: (lambda, arg) => {         // 関数適用の評価
-        return LOG.flatMap(evaluate(lambda, environment))((closure) => {
-          return LOG.flatMap(evaluate(arg, environment))((actualArg) => {
-            return closure(actualArg); 
-          });
+        /* #@range_end(log_interpreter_number) */
+        next();
+      });
+      it('LOG評価器で変数を評価する', (next) => {
+        /* #@range_begin(log_interpreter_variable) */
+        var newEnv = env.extend("x", 1, env.empty);
+        pair.match(evaluate(exp.log(exp.variable("x")), newEnv), {
+          cons: (value, log) => {
+            expect( // 結果の値をテストする
+              value
+            ).to.eql(
+              1
+            );
+            expect( // 保存されたログを見る
+              list.toArray(log)
+            ).to.eql(
+              [1]
+            );
+          }
         });
-      },
-      add: (expL, expR) => {
-        return LOG.flatMap(evaluate(expL, environment))((valueL) => {
-          return LOG.flatMap(evaluate(expR, environment))((valueR) => {
-            return LOG.unit(valueL + valueR); 
-          });
+        /* #@range_end(log_interpreter_variable) */
+        next();
+      });
+      it('LOG評価器で演算を評価する', (next) => {
+        pair.match(evaluate(exp.log(exp.add(exp.num(1),exp.num(2))), env.empty),{
+          cons: (value, log) => {
+            expect(
+              value
+            ).to.be(
+              3
+            );
+            expect(
+              list.toArray(log)
+            ).to.eql(
+              [3]
+            );
+          }
         });
-      }
-    });
-  };
-  it('LOG評価器で数値を評価する', (next) => {
-    /* #@range_begin(log_interpreter_number) */
-    pair.match(evaluate(exp.log(exp.num(2)), env.empty),{
-      cons: (value, log) => {
-        expect( // 結果の値をテストする
-          value
+        pair.match(evaluate(exp.log(exp.add(exp.log(exp.num(1)),exp.log(exp.num(2)))), env.empty),{
+          cons: (value, log) => {
+            expect(
+              value
+            ).to.be(
+              3 // 1 + 2 = 3
+            );
+            expect(
+              list.toArray(log)
+            ).to.eql(
+              [1,2,3]
+            );
+          }
+        });
+        // ログ出力評価器による評価戦略の確認
+        /* #@range_begin(log_interpreter_evaluation_strategy) */
+        // ~~~js
+        // ((n) => {
+        //    return add(1)(n)
+        // })(2);
+        // ~~~ 
+        var theExp = exp.log(exp.app(exp.lambda(exp.variable("n"),
+                                                exp.add(exp.log(exp.num(1)), 
+                                                        exp.variable("n"))),
+                                     exp.log(exp.num(2))));
+        pair.match(evaluate(theExp, env.empty),{
+          /* パターンマッチで結果を取り出す */
+          cons: (value, log) => {
+            expect(
+              value
+            ).to.eql(
+              3
+            );
+            expect(
+              list.toArray(log)
+            ).to.eql(
+              [2,1,3]
+            );
+          }
+        });
+        /* #@range_end(log_interpreter_evaluation_strategy) */
+        next();
+      });
+      it('LOG評価器で関数適用を評価する', (next) => {
+        // ~~~js
+        // ((x) => {
+        //    return add(x)(x)
+        // })(2);
+        // ~~~ 
+        var expression = exp.app(exp.lambda(exp.variable("x"),
+                                            exp.add(exp.variable("x"),exp.variable("x"))),
+                                 exp.num(2));
+        expect(
+          pair.left(evaluate(expression, env.empty))
+        ).to.eql(
+          4
+        );
+        expect(
+          list.toArray(pair.right(evaluate(expression, env.empty)))
+        ).to.eql(
+          []
+        );
+        next();
+      });
+      it('LOG評価器でカリー化関数を評価する', (next) => {
+        // ~~~js
+        // ((x) => {
+        //   return (y) => {
+        //       return add(x)(y)
+        //   };
+        // })(2)(3);
+        // ~~~ 
+        var expression = exp.app(
+          exp.app(exp.lambda(exp.variable("x"),
+                             exp.lambda(exp.variable("y"),
+                                        exp.add(exp.variable("x"),exp.variable("y")))),
+                  exp.num(2)),
+          exp.num(3));
+        expect(
+          pair.left(evaluate(expression, emptyEnv))
         ).to.be(
-          2
+          5
         );
-        expect( // 保存されたログを見る
-          list.toArray(log)
-        ).to.eql(
-          [2]
-        );
-      }
+        next();
+      });
     });
-    /* #@range_end(log_interpreter_number) */
-    next();
-  });
-  it('LOG評価器で変数を評価する', (next) => {
-    /* #@range_begin(log_interpreter_variable) */
-    var newEnv = env.extend("x", 1, env.empty);
-    pair.match(evaluate(exp.log(exp.variable("x")), newEnv), {
-      cons: (value, log) => {
-        expect( // 結果の値をテストする
-          value
-        ).to.eql(
-          1
-        );
-        expect( // 保存されたログを見る
-          list.toArray(log)
-        ).to.eql(
-          [1]
-        );
-      }
-    });
-    /* #@range_end(log_interpreter_variable) */
-    next();
-  });
-  it('LOG評価器で演算を評価する', (next) => {
-    pair.match(evaluate(exp.log(exp.add(exp.num(1),exp.num(2))), env.empty),{
-      cons: (value, log) => {
-        expect(
-          value
-        ).to.be(
-          3
-        );
-        expect(
-          list.toArray(log)
-        ).to.eql(
-          [3]
-        );
-      }
-    });
-    pair.match(evaluate(exp.log(exp.add(exp.log(exp.num(1)),exp.log(exp.num(2)))), env.empty),{
-      cons: (value, log) => {
-        expect(
-          value
-        ).to.be(
-          3 // 1 + 2 = 3
-        );
-        expect(
-          list.toArray(log)
-        ).to.eql(
-          [1,2,3]
-        );
-      }
-    });
-    // ログ出力評価器による評価戦略の確認
-    /* #@range_begin(log_interpreter_evaluation_strategy) */
-    /* ((n) => { return 1 + n})(2) の評価 */
-    var theExp = exp.log(exp.app(exp.lambda(exp.variable("n"),
-                                            exp.add(exp.log(exp.num(1)), 
-                                                    exp.variable("n"))),
-                                 exp.log(exp.num(2))));
-    pair.match(evaluate(theExp, env.empty),{
-      /* パターンマッチで結果を取り出す */
-      cons: (value, log) => {
-        expect(
-          value
-        ).to.eql(
-          3
-        );
-        expect(
-          list.toArray(log)
-        ).to.eql(
-          [2,1,3]
-        );
-      }
-    });
-    /* #@range_end(log_interpreter_evaluation_strategy) */
-    next();
-  });
-  it('LOG評価器で関数適用を評価する', (next) => {
-    // ~~~
-    // \x.add(x,x)(2)
-    // ~~~
-    var expression = exp.app(exp.lambda(exp.variable("x"),
-                                        exp.add(exp.variable("x"),exp.variable("x"))),
-                             exp.num(2));
-    expect(
-      pair.left(evaluate(expression, env.empty))
-    ).to.eql(
-      4
-    );
-    expect(
-      list.toArray(pair.right(evaluate(expression, env.empty)))
-    ).to.eql(
-      []
-    );
-    next();
-  });
-  it('LOG評価器でカリー化関数を評価する', (next) => {
-    // ~~~
-    // (\x.
-    //    \y.
-    //       x+y)(2)(3)
-    // ~~~ 
-    var expression = exp.app(
-      exp.app(exp.lambda(exp.variable("x"),
-                         exp.lambda(exp.variable("y"),
-                                    exp.add(exp.variable("x"),exp.variable("y")))),
-              exp.num(2)),
-      exp.num(3));
-    expect(
-      pair.left(evaluate(expression, emptyEnv))
-    ).to.be(
-      5
-    );
-    next();
   });
 });
+
 
 // [目次に戻る](http://akimichi.github.io/functionaljs/) 
 

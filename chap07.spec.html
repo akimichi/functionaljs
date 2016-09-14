@@ -371,6 +371,9 @@
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>multipleOf関数の定義</p>
+<blockquote>
+<p>multipleOf(n,m)でnの倍数がmかどうかを判定する</p>
+</blockquote>
 
             </div>
             
@@ -411,8 +414,7 @@
       <span class="hljs-literal">false</span>
     );
     next();
-  });
-  it(<span class="hljs-string">'カリー化されたmultipleOf関数'</span>, (next) =&gt; {</pre></div></div>
+  });</pre></div></div>
             
         </li>
         
@@ -427,7 +429,8 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-comment">/* #@range_begin(multipleOf_curried) */</span>
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'カリー化されたmultipleOf関数'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* #@range_begin(multipleOf_curried) */</span>
     <span class="hljs-keyword">var</span> multipleOf = (n) =&gt; { <span class="hljs-comment">// 外側の関数定義</span>
       <span class="hljs-keyword">return</span> (m) =&gt; {         <span class="hljs-comment">// 内側の関数定義</span>
         <span class="hljs-keyword">if</span>(m % n === <span class="hljs-number">0</span>) {
@@ -500,6 +503,9 @@
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>指数関数の例</p>
+<blockquote>
+<p>exponential(b)(n)でbのn乗を計算する</p>
+</blockquote>
 
             </div>
             

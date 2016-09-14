@@ -604,13 +604,7 @@ abc1
               }
             });
           }
-        };
-        <span class="hljs-comment">/* #@range_begin(infinite_ones) */</span>
-        <span class="hljs-comment">/* ones = 1,1,1,1,... */</span>
-        <span class="hljs-keyword">var</span> ones = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
-          <span class="hljs-keyword">return</span> ones; <span class="hljs-comment">// onesを再帰的に呼び出す</span>
-        });
-        <span class="hljs-comment">/* #@range_end(infinite_ones) */</span></pre></div></div>
+        };</pre></div></div>
             
         </li>
         
@@ -620,6 +614,26 @@ abc1
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>無限に1が続く数列</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(infinite_ones) */</span>
+        <span class="hljs-comment">/* ones = 1,1,1,1,... */</span>
+        <span class="hljs-keyword">var</span> ones = stream.cons(<span class="hljs-number">1</span>, (_) =&gt; {
+          <span class="hljs-keyword">return</span> ones; <span class="hljs-comment">// onesを再帰的に呼び出す</span>
+        });
+        <span class="hljs-comment">/* #@range_end(infinite_ones) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>無限に連続する整数列</p>
 
@@ -678,11 +692,11 @@ abc1
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>ストリームのtake関数</p>
 
@@ -706,26 +720,39 @@ abc1
               });
             },
             <span class="hljs-comment">/* #@range_end(stream_take) */</span>
-            <span class="hljs-comment">/* #@range_begin(stream_filter) */</span>
-            <span class="hljs-comment">/* filter :: (STREAM[T], FUN[T =&gt; BOOL]) =&gt; STREAM[T] */</span>
-            filter: (astream,predicate) =&gt; {
-              <span class="hljs-keyword">return</span> match(astream,{
-                empty: (_) =&gt; {
-                  <span class="hljs-keyword">return</span> stream.empty();
-                },
-                cons: (head,tailThunk) =&gt; {
-                  <span class="hljs-keyword">if</span>(predicate(head)){ <span class="hljs-comment">// 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する</span>
-                    <span class="hljs-keyword">return</span> stream.cons(head,(_) =&gt; {
-                      <span class="hljs-keyword">return</span> stream.filter(tailThunk(),predicate);
-                    });
-                  } <span class="hljs-keyword">else</span> { <span class="hljs-comment">// 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す</span>
-                    <span class="hljs-keyword">return</span> stream.filter(tailThunk(),predicate);
-                  }
-                }
-              });
-            }
-            <span class="hljs-comment">/* #@range_end(stream_filter) */</span>
-          };
+            <span class="hljs-comment">/* #@range_begin(stream_filter) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>/<em> filter :: (STREAM[T], FUN[T =&gt; BOOL]) =&gt; STREAM[T] </em>/
+filter: (astream,predicate) =&gt; {
+  return match(astream,{
+    empty: (<em>) =&gt; {
+      return stream.empty();
+    },
+    cons: (head,tailThunk) =&gt; {
+      if(predicate(head)){ // 先頭の要素が条件に合致する場合、その要素を結果のリストの先頭に追加する
+        return stream.cons(head,(</em>) =&gt; {
+          return stream.filter(tailThunk(),predicate);
+        });
+      } else { // 先頭の要素が条件に合致しない場合、末尾要素に対してfilterを再帰的に呼び出す
+        return stream.filter(tailThunk(),predicate);
+      }
+    }
+  });
+}
+/<em> #@range_end(stream_filter) </em>/</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          };
           expect(
             stream.head(enumFrom(<span class="hljs-number">1</span>))
           ).to.eql(
@@ -778,11 +805,11 @@ abc1
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>リストのtoArray関数</p>
 
@@ -809,11 +836,11 @@ abc1
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>無限の整数列をテストする</p>
 
@@ -835,19 +862,32 @@ abc1
           ).to.eql(
             [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>]
           );
-          <span class="hljs-comment">/* #@range_end(stream_filter_test) */</span>
-          <span class="hljs-comment">/* #@range_begin(infinite_even_integer) */</span>
-          <span class="hljs-keyword">var</span> even = (n) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> === (n % <span class="hljs-number">2</span>);
-          };
-          <span class="hljs-keyword">var</span> evenIntegers = stream.filter(enumFrom(<span class="hljs-number">1</span>),even);
-          expect(
-            list.toArray(stream.take(evenIntegers, <span class="hljs-number">4</span>))
-          ).to.eql(
-            [ <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span> ]
-          );
-          <span class="hljs-comment">/* #@range_end(infinite_even_integer) */</span>
-          next();
+          <span class="hljs-comment">/* #@range_end(stream_filter_test) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>/<em> #@range_begin(infinite_even_integer) </em>/
+var even = (n) =&gt; {
+  return 0 === (n % 2);
+};
+var evenIntegers = stream.filter(enumFrom(1),even);
+expect(
+  list.toArray(stream.take(evenIntegers, 4))
+).to.eql(
+  [ 2, 4, 6, 8 ]
+);
+/<em> #@range_end(infinite_even_integer) </em>/</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          next();
         });
       });
     }); <span class="hljs-comment">// thunk</span>
@@ -857,11 +897,11 @@ abc1
         </li>
         
         
-        <li id="section-27">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <h2 id="6-2-">6.2 関数と参照透過性</h2>
 
@@ -872,11 +912,11 @@ abc1
         </li>
         
         
-        <li id="section-28">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <h3 id="-">関数の純粋性</h3>
 <p>succ関数は参照透過性を持つ</p>
@@ -900,11 +940,11 @@ abc1
         </li>
         
         
-        <li id="section-29">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>ファイル操作は参照透過性を破壊する</p>
 
@@ -952,11 +992,11 @@ abc1
         </li>
         
         
-        <li id="section-30">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h3 id="-">副作用への対処</h3>
 
@@ -968,11 +1008,11 @@ abc1
         </li>
         
         
-        <li id="section-31">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>tap関数</p>
 
@@ -988,11 +1028,11 @@ abc1
         </li>
         
         
-        <li id="section-32">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>tap関数によるconsole.logのテスト</p>
 
@@ -1028,11 +1068,11 @@ abc1
         </li>
         
         
-        <li id="section-33">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>tap関数によるファイル入出力のテスト</p>
 
@@ -1070,11 +1110,11 @@ abc1
         </li>
         
         
-        <li id="section-34">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap07.spec.html">次章に移る</a> </p>
 

@@ -661,7 +661,7 @@
       };
       <span class="hljs-keyword">var</span> counter = (init) =&gt; {
         <span class="hljs-keyword">var</span> _init = init;
-        <span class="hljs-keyword">return</span> (dummy) =&gt; {
+        <span class="hljs-keyword">return</span> (_) =&gt; {
           _init = _init + <span class="hljs-number">1</span>;
           <span class="hljs-keyword">return</span> _init;
         };
@@ -806,7 +806,8 @@
         <span class="hljs-literal">false</span>
       );
       <span class="hljs-comment">/* #@range_end(not_combinator_test) */</span>
-      <span class="hljs-comment">/* #@range_begin(and_or_combinator) */</span>
+
+      <span class="hljs-comment">/* 本書では割愛したが、論理和や論理積を実行するコンビネータも同様に定義できる */</span>
       <span class="hljs-comment">/* 「もしくは」を表す論理和  */</span>
       <span class="hljs-comment">/* or:: (NUMBER-&gt;BOOL, NUMBER-&gt;BOOL) -&gt; (NUMBER-&gt;BOOL) */</span>
       <span class="hljs-keyword">var</span> or = (f,g) =&gt; {
@@ -821,24 +822,17 @@
           <span class="hljs-keyword">return</span> f(arg) &amp;&amp; g(arg);
         };
       };
-      <span class="hljs-comment">/* #@range_end(and_or_combinator) */</span>
       <span class="hljs-keyword">var</span> positive = (n) =&gt; {
         <span class="hljs-keyword">return</span> n &gt; <span class="hljs-number">0</span>;
       };
       <span class="hljs-keyword">var</span> zero = (n) =&gt; {
         <span class="hljs-keyword">return</span> n === <span class="hljs-number">0</span>;
       };
-      <span class="hljs-keyword">var</span> negative = or(positive, not(zero));
-      expect(
-        negative(-<span class="hljs-number">3</span>)
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      expect(
-        negative(<span class="hljs-number">0</span>)
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
+      <span class="hljs-comment">/* negativeは、0より小さな数値かどうかを判定する */</span>
+      <span class="hljs-keyword">var</span> negative = and(not(positive), not(zero));
+      expect(negative(-<span class="hljs-number">3</span>)).to.eql(<span class="hljs-literal">true</span>);
+      expect(negative(<span class="hljs-number">3</span>)).to.eql(<span class="hljs-literal">false</span>);
+      expect(negative(<span class="hljs-number">0</span>)).to.eql(<span class="hljs-literal">false</span>);
       next();
     });
   });</pre></div></div>

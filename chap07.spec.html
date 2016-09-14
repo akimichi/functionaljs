@@ -4199,8 +4199,22 @@ $$</p>
         });
       }
     };
-    <span class="hljs-comment">/* #@range_end(pair_datatype) */</span>
-    describe(<span class="hljs-string">'外界を引数に持つIOモナド'</span>, () =&gt; {
+    <span class="hljs-comment">/* #@range_end(pair_datatype) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-120">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-120">&#182;</a>
+              </div>
+              <p>外界を明示したIOモナドの定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    describe(<span class="hljs-string">'外界を明示したIOモナドの定義'</span>, () =&gt; {
       <span class="hljs-keyword">var</span> IO = {
         <span class="hljs-comment">/* #@range_begin(io_monad_definition_with_world) */</span>
         <span class="hljs-comment">/* unit:: T =&gt; IO[T] */</span>
@@ -4222,8 +4236,22 @@ $$</p>
             };
           };
         },
-        <span class="hljs-comment">/* #@range_end(io_monad_definition_with_world) */</span>
-        <span class="hljs-comment">/* #@range_begin(io_monad_definition_with_world_helper_function) */</span>
+        <span class="hljs-comment">/* #@range_end(io_monad_definition_with_world) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-121">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-121">&#182;</a>
+              </div>
+              <p>IOモナドの補助関数</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(io_monad_definition_with_world_helper_function) */</span>
         <span class="hljs-comment">/* done:: T =&gt; IO[T] */</span>
         done: (any) =&gt; {
           <span class="hljs-keyword">return</span> IO.unit();
@@ -4247,11 +4275,11 @@ $$</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>run関数の利用法</p>
 
@@ -4273,13 +4301,13 @@ $$</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
-              <h2 id="-io-monad-module">‘IO’ monad module</h2>
+              <p>IOモナドの定義（ 外界を引数に持たない）</p>
 
             </div>
             
@@ -4335,11 +4363,11 @@ $$</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>run関数の利用法</p>
 
@@ -4360,22 +4388,33 @@ $$</p>
         </li>
         
         
-        <li id="section-123">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <h4 id="io-">IOアクションを合成する</h4>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'IOアクションを合成する'</span>, () =&gt; {
+        <span class="hljs-comment">/* #@range_begin(io_monad_is_composable) */</span></pre></div></div>
+            
+        </li>
         
+        
+        <li id="section-126">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-126">&#182;</a>
+              </div>
+              <p>seq関数の定義</p>
 
-
-        <span class="hljs-comment">/* #@range_begin(io_monad_is_composable) */</span>
-        <span class="hljs-comment">/* IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b] */</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* IO.seq:: IO[a] =&gt; IO[b] =&gt; IO[b] */</span>
         IO.seq = (instanceA) =&gt; {
           <span class="hljs-keyword">return</span> (instanceB) =&gt; {
             <span class="hljs-keyword">return</span> IO.flatMap(instanceA)((a) =&gt; {
@@ -4398,11 +4437,11 @@ $$</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
 </code></pre>
@@ -4420,7 +4459,7 @@ $$</p>
           });
         };
         <span class="hljs-comment">/* IO.getc:: IO[CHAR] */</span>
-        IO.getc =  () =&gt; {
+        IO.getc = () =&gt; {
           <span class="hljs-keyword">var</span> continuation = () =&gt; {
             <span class="hljs-keyword">var</span> chunk = process.stdin.read();
             <span class="hljs-keyword">return</span> chunk;
@@ -4433,11 +4472,11 @@ $$</p>
         </li>
         
         
-        <li id="section-125">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>stringモジュール</p>
 
@@ -4468,7 +4507,6 @@ $$</p>
           }
         };
         <span class="hljs-comment">/* #@range_end(string_module) */</span>
-
         it(<span class="hljs-string">'stringのテスト'</span>, (next) =&gt; {
           expect(
             string.head(<span class="hljs-string">"abc"</span>)
@@ -4482,8 +4520,22 @@ $$</p>
           );
           next();
         });
-      });
-      it(<span class="hljs-string">'IOモナドで参照透過性を確保する'</span>, (next) =&gt; {
+      });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-129">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-129">&#182;</a>
+              </div>
+              <p>IOモナドで参照透過性を確保する</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'IOモナドで参照透過性を確保する'</span>, (next) =&gt; {
         expect(
           IO.flatMap(IO.readFile(<span class="hljs-string">"./test/resources/file.txt"</span>))((content) =&gt; {
             <span class="hljs-keyword">return</span> IO.flatMap(IO.println(content))((_) =&gt; {
@@ -4506,11 +4558,11 @@ $$</p>
         </li>
         
         
-        <li id="section-126">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap08.spec.html">次章に移る</a> </p>
 

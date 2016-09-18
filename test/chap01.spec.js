@@ -1,5 +1,8 @@
 "use strict";
 
+// 第1章 「計算」とは
+// ========
+
 // ## 目次
 // > * [命令型モデル](http://akimichi.github.io/functionaljs/chap01.spec.html#imperative_model)
 // >   - [チューリング機械](http://akimichi.github.io/functionaljs/chap01.spec.html#turing_machine)
@@ -7,9 +10,6 @@
 // >   - [置換ルール](http://akimichi.github.io/functionaljs/chap01.spec.html#substitution_model)
 // >   - [関数の定義](http://akimichi.github.io/functionaljs/chap01.spec.html#function_definition)
 // >   - [関数型モデルを使うメリット](http://akimichi.github.io/functionaljs/chap01.spec.html#advantages_of_functional_model)
-
-// 第1章 「計算」とは
-// ========
 
 
 /* アサートライブラリー expect.js の読み込み */
@@ -23,7 +23,7 @@ describe('命令型モデル', () => {
     // [![IMAGE ALT TEXT](http://img.youtube.com/vi/E3keLeMwfHY/0.jpg)](https://www.youtube.com/watch?v=E3keLeMwfHY "チューリングマシンの動画")
     /* [A turing machine in 133 bytes of javascript](http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069) を参考にしている */
 
-    // JavaScriptによるチューリング機械
+    // **リスト 1.1** JavaScriptによるチューリング機械
     /* #@range_begin(turing) */
     var machine = (program,tape,initState, endState) => {
       /* ヘッドの位置 */
@@ -57,7 +57,7 @@ describe('命令型モデル', () => {
     };
     /* #@range_end(turing)  */
 
-    // ### チューリング機械の実行例
+    // **リスト 1.2** チューリング機械の実行例
     describe('チューリング機械の実行例', () => {
       // #### <a name="turing_demo"> **チューリング機械の挙動** </a>
       // ![チューリング機械の挙動](images/turing_succ.gif) 
@@ -85,6 +85,7 @@ describe('命令型モデル', () => {
         };
         /* #@range_end(turing_example_succ) */
         expect(
+          // **リスト 1.3** 1を加えるチューリング機械の実行
           /* #@range_begin(turing_example_succ_test) */
           machine(program,     // プログラム
                   tape,        // テープ
@@ -123,7 +124,7 @@ describe('関数型モデル', () => {
       );
       next();
     });
-    // add関数
+    // **リスト 1.5** add関数
     it('add関数', (next) => {
       /* #@range_begin(recursive_add) */
       var succ = (n) => {
@@ -153,6 +154,7 @@ describe('関数型モデル', () => {
     });
     // #### コラム 再帰と漸化式
     it('再帰と漸化式', (next) => {
+      // **リスト 1.6** 漸化式の例
       /* #@range_begin(recursion) */
       var a = (n) => {
         if(n === 1) {
@@ -179,7 +181,7 @@ describe('関数型モデル', () => {
       );
       next();
     });
-    // while文を利用したadd関数
+    // **リスト 1.7** while文を利用したadd関数
     it('while文を利用したadd関数', (next) => {
       /* add関数の定義 */
       /* #@range_begin(imperative_add) */
@@ -211,7 +213,7 @@ describe('関数型モデル', () => {
   });
   // ### <section id='function_definition'>関数の定義</section>
   describe('関数の定義', () => {
-    // かけ算の定義
+    // **リスト 1.8** かけ算の定義
     it('かけ算の定義', (next) => {
       var succ = (n) => {
         return n + 1;
@@ -272,7 +274,7 @@ describe('関数型モデル', () => {
   });
   // ### <section id='advantages_of_functional_model'>関数型モデルを使うメリット</section>
   describe('関数型モデルを使うメリット', () => {
-    // #### べき乗の定義
+    // **リスト 1.9** べき乗の定義
     it('べき乗の定義', (next) => {
       var succ = (n) => {
         return n + 1;

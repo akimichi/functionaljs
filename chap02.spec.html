@@ -1313,8 +1313,7 @@ node&gt; ichi === one;
               <span class="hljs-number">3</span>
             );
             next();
-          });
-          it(<span class="hljs-string">'関数合成によるlength関数の定義（引数を明示したスタイル）'</span>, (next) =&gt; {</pre></div></div>
+          });</pre></div></div>
             
         </li>
         
@@ -1325,11 +1324,12 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
-              <p><strong>リスト2.18</strong> 関数合成によるlength関数の定義</p>
+              <p><strong>リスト2.18</strong> 関数合成によるlength関数の定義（引数を明示したスタイル）</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(array_length_in_composition) */</span>
+            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'関数合成によるlength関数の定義（引数を明示したスタイル）'</span>, (next) =&gt; {
+            <span class="hljs-comment">/* #@range_begin(array_length_in_composition) */</span>
             <span class="hljs-keyword">var</span> length = (array) =&gt; { <span class="hljs-comment">// 引数が配列であることを明示する</span>
               <span class="hljs-keyword">return</span> compose(sum,map(alwaysOne))(array);
             };

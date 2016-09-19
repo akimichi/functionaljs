@@ -1735,9 +1735,7 @@ node&gt; ichi === one;
                 <span class="hljs-comment">/* #@range_end(third_element_of_evenStream_result) */</span>
               );
               next();
-            });
-          });
-        });</pre></div></div>
+            });</pre></div></div>
             
         </li>
         
@@ -1752,20 +1750,20 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'配列のelemAt関数'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(array_elemAt) */</span>
-          <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
-            <span class="hljs-keyword">return</span> (anArray) =&gt; {
-              <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
-                <span class="hljs-keyword">return</span> anArray[<span class="hljs-number">0</span>];
-              } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">var</span> tail = anArray.slice(<span class="hljs-number">1</span>,anArray.length);
-                <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(tail);
+            <div class="content"><div class='highlight'><pre>            it(<span class="hljs-string">'配列のelemAt関数'</span>, (next) =&gt; {
+              <span class="hljs-comment">/* #@range_begin(array_elemAt) */</span>
+              <span class="hljs-keyword">var</span> elemAt = (n) =&gt; {
+                <span class="hljs-keyword">return</span> (anArray) =&gt; {
+                  <span class="hljs-keyword">if</span>(n === <span class="hljs-number">1</span>) {
+                    <span class="hljs-keyword">return</span> anArray[<span class="hljs-number">0</span>];
+                  } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">var</span> tail = anArray.slice(<span class="hljs-number">1</span>,anArray.length);
+                    <span class="hljs-keyword">return</span> elemAt(n-<span class="hljs-number">1</span>)(tail);
+                  };
+                };
               };
-            };
-          };
-          <span class="hljs-comment">/* #@range_end(array_elemAt) */</span>
-          expect(</pre></div></div>
+              <span class="hljs-comment">/* #@range_end(array_elemAt) */</span>
+              expect(</pre></div></div>
             
         </li>
         
@@ -1780,15 +1778,17 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(fourth_element_of_evenArray) */</span>
-            elemAt(<span class="hljs-number">4</span>)([<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>])
-            <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray) */</span>
-          ).to.eql(
-            <span class="hljs-comment">/* #@range_begin(fourth_element_of_evenArray_result) */</span>
-            <span class="hljs-literal">undefined</span>
-            <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray_result) */</span>
-          );
-          next();
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-comment">/* #@range_begin(fourth_element_of_evenArray) */</span>
+                elemAt(<span class="hljs-number">4</span>)([<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">6</span>])
+                <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray) */</span>
+              ).to.eql(
+                <span class="hljs-comment">/* #@range_begin(fourth_element_of_evenArray_result) */</span>
+                <span class="hljs-literal">undefined</span>
+                <span class="hljs-comment">/* #@range_end(fourth_element_of_evenArray_result) */</span>
+              );
+              next();
+            });
+          });
         });
       });
     });

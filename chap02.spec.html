@@ -944,7 +944,34 @@ node&gt; array
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'sum関数の定義'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'sum関数の定義'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(sum_in_array_while) */</span>
+        <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+          <span class="hljs-comment">/* 結果を格納する変数 */</span>
+          <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
+          <span class="hljs-comment">/* 反復した回数を格納する変数 */</span>
+          <span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>; 
+          <span class="hljs-keyword">while</span>(index &lt; array.length) {
+            <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
+            result = result + array[index];
+            <span class="hljs-comment">/* 反復回数を更新する */</span>
+            index = index + <span class="hljs-number">1</span>;
+          }
+          <span class="hljs-keyword">return</span> result;
+        };
+        <span class="hljs-comment">/* #@range_end(sum_in_array_while)  */</span>
+        expect(
+          sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
+        ).to.eql(
+          <span class="hljs-number">10</span>
+        );
+        expect(
+          sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
+        ).to.eql(
+          <span class="hljs-number">10</span>
+        );
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -955,38 +982,26 @@ node&gt; array
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
-              <p>forEachメソッドによるsumの定義</p>
+              <p>reduceメソッドによるsumの定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'forEachメソッドによるsumの定義'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(sum_in_array_while) */</span>
-          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-            <span class="hljs-comment">/* 結果を格納する変数 */</span>
-            <span class="hljs-keyword">var</span> result = <span class="hljs-number">0</span>;
-            <span class="hljs-comment">/* 反復した回数を格納する変数 */</span>
-            <span class="hljs-keyword">var</span> index = <span class="hljs-number">0</span>; 
-            <span class="hljs-keyword">while</span>(index &lt; array.length) {
-              <span class="hljs-comment">/* 変数resultを代入で更新する */</span>
-              result = result + array[index];
-              <span class="hljs-comment">/* 反復回数を更新する */</span>
-              index = index + <span class="hljs-number">1</span>;
-            }
-            <span class="hljs-keyword">return</span> result;
-          };
-          <span class="hljs-comment">/* #@range_end(sum_in_array_while)  */</span>
-          expect(
-            sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
-          ).to.eql(
-            <span class="hljs-number">10</span>
-          );
-          expect(
-            sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
-          ).to.eql(
-            <span class="hljs-number">10</span>
-          );
-          next();
-        });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'reduceメソッドによるsumの定義'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_begin(sum_in_array_reduce) */</span>
+        <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+          <span class="hljs-keyword">return</span> array.reduce(<span class="hljs-comment">/* 第1引数に関数を渡す */</span>
+            (accumulator, item) =&gt; { 
+              <span class="hljs-keyword">return</span> accumulator + item; <span class="hljs-comment">/* 足し算を実行する */</span>
+            },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
+        };
+        <span class="hljs-comment">/* #@range_end(sum_in_array_reduce)  */</span>
+        expect(
+          sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
+        ).to.eql(
+          <span class="hljs-number">10</span>
+        );
+        next();
+      });</pre></div></div>
             
         </li>
         
@@ -996,37 +1011,6 @@ node&gt; array
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-42">&#182;</a>
-              </div>
-              <p>reduceメソッドによるsumの定義</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'reduceメソッドによるsumの定義'</span>, (next) =&gt; {
-          <span class="hljs-comment">/* #@range_begin(sum_in_array_reduce) */</span>
-          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce(<span class="hljs-comment">/* 第1引数に関数を渡す */</span>
-              (accumulator, item) =&gt; { 
-                <span class="hljs-keyword">return</span> accumulator + item; <span class="hljs-comment">/* 足し算を実行する */</span>
-              },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
-          };
-          <span class="hljs-comment">/* #@range_end(sum_in_array_reduce)  */</span>
-          expect(
-            sum([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>])
-          ).to.eql(
-            <span class="hljs-number">10</span>
-          );
-          next();
-        });
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-43">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p><strong>リスト2.10</strong> product関数の定義</p>
 
@@ -1053,11 +1037,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-44">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p><strong>リスト2.11</strong> map関数の定義</p>
 
@@ -1086,11 +1070,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-45">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p><strong>リスト2.12</strong> map関数のテスト</p>
 
@@ -1111,11 +1095,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-46">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h4 id="-">部品を組み合わせる</h4>
 
@@ -1126,11 +1110,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-47">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h5 id="-">関数適用で部品を組み合わせる</h5>
 
@@ -1153,11 +1137,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-48">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p><strong>リスト2.13</strong> constant関数</p>
 
@@ -1175,11 +1159,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-49">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p><strong>リスト2.14</strong> map(alwaysOne)で配列の全要素を1に変える</p>
 
@@ -1222,11 +1206,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-50">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p><strong>リスト2.15</strong> length関数の定義</p>
 
@@ -1248,11 +1232,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-51">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <h5 id="-">関数合成による処理の合成</h5>
 
@@ -1263,11 +1247,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-52">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p><strong>リスト2.16</strong> 関数の合成</p>
 
@@ -1284,11 +1268,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-53">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p><strong>リスト2.17</strong> 関数合成によるlength関数の定義（ポイントフリースタイル）</p>
 
@@ -1309,11 +1293,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-54">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p><strong>リスト2.18</strong> 関数合成によるlength関数の定義（引数を明示したスタイル）</p>
 
@@ -1338,11 +1322,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-55">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <h5 id="-">関数による遅延評価</h5>
 
@@ -1353,11 +1337,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-56">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>評価戦略の種類</p>
 
@@ -1387,11 +1371,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-57">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p><strong>リスト2.19</strong> 正格評価の例</p>
 
@@ -1413,11 +1397,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-58">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p><strong>リスト2.20</strong> 遅延評価の例</p>
 
@@ -1442,11 +1426,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-59">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <h5 id="-">遅延評価によるストリーム</h5>
 
@@ -1457,11 +1441,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-60">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p><strong>リスト2.21</strong> ストリームの例</p>
 
@@ -1490,11 +1474,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-61">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p><strong>リスト2.22</strong> enumFrom関数 </p>
 
@@ -1511,11 +1495,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-62">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p><strong>リスト2.23</strong> 無限の偶数列を作る</p>
 
@@ -1548,11 +1532,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-63">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p><strong>リスト2.24</strong> iterate関数 </p>
 
@@ -1571,11 +1555,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-64">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p><strong>リスト2.25</strong> 無限ストリームの例</p>
 
@@ -1593,11 +1577,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-65">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>自然数列を定義する</p>
 
@@ -1608,11 +1592,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-66">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>偶数列を定義する</p>
 
@@ -1630,11 +1614,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-67">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p><strong>リスト2.26</strong> ストリームのfilter関数</p>
 
@@ -1661,11 +1645,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-68">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p><strong>リスト2.27</strong>filter関数で無限の偶数列を作る</p>
 
@@ -1681,11 +1665,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-69">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p><strong>リスト2.28</strong> ストリームのelemAt関数</p>
 
@@ -1706,11 +1690,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-70">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p><strong>リスト2.29</strong> 3番目の偶数を求める</p>
 
@@ -1731,11 +1715,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-71">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p><strong>リスト2.30</strong> 配列のelemAt関数</p>
 
@@ -1759,11 +1743,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-72">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p><strong>リスト2.31</strong> 4番目の偶数を求める</p>
 
@@ -1788,11 +1772,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-73">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <h3 id="-">テストが容易である</h3>
 
@@ -1803,11 +1787,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-74">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p><strong>リスト2.32</strong> 単体テストの書き方の例</p>
 
@@ -1830,11 +1814,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-75">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p><strong>リスト2.33</strong> 参照透過性のない関数の単体テスト</p>
 
@@ -1867,11 +1851,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-76">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p><strong>リスト2.34</strong> winner関数の分離</p>
 
@@ -1906,11 +1890,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-77">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p><strong>リスト2.35</strong> 副作用のない関数のテスト</p>
 
@@ -1940,11 +1924,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-78">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <h3 id="-">コードの正しさを証明できる</h3>
 
@@ -1955,11 +1939,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-79">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <h4 id="-">プロパティテストで正しさを検証する</h4>
 
@@ -1987,11 +1971,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-80">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p><strong>リスト2.39</strong> プロパティテストのための関数</p>
 
@@ -2041,11 +2025,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-81">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p><strong>リスト2.40</strong> succ関数のプロパティテスト</p>
 
@@ -2072,11 +2056,11 @@ node&gt; array
         </li>
         
         
-        <li id="section-82">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap03.spec.html">次章に移る</a> </p>
 

@@ -3,6 +3,25 @@
 // 第7章 高階関数を活用する
 // =======
 
+// ## 目次
+// > * [カリー化で関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#currying)
+// > * [コンビネータで関数を組み合わせる](http://akimichi.github.io/functionaljs/chap07.spec.html#combinator)
+// >   - [コンビネータの作り方](http://akimichi.github.io/functionaljs/chap07.spec.html#combinator-creation)
+// >   - [関数を合成する](http://akimichi.github.io/functionaljs/chap07.spec.html#composing-function)
+// > * [クロージャーを使う](http://akimichi.github.io/functionaljs/chap07.spec.html#closure)
+// >   - [クロージャーの仕組み](http://akimichi.github.io/functionaljs/chap07.spec.html#mechanism-of-closure)
+// >   - [クロージャーで状態をカプセル化する](http://akimichi.github.io/functionaljs/chap07.spec.html#encapsulation-with-closure)
+// >   - [クロージャーの純粋性](http://akimichi.github.io/functionaljs/chap07.spec.html#pure-closure)
+// > * [関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#passing-function)
+// >   - [コールバックで処理をモジュール化する](http://akimichi.github.io/functionaljs/chap07.spec.html#callback)
+// >   - [畳み込み関数に関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#folding)
+// >   - [非同期処理にコールバック関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#asynchronous)
+// >   - [継続で未来を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#continuation)
+// > * [モナドを作る](http://akimichi.github.io/functionaljs/chap07.spec.html#monad)
+// >   - [恒等モナド](http://akimichi.github.io/functionaljs/chap07.spec.html#identity-monad)
+// >   - [Maybeモナドでエラーを処理する](http://akimichi.github.io/functionaljs/chap07.spec.html#maybe-monad)
+// >   - [IOモナドで副作用を閉じ込める](http://akimichi.github.io/functionaljs/chap07.spec.html#io-monad)
+
 var expect = require('expect.js');
 
 // テストで利用されるlistモジュールとstreamモジュールを定義しておく
@@ -162,20 +181,6 @@ var stream = {
       }
     });
   },
-  map: (lazyList) => {
-    return (transform) => {
-      return match(lazyList,{
-        empty: (_) => {
-          return stream.empty();
-        },
-        cons: (head,tailThunk) => {
-          return stream.cons(transform(head),(_) => {
-            return stream.map(tailThunk())(transform);
-          });
-        }
-      });
-    };
-  },
   /* take:: STREAM -> NUMBER -> STREAM */
   take: (lazyList) => {
     return (number) => {
@@ -227,9 +232,9 @@ var stream = {
 }; // end of 'stream' module
 
 
-// ## 7.2 カリー化で関数を渡す
+// ## 7.2 <section id='currying'>カリー化で関数を渡す</section>
 describe('カリー化で関数を渡す', () => {
-  // multipleOf関数の定義
+  // **リスト7.1** multipleOf関数の定義
   // > multipleOf(n,m)でnの倍数がmかどうかを判定する
   it('multipleOf関数の定義', (next) => {
     /* #@range_begin(multipleOf_uncurried) */
@@ -241,7 +246,7 @@ describe('カリー化で関数を渡す', () => {
       }
     };
     /* #@range_end(multipleOf_uncurried) */
-    // multipleOf関数のテスト
+    // **リスト7.2** multipleOf関数のテスト
     /* #@range_begin(multipleOf_uncurried_test) */
     expect(
       multipleOf(2,4)     /* 4は、2の倍数である */
@@ -256,7 +261,7 @@ describe('カリー化で関数を渡す', () => {
     );
     next();
   });
-  // カリー化されたmultipleOf関数の定義
+  // **リスト7.3** カリー化されたmultipleOf関数の定義
   it('カリー化されたmultipleOf関数', (next) => {
     /* #@range_begin(multipleOf_curried) */
     var multipleOf = (n) => { // 外側の関数定義
@@ -269,7 +274,7 @@ describe('カリー化で関数を渡す', () => {
       };
     };
     /* #@range_end(multipleOf_curried) */
-    // カリー化されたmultipleOf関数のテスト
+    // **リスト7.4** カリー化されたmultipleOf関数のテスト
     /* #@range_begin(multipleOf_curried_test) */
     expect(
       multipleOf(2)(4)   /* 関数適用を2回実行する */ 
@@ -282,7 +287,7 @@ describe('カリー化で関数を渡す', () => {
     ).to.eql(
       false
     );
-    // multipleOf関数のテスト
+    // **リスト7.5** multipleOf関数のテスト
     /* #@range_begin(multipleOf_curried_partilly_applied) */
     var twoFold = multipleOf(2);
     expect(
@@ -294,7 +299,7 @@ describe('カリー化で関数を渡す', () => {
     next();
   });
   it('カリー化された指数関数', (next) => {
-    // 指数関数の例
+    // **リスト7.6** 指数関数の例
     // > exponential(b)(n)でbのn乗を計算する
     /* #@range_begin(exponential_curried) */
     var exponential = (base) => {
@@ -318,7 +323,7 @@ describe('カリー化で関数を渡す', () => {
     ).to.eql(
       4
     );
-    // flip関数の定義
+    // **リスト7.7** flip関数の定義
     // > flip(fun)(x)(y)とすれば、fun(y)(x)を実行する
     /* #@range_begin(flip_definition) */
     var flip = (fun) => {
@@ -330,7 +335,7 @@ describe('カリー化で関数を渡す', () => {
     };
     /* #@range_end(flip_definition) */
 
-    // flip関数でexponential関数の引数の順番を変更する
+    // **リスト7.8** flip関数でexponential関数の引数の順番を変更する
     /* #@range_begin(flipped_exponential) */
     /* flipで引数を逆転させて、2乗を定義する */
     var square = flip(exponential)(2); 
@@ -353,7 +358,7 @@ describe('カリー化で関数を渡す', () => {
   });
   // ### コラム： チャーチ数
   describe('コラム： チャーチ数', () => {
-    // チャーチによる自然数の定義
+    // **リスト7.9** チャーチによる自然数の定義
     it('チャーチによる自然数の定義', (next) => {
       /* #@range_begin(church_numeral) */
       var zero = (f) => {
@@ -414,11 +419,11 @@ describe('カリー化で関数を渡す', () => {
   });
 });
 
-// ## 7.3 コンビネータで関数を組み合わせる
+// ## 7.3 <section id='combinator'>コンビネータで関数を組み合わせる</section>
 describe('コンビネータで関数を組み合わせる', () => {
-  // ### コンビネータの作り方
+  // ### <section id='combinator-creation'>コンビネータの作り方</section>
   describe('コンビネータの作り方', () => {
-    // multipleOf関数の再利用
+    // **リスト7.10** multipleOf関数の再利用
     it('multipleOf関数の再利用', (next) => {
       var multipleOf = (n) => {
         return (m) => {
@@ -451,7 +456,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         };
       };
       var even = multipleOf(2);
-      // notコンビネータ
+      // **リスト7.13** notコンビネータ
       it('notコンビネータ', (next) => {
         /* #@range_begin(not_combinator) */
         /* not:: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
@@ -462,7 +467,7 @@ describe('コンビネータで関数を組み合わせる', () => {
           };
         };
         /* #@range_end(not_combinator) */
-        // notコンビネータによるodd関数の定義
+        // **リスト7.15** notコンビネータによるodd関数の定義
         /* #@range_begin(not_combinator_test) */
         var odd = not(even); // notコンビネータでodd関数を定義する
         /******** テスト ********/
@@ -515,12 +520,12 @@ describe('コンビネータで関数を組み合わせる', () => {
       });
     });
   });
-  // ### 関数を合成する
+  // ### <section id='composing-function'>関数を合成する</section>
   // $$ 
   //    f \circ g 
   // $$
   describe('関数を合成する', () => {
-    // 関数合成の定義
+    // **リスト7.16** 関数合成の定義
     /* #@range_begin(compose_definition) */
     var compose = (f,g) => {
       return (arg) => {
@@ -528,7 +533,7 @@ describe('コンビネータで関数を組み合わせる', () => {
       };
     };
     /* #@range_end(compose_definition) */
-    // 関数合成のテスト
+    // **リスト7.17** 関数合成のテスト
     /* #@range_begin(compose_test) */
     var f = (x) => {
       return x * x + 1; 
@@ -544,7 +549,7 @@ describe('コンビネータで関数を組み合わせる', () => {
     /* #@range_end(compose_test) */
     // #### 関数合成の条件
     describe('関数合成の条件', () => {
-      // 反数関数の合成
+      // **リスト7.18** 反数関数の合成
       it('反数関数の合成', (next) => {
         /* #@range_begin(composition_example_opposite_twice) */
         /* 反数の定義 */
@@ -560,7 +565,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         /* #@range_end(composition_example_opposite_twice) */
         next();
       });
-      // カリー化による合成
+      // **リスト7.20** カリー化による合成
       it('カリー化による合成', (next) => {
         /* #@range_begin(compose_opposite_add_successful) */
         var opposite = (x) => {
@@ -590,7 +595,7 @@ describe('コンビネータで関数を組み合わせる', () => {
     };
     // #### 関数合成による抽象化
     describe('関数合成による抽象化', () => {
-      // 具体的なlast関数
+      // **リスト7.21** 具体的なlast関数
       it('具体的なlast関数', (next) => {
         /* #@range_begin(list_last_recursive) */
         var last = (alist) => {
@@ -622,7 +627,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         );
         next();
       });
-      // 抽象的なlast関数
+      // ** リスト7.22** 抽象的なlast関数
       it('抽象的なlast関数', (next) => {
         /* #@range_begin(list_last_compose) */
         var last = (alist) => {
@@ -638,7 +643,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         );
         next();
       });
-      // 関数合成による様々な関数定義
+      // **表7.1** 関数合成による様々な関数定義
       // 
       // |関数名	   ||関数合成による定義	               |
       // |:------------||------------------------------:|
@@ -827,6 +832,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         });
       };
       /* #@range_end(Y_combinator)  */
+      // **リスト7.24** Yコンビネータによるfactorial関数の実装
       /* #@range_begin(Y_combinator_test) */
       var factorial = Y((fact) => {
         return (n) => {
@@ -849,16 +855,16 @@ describe('コンビネータで関数を組み合わせる', () => {
 }); // コンビネータ
 
 
-// ## クロージャーを使う
+// ## <section id='closure'>クロージャーを使う</section>
 describe('クロージャーを使う', () => {
-  // ### クロージャーの仕組み
   var compose = (f,g) => {
     return (arg) => {
       return f(g(arg));
     };
   };
+  // ### <section id='mechanism-of-closure'>クロージャーの仕組み</section>
   describe('クロージャーの仕組み', () => {
-    // 環境における変数のバインディング
+    // **リスト7.25** 環境における変数のバインディング
     it('環境における変数のバインディング', (next) => {
       /* #@range_begin(variable_binding_in_environment) */
       /* 変数fooに数値1をバインドする */
@@ -866,8 +872,8 @@ describe('クロージャーを使う', () => {
       /* 変数bar に文字列 "a string" をバインドする */
       var bar = "a string"; 
       /* #@range_end(variable_binding_in_environment) */
-      // 環境からバインディングを参照する
-      /* 環境 <foo ↦ 1, bar ↦ "a string"> のもとで評価する */
+
+      // **リスト7.26** 環境からバインディングを参照する
       /* #@range_begin(variable_binding_in_environment_test) */
       /* 環境 <foo |-> 1, bar |-> "a string"> のもとで評価する */
       expect(
@@ -878,7 +884,7 @@ describe('クロージャーを使う', () => {
       /* #@range_end(variable_binding_in_environment_test) */
       next();
     });
-    // 部分適用と環境
+    // **リスト7.27** 部分適用と環境
     it('部分適用と環境', (next) => {
       var multipleOf = (n) => { // 外側の関数定義
         return (m) => {         // 内側の関数定義
@@ -899,9 +905,9 @@ describe('クロージャーを使う', () => {
       /* #@range_end(partial_application_with_environment) */
       next();
     });
-    // ### クロージャーで状態をカプセル化する
+    // ### <section id='encapsulation-with-closure'>クロージャーで状態をカプセル化する</section>
     describe('クロージャーで状態をカプセル化する', () => {
-      // クロージャーとしてのcounter関数
+      // **リスト7.28** クロージャーとしてのcounter関数
       it('クロージャーとしてのcounter関数', (next) => {
         /* #@range_begin(counter_as_closure) */
         var counter = (init) => {
@@ -913,7 +919,7 @@ describe('クロージャーを使う', () => {
           };
         };
         /* #@range_end(counter_as_closure) */
-        // counter関数の利用
+        // **リスト7.29** counter関数の利用法
         /* #@range_begin(counter_as_closure_test) */
         var counterFromZero = counter(0);
         expect(
@@ -931,7 +937,7 @@ describe('クロージャーを使う', () => {
       });
       // #### クロージャーで不変なデータ型を作る
       describe('クロージャーで不変なデータ型を作る', () => {
-        // カリー化された不変なオブジェクト型
+        // **リスト7.31** カリー化された不変なオブジェクト型
         it('カリー化された不変なオブジェクト型', (next) => {
           /* #@range_begin(immutable_object_type_curried) */
           var object = {  // objectモジュール
@@ -956,7 +962,7 @@ describe('クロージャーを使う', () => {
             }
           };
           /* #@range_end(immutable_object_type_curried) */
-          // カリー化された不変なオブジェクト型のテスト
+          // **リスト7.32** カリー化された不変なオブジェクト型のテスト
           /* #@range_begin(immutable_object_type_curried_test) */
           var robots = compose( // object.setを合成する
             object.set("C3PO", "Star Wars"),
@@ -974,7 +980,7 @@ describe('クロージャーを使う', () => {
       });
       // #### クロージャーでジェネレーターを作る
       describe('クロージャーでジェネレーターを作る', () => {
-        // ストリームからジェネレータを作る
+        // **リスト7.33** ストリームからジェネレータを作る
         describe('ストリームからジェネレータを作る', () => {
           /* #@range_begin(generator_from_stream) */
           var generate = (aStream) => {
@@ -994,7 +1000,7 @@ describe('クロージャーを使う', () => {
             };
           };
           /* #@range_end(generator_from_stream) */
-          // 整数列のジェネレータ
+          // **リスト7.34** 整数列のジェネレータ
           it('整数列のジェネレータ',(next) => {
             var enumFrom = (from) => {
               return stream.cons(from, (_) => {
@@ -1101,6 +1107,7 @@ describe('クロージャーを使う', () => {
                   });
                 };
               },
+              // **リスト7.35** ストリームのfilter関数
               /* #@range_begin(stream_filter) */
               /* filter:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
               filter: (predicate) => {
@@ -1122,6 +1129,7 @@ describe('クロージャーを使う', () => {
                 };
               },
               /* #@range_end(stream_filter) */
+              // **リスト7.36** ストリームのremove関数
               /* #@range_begin(stream_remove) */
               /* remove:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
               remove: (predicate) => {
@@ -1162,7 +1170,7 @@ describe('クロージャーを使う', () => {
                 }
               };
             };
-            // エラトステネスのふるいによる素数の生成 
+            // **リスト7.37** 素数列の生成 
             // [![IMAGE ALT TEXT](http://img.youtube.com/vi/1NzrrU8BawA/0.jpg)](http://www.youtube.com/watch?v=1NzrrU8BawA "エラトステネスのふるいの動画")
             /* #@range_begin(eratosthenes_sieve) */
             /* エラトステネスのふるい */
@@ -1192,7 +1200,7 @@ describe('クロージャーを使う', () => {
             );
             /* #@range_end(eratosthenes_sieve_test) */
 
-            // 素数のジェネレータ
+            // **リスト7.39** 素数のジェネレータ
             /* #@range_begin(prime_generator) */
             var primes = sieve(stream.enumFrom(2)); // 無限の素数列
             var primeGenerator = generate(primes);  // 素数のジェネレータ
@@ -1212,6 +1220,7 @@ describe('クロージャーを使う', () => {
         });
         // #### コラム：ECMAScript2015（ES6）におけるジェネレータ
         it('ECMAScript2015（ES6）におけるジェネレータ', (next) => {
+          // **リスト7.40** ECMAScript2015のジェネレータ
           /* #@range_begin(es6_generator) */
           function* genCounter(){
             yield 1;
@@ -1235,9 +1244,9 @@ describe('クロージャーを使う', () => {
       });
     }); // クロージャーで状態をカプセル化する
   });
-  // ### クロージャーの純粋性 
+  // ### <section id='pure-closure'>クロージャーの純粋性 </section>
   describe('クロージャーの純粋性', () => {
-    // multipleOf関数の参照透過性
+    // **リスト 7.41** multipleOf関数の参照透過性
     it('multipleOf関数の参照透過性', (next) => {
       var multipleOf = (n) => {
         return (m) => {
@@ -1262,7 +1271,7 @@ describe('クロージャーを使う', () => {
       /* #@range_end(multipleOf_is_transparent) */
       next();
     });
-    // 参照透過性のないクロージャーの例
+    // **リスト7.42** 参照透過性のないクロージャーの例
     it('参照透過性のないクロージャーの例', (next) => {
       var counter = (init) => {
         var _init = init;
@@ -1281,7 +1290,7 @@ describe('クロージャーを使う', () => {
       /* #@range_end(counter_is_not_transparent) */
       next();
     });
-    // カウンターをクロージャーで定義する
+    // **リスト7.44** カウンターをクロージャーで定義する
     it('カウンターをクロージャーで定義する', (next) => {
       /* チャーチ数 church numeral */
       var zero = (f) => {
@@ -1289,11 +1298,14 @@ describe('クロージャーを使う', () => {
           return x;
         };
       };
+      // **リスト7.45** チャーチ数のone関数
+      /* #@range_begin(church_one) */
       var one = (f) => {
         return (x) => {
           return f(x);
         };
       };
+      /* #@range_end(church_one) */
       var two = (f) => {
         return (x) => {
           return f(f(x));
@@ -1351,16 +1363,16 @@ describe('クロージャーを使う', () => {
   });
 });
 
-// ## 7.5 関数を渡す
+// ## 7.5 <section id='passing-function'>関数を渡す</section>
 describe('関数を渡す', () => {
   var compose = (f,g) => {
     return (arg) => {
       return f(g(arg));
     };
   };
-  // ### コールバックで処理をモジュール化する
+  // ### <section id='callback'>コールバックで処理をモジュール化する</section>
   describe('コールバックで処理をモジュール化する', () => {
-    // 直接的な呼び出しの例
+    // **リスト7.47** 直接的な呼び出しの例
     it('直接的な呼び出しの例', (next) => {
       /* #@range_begin(direct_call) */
       var succ = (n) => {
@@ -1377,7 +1389,7 @@ describe('関数を渡す', () => {
       /* #@range_end(direct_call) */
       next();
     });
-    // 単純なコールバックの例
+    // **リスト7.48** 単純なコールバックの例
     it('単純なコールバックの例', (next) => {
       var succ = (n) => {
         return n + 1;
@@ -1400,7 +1412,7 @@ describe('関数を渡す', () => {
       next();
     });
     it('リストのmap関数', (next) => {
-      // リストのmap関数の定義
+      // **リスト7.49** リストのmap関数の定義
       /* #@range_begin(list_map) */
       /* map:: FUN[T => T] => LIST[T] =>  LIST[T] */
       var map = (callback) => {
@@ -1419,7 +1431,7 @@ describe('関数を渡す', () => {
       };
       /* #@range_end(list_map) */
 
-      // map関数のテスト
+      // **リスト7.50** map関数のテスト
       /* #@range_begin(list_map_test) */
       /* map処理の対象となる数値のリスト */
       var numbers = list.cons(1,
@@ -1448,10 +1460,10 @@ describe('関数を渡す', () => {
       next();
     });
   });
-  // ### 畳み込み関数に関数を渡す
+  // ### <section id='folding'>畳み込み関数に関数を渡す</section>
   describe('畳み込み関数に関数を渡す', () => {
     describe('コールバックによるリストの再帰関数', () => {
-      // sum関数の定義
+      // **リスト7.51** sum関数の定義
       it('sum関数の定義', (next) => {
         var list = {
           match : (data, pattern) => {
@@ -1481,7 +1493,7 @@ describe('関数を渡す', () => {
             };
           },
           /* #@range_end(list_sum) */
-          // コールバック関数を用いたsum関数の再定義
+          // **リスト7.52** コールバック関数を用いたsum関数の再定義
           /* #@range_begin(list_sum_callback) */
           sumWithCallback: (alist) => {
             return (accumulator) => {
@@ -1502,7 +1514,7 @@ describe('関数を渡す', () => {
           /* #@range_end(list_sum_callback) */
         };
 
-        // sumWithCallback関数のテスト
+        // **リスト7.53** sumWithCallback関数のテスト
         /* #@range_begin(list_sum_callback_test) */
         var numbers = list.cons(1, 
                                 list.cons(2,
@@ -1527,7 +1539,7 @@ describe('関数を渡す', () => {
         );
         next();
       });
-      // length関数の定義
+      // **リスト7.54** length関数の定義
       it('length関数の定義', (next) => {
         var list = {
           match : (data, pattern) => {
@@ -1557,7 +1569,7 @@ describe('関数を渡す', () => {
             };
           },
           /* #@range_end(list_length) */
-          // コールバックによるlength関数の再定義
+          // **リスト7.55** length関数の再定義
           /* #@range_begin(list_length_callback) */
           lengthWithCallback: (alist) => {
             return (accumulator) => {
@@ -1586,7 +1598,7 @@ describe('関数を渡す', () => {
         ).to.eql(
           3
         );
-        // リストの長さのテスト
+        // **リスト7.56** lengthWithCallback関数でリストの長さをテストする
         /* #@range_begin(list_length_callback_test) */
         /* lengthWithCallback関数に渡すコールバック関数 */
         var callback = (n) => {  
@@ -1604,7 +1616,7 @@ describe('関数を渡す', () => {
       });
     });
     describe('畳み込み関数', () => {
-      // リストの畳み込み関数
+      // **リスト7.58** リストの畳み込み関数
       /* #@range_begin(list_foldr) */
       var foldr = (alist) => {
         return (accumulator) => {
@@ -1621,7 +1633,8 @@ describe('関数を渡す', () => {
         };
       };
       /* #@range_end(list_foldr) */
-      // foldr関数によるsum関数
+      // ** リスト7.59** foldr関数によるsum関数とlength関数の定義
+      /* foldr関数によるsum関数 */
       it("foldr関数によるsum関数", (next) => {
         /* #@range_begin(foldr_sum) */
         var sum = (alist) => {
@@ -1641,7 +1654,7 @@ describe('関数を渡す', () => {
         );
         next();
       });
-      // foldr関数によるlength関数
+      /* foldr関数によるlength関数 */
       it("foldrでlength関数を作る", (next) => {
         /* #@range_begin(foldr_length) */
         var length = (alist) => {
@@ -1661,88 +1674,100 @@ describe('関数を渡す', () => {
         );
         next();
       });
-      it("foldrでproductを作る", (next) => {
-        /* #@range_begin(foldr_product) */
-        var product = (alist) => {
-          return foldr(alist)(1)((item) => {
-            return (accumulator) => {
-              return accumulator * item;
-            };
-          });
-        };
-        /********* テスト **********/
-        /* list = [1,2,3] */
-        var seq = list.cons(1,
-                            list.cons(2,
-                                      list.cons(3,
-                                                list.empty())));
-        expect(
-          product(seq)
-        ).to.eql(
-          6 // 1 * 2 * 3 = 6
-        );
-        /* #@range_end(foldr_product) */
-        next();
+      // **表7.2** 反復処理における蓄積変数の初期値とコールバック関数の関係
+      //
+      // |関数名	   |蓄積変数の初期値 | 関数合成による定義	                      ||
+      // |:------------|--------------|-------------------------------------------||
+      // |sum          |0             |(n) => { return (m) => { return n + m;};}  ||
+      // |length       |0             |(n) => { return (m) => { return 1 + m;};}  ||
+      // |product      |1             |(n) => { return (m) => { return n ＊ m;};}  ||
+      // |all          |true          |(n) => { return (m) => { return n ＆＆ m;};} ||
+      // |any          |true          |(n) => { return (m) => { return n ｜｜ m;};}||
+      //
+      describe('反復処理における蓄積変数の初期値とコールバック関数の関係', () => {
+        it("foldrでproductを作る", (next) => {
+          /* #@range_begin(foldr_product) */
+          var product = (alist) => {
+            return foldr(alist)(1)((item) => {
+              return (accumulator) => {
+                return accumulator * item;
+              };
+            });
+          };
+          /********* テスト **********/
+          /* list = [1,2,3] */
+          var seq = list.cons(1,
+                              list.cons(2,
+                                        list.cons(3,
+                                                  list.empty())));
+          expect(
+            product(seq)
+          ).to.eql(
+            6 // 1 * 2 * 3 = 6
+          );
+          /* #@range_end(foldr_product) */
+          next();
+        });
+        it("foldrでallを作る", (next) => {
+          var all = (alist) => {
+            return foldr(alist)(true)((item) => {
+              return (accumulator) => {
+                return accumulator && item;
+              };
+            });
+          };
+          /********* テスト **********/
+          var allTrueList = list.cons(true,
+                                      list.cons(true,
+                                                list.cons(true,
+                                                          list.empty())));
+          expect(
+            all(allTrueList)
+          ).to.eql(
+            true
+          );
+          var someFalseList = list.cons(true,
+                                        list.cons(false,
+                                                  list.cons(true,
+                                                            list.empty())));
+          expect(
+            all(someFalseList)
+          ).to.eql(
+            false
+          );
+          next();
+        });
+        it("foldrでanyを作る", (next) => {
+          var any = (alist) => {
+            return foldr(alist)(false)((item) => {
+              return (accumulator) => {
+                return accumulator || item;
+              };
+            });
+          };
+          /********* テスト **********/
+          var allTrueList = list.cons(true,
+                                      list.cons(true,
+                                                list.cons(true,
+                                                          list.empty())));
+          expect(
+            any(allTrueList)
+          ).to.eql(
+            true
+          );
+          var someFalseList = list.cons(true,
+                                        list.cons(false,
+                                                  list.cons(true,
+                                                            list.empty())));
+          expect(
+            any(someFalseList)
+          ).to.eql(
+            true
+          );
+          next();
+        });
       });
-      it("foldrでallを作る", (next) => {
-        var all = (alist) => {
-          return foldr(alist)(true)((item) => {
-            return (accumulator) => {
-              return accumulator && item;
-            };
-          });
-        };
-        /********* テスト **********/
-        var allTrueList = list.cons(true,
-                                    list.cons(true,
-                                              list.cons(true,
-                                                        list.empty())));
-        expect(
-          all(allTrueList)
-        ).to.eql(
-          true
-        );
-        var someFalseList = list.cons(true,
-                                    list.cons(false,
-                                              list.cons(true,
-                                                        list.empty())));
-        expect(
-          all(someFalseList)
-        ).to.eql(
-          false
-        );
-        next();
-      });
-      it("foldrでanyを作る", (next) => {
-        var any = (alist) => {
-          return foldr(alist)(false)((item) => {
-            return (accumulator) => {
-              return accumulator || item;
-            };
-          });
-        };
-        /********* テスト **********/
-        var allTrueList = list.cons(true,
-                                    list.cons(true,
-                                              list.cons(true,
-                                                        list.empty())));
-        expect(
-          any(allTrueList)
-        ).to.eql(
-          true
-        );
-        var someFalseList = list.cons(true,
-                                    list.cons(false,
-                                              list.cons(true,
-                                                        list.empty())));
-        expect(
-          any(someFalseList)
-        ).to.eql(
-          true
-        );
-        next();
-      });
-      // foldr関数によるreverse関数の定義
+      // **リス7.60** foldr関数によるreverse関数の定義
       it("foldr関数によるreverse関数の定義", (next) => {
         var list = {
           match : (data, pattern) => {
@@ -1809,7 +1834,7 @@ describe('関数を渡す', () => {
         );
         next();
       });
-      // foldr関数によるfind関数の定義
+      // **リスト7.61** foldr関数によるfind関数の定義
       it("foldr関数によるfind関数の定義", (next) => {
         var even = (n) => {
           return (n % 2) === 0;
@@ -1886,7 +1911,7 @@ describe('関数を渡す', () => {
     });
     // #### コラム：配列の畳み込み関数
     describe("コラム：配列の畳み込み関数", () => {
-      // reduceメソッドによるfromArray関数
+      // **リスト7.62** reduceメソッドによるfromArray関数
       it("reduceメソッドによるfromArray関数", (next) => {
         /* #@range_begin(list_fromArray) */
         var fromArray = (array) => {
@@ -1906,9 +1931,9 @@ describe('関数を渡す', () => {
       });
     });
   });
-  // ### 非同期処理にコールバック関数を渡す 
+  // ### <section id='asynchronous'>非同期処理にコールバック関数を渡す</section>
   describe('非同期処理にコールバック関数を渡す', () => {
-    // tarai関数の定義
+    // **リスト7.64** tarai関数の定義
     it("tarai関数の定義", (next) => {
       /* #@range_begin(tarai_function) */
       /* たらいまわし関数 */
@@ -1930,12 +1955,12 @@ describe('関数を渡す', () => {
       next();
     });
   });
-  // ### 継続で未来を渡す
+  // ### <section id='continuation'>継続で未来を渡す</section>
   // > https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A
   describe('継続で未来を渡す', () => {
     // #### 継続とは何か
     describe('継続とは何か', () => {
-      // 継続渡しのsucc関数
+      // **リスト7.67** 継続渡しのsucc関数
       it("継続渡しのsucc関数", (next) => {
         /* #@range_begin(succ_cps) */
         /* continues関数は、succ(n)のあとに続く継続 */
@@ -1944,7 +1969,7 @@ describe('関数を渡す', () => {
         };
         /* #@range_end(succ_cps) */
 
-        // 継続渡しのsucc関数をテストする
+        // **リスト7.68** 継続渡しのsucc関数をテストする
         var identity = (any) => {
           return any;
         };
@@ -1960,7 +1985,7 @@ describe('関数を渡す', () => {
         /* #@range_end(succ_cps_test) */
         next();
       });
-      // add(2, succ(3))の継続渡し
+      // **リスト7.70** add(2, succ(3))の継続渡し
       it("add(2, succ(3))の継続渡し", (next) => {
         var identity = (any) => { // 値をそのまま返すだけの継続
           return any;
@@ -1988,7 +2013,7 @@ describe('関数を渡す', () => {
       });
     });
     describe("継続で未来を選ぶ", () => {
-      // 継続による反復処理からの脱出
+      // **リスト7.71** 継続による反復処理からの脱出
       it("継続による反復処理からの脱出", (next) => {
         /* #@range_begin(stream_find_cps) */
         var find = (aStream,
@@ -2023,7 +2048,7 @@ describe('関数を渡す', () => {
         var identity = (any) => {
           return any;
         };
-        // find関数に渡す2つの継続
+        // **リスト7.72** find関数に渡す2つの継続
         /* #@range_begin(stream_find_continuations) */
         /* 成功継続では、反復処理を脱出する */
         var continuesOnSuccess = identity; 
@@ -2042,7 +2067,7 @@ describe('関数を渡す', () => {
                                     );  
                                   };
         /* #@range_end(stream_find_continuations) */
-        // find関数のテスト
+        // **リスト7.73** find関数のテスト
         /* upto3変数は、1から3までの有限ストリーム */
         var upto3 = stream.cons(1,(_) => {
           return stream.cons(2, (_) => {
@@ -2077,7 +2102,7 @@ describe('関数を渡す', () => {
     // #### 非決定計算機を作る
     // > SICPの非決定計算の章は、http://sicp.iijlab.net/fulltext/x430.html 
 
-    // 決定性計算機
+    // **リスト7.74** 決定性計算機
     // > 非決定性計算機の前に、決定性計算機を復習
     describe("決定計算機", () => {
       // 式の代数的データ構造
@@ -2113,7 +2138,7 @@ describe('関数を渡す', () => {
         match : (anExp, pattern) => {
           return anExp.call(exp, pattern);
         },
-        // 非決定計算機の式
+        // **リスト7.75** 非決定計算機の式
         /* #@range_begin(amb_expression) */
         amb : (alist) => {
           return (pattern) => {
@@ -2139,14 +2164,14 @@ describe('関数を渡す', () => {
                        continuesOnFailure) => {
                          /* 式に対してパターンマッチを実行する */
                          return exp.match(anExp, { 
-                           // 数値の評価
+                           // **リスト7.79** 数値の評価
                            /* #@range_begin(amb_calculate_num) */
                            /* 数値を評価する */
                            num: (n) => {
                              return continuesOnSuccess(n, continuesOnFailure);
                            },
                            /* #@range_end(amb_calculate_num) */
-                           // 足し算の評価 
+                           // **リスト7.80** 足し算の評価 
                            /* #@range_begin(amb_calculate_add) */
                            /* 足し算の式を評価する */
                            add: (x, y) => {
@@ -2160,7 +2185,7 @@ describe('関数を渡す', () => {
                              }, continuesOnFailure);    /* x の計算に失敗すれば、おおもとの失敗継続を渡す */
                            },
                            /* #@range_end(amb_calculate_add) */
-                           // amb式の評価
+                           // **リスト7.81** amb式の評価
                            /* #@range_begin(amb_calculate_amb) */
                            /* amb式を評価する */
                            amb: (choices) => {
@@ -2192,7 +2217,7 @@ describe('関数を渡す', () => {
                        };
       /* #@range_end(amb_calculate) */
 
-      // 非決定計算機の駆動関数
+      // **リスト7.82** 非決定計算機の駆動関数
       /* #@range_begin(amb_driver) */
       var driver = (expression) =>{
         /* 中断された計算を継続として保存する変数 */
@@ -2243,7 +2268,7 @@ describe('関数を渡す', () => {
         );
         next();
       });
-      // 非決定計算機のテスト
+      // **リスト7.83** 非決定計算機のテスト
       it("非決定計算機のテスト", (next) => {
         /* amb[1,2] + amb[3,4] = amb[4, 5, 5, 6] */
         /* #@range_begin(amb_test) */
@@ -2368,16 +2393,16 @@ describe('関数を渡す', () => {
   }); // 継続を渡す
 }); // 関数を渡す
 
-// ## 7.6 モナドを作る
+// ## 7.6 <section id='monad'>モナドを作る</section>
 describe('モナドを作る', () => {
   var compose = (f,g) => {
     return (arg) => {
       return f(g(arg));
     };
   };
-  // ### 恒等モナド
+  // ### <section id='identity-monad'>恒等モナド</section>
   describe('恒等モナド', () => {
-    // 恒等モナドの定義
+    // **リスト7.85** 恒等モナドの定義
     var ID = {
       /* #@range_begin(identity_monad) */
       /* unit:: T => ID[T] */
@@ -2397,7 +2422,7 @@ describe('モナドを作る', () => {
         };
       }
     };
-    // 恒等モナドunit関数のテスト
+    // **リスト7.86** 恒等モナドunit関数のテスト
     it("恒等モナドunit関数のテスト", (next) => {
       /* #@range_begin(identity_monad_unit_test) */
       expect(
@@ -2408,7 +2433,7 @@ describe('モナドを作る', () => {
       /* #@range_end(identity_monad_unit_test) */
       next();
     });
-    // 恒等モナドflatMap関数のテスト
+    // **リスト7.87** 恒等モナドflatMap関数のテスト
     it("恒等モナドflatMap関数のテスト", (next) => {
       var succ = (n) => {
         return n + 1;
@@ -2425,7 +2450,7 @@ describe('モナドを作る', () => {
       var double = (m) => {
         return m * 2;
       };
-      // flatMapと関数合成の類似性
+      // **リスト7.88** flatMapと関数合成の類似性
       /* #@range_begin(flatMap_and_composition) */
       expect(
         ID.flatMap(ID.unit(1))((one) => {    
@@ -2441,7 +2466,7 @@ describe('モナドを作る', () => {
       /* #@range_end(flatMap_and_composition) */
       next();
     });
-    // #### 恒等モナドのモナド則
+    // **リスト7.89**  恒等モナドのモナド則
     describe("恒等モナドのモナド則", () => {
       /* #@range_begin(identity_monad_laws) */
       it("flatMap(instanceM)(unit) === instanceM", (next) => {
@@ -2502,10 +2527,10 @@ describe('モナドを作る', () => {
       });
     });
   });
-  // ### Maybeモナドでエラーを処理する
+  // ### <section id='maybe-monad'>Maybeモナドでエラーを処理する</section>
   describe('Maybeモナドでエラーを処理する', () => {
     describe('Maybeモナドを作る', () => {
-      // Maybeの代数的構造
+      // **リスト7.91** Maybeの代数的構造
       /* #@range_begin(algebraic_type_maybe) */
       var maybe = {
         match: (exp, pattern) => {
@@ -2523,7 +2548,7 @@ describe('モナドを作る', () => {
         }
       };
       /* #@range_end(algebraic_type_maybe) */
-      // Maybeモナドの定義
+      // **リスト7.92** Maybeモナドの定義
       var MAYBE = {
         /* #@range_begin(maybe_monad) */
         /* unit:: T => MAYBE[T] */
@@ -2560,7 +2585,7 @@ describe('モナドを作る', () => {
         },
         /* #@range_end(maybe_monad) */
       };
-      // Maybeモナドの利用法
+      // **リスト7.93** Maybeモナドの利用法
       it("Maybeモナドの利用法", (next) => {
         /* #@range_begin(maybe_monad_add_test) */
         /* 足し算を定義する */
@@ -2589,12 +2614,12 @@ describe('モナドを作る', () => {
       });
     });
   });
-  // ### IOモナドで副作用を閉じ込める
+  // ### <section id='io-monad'>IOモナドで副作用を閉じ込める</section>
   describe('IOモナドで副作用を閉じ込める', () => {
     var match = (data, pattern) => {
       return data.call(pattern, pattern);
     };
-    // Pair型の定義
+    // **リスト7.94** Pair型の定義
     /* #@range_begin(pair_datatype) */
     var pair = {
       /* pair のデータ構造 */
@@ -2621,7 +2646,7 @@ describe('モナドを作る', () => {
       }
     };
     /* #@range_end(pair_datatype) */
-    // 外界を明示したIOモナドの定義
+    // **リスト7.95** 外界を明示したIOモナドの定義
     describe('外界を明示したIOモナドの定義', () => {
       var IO = {
         /* #@range_begin(io_monad_definition_with_world) */
@@ -2645,7 +2670,7 @@ describe('モナドを作る', () => {
           };
         },
         /* #@range_end(io_monad_definition_with_world) */
-        // IOモナドの補助関数
+        // **リスト7.96** IOモナドの補助関数
         /* #@range_begin(io_monad_definition_with_world_helper_function) */
         /* done:: T => IO[T] */
         done: (any) => {
@@ -2666,7 +2691,7 @@ describe('モナドを作る', () => {
           return IO.unit(null)(world);
         };
       };
-      // run関数の利用法
+      // **リスト7.98** run関数の利用法
       /* #@range_begin(run_println) */
       /* 初期の外界に null をバインドする */
       var initialWorld = null; 
@@ -2679,7 +2704,7 @@ describe('モナドを作る', () => {
     });
     describe('外界を引数に持たないIOモナド', () => {
       var fs = require('fs');
-      // IOモナドの定義（ 外界を引数に持たない）
+      // **リスト7.99**外界を明示しないIOモナドの定義
       /* #@range_begin(io_monad_definition) */
       var IO = {
         /* unit:: T => IO[T] */
@@ -2728,7 +2753,7 @@ describe('モナドを作る', () => {
         }
       }; // IO monad
       /* #@range_end(io_monad_definition) */
-      // run関数の利用法
+      // **リスト7.100** run関数の利用法
       it('run関数の利用法', (next) => {
         /* #@range_begin(run_println_without_world) */
         expect(
@@ -2743,7 +2768,7 @@ describe('モナドを作る', () => {
       // #### IOアクションを合成する
       describe('IOアクションを合成する', () => {
         /* #@range_begin(io_monad_is_composable) */
-        // seq関数の定義
+        // **リスト7.102** seq関数の定義
         /* IO.seq:: IO[a] => IO[b] => IO[b] */
         IO.seq = (instanceA) => {
           return (instanceB) => {
@@ -2784,7 +2809,7 @@ describe('モナドを作る', () => {
         };
         /* #@range_end(io_monad_is_composable) */
 
-        // stringモジュール
+        // **リスト7.103** stringモジュール
         /* #@range_begin(string_module) */
         var string = {
           /* 先頭文字を取得する */
@@ -2825,6 +2850,8 @@ describe('モナドを作る', () => {
         });
       });
       // IOモナドで参照透過性を確保する
+      //
+      // 本文では割愛したが、IOモナドが入出力についても参照透過性を確保していることを単体テストで示す
       it('IOモナドで参照透過性を確保する', (next) => {
         expect(
           IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {

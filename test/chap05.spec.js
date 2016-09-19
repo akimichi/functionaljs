@@ -3,14 +3,23 @@
 // 第5章 プログラムをコントロールする仕組み
 // ============================
 
+// ## 目次
+// > * [条文分岐の種類と特徴](http://akimichi.github.io/functionaljs/chap05.spec.html#conditional-statements)
+// >   - [条件分岐としてのif文](http://akimichi.github.io/functionaljs/chap05.spec.html#if-statement)
+// >   - [条件分岐としてのswitch文](http://akimichi.github.io/functionaljs/chap05.spec.html#switch-statement)
+// > * [反復処理の種類と特徴](http://akimichi.github.io/functionaljs/chap05.spec.html#loop-statements)
+// > * [再帰による反復処理](http://akimichi.github.io/functionaljs/chap05.spec.html#recursion)
+// >   - [再帰呼び出しの条件](http://akimichi.github.io/functionaljs/chap05.spec.html#requirements-of-recursion)
+// >   - [再帰呼び出しの利点](http://akimichi.github.io/functionaljs/chap05.spec.html#advantages-of-recursion)
+
+
 var expect = require('expect.js');
 
-
-// ## 5.1 条文分岐の種類と特徴
+// ## 5.1 <section id='conditional-statements'>条文分岐の種類と特徴</section>
 describe('条文分岐の種類と特徴', () => {
-  // ### 条文分岐としてのif文
+  // ### <section id='if-statement'>条文分岐としてのif文</section>
   describe('条件分岐としてのif文', () => {
-    // 偶数かどうかを判定する
+    // **リスト5.2** 偶数かどうかを判定する
     it('偶数かどうかを判定する', (next) => {
       /* ##@range_begin(even_function)*/
       var even = (n) => {
@@ -33,7 +42,7 @@ describe('条文分岐の種類と特徴', () => {
       );
       next();
     });
-    // ネストされたif文
+    // **リスト5.3** ネストされたif文
     it("ネストされたif文", (next) => {
       /* #@range_begin(compare) */
       var compare =  (n,m) => {
@@ -69,7 +78,7 @@ describe('条文分岐の種類と特徴', () => {
       );
       next();
     });
-    // else if文による3つ以上の条件分岐
+    // **リスト5.4** else if文による3つ以上の条件分岐
     it("else if文による3つ以上の条件分岐", (next) => {
       /* #@range_begin(elseif) */
       var compare =  (n,m) => {
@@ -118,7 +127,7 @@ describe('条文分岐の種類と特徴', () => {
     // 3
     // ~~~
     describe('if文の問題点', () => {
-      // returnで関数を抜ける
+      // **リスト5.7** returnで関数を抜ける
       it('returnで関数を抜ける', (next) => {
         /* ##@range_begin(even_function_again) */
         var even = (n) => {
@@ -135,11 +144,12 @@ describe('条文分岐の種類と特徴', () => {
       });
     });
   });
-  // ### 条件分岐としてのswitch文
+  // ### <section id='switch-statement'>条件分岐としてのswitch文</section>
+  // > 参考 https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch
   describe('条件分岐としてのswitch文', () => {
     // #### switch文の問題点
     it("switch文の問題点", (next) => {
-      // 可変なデータとのマッチング
+      // **リスト5.10** 可変なデータとのマッチング
       /* #@range_begin(switch_for_mutable) */
       var match_for_mutable = (array) => {
         switch(array){
@@ -161,11 +171,12 @@ describe('条文分岐の種類と特徴', () => {
     });
   });
   // #### 代数的データ型とパターンマッチ
+  // > 参考 [代数的データ型](https://ja.wikipedia.org/wiki/%E4%BB%A3%E6%95%B0%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B)
   describe('代数的データ型とパターンマッチ', () => {
     var match = (data, pattern) => {
       return data.call(pattern, pattern);
     };
-    // 代数的データ構造によるリスト
+    // **リスト5.12** 代数的データ構造によるリスト
     it('代数的データ構造によるリスト', (next) => {
       /* #@range_begin(list_in_algebraic_datatype) */
       /* リストの代数的データ型 */
@@ -181,7 +192,7 @@ describe('条文分岐の種類と特徴', () => {
       };
       /* #@range_end(list_in_algebraic_datatype) */
 
-      // 代数的データ構造のmatch関数
+      // **リスト5.13** 代数的データ構造のmatch関数
       /* #@range_begin(match_in_algebraic_datatype) */
       /* 代数的データ型に対してパターンマッチを実現する関数 */
       var match = (data, pattern) => {
@@ -189,7 +200,7 @@ describe('条文分岐の種類と特徴', () => {
       };
       /* #@range_end(match_in_algebraic_datatype) */
 
-      // リストの関数定義
+      // **リスト5.14** リストの関数定義
       /* #@range_begin(list_function_using_algebraic_datatype) */
       /* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
          判定する */
@@ -232,7 +243,7 @@ describe('条文分岐の種類と特徴', () => {
       };
       /* #@range_end(list_function_using_algebraic_datatype) */
 
-      // 代数的データ構造のリストの関数のテスト
+      // **リスト5.15** 代数的データ構造のリストの関数のテスト
       /* #@range_begin(list_in_algebraic_datatype_test) */
       /* emptyは空のリストか */
       expect(
@@ -269,9 +280,9 @@ describe('条文分岐の種類と特徴', () => {
   });
 });
 
-// ## 5.2 反復処理の種類と特徴
+// ## 5.2 <section id='loop-statements'>反復処理の種類と特徴</section>
 describe("反復処理の種類と特徴", () => {
-  // while文の例
+  // **リスト5.16** while文の例
   it("while文の例", (next) => {
     /* #@range_begin(while_counter) */
     var counter = 0;         // 変数の初期化
@@ -287,7 +298,7 @@ describe("反復処理の種類と特徴", () => {
     /* #@range_end(while_counter) */
     next();
   });
-  // for文の例
+  // **リスト5.17** for文の例
   it("for文の例", (next) => {
     /* #@range_begin(for_example) */
     for (var counter = 0; counter < 10; counter += 1) {
@@ -302,7 +313,7 @@ describe("反復処理の種類と特徴", () => {
     /* #@range_end(for_example) */
     next();
   });
-  // forEachメソッドの例
+  // **リスト5.18** forEachメソッドの例
   it("forEach文によるlength", (next) => {
     /* #@range_begin(forEach_length) */
     var length = (array) => {
@@ -323,11 +334,13 @@ describe("反復処理の種類と特徴", () => {
   });
 });
 
-// ## 5.3 再帰による反復処理
+// ## 5.3 <section id='recursion'>再帰による反復処理</section>
 describe('再帰による反復処理', () => {
+  // ### 複利法 
   describe('複利法の例', () => {
-    // 複利の計算
     // [![IMAGE ALT TEXT](http://img.youtube.com/vi/tviCjVufyTU/0.jpg)](https://www.youtube.com/watch?v=tviCjVufyTU "複利計算の公式")
+
+    // **リスト5.19** 複利の計算
     it("複利の計算", (next) => {
       /* #@range_begin(compound_interest) */
       var compoundInterest = (a, r, n) => {
@@ -357,15 +370,15 @@ describe('再帰による反復処理', () => {
       next();
     });
   });
-  // ### 再帰呼び出しの条件
+  // ### <section id='requirements-of-recursion'>再帰呼び出しの条件</section>
   describe('再帰呼び出しの条件', () => {
-    // infiniteLoop関数
+    // **リスト5.20** infiniteLoop関数
     /* ##@range_begin(infiniteLoop) */
     var infiniteLoop = (_) => {
       return infiniteLoop(_);
     };
     /* ##@range_end(infiniteLoop) */
-    // 再帰によるmap関数
+    // **リスト5.21** 再帰によるmap関数
     it('再帰によるmap関数', (next) => {
       /* 第5章で紹介したリスト型 */
       var match = (exp, pattern) => {
@@ -392,7 +405,7 @@ describe('再帰による反復処理', () => {
         });
       };
       /* #@range_end(recursive_map) */
-      // 再帰によるtoArray関数
+      // **リスト5.22** 再帰によるtoArray関数
       /* #@range_begin(recursive_toArray) */
       var toArray = (alist) => {
         /* 補助関数 toArrayHelper */
@@ -418,56 +431,56 @@ describe('再帰による反復処理', () => {
       next();
     });
   });
-  // ### 再帰処理の利点
+  // ### <section id='advantages-of-recursion'>再帰処理の利点</section>
   describe('再帰処理の利点', () => {
-    var match = (exp, pattern) => {
-      return exp.call(pattern, pattern);
-    };
-    var empty = (_) => {
-      return (pattern) => {
-        return pattern.empty(_);
-      };
-    };
-    var cons = (x, xs) => {
-      return (pattern) => {
-        return pattern.cons(x, xs);
-      };
-    };
-    var isEmpty = (list) => {
-      return match(list, {
-        empty: (_) => {
-          return true;
-        },
-        cons: (head, tail) => {
-          return false;
-        }
-      });
-    };
-    var head = (list) => {
-      return match(list, {
-        empty: (_) => {
-          return null;
-        },
-        cons: (head, tail) => {
-          return head;
-        }
-      });
-    };
-    var tail = (list) => {
-      return match(list, {
-        empty: (_) => {
-          return null;
-        },
-        cons: (head, tail) => {
-          return tail;
-        }
-      });
-    };
     // #### 再帰処理と再帰的データ構造
     describe('再帰処理と再帰的データ構造', () => {
       // #### 再帰的データ構造としてのリスト
+      var match = (exp, pattern) => {
+        return exp.call(pattern, pattern);
+      };
+      var empty = (_) => {
+        return (pattern) => {
+          return pattern.empty(_);
+        };
+      };
+      var cons = (x, xs) => {
+        return (pattern) => {
+          return pattern.cons(x, xs);
+        };
+      };
+      var isEmpty = (list) => {
+        return match(list, {
+          empty: (_) => {
+            return true;
+          },
+          cons: (head, tail) => {
+            return false;
+          }
+        });
+      };
+      var head = (list) => {
+        return match(list, {
+          empty: (_) => {
+            return null;
+          },
+          cons: (head, tail) => {
+            return head;
+          }
+        });
+      };
+      var tail = (list) => {
+        return match(list, {
+          empty: (_) => {
+            return null;
+          },
+          cons: (head, tail) => {
+            return tail;
+          }
+        });
+      };
       describe('再帰的データ構造としてのリスト', () => {
-        // 再帰によるlength関数
+        // **リスト5.25** 再帰によるlength関数
         it('再帰によるlength関数', (next) => {
           /* #@range_begin(recursive_length_without_accumulator) */
           var length = (list) => {
@@ -491,13 +504,8 @@ describe('再帰による反復処理', () => {
           );
           next();
         });
-        // 再帰によるappend関数
+        // **リスト5.26** 再帰によるappend関数
         it('再帰によるappend関数', (next) => {
-          var cons = (x, xs) => {
-            return (pattern) => {
-              return pattern.cons(x, xs);
-            };
-          };
           var toArray = (seq,callback) => {
             var toArrayAux = (seq,accumulator) => {
               return match(seq, {
@@ -543,18 +551,8 @@ describe('再帰による反復処理', () => {
           /* #@range_end(list_append_test) */
           next();
         });
-        // 再帰によるreverse関数
+        // **リスト5.27** 再帰によるreverse関数
         it('再帰によるreverse関数', (next) => {
-          var empty = (_) => {
-            return (pattern) => {
-              return pattern.empty(_);
-            };
-          };
-          var cons = (x, xs) => {
-            return (pattern) => {
-              return pattern.cons(x, xs);
-            };
-          };
           /* #@range_begin(list_reverse) */
           var reverse = (list) => {
             var reverseHelper = (list, accumulator) => {
@@ -575,7 +573,7 @@ describe('再帰による反復処理', () => {
       });
       // #### 再帰的データ構造としての数式
       describe('再帰的データ構造としての数式', () => {
-        // 代数的データ構造による数式
+        // **リスト5.28** 代数的データ構造による数式
         /* #@range_begin(expression_algebraic_datatype) */
         var num = (n) => {
           return (pattern) => {
@@ -593,7 +591,7 @@ describe('再帰による反復処理', () => {
           };
         };
         /* #@range_end(expression_algebraic_datatype) */
-        // 数式を再帰的に計算する
+        // **リスト5.30** 数式を再帰的に計算する
         /* #@range_begin(expression_algebraic_datatype_recursion) */
         var calculate = (exp) => {
           return match(exp, { // パターンマッチを実行する
@@ -670,7 +668,7 @@ describe('再帰による反復処理', () => {
           return pattern.cons(x, xs);
         };
       };
-      // 命題Pの単体テスト
+      // **リスト5.36** 命題Pの単体テスト
       // > 命題Pの帰納法による証明は、本書を参照してください
       /* #@range_begin(statement_p_test) */
       var xs = cons(1,

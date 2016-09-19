@@ -88,3 +88,20 @@
       );
       next();
     });
+
+      it('adderからsucc関数を作る', (next) => {
+        /* #@range_begin(succ_from_adder) */
+        var adder = (m) => {
+          return (n) => {
+            return m + n;
+          };
+        };
+        var succ = adder(1);
+        /* #@range_end(succ_from_adder)  */
+        expect(
+          succ(1)
+        ).to.eql(
+          2
+        );
+        next();
+      });

@@ -4,16 +4,22 @@
 // 第3章 心の準備
 // ========
 
+// ## 目次
+// > * [DRY原則](http://akimichi.github.io/functionaljs/chap03.spec.html#DRY-principle)
+// > * [抽象化への指向](http://akimichi.github.io/functionaljs/chap03.spec.html#abstraction-oriented)
+// > * [セマンティクスを意識する](http://akimichi.github.io/functionaljs/chap03.spec.html#semantics-conscious)
+// > * [テストに親しむ](http://akimichi.github.io/functionaljs/chap03.spec.html#test-driven)
+
 var expect = require('expect.js');
 
-// ## 3.1 DRY原則
+// ## 3.1 <section id='DRY-principle'>DRY原則</section>
 // 
 // 参考 [DRY原則の利用: コードの重複と密結合の間](https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling)
 describe('DRY原則', () => {
   var add = (x, y) => {
     return x + y;
   };
-  // 冗長なコード
+  // **リスト3.1** 冗長なコード
   it('冗長なコード', (next) => {
     /* #@range_begin(redundant_code) */
     var timesForMultiply = (count, arg, memo) => {
@@ -50,7 +56,7 @@ describe('DRY原則', () => {
     next();
   });
   it('DRYを適用する', (next) => {
-    // DRYなtimes関数
+    // **リスト3.3** DRYなtimes関数
     /* #@range_begin(dry_times) */
     var times = (count, arg, memo, fun) => { // 引数funを追加
       if(count > 1) {
@@ -61,7 +67,7 @@ describe('DRY原則', () => {
     };
     /* #@range_end(dry_times) */
 
-    // DRYなかけ算とべき乗
+    // **リスト3.4** DRYなかけ算とべき乗
     /* #@range_begin(dry_functions) */
     var add = (n, m) => {
       return n + m;
@@ -94,9 +100,9 @@ describe('DRY原則', () => {
   });
 });
 
-// ## 3.2 抽象化への指向
+// ## 3.2 <section id='abstraction-oriented'>抽象化への指向</section>
 describe('抽象化への指向', () => {
-  // 関数という抽象化
+  // **リスト3.5** 関数という抽象化
   it('関数という抽象化', (next) => {
     /* #@range_begin(function_abstraction_example) */
     var succ = (n) => {
@@ -108,7 +114,7 @@ describe('抽象化への指向', () => {
   describe('高階関数による抽象化', () => {
     var anArray = [2,3,5,7,11,13];
 
-    // for文によるsum関数
+    // **リスト3.6** for文によるsum関数
     it('for文によるsum関数', (next) => {
       /* #@range_begin(sum_for) */
       var anArray = [2,3,5,7];
@@ -128,7 +134,7 @@ describe('抽象化への指向', () => {
       );
       next();
     });
-    // forEachによるsum関数
+    // **リスト3.7** forEachによるsum関数
     it('forEachによるsum関数', (next) => {
       /* #@range_begin(sum_forEach) */
       var sum = (array) => {
@@ -147,7 +153,7 @@ describe('抽象化への指向', () => {
       );
       next();
     });
-    // reduceによるsum関数
+    // **リスト3.8** reduceによるsum関数
     it('reduceによるsum関数', (next) => {
       /* #@range_begin(sum_reduce) */
       var sum = (array) => {
@@ -166,9 +172,9 @@ describe('抽象化への指向', () => {
   });
 });
 
-// ## 3.3 セマンティクスを意識する
+// ## 3.3 <section id='semantics-conscious'>セマンティクスを意識する</section>
 describe('セマンティクスを意識する', () => {
-  // 環境という仕組み
+  // **リスト3.9** 環境という仕組み
   it('環境という仕組み', (next) => {
     /* merge関数は、引数にわたされた2つのオブジェクトを併合する */
     var merge = (obj1, obj2) => {
@@ -205,7 +211,7 @@ describe('セマンティクスを意識する', () => {
     // b
     // ~~~
     expect(((_) => {
-      // リスト 3.10のセマンティクス 
+      // **リスト3.11** リスト 3.10のセマンティクス 
       /* #@range_begin(environment_example_usage) */
       /* 空の辞書を作成する */
       var initEnv = emptyEnv;                       
@@ -224,12 +230,14 @@ describe('セマンティクスを意識する', () => {
   });
 });
 
-// ## 3.4 テストに親しむ
+// ## 3.4 <section id='test-driven'>テストに親しむ</section>
 describe('テストに親しむ', () => {
   // ### 単体テストの仕組み
   // > 参考 [単体テスト](https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88)
   describe('単体テストの仕組み', () => {
-    // assertによる表明
+    // **リスト3.12** アサート関数の例
+    //
+    // assertライブラリを使う場合
     it('assertによる表明', (next) => {
       /* #@range_begin(assert_assertion) */
       var assert = require("assert");
@@ -237,8 +245,7 @@ describe('テストに親しむ', () => {
       /* #@range_end(assert_assertion) */
       next();
     });
-    // expectによる表明
-    // 
+    // expectライブラリを使う場合
     // > 参考 https://github.com/Automattic/expect.js
     it('expectによる表明', (next) => {
       /* #@range_begin(expect_assertion) */

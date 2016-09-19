@@ -3,11 +3,17 @@
 // 第2章 なぜ関数型プログラミングが重要か
 // ========
 
+// ## 目次
+// > * [関数型プログラミングの特徴](http://akimichi.github.io/functionaljs/chap02.spec.html#features-of_functional-programming)
+// >   - [ファーストクラスオブジェクトとしての関数](http://akimichi.github.io/functionaljs/chap02.spec.html#first-class-object)
+// >   - [参照透過性](http://akimichi.github.io/functionaljs/chap02.spec.html#referential-transparency)
+// > * [関数型プログラミングの利点](http://akimichi.github.io/functionaljs/chap02.spec.html#advantages-of-functional-programming)
+
 var expect = require('expect.js');
 
-// ## 2.2 関数型プログラミングの特徴
+// ## 2.2 <section id='features-of-functional-programming'>関数型プログラミングの特徴</section>
 describe('関数型プログラミングの特徴', () => {
-  // ### ファーストクラスオブジェクトとしての関数
+  // ### <section id='first-class-object'>ファーストクラスオブジェクトとしての関数</section>
   describe('ファーストクラスオブジェクトとしての関数', () => {
     // ~~~
     // node> var zero = 0;
@@ -113,7 +119,7 @@ describe('関数型プログラミングの特徴', () => {
       });
     });
   });
-  // ### 参照透過性
+  // ### <section id='referential-transparency'>参照透過性</section>
   describe('参照透過性', () => {
     // #### 参照透明性が成立する場面
     describe('参照透明性が成立する場面', () => {
@@ -300,9 +306,9 @@ describe('関数型プログラミングの特徴', () => {
         });
       });
     });
-    // ### 参照透明性を保証する
+    // #### 参照透明性を保証する
     describe('参照透明性を保証する', () => {
-      // #### 値の参照透過性を保証する（可変なデータの排除）
+      // ##### 値の参照透過性を保証する（可変なデータの排除）
       describe('値の参照透過性を保証する（可変なデータの排除）', () =>  {
         // ** リスト2.4** 不変なデータ構造としてのオブジェクト型の実装
         it('不変なデータ構造としてのオブジェクト型の実装', (next) => {
@@ -326,7 +332,7 @@ describe('関数型プログラミングの特徴', () => {
           next();
         });
       });
-      // #### 変数の参照透過性を保証する(代入の排除)
+      // ##### 変数の参照透過性を保証する(代入の排除)
       describe('変数の参照透過性を保証する(代入の排除)', () => {
         // ** リスト2.5** 代入を使った足し算の定義
         it('代入を使った足し算の定義', (next) => {
@@ -366,7 +372,7 @@ describe('関数型プログラミングの特徴', () => {
           next();
         });
       });
-      // #### 関数の参照透過性を保証する（副作用の分離）
+      // ##### 関数の参照透過性を保証する（副作用の分離）
       describe('関数の参照透過性を保証する（副作用の分離）', () =>  {
         // **リスト2.7** 副作用が分離されていないコード
         it('副作用が分離されていないコード', (next) => {
@@ -399,7 +405,7 @@ describe('関数型プログラミングの特徴', () => {
     });
   });
 });
-// ## 2.3 関数型プログラミングの利点
+// ## 2.3 <section id='advantages-of-functional-programming'>関数型プログラミングの利点</section>
 describe('関数型プログラミングの利点', () => {
   /* 下記テストで利用される関数をあらかじめ定義しておく */
   var compose = (f,g) => {

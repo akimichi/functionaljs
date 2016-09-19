@@ -1145,7 +1145,7 @@ node&gt; ichi === one;
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'関数適用で部品を組み合わせる'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'関数適用で部品を組み合わせる'</span>, () =&gt; {
         <span class="hljs-keyword">var</span> map = (transform) =&gt; {
           <span class="hljs-keyword">return</span> (array) =&gt; {
             <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
@@ -1207,7 +1207,26 @@ node&gt; ichi === one;
               <span class="hljs-keyword">return</span> fun(y)(x);
             };
           };
-        };</pre></div></div>
+        };
+        it(<span class="hljs-string">'length関数の定義'</span>, (next) =&gt; {
+          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
+            <span class="hljs-keyword">return</span> (array) =&gt; {
+              <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
+                <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
+              },[]); <span class="hljs-comment">// 蓄積変数の初期値として空の配列[]を指定する</span>
+            };
+          };
+          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
+            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
+              <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
+            },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
+          };
+          <span class="hljs-keyword">var</span> constant = (any) =&gt; {
+            <span class="hljs-keyword">return</span> (_) =&gt; {
+              <span class="hljs-keyword">return</span> any;
+            };
+          };
+          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>);</pre></div></div>
             
         </li>
         
@@ -1218,41 +1237,22 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
-              <p><strong>リスト2.18</strong> 関数合成によるlength関数の定義</p>
+              <p><strong>リスト2.15</strong> length関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(array_length_in_composition) */</span>
-        <span class="hljs-keyword">var</span> length = (array) =&gt; { <span class="hljs-comment">// 引数が配列であることを明示する</span>
-          <span class="hljs-keyword">return</span> compose(sum,map(alwaysOne))(array);
-        };
-        <span class="hljs-comment">/* #@range_end(array_length_in_composition)  */</span>
-        expect(
-          length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
-        ).to.eql(
-          <span class="hljs-number">3</span>
-        );
-        next();
-      });
-      it(<span class="hljs-string">'length関数の定義'</span>, (next) =&gt; {
-        <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-          <span class="hljs-keyword">return</span> (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-              <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
-            },[]); <span class="hljs-comment">// 蓄積変数の初期値として空の配列[]を指定する</span>
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(array_length) */</span>
+          <span class="hljs-keyword">var</span> length = (array) =&gt; {
+            <span class="hljs-keyword">return</span> sum(map(alwaysOne)(array));
           };
-        };
-        <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-          <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
-            <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
-          },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
-        };
-        <span class="hljs-keyword">var</span> constant = (any) =&gt; {
-          <span class="hljs-keyword">return</span> (_) =&gt; {
-            <span class="hljs-keyword">return</span> any;
-          };
-        };
-        <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>);</pre></div></div>
+          <span class="hljs-comment">/* #@range_end(array_length)  */</span>
+          expect(
+            length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+          ).to.eql(
+            <span class="hljs-number">3</span>
+          );
+          next();
+        });</pre></div></div>
             
         </li>
         
@@ -1263,22 +1263,11 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
-              <p><strong>リスト2.14</strong> length関数の定義</p>
+              <h5 id="-">関数合成による処理の合成</h5>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(array_length) */</span>
-        <span class="hljs-keyword">var</span> length = (array) =&gt; {
-          <span class="hljs-keyword">return</span> sum(map(alwaysOne)(array));
-        };
-        <span class="hljs-comment">/* #@range_end(array_length)  */</span>
-        expect(
-          length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
-        ).to.eql(
-          <span class="hljs-number">3</span>
-        );
-        next();
-      });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        describe(<span class="hljs-string">'関数合成による処理の合成'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -1289,11 +1278,17 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
-              <h5 id="-">関数合成による処理の合成</h5>
+              <p><strong>リスト2.16</strong> 関数の合成</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'関数合成による処理の合成'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(function_compose) */</span>
+          <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
+            <span class="hljs-keyword">return</span> (arg) =&gt; {
+              <span class="hljs-keyword">return</span> f(g(arg));
+            };
+          };
+          <span class="hljs-comment">/* #@range_end(function_compose)  */</span></pre></div></div>
             
         </li>
         
@@ -1304,17 +1299,22 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
-              <p>関数の合成</p>
+              <p><strong>リスト2.17</strong> 関数合成によるlength関数の定義（ポイントフリースタイル）</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* #@range_begin(function_compose) */</span>
-        <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
-          <span class="hljs-keyword">return</span> (arg) =&gt; {
-            <span class="hljs-keyword">return</span> f(g(arg));
-          };
-        };
-        <span class="hljs-comment">/* #@range_end(function_compose)  */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>          it(<span class="hljs-string">'関数合成によるlength関数の定義（ポイントフリースタイル）'</span>, (next) =&gt; {
+            <span class="hljs-comment">/* #@range_begin(array_length_in_composition_with_point_free_style) */</span>
+            <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));
+            <span class="hljs-comment">/* #@range_end(array_length_in_composition_with_point_free_style)  */</span>
+            expect(
+              length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+            ).to.eql(
+              <span class="hljs-number">3</span>
+            );
+            next();
+          });
+          it(<span class="hljs-string">'関数合成によるlength関数の定義（引数を明示したスタイル）'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -1325,39 +1325,22 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
-              <p>関数合成によるlength関数の定義（ポイントフリースタイル）</p>
+              <p><strong>リスト2.18</strong> 関数合成によるlength関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'関数合成によるlength関数の定義（ポイントフリースタイル）'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-            <span class="hljs-keyword">return</span> (array) =&gt; {
-              <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-                <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
-              },[]); 
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-comment">/* #@range_begin(array_length_in_composition) */</span>
+            <span class="hljs-keyword">var</span> length = (array) =&gt; { <span class="hljs-comment">// 引数が配列であることを明示する</span>
+              <span class="hljs-keyword">return</span> compose(sum,map(alwaysOne))(array);
             };
-          };
-          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { 
-              <span class="hljs-keyword">return</span> accumulator + item;                
-            },<span class="hljs-number">0</span>); 
-          };
-          <span class="hljs-keyword">var</span> constant = (any) =&gt; {
-            <span class="hljs-keyword">return</span> (_) =&gt; {
-              <span class="hljs-keyword">return</span> any;
-            };
-          };
-          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
-
-          <span class="hljs-comment">/* #@range_begin(array_length_in_composition_with_point_free_style) */</span>
-          <span class="hljs-keyword">var</span> length = compose(sum,map(alwaysOne));
-          <span class="hljs-comment">/* #@range_end(array_length_in_composition_with_point_free_style)  */</span>
-          expect(
-            length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
-          ).to.eql(
-            <span class="hljs-number">3</span>
-          );
-          next();
+            <span class="hljs-comment">/* #@range_end(array_length_in_composition)  */</span>
+            expect(
+              length([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>])
+            ).to.eql(
+              <span class="hljs-number">3</span>
+            );
+            next();
+          });
         });
       });</pre></div></div>
             

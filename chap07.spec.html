@@ -2791,13 +2791,12 @@ $$</p>
                 <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p><strong>表7.2</strong> 反復処理における蓄積変数の初期値とコールバック関数の関係
-|関数名       |蓄積変数の初期値|関数合成による定義                   |
-|:————|:————-|——————————:|
-|sum          |0             |(n) =&gt; { return (m) =&gt; { return n + m;};}|
-|length       |0             |(n) =&gt; { return (m) =&gt; { return 1 + m;};}|
-|product      |1             |(n) =&gt; { return (m) =&gt; { return n * m;};}|
-|all          |true          |(n) =&gt; { return (m) =&gt; { return n &amp;&amp; m;};}|
-|any          |true          |(n) =&gt; { return (m) =&gt; { return n || m;};}|</p>
+|関数名       |蓄積変数の初期値|関数合成による定義                              |
+|:————|:————-|——————————————-|
+|sum          |0             |(n) =&gt; { return (m) =&gt; { return n + m;};}  |
+|length       |0             |(n) =&gt; { return (m) =&gt; { return 1 + m;};}  |
+|product      |1             |(n) =&gt; { return (m) =&gt; { return n * m;};}  |
+|all          |true          |(n) =&gt; { return (m) =&gt; { return n &amp;&amp; m;};} |</p>
 
             </div>
             

@@ -72,14 +72,33 @@
               <h2 id="-">目次</h2>
 <blockquote>
 <ul>
-<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#function-basics">関数の基本</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#curring">カリー化で関数を渡す</a><ul>
 <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#function-definition">関数を定義する</a></li>
 <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#function-application">関数を適用する</a></li>
 </ul>
 </li>
-<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#function-and-referential-transparency">関数と参照透過性</a><ul>
-<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#purity-of-function">関数の純粋性</a></li>
-<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#coping-sideeffect">副作用への対処</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#combinator">コンビネータで関数を組み合わせる</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#combinator-creation">コンビネータの作り方</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#composing-function">関数を合成する</a></li>
+</ul>
+</li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#closure">クロージャーを使う</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#mechanism-of-closure">クロージャーの仕組み</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#encapsulation-with-closure">クロージャーで状態をカプセル化する</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#pure-closure">クロージャーの純粋性</a></li>
+</ul>
+</li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#function-and-repassing-function">関数を渡す</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#callback">コールバックで処理をモジュール化する</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#folding">畳み込み関数に関数を渡す</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#asynchronous">非同期処理にコールバック関数を渡す</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#continuation">継続で未来を渡す</a></li>
+</ul>
+</li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#monad">モナドを作る</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#identity-monad">恒等モナド</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#maybe-monad">Maybeモナドでエラーを処理する</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#io-monad">IOモナドで副作用を閉じ込める</a></li>
 </ul>
 </li>
 </ul>
@@ -88,7 +107,6 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
-
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
             
         </li>
@@ -342,7 +360,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h2 id="7-2-">7.2 カリー化で関数を渡す</h2>
+              <h2 id="7-2-section-id-currying-section-">7.2 <section id='currying'>カリー化で関数を渡す</section></h2>
 
             </div>
             
@@ -676,7 +694,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <h2 id="7-3-">7.3 コンビネータで関数を組み合わせる</h2>
+              <h2 id="7-3-section-id-combinator-section-">7.3 <section id='combinator'>コンビネータで関数を組み合わせる</section></h2>
 
             </div>
             
@@ -691,7 +709,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <h3 id="-">コンビネータの作り方</h3>
+              <h3 id="-section-id-combinator-creation-section-"><section id='combinator-creation'>コンビネータの作り方</section></h3>
 
             </div>
             
@@ -842,7 +860,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <h3 id="-">関数を合成する</h3>
+              <h3 id="-section-id-composing-function-section-"><section id='composing-function'>関数を合成する</section></h3>
 <p>$$ 
    f \circ g 
 $$</p>
@@ -1441,11 +1459,16 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
-              <h2 id="-">クロージャーを使う</h2>
+              <h2 id="-section-id-closure-section-"><section id='closure'>クロージャーを使う</section></h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'クロージャーを使う'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'クロージャーを使う'</span>, () =&gt; {
+  <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
+    <span class="hljs-keyword">return</span> (arg) =&gt; {
+      <span class="hljs-keyword">return</span> f(g(arg));
+    };
+  };</pre></div></div>
             
         </li>
         
@@ -1456,16 +1479,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
-              <h3 id="-">クロージャーの仕組み</h3>
+              <h3 id="-section-id-mechanism-of-closure-section-"><section id='mechanism-of-closure'>クロージャーの仕組み</section></h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> compose = (f,g) =&gt; {
-    <span class="hljs-keyword">return</span> (arg) =&gt; {
-      <span class="hljs-keyword">return</span> f(g(arg));
-    };
-  };
-  describe(<span class="hljs-string">'クロージャーの仕組み'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'クロージャーの仕組み'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -1556,7 +1574,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
-              <h3 id="-">クロージャーで状態をカプセル化する</h3>
+              <h3 id="-section-id-encapsulation-with-closure-section-"><section id='encapsulation-with-closure'>クロージャーで状態をカプセル化する</section></h3>
 
             </div>
             
@@ -2089,7 +2107,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
-              <h3 id="-">クロージャーの純粋性</h3>
+              <h3 id="-section-id-pure-closure-section-"><section id='pure-closure'>クロージャーの純粋性 </section></h3>
 
             </div>
             
@@ -2272,7 +2290,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
-              <h2 id="7-5-">7.5 関数を渡す</h2>
+              <h2 id="7-5-section-id-passing-function-section-">7.5 <section id='passing-function'>関数を渡す</section></h2>
 
             </div>
             
@@ -2292,7 +2310,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
-              <h3 id="-">コールバックで処理をモジュール化する</h3>
+              <h3 id="-section-id-callback-section-"><section id='callback'>コールバックで処理をモジュール化する</section></h3>
 
             </div>
             
@@ -2446,7 +2464,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
-              <h3 id="-">畳み込み関数に関数を渡す</h3>
+              <h3 id="-section-id-folding-section-"><section id='folding'>畳み込み関数に関数を渡す</section></h3>
 
             </div>
             
@@ -3089,7 +3107,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
-              <h3 id="-">非同期処理にコールバック関数を渡す</h3>
+              <h3 id="-section-id-asynchronous-section-"><section id='asynchronous'>非同期処理にコールバック関数を渡す</section></h3>
 
             </div>
             
@@ -3139,7 +3157,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
-              <h3 id="-">継続で未来を渡す</h3>
+              <h3 id="-section-id-continuation-section-"><section id='continuation'>継続で未来を渡す</section></h3>
 <blockquote>
 <p><a href="https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A">https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A</a></p>
 </blockquote>
@@ -3837,7 +3855,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
-              <h2 id="7-6-">7.6 モナドを作る</h2>
+              <h2 id="7-6-section-id-monad-section-">7.6 <section id='monad'>モナドを作る</section></h2>
 
             </div>
             
@@ -3857,7 +3875,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
-              <h3 id="-">恒等モナド</h3>
+              <h3 id="-section-id-identity-monad-section-"><section id='identity-monad'>恒等モナド</section></h3>
 
             </div>
             
@@ -4101,7 +4119,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
-              <h3 id="maybe-">Maybeモナドでエラーを処理する</h3>
+              <h3 id="-section-id-maybe-monad-maybe-section-"><section id='maybe-monad'>Maybeモナドでエラーを処理する</section></h3>
 
             </div>
             
@@ -4240,7 +4258,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
-              <h3 id="io-">IOモナドで副作用を閉じ込める</h3>
+              <h3 id="-section-id-io-monad-io-section-"><section id='io-monad'>IOモナドで副作用を閉じ込める</section></h3>
 
             </div>
             

@@ -486,8 +486,7 @@ node&gt; array.push(<span class="hljs-number">2</span>);
 <span class="hljs-number">2</span>
 node&gt; array
 [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
-</code></pre><p>可変なデータは参照透明性を破壊する</p>
-
+</code></pre>
             </div>
             
             <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'可変なデータは参照透明性を破壊する'</span>, (next) =&gt; {
@@ -516,15 +515,7 @@ node&gt; array
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p><strong>リスト2.2</strong> 代入が参照透明性を破壊する例</p>
-<pre><code>node&gt; <span class="hljs-keyword">var</span> one = <span class="hljs-number">1</span>;
-node&gt; <span class="hljs-keyword">var</span> ichi = one;
-node&gt; ichi === one;
-<span class="hljs-literal">true</span>
-node&gt; one = <span class="hljs-number">2</span>;
-<span class="hljs-number">2</span>
-node&gt; ichi === one;
-<span class="hljs-literal">false</span>
-</code></pre>
+
             </div>
             
             <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'代入が参照透明性を破壊する例'</span>, (next) =&gt; {
@@ -534,12 +525,12 @@ node&gt; ichi === one;
           x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
           <span class="hljs-keyword">return</span> x + y;
         };
-        <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
         expect(
           add(<span class="hljs-number">1</span>)
         ).to.eql(
           <span class="hljs-number">2</span>
         );
+        <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
         next();
       });</pre></div></div>
             

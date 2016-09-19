@@ -75,7 +75,7 @@ describe('関数型プログラミングの特徴', () => {
       /* #@range_end(function_embedded_in_object) */
       next();
     });
-    // forEach文によるsumの定義
+    // **リスト 2.1** forEach文によるsumの定義
     it('forEach文によるsumの定義', (next) => {
       /* #@range_begin(sum_forEach) */
       var sum = (array) => {
@@ -207,7 +207,7 @@ describe('関数型プログラミングの特徴', () => {
         );
         next();
       });
-      // 代入は参照透明性を破壊する
+      // **リスト2.2** 代入が参照透明性を破壊する例
       // ~~~
       // node> var one = 1;
       // node> var ichi = one;
@@ -218,7 +218,7 @@ describe('関数型プログラミングの特徴', () => {
       // node> ichi === one;
       // false
       // ~~~
-      it('代入は参照透明性を破壊する', (next) => {
+      it('代入が参照透明性を破壊する例', (next) => {
         /* #@range_begin(assignment_breaks_referential_transparency) */
         var x = 0;
         var add = (y) => {
@@ -233,8 +233,8 @@ describe('関数型プログラミングの特徴', () => {
         );
         next();
       });
-      // 命令型な階乗関数
-      it('命令型な階乗関数', (next) => {
+      // **リスト2.3** 命令的な階乗関数
+      it('命令的な階乗関数', (next) => {
         /* #@range_begin(imperative_factorial) */
         var factorial = (n) => {
           /* 変数resultに結果が入る */
@@ -315,7 +315,8 @@ describe('関数型プログラミングの特徴', () => {
     describe('参照透明性を保証する', () => {
       // #### 値の参照透過性を保証する（可変なデータの排除）
       describe('値の参照透過性を保証する（可変なデータの排除）', () =>  {
-        it('不変なデータ型', (next) => {
+        // ** リスト2.4** 不変なデータ構造としてのオブジェクト型の実装
+        it('不変なデータ構造としてのオブジェクト型の実装', (next) => {
           /* #@range_begin(immutable_datatype) */
           var empty =  (_) => {
             return null;
@@ -338,7 +339,7 @@ describe('関数型プログラミングの特徴', () => {
       });
       // #### 変数の参照透過性を保証する(代入の排除)
       describe('変数の参照透過性を保証する(代入の排除)', () => {
-        // 代入を使った足し算の定義
+        // ** リスト2.5** 代入を使った足し算の定義
         it('代入を使った足し算の定義', (next) => {
           /* #@range_begin(imperative_addition) */
           var add = (x,y) => {
@@ -358,7 +359,7 @@ describe('関数型プログラミングの特徴', () => {
           expect(add(3,2)).to.eql(5);
           next();
         });
-        // 関数型プログラミングによる足し算の定義
+        // ** リスト2.6** 関数型プログラミングによる足し算の定義
         it('関数型プログラミングによる足し算の定義', (next) => {
           /* #@range_begin(functional_addition) */
           var add = (x,y) => {
@@ -378,7 +379,7 @@ describe('関数型プログラミングの特徴', () => {
       });
       // #### 関数の参照透過性を保証する（副作用の分離）
       describe('関数の参照透過性を保証する（副作用の分離）', () =>  {
-        // 副作用が分離されていないコード
+        // **リスト2.7** 副作用が分離されていないコード
         it('副作用が分離されていないコード', (next) => {
           /* #@range_begin(age_sideeffect) */
           var age = (birthYear) => {
@@ -391,7 +392,7 @@ describe('関数型プログラミングの特徴', () => {
           /* #@range_end(age_sideeffect) */
           next();
         });
-        // 副作用が分離されているコード
+        // **リスト2.8** 副作用が分離されているコード
         it('副作用が分離されているコード', (next) => {
           /* #@range_begin(age_without_sideeffect) */
           var age = (birthYear, thisYear) => {
@@ -421,7 +422,7 @@ describe('関数型プログラミングの利点', () => {
   describe('モジュール性とは何か', () => {
     // #### 部品の汎用性
     describe('部品の汎用性', () => {
-      // sumの定義
+      // **リスト2.9** sumの定義
       describe('sum関数の定義', () => {
         // forEachメソッドによるsumの定義
         it('forEachメソッドによるsumの定義', (next) => {
@@ -470,7 +471,7 @@ describe('関数型プログラミングの利点', () => {
           next();
         });
       });
-      // product関数の定義
+      // **リスト2.10** product関数の定義
       it('product関数の定義', (next) => {
         /* #@range_begin(product_in_array_reduce) */
         var product = (array) => {
@@ -488,7 +489,7 @@ describe('関数型プログラミングの利点', () => {
         /* #@range_end(product_in_array_reduce_test)  */
         next();
       });
-      // map関数の定義
+      // **リスト2.11** map関数の定義
       it('map関数の定義', (next) => {
         var succ = (n) => {
           return n + 1;
@@ -508,6 +509,7 @@ describe('関数型プログラミングの利点', () => {
           [2,3,4]
         );
         expect(
+          // **リスト2.12** map関数のテスト
           /* #@range_begin(map_in_array_reduce_test) */
           map(succ)([1,3,5])
           /* #@range_end(map_in_array_reduce_test) */
@@ -522,7 +524,7 @@ describe('関数型プログラミングの利点', () => {
     // #### 部品を組み合わせる
     describe('部品を組み合わせる', () => {
       // ##### 関数適用で部品を組み合わせる
-      it('関数適用で部品を組み合わせる', (next) => {
+      describe('関数適用で部品を組み合わせる', () => {
         var map = (transform) => {
           return (array) => {
             return array.reduce((accumulator, item) => {
@@ -535,7 +537,7 @@ describe('関数型プログラミングの利点', () => {
             return accumulator + item;                 // 足し算を実行する
           },0); // 第2引数には、蓄積変数の初期値として0を渡す 
         };
-        // constant関数
+        // **リスト2.13** constant関数
         /* #@range_begin(constant) */
         var constant = (any) => {
           return (_) => {
@@ -544,6 +546,7 @@ describe('関数型プログラミングの利点', () => {
         };
         var alwaysOne = constant(1); 
         /* #@range_end(constant) */
+        // **リスト2.14** map(alwaysOne)で配列の全要素を1に変える
         /* #@range_begin(map_alwaysOne) */
         expect(
           map(alwaysOne)([1,2,3])
@@ -558,90 +561,18 @@ describe('関数型プログラミングの利点', () => {
             };
           };
         };
-        // length関数の定義
-        /* #@range_begin(array_length_in_composition) */
-        var length = (array) => { // 引数が配列であることを明示する
-          return compose(sum,map(alwaysOne))(array);
-        };
-        /* #@range_end(array_length_in_composition)  */
-        expect(
-          length([1,2,3])
-        ).to.eql(
-          3
-        );
-        next();
-      });
-      it('adderからsucc関数を作る', (next) => {
-        /* #@range_begin(succ_from_adder) */
-        var adder = (m) => {
-          return (n) => {
-            return m + n;
-          };
-        };
-        var succ = adder(1);
-        /* #@range_end(succ_from_adder)  */
-        expect(
-          succ(1)
-        ).to.eql(
-          2
-        );
-        next();
-      });
-      // length関数の定義
-      it('length関数の定義', (next) => {
-        var map = (transform) => {
-          return (array) => {
-            return array.reduce((accumulator, item) => {
-              return accumulator.concat(transform(item));
-            },[]); // 蓄積変数の初期値として空の配列[]を指定する
-          };
-        };
-        var sum = (array) => {
-          return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
-            return accumulator + item;                 // 足し算を実行する
-          },0); // 第2引数には、蓄積変数の初期値として0を渡す 
-        };
-        var constant = (any) => {
-          return (_) => {
-            return any;
-          };
-        };
-        var alwaysOne = constant(1); 
-        /* #@range_begin(array_length) */
-        var length = (array) => {
-          return sum(map(alwaysOne)(array));
-        };
-        /* #@range_end(array_length)  */
-        expect(
-          length([1,2,3])
-        ).to.eql(
-          3
-        );
-        next();
-      });
-      // ##### 関数合成による処理の合成
-      describe('関数合成による処理の合成', () => {
-        // 関数の合成
-        /* #@range_begin(function_compose) */
-        var compose = (f,g) => {
-          return (arg) => {
-            return f(g(arg));
-          };
-        };
-        /* #@range_end(function_compose)  */
-        // 関数合成によるlength関数の定義（ポイントフリースタイル）
-        it('関数合成によるlength関数の定義（ポイントフリースタイル）', (next) => {
+        it('length関数の定義', (next) => {
           var map = (transform) => {
             return (array) => {
               return array.reduce((accumulator, item) => {
                 return accumulator.concat(transform(item));
-              },[]); 
+              },[]); // 蓄積変数の初期値として空の配列[]を指定する
             };
           };
           var sum = (array) => {
-            return array.reduce((accumulator, item) => { 
-              return accumulator + item;                
-            },0); 
+            return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
+              return accumulator + item;                 // 足し算を実行する
+            },0); // 第2引数には、蓄積変数の初期値として0を渡す 
           };
           var constant = (any) => {
             return (_) => {
@@ -649,16 +580,55 @@ describe('関数型プログラミングの利点', () => {
             };
           };
           var alwaysOne = constant(1); 
-
-          /* #@range_begin(array_length_in_composition_with_point_free_style) */
-          var length = compose(sum,map(alwaysOne));
-          /* #@range_end(array_length_in_composition_with_point_free_style)  */
+          // **リスト2.15** length関数の定義
+          /* #@range_begin(array_length) */
+          var length = (array) => {
+            return sum(map(alwaysOne)(array));
+          };
+          /* #@range_end(array_length)  */
           expect(
             length([1,2,3])
           ).to.eql(
             3
           );
           next();
+        });
+        // ##### 関数合成による処理の合成
+        describe('関数合成による処理の合成', () => {
+          // **リスト2.16** 関数の合成
+          /* #@range_begin(function_compose) */
+          var compose = (f,g) => {
+            return (arg) => {
+              return f(g(arg));
+            };
+          };
+          /* #@range_end(function_compose)  */
+          // **リスト2.17** 関数合成によるlength関数の定義（ポイントフリースタイル）
+          it('関数合成によるlength関数の定義（ポイントフリースタイル）', (next) => {
+            /* #@range_begin(array_length_in_composition_with_point_free_style) */
+            var length = compose(sum,map(alwaysOne));
+            /* #@range_end(array_length_in_composition_with_point_free_style)  */
+            expect(
+              length([1,2,3])
+            ).to.eql(
+              3
+            );
+            next();
+          });
+          // **リスト2.18** 関数合成によるlength関数の定義（引数を明示したスタイル）
+          it('関数合成によるlength関数の定義（引数を明示したスタイル）', (next) => {
+            /* #@range_begin(array_length_in_composition) */
+            var length = (array) => { // 引数が配列であることを明示する
+              return compose(sum,map(alwaysOne))(array);
+            };
+            /* #@range_end(array_length_in_composition)  */
+            expect(
+              length([1,2,3])
+            ).to.eql(
+              3
+            );
+            next();
+          });
         });
       });
       // ##### 関数による遅延評価
@@ -684,7 +654,7 @@ describe('関数型プログラミングの利点', () => {
           };
           var alwaysOne = constant(1); 
           var length = compose(sum,map(alwaysOne));
-          // 正格評価の例
+          // **リスト2.19** 正格評価の例
           it('正格評価の例', (next) => {
             expect(
               /* #@range_begin(strict_evaluation) */
@@ -697,7 +667,7 @@ describe('関数型プログラミングの利点', () => {
             );
             next();
           });
-          // 遅延評価の例
+          // **リスト2.20** 遅延評価の例
           it('遅延評価の例', (next) => {
             expect(
               /* #@range_begin(lazy_evaluation) */
@@ -713,9 +683,9 @@ describe('関数型プログラミングの利点', () => {
             next();
           });
         });
-        // 遅延評価によるストリーム
+        // ##### 遅延評価によるストリーム
         describe('遅延評価によるストリーム', () => {
-          // ストリームの例
+          // **リスト2.21** ストリームの例
           it('ストリームの例', (next) => {
             /* #@range_begin(stream_example) */
             var aStream = [1, (_) => { // 後尾は無名関数で表現する
@@ -735,7 +705,7 @@ describe('関数型プログラミングの利点', () => {
             next();
           });
           describe('無限ストリームを作る', () => {
-            // 無限の整数列
+            // **リスト2.22** enumFrom関数 
             /* #@range_begin(enumFrom) */
             var enumFrom = (n) => {
               return [n, (_) => { // ストリームを返す
@@ -743,7 +713,7 @@ describe('関数型プログラミングの利点', () => {
               }];
             };
             /* #@range_end(enumFrom) */
-            // 無限の偶数列を作る
+            // **リスト2.23** 無限の偶数列を作る
             it('無限の偶数列を作る', (next) => {
               /* #@range_begin(evenStream) */
               var evenFrom = (n) => {
@@ -767,7 +737,7 @@ describe('関数型プログラミングの利点', () => {
               );
               next();
             });
-            // 無限ストリームの例
+            // **リスト2.24** iterate関数 
             /* #@range_begin(stream_iterate) */
             var iterate = (init) => {  // 先頭の値を渡す
               return (step) => {       // 次の値との差を計算する関数を渡す
@@ -803,20 +773,8 @@ describe('関数型プログラミングの利点', () => {
             var evenStream = filter(even)(enumFrom(1));
             /* #@range_end(evenStream_by_filter) */
 
-            // elemAt関数
-            /* #@range_begin(stream_elemAt) */
-            var elemAt = (n) => {
-              return (aStream) => {
-                if(n === 1) {
-                  return aStream[0];
-                } else {
-                  return elemAt(n-1)(aStream[1]());
-                };
-              };
-            };
-            /* #@range_end(stream_elemAt) */
 
-            // 無限の偶数列
+            // **リスト2.25** 無限ストリームの例
             it('無限の偶数列', (next) => {
               var succ = (n) => {
                 return n + 1;
@@ -833,18 +791,30 @@ describe('関数型プログラミングの利点', () => {
               };
               var evenStream = iterate(2)(twoStep);
               /* #@range_end(enumFrom_by_iterate) */
+              // elemAt関数
+              /* #@range_begin(stream_elemAt) */
+              var elemAt = (n) => {
+                return (aStream) => {
+                  if(n === 1) {
+                    return aStream[0];
+                  } else {
+                    return elemAt(n-1)(aStream[1]());
+                  };
+                };
+              };
+              /* #@range_end(stream_elemAt) */
+              // 3番目の偶数を求める
+              expect(
+                /* #@range_begin(third_element_of_evenStream) */
+                elemAt(3)(evenStream)
+                /* #@range_end(third_element_of_evenStream) */
+              ).to.eql(
+                /* #@range_begin(third_element_of_evenStream_result) */
+                6
+                /* #@range_end(third_element_of_evenStream_result) */
+              );
               next();
             });
-            // 3番目の偶数を求める
-            expect(
-              /* #@range_begin(third_element_of_evenStream) */
-              elemAt(3)(evenStream)
-              /* #@range_end(third_element_of_evenStream) */
-            ).to.eql(
-              /* #@range_begin(third_element_of_evenStream_result) */
-              6
-              /* #@range_end(third_element_of_evenStream_result) */
-            );
           });
         });
         // 配列に対するelemAt関数

@@ -960,3 +960,14 @@ describe('副作用の種類', () => {
       //     }
       //   };
       // };
+
+      // ~~~
+      // node> var one = 1;
+      // node> var ichi = one;
+      // node> ichi === one;
+      // true
+      // node> one = 2;
+      // 2
+      // node> ichi === one;
+      // false
+      // ~~~

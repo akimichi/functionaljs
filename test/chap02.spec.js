@@ -191,7 +191,6 @@ describe('関数型プログラミングの特徴', () => {
       // node> array
       // [ 1, 2 ]
       // ~~~
-      // 可変なデータは参照透明性を破壊する
       it('可変なデータは参照透明性を破壊する', (next) => {
         var array = [1];
         expect(
@@ -208,16 +207,6 @@ describe('関数型プログラミングの特徴', () => {
         next();
       });
       // **リスト2.2** 代入が参照透明性を破壊する例
-      // ~~~
-      // node> var one = 1;
-      // node> var ichi = one;
-      // node> ichi === one;
-      // true
-      // node> one = 2;
-      // 2
-      // node> ichi === one;
-      // false
-      // ~~~
       it('代入が参照透明性を破壊する例', (next) => {
         /* #@range_begin(assignment_breaks_referential_transparency) */
         var x = 0;
@@ -225,12 +214,12 @@ describe('関数型プログラミングの特徴', () => {
           x = x + 1; // 代入で変数を更新する
           return x + y;
         };
-        /* #@range_end(assignment_breaks_referential_transparency)  */
         expect(
           add(1)
         ).to.eql(
           2
         );
+        /* #@range_end(assignment_breaks_referential_transparency)  */
         next();
       });
       // **リスト2.3** 命令的な階乗関数
@@ -424,7 +413,7 @@ describe('関数型プログラミングの利点', () => {
     describe('部品の汎用性', () => {
       // **リスト2.9** sumの定義
       describe('sum関数の定義', () => {
-        // forEachメソッドによるsumの定義
+        // ##### forEachメソッドによるsumの定義
         it('forEachメソッドによるsumの定義', (next) => {
           /* #@range_begin(sum_in_array_while) */
           var sum = (array) => {
@@ -453,7 +442,7 @@ describe('関数型プログラミングの利点', () => {
           );
           next();
         });
-        // reduceメソッドによるsumの定義
+        // ##### reduceメソッドによるsumの定義
         it('reduceメソッドによるsumの定義', (next) => {
           /* #@range_begin(sum_in_array_reduce) */
           var sum = (array) => {
@@ -561,26 +550,8 @@ describe('関数型プログラミングの利点', () => {
             };
           };
         };
-        it('length関数の定義', (next) => {
-          var map = (transform) => {
-            return (array) => {
-              return array.reduce((accumulator, item) => {
-                return accumulator.concat(transform(item));
-              },[]); // 蓄積変数の初期値として空の配列[]を指定する
-            };
-          };
-          var sum = (array) => {
-            return array.reduce((accumulator, item) => { // 第1引数に関数を渡す
-              return accumulator + item;                 // 足し算を実行する
-            },0); // 第2引数には、蓄積変数の初期値として0を渡す 
-          };
-          var constant = (any) => {
-            return (_) => {
-              return any;
-            };
-          };
-          var alwaysOne = constant(1); 
-          // **リスト2.15** length関数の定義
+        // **リスト2.15** 関数適用によるlength関数の定義
+        it('関数適用によるlength関数の定義', (next) => {
           /* #@range_begin(array_length) */
           var length = (array) => {
             return sum(map(alwaysOne)(array));
@@ -747,32 +718,6 @@ describe('関数型プログラミングの利点', () => {
               };
             };
             /* #@range_end(stream_iterate) */
-            // ストリームのフィルタリング 
-            /* #@range_begin(stream_filter) */
-            var filter = (predicate) => {
-              return (aStream) => {
-                /* ストリームの先頭要素を取り出す */
-                var head = aStream[0];
-                /* 先頭要素が条件に合致する場合 */
-                if(predicate(head) === true) { 
-                  return [head, (_) => {
-                    return filter(predicate)(aStream[1]());
-                  }];
-                } else {                       
-                  /* 先頭要素が条件に合致しない場合 */
-                  return filter(predicate)(aStream[1]());
-                }
-              };
-            };
-            /* #@range_end(stream_filter) */
-            // filter関数で無限の偶数列を作る
-            /* #@range_begin(evenStream_by_filter) */
-            var even = (n) => {
-              return (n % 2) === 0; 
-            };
-            var evenStream = filter(even)(enumFrom(1));
-            /* #@range_end(evenStream_by_filter) */
-
 
             // **リスト2.25** 無限ストリームの例
             it('無限の偶数列', (next) => {
@@ -791,7 +736,35 @@ describe('関数型プログラミングの利点', () => {
               };
               var evenStream = iterate(2)(twoStep);
               /* #@range_end(enumFrom_by_iterate) */
-              // elemAt関数
+              next();
+            });
+            it('ストリームを加工する', (next) => {
+              // **リスト2.26** ストリームのfilter関数
+              /* #@range_begin(stream_filter) */
+              var filter = (predicate) => {
+                return (aStream) => {
+                  /* ストリームの先頭要素を取り出す */
+                  var head = aStream[0];
+                  /* 先頭要素が条件に合致する場合 */
+                  if(predicate(head) === true) { 
+                    return [head, (_) => {
+                      return filter(predicate)(aStream[1]());
+                    }];
+                  } else {                       
+                    /* 先頭要素が条件に合致しない場合 */
+                    return filter(predicate)(aStream[1]());
+                  }
+                };
+              };
+              /* #@range_end(stream_filter) */
+              // **リスト2.27**filter関数で無限の偶数列を作る
+              /* #@range_begin(evenStream_by_filter) */
+              var even = (n) => {
+                return (n % 2) === 0; 
+              };
+              var evenStream = filter(even)(enumFrom(1));
+              /* #@range_end(evenStream_by_filter) */
+              // **リスト2.28** ストリームのelemAt関数
               /* #@range_begin(stream_elemAt) */
               var elemAt = (n) => {
                 return (aStream) => {
@@ -803,7 +776,7 @@ describe('関数型プログラミングの利点', () => {
                 };
               };
               /* #@range_end(stream_elemAt) */
-              // 3番目の偶数を求める
+              // **リスト2.29** 3番目の偶数を求める
               expect(
                 /* #@range_begin(third_element_of_evenStream) */
                 elemAt(3)(evenStream)
@@ -815,41 +788,42 @@ describe('関数型プログラミングの利点', () => {
               );
               next();
             });
-          });
-        });
-        // 配列に対するelemAt関数
-        it('配列に対するelemAt関数', (next) => {
-          /* #@range_begin(array_elemAt) */
-          var elemAt = (n) => {
-            return (anArray) => {
-              if(n === 1) {
-                return anArray[0];
-              } else {
-                var tail = anArray.slice(1,anArray.length);
-                return elemAt(n-1)(tail);
+            // **リスト2.30** 配列のelemAt関数
+            it('配列のelemAt関数', (next) => {
+              /* #@range_begin(array_elemAt) */
+              var elemAt = (n) => {
+                return (anArray) => {
+                  if(n === 1) {
+                    return anArray[0];
+                  } else {
+                    var tail = anArray.slice(1,anArray.length);
+                    return elemAt(n-1)(tail);
+                  };
+                };
               };
-            };
-          };
-          /* #@range_end(array_elemAt) */
-          expect(
-            // 4番目の偶数を求める
-            /* #@range_begin(fourth_element_of_evenArray) */
-            elemAt(4)([2,4,6])
-            /* #@range_end(fourth_element_of_evenArray) */
-          ).to.eql(
-            /* #@range_begin(fourth_element_of_evenArray_result) */
-            undefined
-            /* #@range_end(fourth_element_of_evenArray_result) */
-          );
-          next();
+              /* #@range_end(array_elemAt) */
+              expect(
+                // **リスト2.31** 4番目の偶数を求める
+                /* #@range_begin(fourth_element_of_evenArray) */
+                elemAt(4)([2,4,6])
+                /* #@range_end(fourth_element_of_evenArray) */
+              ).to.eql(
+                /* #@range_begin(fourth_element_of_evenArray_result) */
+                undefined
+                /* #@range_end(fourth_element_of_evenArray_result) */
+              );
+              next();
+            });
+          });
         });
       });
     });
   });
   // ### テストが容易である
   describe('テストが容易である', () => {
-    // 単体テストの書き方の例
+    // **リスト2.32** 単体テストの書き方の例
     it('単体テストの書き方の例', (next) => {
+      /* #@range_begin(expect_example) */
       var succ = (n) => {
         return n + 1;
       };
@@ -858,9 +832,10 @@ describe('関数型プログラミングの利点', () => {
       ).to.eql(
         2       // 期待する結果を書く
       );
+      /* #@range_end(expect_example) */
       next();
     });
-    // 参照透過性のない関数の単体テスト
+    // **リスト2.33** 参照透過性のない関数の単体テスト
     it("参照透過性のない関数の単体テスト", (next) => {
       /* #@range_begin(winner_with_sideeffect) */
       var winner = (playerL, playerR) => {
@@ -884,7 +859,7 @@ describe('関数型プログラミングの利点', () => {
       next();
     });
     describe('副作用を分離する', () => {
-      // winner関数の分離
+      // **リスト2.34** winner関数の分離
       it("winner関数の分離", (next) => {
         /* #@range_begin(winner_without_sideeffect) */
         /* 勝者を判定する */
@@ -910,7 +885,7 @@ describe('関数型プログラミングの利点', () => {
           console.log(announce(winner));
         };
         /* #@range_end(winner_without_sideeffect) */
-        // 副作用のない関数のテスト
+        // **リスト2.35** 副作用のない関数のテスト
         /* #@range_begin(announce_winner) */
         var socrates = {
           name: 'ソクラテス',
@@ -952,8 +927,7 @@ describe('関数型プログラミングの利点', () => {
         return iterate(succ)(from);
       };
       it('succ関数の性質テスト', (next) => {
-
-        // プロパティテストのための関数
+        // **リスト2.39** プロパティテストのための関数
         /* #@range_begin(succ_property) */
         /* ストリームのmap関数 */
         var map = (transform) => {
@@ -995,7 +969,7 @@ describe('関数型プログラミングの利点', () => {
         };
         /* #@range_end(succ_property) */
 
-        // succ関数のプロパティテスト
+        // **リスト2.40** succ関数のプロパティテスト
         /* #@range_begin(succ_property_test) */
         /* 100個の整数について命題が正しいかをテストする */
         expect(

@@ -711,11 +711,13 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p>具体的なリストの利用法</p>
+              <p><strong>リスト4.16</strong> 具体的なリストの利用法</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'具体的なリストの利用法'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* 具体的なリスト型を定義しておく */</span>
+      <span class="hljs-comment">/* ただし、引数listにはJavaScriptの配列が入る */</span>
       <span class="hljs-keyword">var</span> cons = (n, list) =&gt; {
         <span class="hljs-keyword">return</span> [n].concat(list);
       };
@@ -766,7 +768,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>配列型の可変性</p>
+              <p><strong>リスト4.17</strong> 配列型の可変性</p>
 <blockquote>
 <p>JavaScriptの配列は、その一部を書きかえることができる</p>
 </blockquote>
@@ -795,7 +797,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <p>配列の破壊的メソッド</p>
+              <p><strong>リスト4.18</strong> 配列の破壊的メソッド</p>
 <blockquote>
 <p>配列のreverse関数は、元の配列を逆転させる</p>
 </blockquote>
@@ -829,7 +831,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p>非破壊的なreverse関数</p>
+              <p><strong>リスト4.19</strong> 非破壊的なreverse関数</p>
 
             </div>
             
@@ -862,7 +864,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p>非破壊的なreverse関数は完全には不変でない</p>
+              <p><strong>リスト4.20</strong> 非破壊的なreverse関数は完全には不変でない</p>
 
             </div>
             
@@ -922,7 +924,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>バインド変数と自由変数</p>
+              <p><strong>リスト4.21</strong> バインド変数と自由変数</p>
 
             </div>
             
@@ -955,7 +957,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
-              <p>関数本体でのバインド変数</p>
+              <p><strong>リスト4.22</strong> 関数本体でのバインド変数</p>
 
             </div>
             
@@ -1006,7 +1008,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
-              <p>関数本体での自由変数</p>
+              <p><strong>リスト4.23</strong> 関数本体での自由変数</p>
 
             </div>
             
@@ -1076,7 +1078,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
-              <p>関数とローカルスコープ</p>
+              <p><strong>リスト4.25</strong> 関数とローカルスコープ</p>
 
             </div>
             
@@ -1113,7 +1115,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
-              <p>入れ子になった関数の変数バインド</p>
+              <p><strong>リスト4.26</strong> 入れ子になった関数の変数バインド</p>
 
             </div>
             
@@ -1125,9 +1127,22 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         };
         <span class="hljs-keyword">return</span> addWithFreeVariable;
       };
-      <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span>
-      <span class="hljs-comment">/* 入れ子になった関数の適用 */</span>
-      <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
+      <span class="hljs-comment">/* #@range_end(binding_in_closure) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p><strong>リスト4.27</strong> 入れ子になった関数の適用 </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(binding_in_closure_test) */</span>
       expect(
         adder(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>)
       ).to.eql(
@@ -1142,11 +1157,11 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h2 id="4-5-">4.5 参照透過性の仕組み</h2>
 
@@ -1157,11 +1172,11 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <h3 id="-">不変なデータの仕組み</h3>
 
@@ -1172,13 +1187,13 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
-              <p>基本型は値としてのデータである</p>
+              <p><strong>リスト4.28</strong> 基本型は値としてのデータである</p>
 
             </div>
             
@@ -1214,11 +1229,11 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         </li>
         
         
-        <li id="section-48">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <h3 id="-">代入の仕組みと効果</h3>
 
@@ -1229,13 +1244,13 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         </li>
         
         
-        <li id="section-49">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
-              <p>変数への代入</p>
+              <p><strong>リスト4.29</strong> 変数への代入</p>
 
             </div>
             
@@ -1263,11 +1278,11 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
         </li>
         
         
-        <li id="section-50">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap05.spec.html">次章に移る</a> </p>
 

@@ -875,50 +875,7 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'再帰処理の利点'</span>, () =&gt; {
-    <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
-      <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
-    };
-    <span class="hljs-keyword">var</span> empty = (_) =&gt; {
-      <span class="hljs-keyword">return</span> (pattern) =&gt; {
-        <span class="hljs-keyword">return</span> pattern.empty(_);
-      };
-    };
-    <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
-      <span class="hljs-keyword">return</span> (pattern) =&gt; {
-        <span class="hljs-keyword">return</span> pattern.cons(x, xs);
-      };
-    };
-    <span class="hljs-keyword">var</span> isEmpty = (list) =&gt; {
-      <span class="hljs-keyword">return</span> match(list, {
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-        },
-        cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-        }
-      });
-    };
-    <span class="hljs-keyword">var</span> head = (list) =&gt; {
-      <span class="hljs-keyword">return</span> match(list, {
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-        },
-        cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> head;
-        }
-      });
-    };
-    <span class="hljs-keyword">var</span> tail = (list) =&gt; {
-      <span class="hljs-keyword">return</span> match(list, {
-        empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-        },
-        cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> tail;
-        }
-      });
-    };</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'再帰処理の利点'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -948,7 +905,50 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      describe(<span class="hljs-string">'再帰的データ構造としてのリスト'</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> match = (exp, pattern) =&gt; {
+        <span class="hljs-keyword">return</span> exp.call(pattern, pattern);
+      };
+      <span class="hljs-keyword">var</span> empty = (_) =&gt; {
+        <span class="hljs-keyword">return</span> (pattern) =&gt; {
+          <span class="hljs-keyword">return</span> pattern.empty(_);
+        };
+      };
+      <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
+        <span class="hljs-keyword">return</span> (pattern) =&gt; {
+          <span class="hljs-keyword">return</span> pattern.cons(x, xs);
+        };
+      };
+      <span class="hljs-keyword">var</span> isEmpty = (list) =&gt; {
+        <span class="hljs-keyword">return</span> match(list, {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          }
+        });
+      };
+      <span class="hljs-keyword">var</span> head = (list) =&gt; {
+        <span class="hljs-keyword">return</span> match(list, {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> head;
+          }
+        });
+      };
+      <span class="hljs-keyword">var</span> tail = (list) =&gt; {
+        <span class="hljs-keyword">return</span> match(list, {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> tail;
+          }
+        });
+      };
+      describe(<span class="hljs-string">'再帰的データ構造としてのリスト'</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -1001,11 +1001,6 @@ node&gt; resultExpression
             </div>
             
             <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'再帰によるappend関数'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              <span class="hljs-keyword">return</span> pattern.cons(x, xs);
-            };
-          };
           <span class="hljs-keyword">var</span> toArray = (seq,callback) =&gt; {
             <span class="hljs-keyword">var</span> toArrayAux = (seq,accumulator) =&gt; {
               <span class="hljs-keyword">return</span> match(seq, {
@@ -1066,16 +1061,6 @@ node&gt; resultExpression
             </div>
             
             <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'再帰によるreverse関数'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> empty = (_) =&gt; {
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              <span class="hljs-keyword">return</span> pattern.empty(_);
-            };
-          };
-          <span class="hljs-keyword">var</span> cons = (x, xs) =&gt; {
-            <span class="hljs-keyword">return</span> (pattern) =&gt; {
-              <span class="hljs-keyword">return</span> pattern.cons(x, xs);
-            };
-          };
           <span class="hljs-comment">/* #@range_begin(list_reverse) */</span>
           <span class="hljs-keyword">var</span> reverse = (list) =&gt; {
             <span class="hljs-keyword">var</span> reverseHelper = (list, accumulator) =&gt; {

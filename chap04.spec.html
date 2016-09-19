@@ -1000,7 +1000,9 @@
       })(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)
     );
     next();
-  });</pre></div></div>
+  });
+  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {
+    it(<span class="hljs-string">'関数本体での自由変数'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -1010,23 +1012,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-39">&#182;</a>
-              </div>
-              <p><a name="environment_demo"> <strong>変数バインディングと環境</strong> </a>
-<img src="images/environment.gif" alt="変数バインディングと環境"> </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'環境と値'</span>, () =&gt; {
-    it(<span class="hljs-string">'関数本体での自由変数'</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-40">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p><strong>リスト4.23</strong> 関数本体での自由変数</p>
 
@@ -1041,11 +1026,11 @@
         </li>
         
         
-        <li id="section-41">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>関数本体での自由変数のテスト</p>
 <p>例外が発生する場合は、無名関数で包みこみ、発生した例外を以下のように捕捉する。</p>
@@ -1077,11 +1062,11 @@
         </li>
         
         
-        <li id="section-42">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <h3 id="-section-id-variable-scope-section-"><section id='variable-scope'>変数のスコープ</section></h3>
 
@@ -1092,11 +1077,11 @@
         </li>
         
         
-        <li id="section-43">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p><strong>リスト4.25</strong> 関数とローカルスコープ</p>
 
@@ -1129,11 +1114,11 @@
         </li>
         
         
-        <li id="section-44">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p><strong>リスト4.26</strong> 入れ子になった関数の変数バインド</p>
 
@@ -1152,11 +1137,11 @@
         </li>
         
         
-        <li id="section-45">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p><strong>リスト4.27</strong> 入れ子になった関数の適用 </p>
 
@@ -1177,11 +1162,11 @@
         </li>
         
         
-        <li id="section-46">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h2 id="4-5-section-id-mechanism-of-referential-transparency-section-">4.5 <section id='mechanism-of-referential-transparency'>参照透過性の仕組み</section></h2>
 
@@ -1192,11 +1177,11 @@
         </li>
         
         
-        <li id="section-47">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <h3 id="-section-id-mechanism-of-immutability-section-"><section id='mechanism-of-immutability'>不変なデータの仕組み</section></h3>
 
@@ -1207,11 +1192,11 @@
         </li>
         
         
-        <li id="section-48">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p><strong>リスト4.28</strong> 基本型は値としてのデータである</p>
 
@@ -1249,11 +1234,11 @@
         </li>
         
         
-        <li id="section-49">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <h3 id="-section-id-mechanism-of-assingment-section-"><section id='mechanism-of-assingment'>代入の仕組みと効果</section></h3>
 
@@ -1264,13 +1249,15 @@
         </li>
         
         
-        <li id="section-50">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
-              <p><strong>リスト4.29</strong> 変数への代入</p>
+              <p><a name="mechanism-of-assignment"> <strong>代入の仕組み</strong> </a>
+<img src="images/mechanism-of-assignment.gif" alt="代入の仕組み"> 
+<strong>リスト4.29</strong> 変数への代入</p>
 
             </div>
             
@@ -1298,11 +1285,11 @@
         </li>
         
         
-        <li id="section-51">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap05.spec.html">次章に移る</a> </p>
 

@@ -60,9 +60,6 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
-            
         </li>
         
         
@@ -72,7 +69,31 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="3-1-dry-">3.1 DRY原則</h2>
+              <h2 id="-">目次</h2>
+<blockquote>
+<ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#DRY-principle">DRY原則</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#abstraction-oriented">抽象化への指向</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#semantics-conscious">セマンティクスを意識する</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#test-driven">テストに親しむ</a></li>
+</ul>
+</blockquote>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="3-1-section-id-dry-principle-dry-section-">3.1 <section id='DRY-principle'>DRY原則</section></h2>
 <p>参考 <a href="https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling">DRY原則の利用: コードの重複と密結合の間</a></p>
 
             </div>
@@ -85,13 +106,13 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>冗長なコード</p>
+              <p><strong>リスト3.1</strong> 冗長なコード</p>
 
             </div>
             
@@ -135,13 +156,13 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>DRYなtimes関数</p>
+              <p><strong>リスト3.3</strong> DRYなtimes関数</p>
 
             </div>
             
@@ -158,13 +179,13 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>DRYなかけ算とべき乗</p>
+              <p><strong>リスト3.4</strong> DRYなかけ算とべき乗</p>
 
             </div>
             
@@ -203,13 +224,13 @@
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <h2 id="3-2-">3.2 抽象化への指向</h2>
+              <h2 id="3-2-section-id-abstraction-oriented-section-">3.2 <section id='abstraction-oriented'>抽象化への指向</section></h2>
 
             </div>
             
@@ -218,13 +239,13 @@
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>関数という抽象化</p>
+              <p><strong>リスト3.5</strong> 関数という抽象化</p>
 
             </div>
             
@@ -242,13 +263,13 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>for文によるsum関数</p>
+              <p><strong>リスト3.6</strong> for文によるsum関数</p>
 
             </div>
             
@@ -275,13 +296,13 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>forEachによるsum関数</p>
+              <p><strong>リスト3.7</strong> forEachによるsum関数</p>
 
             </div>
             
@@ -307,13 +328,13 @@
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>reduceによるsum関数</p>
+              <p><strong>リスト3.8</strong> reduceによるsum関数</p>
 
             </div>
             
@@ -338,13 +359,13 @@
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <h2 id="3-3-">3.3 セマンティクスを意識する</h2>
+              <h2 id="3-3-section-id-semantics-conscious-section-">3.3 <section id='semantics-conscious'>セマンティクスを意識する</section></h2>
 
             </div>
             
@@ -353,13 +374,13 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>環境という仕組み</p>
+              <p><strong>リスト3.9</strong> 環境という仕組み</p>
 
             </div>
             
@@ -375,11 +396,11 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <dl>
   <dt>empty</dt>
@@ -410,11 +431,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <pre><code><span class="hljs-keyword">var</span> a = <span class="hljs-number">1</span>;
 <span class="hljs-keyword">var</span> b = <span class="hljs-number">3</span>;
@@ -427,13 +448,13 @@ b
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>リスト 3.10のセマンティクス </p>
+              <p><strong>リスト3.11</strong> リスト 3.10のセマンティクス </p>
 
             </div>
             
@@ -458,13 +479,13 @@ b
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <h2 id="3-4-">3.4 テストに親しむ</h2>
+              <h2 id="3-4-section-id-test-driven-section-">3.4 <section id='test-driven'>テストに親しむ</section></h2>
 
             </div>
             
@@ -473,11 +494,11 @@ b
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h3 id="-">単体テストの仕組み</h3>
 <blockquote>
@@ -491,13 +512,14 @@ b
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>assertによる表明</p>
+              <p><strong>リスト3.12</strong> アサート関数の例</p>
+<p>assertライブラリを使う場合</p>
 
             </div>
             
@@ -512,13 +534,13 @@ b
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>expectによる表明</p>
+              <p>expectライブラリを使う場合</p>
 <blockquote>
 <p>参考 <a href="https://github.com/Automattic/expect.js">https://github.com/Automattic/expect.js</a></p>
 </blockquote>
@@ -542,11 +564,11 @@ b
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p><a href="http://akimichi.github.io/functionaljs/">目次に戻る</a> <a href="http://akimichi.github.io/functionaljs/chap04.spec.html">次章に移る</a> </p>
 

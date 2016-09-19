@@ -3,11 +3,27 @@
 // 第4章 データの種類と特徴
 // ========
 
+// ## 目次
+// > * [型とは何か](http://akimichi.github.io/functionaljs/chap04.spec.html#what-is-type)
+// > * [基本型](http://akimichi.github.io/functionaljs/chap04.spec.html#basic-type)
+// > * [合成型](http://akimichi.github.io/functionaljs/chap04.spec.html#composite-type)
+// >   - [オブジェクト型](http://akimichi.github.io/functionaljs/chap04.spec.html#object-type)
+// >   - [配列型](http://akimichi.github.io/functionaljs/chap04.spec.html#array-type)
+// >   - [関数型](http://akimichi.github.io/functionaljs/chap04.spec.html#function-type)
+// >   - [抽象データ型](http://akimichi.github.io/functionaljs/chap04.spec.html#abstract-datatype)
+// >   - [合成型の可変性](http://akimichi.github.io/functionaljs/chap04.spec.html#mutability-of-composite-type)
+// > * [変数とデータの関係](http://akimichi.github.io/functionaljs/chap04.spec.html#variable-and-data)
+// >   - [変数のバインド](http://akimichi.github.io/functionaljs/chap04.spec.html#variable-binding)
+// >   - [変数のスコープ](http://akimichi.github.io/functionaljs/chap04.spec.html#variable-scope)
+// > * [参照透過性の仕組み](http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-referential-transparency)
+// >   - [不変なデータの仕組み](http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-immutability)
+// >   - [代入の仕組みと効果](http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-assingment)
+
 var expect = require('expect.js');
 
-// ## 4.1 型とは何か
+// ## 4.1 <section id='what-is-type'>型とは何か</section>
 describe('型とは何か', () => {
-  // 自然数の作り方
+  // **リスト4.1** 自然数の作り方
   it('自然数の作り方', (next) => {
     /* #@range_begin(integer_construction) */
     var succ = (n) => {
@@ -27,10 +43,10 @@ describe('型とは何か', () => {
     next();
   });
 });
-// ## 4.2 基本型
+// ## 4.2 <section id='basic-type'>基本型</section>
 // 基本型とは、そのデータ型の定義に他のデータ型を含まないような原始的な型をいう。
 describe('基本型', () => {
-  // 未定義の変数
+  // **リスト4.2** 未定義の変数
   it('未定義の変数', (next) => {
     /* #@range_begin(undefined_variable) */
     var variable; // 宣言されているが値と結びついていない変数
@@ -87,14 +103,14 @@ describe('基本型', () => {
   });
 });
 
-// ## 4.3 合成型
+// ## 4.3 <section id='composite-type'>合成型</section>
 // 合成型は、内部に構造を持つ
 describe('合成型', () => {
-  // ### オブジェクト型
+  // ### <section id='object-type'>オブジェクト型</section>
   // c.f. [オブジェクトを利用する](https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects)
   describe('オブジェクト型', () => {
     describe('アドレス帳の例', () => {
-      // オブジェクト型の例
+      // **リスト4.4** オブジェクト型の例
       it('オブジェクト型の例', (next) => {
         /* #@range_begin(object_instance_example) */
         var addressbook = {
@@ -106,7 +122,7 @@ describe('合成型', () => {
         /* #@range_end(object_instance_example) */
         next();
       });
-      // オブジェクト型の入れ子
+      // **リスト4.5** オブジェクト型の入れ子
       it('オブジェクト型の入れ子', (next) => {
         /* ##@range_begin(object_can_embed_object) */
         var addressbook = {
@@ -145,7 +161,7 @@ describe('合成型', () => {
           }
           /* ##@range_end(object_can_embed_object_nested) */
         };
-        // オブジェクト型インスタンスへのアクセス
+        // **リスト4.6** オブジェクト型インスタンスへのアクセス
         /* #@range_begin(object_access) */
         expect(
           addressbook.No1.name        // オブジェクト.キー記法
@@ -162,10 +178,10 @@ describe('合成型', () => {
       });
     });
   });
-  // ### 配列型
+  // ### <section id='array-type'>配列型</section>
   // c.f. https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array  
   describe('配列型', () => {
-    // 配列の基本操作
+    // **リスト4.7** 配列の基本操作
     it("配列の基本操作", (next) => {
       /* #@range_begin(array_access) */
       var array = [10,11,12];
@@ -189,7 +205,7 @@ describe('合成型', () => {
       /* #@range_end(array_access) */
       next();
     });
-    // **sortによる配列要素の並べかえ**
+    // **リスト4.8** sortによる配列要素の並べかえ
     //
     // > [5,3,4,1,2]の配列を昇順に並べかえる
     // > c.f. https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
@@ -206,7 +222,7 @@ describe('合成型', () => {
       /* #@range_end(sort_in_array) */
       next();
     });
-    // 名簿の配列型表現
+    // **リスト4.9** 名簿の配列型表現
     it("名簿の配列型表現", (next) => {
       /* #@range_begin(addressbook_example_in_array) */
       var addressbook = [ // 配列に要素を格納する
@@ -232,7 +248,7 @@ describe('合成型', () => {
         }
       ];
       /* #@range_end(addressbook_example_in_array) */
-      // 名簿の並べかえ
+      // **リスト4.10** 名簿の並べかえ
       /* #@range_begin(sorting_array) */
       expect(
         addressbook.sort((onePerson,anotherPerson) => {
@@ -266,9 +282,9 @@ describe('合成型', () => {
       next();
     });
   });
-  // ### 関数型
+  // ### <section id='function-type'>関数型</section>
   describe('関数型', () => {
-    // 関数はオブジェクト型である
+    // **リスト4.11** 関数はオブジェクト型である
     it('関数はオブジェクト型である', (next) => {
       /* #@range_begin(function_is_object_type) */
       var func = (n) => {
@@ -283,7 +299,7 @@ describe('合成型', () => {
       /* #@range_end(function_is_object_type) */
       next();
     });
-    // 引数のない関数 
+    // **リスト4.12** 引数のない関数 
     it('引数のない関数', (next) => {
       /* #@range_begin(function_without_argument) */
       var three = () => {
@@ -297,7 +313,7 @@ describe('合成型', () => {
       /* #@range_end(function_without_argument) */
       next();
     });
-    // 関数と変数の類似
+    // **リスト4.13** 関数と変数の類似
     it('関数と変数の類似', (next) => {
       /* #@range_begin(function_resembles_variable) */
       var three = 3;
@@ -310,10 +326,13 @@ describe('合成型', () => {
       next();
     });
   });
-  // ### 抽象データ型
+  // ### <section id='abstract-datatype'>抽象データ型</section>
+  // > 参考 [抽象データ型](https://ja.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B)
   describe('抽象データ型', () => {
-    // 具体的なリストの利用法
+    // **リスト4.16** 具体的なリストの利用法
     it('具体的なリストの利用法', (next) => {
+      /* 具体的なリスト型を定義しておく */
+      /* ただし、引数listにはJavaScriptの配列が入る */
       var cons = (n, list) => {
         return [n].concat(list);
       };
@@ -339,9 +358,9 @@ describe('合成型', () => {
       next();
     });
   });
-  // ### 合成型の可変性
+  // ### <section id='mutability-of-composite-type'>合成型の可変性</section>
   describe('合成型の可変性', () => {
-    // 配列型の可変性
+    // **リスト4.17** 配列型の可変性
     // > JavaScriptの配列は、その一部を書きかえることができる
     it('配列型の可変性', (next) => {
       /* #@range_begin(array_is_mutable) */
@@ -355,7 +374,7 @@ describe('合成型', () => {
       /* #@range_end(array_is_mutable) */
       next();
     });
-    // 配列の破壊的メソッド
+    // **リスト4.18** 配列の破壊的メソッド
     // > 配列のreverse関数は、元の配列を逆転させる
     it('配列の破壊的メソッド', (next) => {
       /* #@range_begin(destructive_reverse) */
@@ -374,7 +393,7 @@ describe('合成型', () => {
       next();
     });
     it('非破壊的なreverse関数', (next) => {
-      // 非破壊的なreverse関数
+      // **リスト4.19** 非破壊的なreverse関数
       /* #@range_begin(immutable_reverse) */
       var reverse = (array) => {
         return array.reduce((accumulator, item) => {
@@ -394,7 +413,7 @@ describe('合成型', () => {
       ).to.eql(
         [5,4,3,2,1]
       );
-      // 非破壊的なreverse関数は完全には不変でない
+      // **リスト4.20** 非破壊的なreverse関数は完全には不変でない
       /* #@range_begin(immutable_reverse_is_not_immutable) */
       var reversed = reverse(array);
       reversed[0] = 0;
@@ -408,12 +427,12 @@ describe('合成型', () => {
     });
   });
 });
-// ## 4.4 変数とデータの関係
+// ## 4.4 <section id='variable-and-data'>変数とデータの関係</section>
 describe('変数とデータの関係', () => {
-  // ### 変数のバインド
+  // ### <section id='variable-binding'>変数のバインド</section>
   // > 変数boundはバインドされているが、変数unboundはバインドされていない
   it('変数のバインド', (next) => {
-    // バインド変数と自由変数
+    // **リスト4.21** バインド変数と自由変数
     /* #@range_begin(variable_binding_value) */
     var bound = "我思うゆえに我あり";
     expect(
@@ -433,7 +452,7 @@ describe('変数とデータの関係', () => {
     /* #@range_end(variable_binding_value) */
     next();
   });
-  // 関数本体でのバインド変数
+  // **リスト4.22** 関数本体でのバインド変数
   it('関数本体でのバインド変数', (next) => {
     /* #@range_begin(bound_variable_in_function) */
     var add = (x,y) => { // xとyは引数
@@ -458,7 +477,7 @@ describe('変数とデータの関係', () => {
   // ![変数バインディングと環境](images/environment.gif) 
   describe('環境と値', () => {
     it('関数本体での自由変数', (next) => {
-      // 関数本体での自由変数
+      // **リスト4.23** 関数本体での自由変数
       /* #@range_begin(free_variable_in_function) */
       var addWithFreeVariable = (x) => {
         return x + y;  // xはバインド変数だが、yは自由変数
@@ -486,9 +505,9 @@ describe('変数とデータの関係', () => {
       next();
     });
   });
-  // ### 変数のスコープ
+  // ### <section id='variable-scope'>変数のスコープ</section>
   describe('変数のスコープ', () => {
-    // 関数とローカルスコープ
+    // **リスト4.25** 関数とローカルスコープ
     it('関数とローカルスコープ', (next) => {
       /* #@range_begin(function_creates_scope) */
       var createScope = (_) =>  { // ローカルスコープを作る
@@ -512,7 +531,7 @@ describe('変数とデータの関係', () => {
       );
       next();
     });
-    // 入れ子になった関数の変数バインド
+    // **リスト4.26** 入れ子になった関数の変数バインド
     it('入れ子になった関数の変数バインド', (next) => {
       /* #@range_begin(binding_in_closure) */
       var adder = (y) => { // 外側の関数
@@ -522,7 +541,7 @@ describe('変数とデータの関係', () => {
         return addWithFreeVariable;
       };
       /* #@range_end(binding_in_closure) */
-      /* 入れ子になった関数の適用 */
+      // **リスト4.27** 入れ子になった関数の適用 
       /* #@range_begin(binding_in_closure_test) */
       expect(
         adder(2)(3)
@@ -534,11 +553,11 @@ describe('変数とデータの関係', () => {
     });
   });
 });
-// ## 4.5 参照透過性の仕組み
+// ## 4.5 <section id='mechanism-of-referential-transparency'>参照透過性の仕組み</section>
 describe('参照透過性の仕組み', () => {
-  // ### 不変なデータの仕組み 
+  // ### <section id='mechanism-of-immutability'>不変なデータの仕組み</section>
   describe('不変なデータの仕組み', () => {
-    // 基本型は値としてのデータである
+    // **リスト4.28** 基本型は値としてのデータである
     it('基本型は値としてのデータである', (next) => {
       /* #@range_begin(basic_type_is_value_type) */
       var n = 1;
@@ -567,9 +586,9 @@ describe('参照透過性の仕組み', () => {
       next();
     });
   });
-  // ### 代入の仕組みと効果
+  // ### <section id='mechanism-of-assingment'>代入の仕組みと効果</section>
   describe('代入の仕組みと効果', () => {
-    // 変数への代入
+    // **リスト4.29** 変数への代入
     it('変数への代入', (next) => {
       /* #@range_begin(assign_to_variable) */
       var age = 29;

@@ -2790,11 +2790,28 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
-              <p><strong>表7.2</strong> 反復処理における蓄積変数の初期値とコールバック関数の関係
-|関数名       |蓄積変数の初期値|関数合成による定義                              |
-|:————|:————-|——————————————-|
-|sum          |0             |(n) =&gt; { return (m) =&gt; { return n + m;};}  |
-|length       |0             |(n) =&gt; { return (m) =&gt; { return 1 + m;};}  |</p>
+              <p><strong>表7.2</strong> 反復処理における蓄積変数の初期値とコールバック関数の関係</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">関数名</th>
+<th style="text-align:left">蓄積変数の初期値</th>
+<th>関数合成による定義</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">sum</td>
+<td style="text-align:left">0</td>
+<td>(n) =&gt; { return (m) =&gt; { return n + m;};}</td>
+</tr>
+<tr>
+<td style="text-align:left">length</td>
+<td style="text-align:left">0</td>
+<td>(n) =&gt; { return (m) =&gt; { return 1 + m;};}</td>
+</tr>
+</tbody>
+</table>
 
             </div>
             

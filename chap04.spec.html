@@ -72,10 +72,26 @@
               <h2 id="-">目次</h2>
 <blockquote>
 <ul>
-<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#DRY-principle">DRY原則</a></li>
-<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#abstraction-oriented">抽象化への指向</a></li>
-<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#semantics-conscious">セマンティクスを意識する</a></li>
-<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#test-driven">テストに親しむ</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#what-is-type">型とは何か</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#basic-type">基本型</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#composite-type">合成型</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#object-type">オブジェクト型</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#array-type">配列型</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#function-type">関数型</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#abstract-datatype">抽象データ型</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mutability-of-composite-type">合成型の可変性</a></li>
+</ul>
+</li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#variable-and-data">変数とデータの関係</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#variable-binding">変数のバインド</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#variable-scope">変数のスコープ</a></li>
+</ul>
+</li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-referential-transparency">参照透過性の仕組み</a><ul>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-immutability">不変なデータの仕組み</a></li>
+<li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-assingment">代入の仕組みと効果</a></li>
+</ul>
+</li>
 </ul>
 </blockquote>
 
@@ -93,7 +109,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <h2 id="4-1-">4.1 型とは何か</h2>
+              <h2 id="4-1-section-id-what-is-type-section-">4.1 <section id='what-is-type'>型とは何か</section></h2>
 
             </div>
             
@@ -141,7 +157,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <h2 id="4-2-">4.2 基本型</h2>
+              <h2 id="4-2-section-id-basic-type-section-">4.2 <section id='basic-type'>基本型</section></h2>
 <p>基本型とは、そのデータ型の定義に他のデータ型を含まないような原始的な型をいう。</p>
 
             </div>
@@ -261,7 +277,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <h2 id="4-3-">4.3 合成型</h2>
+              <h2 id="4-3-section-id-composite-type-section-">4.3 <section id='composite-type'>合成型</section></h2>
 <p>合成型は、内部に構造を持つ</p>
 
             </div>
@@ -277,7 +293,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <h3 id="-">オブジェクト型</h3>
+              <h3 id="-section-id-object-type-section-"><section id='object-type'>オブジェクト型</section></h3>
 <p>c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects">オブジェクトを利用する</a></p>
 
             </div>
@@ -401,7 +417,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <h3 id="-">配列型</h3>
+              <h3 id="-section-id-array-type-section-"><section id='array-type'>配列型</section></h3>
 <p>c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array">https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array</a>  </p>
 
             </div>
@@ -597,7 +613,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <h3 id="-">関数型</h3>
+              <h3 id="-section-id-function-type-section-"><section id='function-type'>関数型</section></h3>
 
             </div>
             
@@ -693,7 +709,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <h3 id="-">抽象データ型</h3>
+              <h3 id="-section-id-abstract-datatype-section-"><section id='abstract-datatype'>抽象データ型</section></h3>
 <blockquote>
 <p>参考 <a href="https://ja.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B">抽象データ型</a></p>
 </blockquote>
@@ -753,7 +769,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <h3 id="-">合成型の可変性</h3>
+              <h3 id="-section-id-mutability-of-composite-type-section-"><section id='mutability-of-composite-type'>合成型の可変性</section></h3>
 
             </div>
             
@@ -891,7 +907,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
-              <h2 id="4-4-">4.4 変数とデータの関係</h2>
+              <h2 id="4-4-section-id-variable-and-data-section-">4.4 <section id='variable-and-data'>変数とデータの関係</section></h2>
 
             </div>
             
@@ -906,7 +922,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
-              <h3 id="-">変数のバインド</h3>
+              <h3 id="-section-id-variable-binding-section-"><section id='variable-binding'>変数のバインド</section></h3>
 <blockquote>
 <p>変数boundはバインドされているが、変数unboundはバインドされていない</p>
 </blockquote>
@@ -1063,7 +1079,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
-              <h3 id="-">変数のスコープ</h3>
+              <h3 id="-section-id-variable-scope-section-"><section id='variable-scope'>変数のスコープ</section></h3>
 
             </div>
             
@@ -1163,7 +1179,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
-              <h2 id="4-5-">4.5 参照透過性の仕組み</h2>
+              <h2 id="4-5-section-id-mechanism-of-referential-transparency-section-">4.5 <section id='mechanism-of-referential-transparency'>参照透過性の仕組み</section></h2>
 
             </div>
             
@@ -1178,7 +1194,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
-              <h3 id="-">不変なデータの仕組み</h3>
+              <h3 id="-section-id-mechanism-of-immutability-section-"><section id='mechanism-of-immutability'>不変なデータの仕組み</section></h3>
 
             </div>
             
@@ -1235,7 +1251,7 @@ c.f. <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Glo
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
-              <h3 id="-">代入の仕組みと効果</h3>
+              <h3 id="-section-id-mechanism-of-assingment-section-"><section id='mechanism-of-assingment'>代入の仕組みと効果</section></h3>
 
             </div>
             

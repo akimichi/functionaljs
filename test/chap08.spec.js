@@ -2,6 +2,13 @@
 
 // 第8章 関数型言語を作る
 // ========
+// ## 目次
+// > * [抽象構文木を作る](http://akimichi.github.io/functionaljs/chap08.spec.html#abstract-syntax-tree)
+// > * [環境を作る](http://akimichi.github.io/functionaljs/chap08.spec.html#environment)
+// > * [評価器を作る](http://akimichi.github.io/functionaljs/chap08.spec.html#evaluator)
+// >   - [恒等モナドによる評価器](http://akimichi.github.io/functionaljs/chap08.spec.html#identity-monad-evaluator)
+// >   - [ログ出力評価器](http://akimichi.github.io/functionaljs/chap08.spec.html#logger-monad-evaluator)
+
 var expect = require('expect.js');
 
 // pairモジュール 
@@ -103,9 +110,9 @@ var list  = {
   }
 };
 
-// ## 8.2 抽象構文木を作る
+// ## 8.2 <section id='abstract-syntax-tree'>抽象構文木を作る</section>
 describe('抽象構文木を作る', () => {
-  // 式の代数的データ構造
+  // **リスト8.2** 式の代数的データ構造
   describe('式の代数的データ構造', () => {
     var exp = {
       /* #@range_begin(expression_algebraic_datatype) */
@@ -139,7 +146,7 @@ describe('抽象構文木を作る', () => {
       },
       /* #@range_end(expression_algebraic_datatype) */
 
-      // 演算の定義
+      // **リスト8.3** 演算の定義
       /* #@range_begin(expression_arithmetic) */
       /* 足し算の式 */
       add : (expL,expR) => {        
@@ -166,9 +173,9 @@ describe('抽象構文木を作る', () => {
 
 });
 
-// ## 8.3 環境を作る
+// ## 8.3 <section id='environment'>環境を作る</section>
 describe('環境を作る', () => {
-  // クロージャーによる「環境」の定義
+  // **リスト8.5** クロージャーによる「環境」の定義
   /* #@range_begin(environment) */
   var env = {
     /* 空の環境を作る */
@@ -194,7 +201,7 @@ describe('環境を作る', () => {
     }
   };
   /* #@range_end(environment) */
-  // 変数バインディングにおける環境のセマンティクス
+  // **リスト8.7** 変数バインディングにおける環境のセマンティクス
 
   // ~~~
   // var a = 1;
@@ -231,7 +238,7 @@ describe('環境を作る', () => {
     // };
     // closure() 
     // ~~~
-    // クロージャーにおける環境のセマンティクス
+    // **リスト8.9** クロージャーにおける環境のセマンティクス
     /* #@range_begin(environment_extend_test) */
     expect(((_) => {
       /* 空の辞書を作成する */
@@ -251,7 +258,7 @@ describe('環境を作る', () => {
   });
 });
 
-// ## 8.4 評価器を作る
+// ## 8.4 <section id='evaluator'>評価器を作る</section>
 describe('評価器を作る', () => {
   /* 「環境」モジュール */
   var env = {
@@ -273,7 +280,7 @@ describe('評価器を作る', () => {
   };
   var emptyEnv = env.empty;
 
-  // ### 恒等モナドによる評価器
+  // ### <section id='identity-monad-evaluator'>恒等モナドによる評価器</section>
   describe('恒等モナドによる評価器', () => {
     var exp = {
       match : (data, pattern) => { // 式のパターンマッチ関数
@@ -320,16 +327,16 @@ describe('評価器を作る', () => {
     };
     /* #@range_end(identity_monad) */
 
-    // 恒等モナド評価器の定義
+    // **リスト8.10** 恒等モナド評価器の定義
     /* #@range_begin(identity_monad_evaluator) */
     /* evaluate:: (EXP, ENV) => ID[VALUE] */
     var evaluate = (anExp, environment) => {
       return exp.match(anExp,{
-        /* 数値の評価 */
+        // **リスト8.11** 数値の評価
         num: (numericValue) => {        
           return ID.unit(numericValue);
         },
-        /* 変数の評価  */
+        // **リスト8.13** 変数の評価
         variable: (name) => {           
           return ID.unit(env.lookup(name, environment));
         },
@@ -352,7 +359,7 @@ describe('評価器を作る', () => {
             });
           });
         },
-        /* 足し算の評価 */
+        // **リスト8.15**  足し算の評価 
         add: (expL, expR) => {          
           return ID.flatMap(evaluate(expL, environment))((valueL) => {
             return ID.flatMap(evaluate(expR, environment))((valueR) => {
@@ -363,7 +370,7 @@ describe('評価器を作る', () => {
       });
     };
     /* #@range_end(identity_monad_evaluator) */
-    // 数値の評価のテスト
+    // **リスト8.12** 数値の評価のテスト
     it('数値の評価のテスト', (next) => {
       /* #@range_begin(number_evaluation_test) */
       expect(
@@ -374,15 +381,7 @@ describe('評価器を作る', () => {
       /* #@range_end(number_evaluation_test) */
       next();
     });
-    it('ID評価器で演算を評価する', (next) => {
-      expect(
-        evaluate(exp.add(exp.num(1),exp.num(2)), emptyEnv)
-      ).to.be(
-        ID.unit(3)
-      );
-      next();
-    });
-    // 変数の評価のテスト
+    // **リスト8.14** 変数の評価のテスト
     it('変数の評価のテスト', (next) => {
       /* #@range_begin(variable_evaluation_test) */
       /* 変数xを1に対応させた環境を作る */
@@ -401,8 +400,7 @@ describe('評価器を作る', () => {
       );
       next();
     });
-    // #### 足し算の評価
-    // 足し算の評価のテスト
+    // **リスト8.16** 足し算の評価のテスト
     it('足し算の評価のテスト', (next) => {
       /* add(1,2) */
       /* #@range_begin(add_evaluation_test) */
@@ -413,6 +411,14 @@ describe('評価器を作る', () => {
         ID.unit(3)
       );
       /* #@range_end(add_evaluation_test) */
+      next();
+    });
+    it('恒等モナド評価器で演算を評価する', (next) => {
+      expect(
+        evaluate(exp.add(exp.num(1),exp.num(2)), emptyEnv)
+      ).to.be(
+        ID.unit(3)
+      );
       next();
     });
     // #### 関数の評価
@@ -432,7 +438,7 @@ describe('評価器を作る', () => {
       next();
     });
     it('関数適用の評価のテスト', (next) => {
-      // 関数適用の評価のテスト
+      // **リスト8.17** 関数適用の評価のテスト
       // ~~~js
       // ((n) => {
       //   return n + 1; 
@@ -469,7 +475,7 @@ describe('評価器を作る', () => {
       next();
     });
     it('カリー化関数の評価', (next) => {
-      // カリー化関数の評価
+      // **リスト8.19**カリー化関数の評価
       // ~~~js
       // ((n) => {
       //    return (m) => {
@@ -495,9 +501,9 @@ describe('評価器を作る', () => {
       next();
     });
   });
-  // ### ログ出力評価器
+  // ### <section id='logger-monad-evaluator'>ログ出力評価器</section>
   describe('ログ出力評価器', () => {
-    // ログ出力評価器の式
+    // **リスト8.20** ログ出力評価器の式
     /* #@range_begin(expression_logger_interpreter) */
     var exp = {
       log: (anExp) => { // ログ出力用の式
@@ -544,7 +550,7 @@ describe('評価器を作る', () => {
         };
       }
     };
-    // LOGモナドの定義
+    // **リスト8.21** LOGモナドの定義
     /* #@range_begin(logger_monad) */
     /* LOG[T] = PAIR[T, LIST[STRING]] */
     var LOG = {
@@ -577,7 +583,7 @@ describe('評価器を作る', () => {
       }
     };
     /* #@range_end(logger_monad) */
-    // LOGモナド評価器
+    // **リスト8.22** LOGモナド評価器
     /* #@range_begin(logger_monad_evaluator) */
     /* evaluate:: (EXP, ENV) => LOG[VALUE] */
     var evaluate = (anExp, environment) => {
@@ -698,7 +704,7 @@ describe('評価器を作る', () => {
             );
           }
         });
-        // ログ出力評価器による評価戦略の確認
+        // **リスト8.25** ログ出力評価器による評価戦略の確認
         /* #@range_begin(log_interpreter_evaluation_strategy) */
         // ~~~js
         // ((n) => {

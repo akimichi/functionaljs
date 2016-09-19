@@ -1696,7 +1696,7 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
-              <p>**リスト2.28 ストリームのelemAt関数</p>
+              <p><strong>リスト2.28</strong> ストリームのelemAt関数</p>
 
             </div>
             
@@ -1818,11 +1818,12 @@ node&gt; ichi === one;
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
-              <p>単体テストの書き方の例</p>
+              <p><strong>リスト2.32</strong> 単体テストの書き方の例</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'単体テストの書き方の例'</span>, (next) =&gt; {
+      <span class="hljs-comment">/* #@range_begin(expect_example) */</span>
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
       };
@@ -1831,6 +1832,7 @@ node&gt; ichi === one;
       ).to.eql(
         <span class="hljs-number">2</span>       <span class="hljs-comment">// 期待する結果を書く</span>
       );
+      <span class="hljs-comment">/* #@range_end(expect_example) */</span>
       next();
     });</pre></div></div>
             

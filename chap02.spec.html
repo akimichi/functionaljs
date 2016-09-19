@@ -1198,8 +1198,22 @@ node&gt; array
               <span class="hljs-keyword">return</span> fun(y)(x);
             };
           };
-        };
-        it(<span class="hljs-string">'length関数の定義'</span>, (next) =&gt; {
+        };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p><strong>リスト2.15</strong> 関数適用によるlength関数の定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'関数適用によるlength関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> map = (transform) =&gt; {
             <span class="hljs-keyword">return</span> (array) =&gt; {
               <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
@@ -1217,22 +1231,8 @@ node&gt; array
               <span class="hljs-keyword">return</span> any;
             };
           };
-          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-50">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
-              </div>
-              <p><strong>リスト2.15</strong> length関数の定義</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(array_length) */</span>
+          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
+          <span class="hljs-comment">/* #@range_begin(array_length) */</span>
           <span class="hljs-keyword">var</span> length = (array) =&gt; {
             <span class="hljs-keyword">return</span> sum(map(alwaysOne)(array));
           };

@@ -1214,24 +1214,6 @@ node&gt; array
             </div>
             
             <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'関数適用によるlength関数の定義'</span>, (next) =&gt; {
-          <span class="hljs-keyword">var</span> map = (transform) =&gt; {
-            <span class="hljs-keyword">return</span> (array) =&gt; {
-              <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-                <span class="hljs-keyword">return</span> accumulator.concat(transform(item));
-              },[]); <span class="hljs-comment">// 蓄積変数の初期値として空の配列[]を指定する</span>
-            };
-          };
-          <span class="hljs-keyword">var</span> sum = (array) =&gt; {
-            <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; { <span class="hljs-comment">// 第1引数に関数を渡す</span>
-              <span class="hljs-keyword">return</span> accumulator + item;                 <span class="hljs-comment">// 足し算を実行する</span>
-            },<span class="hljs-number">0</span>); <span class="hljs-comment">// 第2引数には、蓄積変数の初期値として0を渡す </span>
-          };
-          <span class="hljs-keyword">var</span> constant = (any) =&gt; {
-            <span class="hljs-keyword">return</span> (_) =&gt; {
-              <span class="hljs-keyword">return</span> any;
-            };
-          };
-          <span class="hljs-keyword">var</span> alwaysOne = constant(<span class="hljs-number">1</span>); 
           <span class="hljs-comment">/* #@range_begin(array_length) */</span>
           <span class="hljs-keyword">var</span> length = (array) =&gt; {
             <span class="hljs-keyword">return</span> sum(map(alwaysOne)(array));

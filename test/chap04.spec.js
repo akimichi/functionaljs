@@ -107,7 +107,7 @@ describe('基本型', () => {
 // 合成型は、内部に構造を持つ
 describe('合成型', () => {
   // ### <section id='object-type'>オブジェクト型</section>
-  // c.f. [オブジェクトを利用する](https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects)
+  // > 参考 [オブジェクトを利用する](https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects)
   describe('オブジェクト型', () => {
     describe('アドレス帳の例', () => {
       // **リスト4.4** オブジェクト型の例
@@ -179,7 +179,7 @@ describe('合成型', () => {
     });
   });
   // ### <section id='array-type'>配列型</section>
-  // c.f. https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array  
+  // > 参考 https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array  
   describe('配列型', () => {
     // **リスト4.7** 配列の基本操作
     it("配列の基本操作", (next) => {
@@ -208,7 +208,7 @@ describe('合成型', () => {
     // **リスト4.8** sortによる配列要素の並べかえ
     //
     // > [5,3,4,1,2]の配列を昇順に並べかえる
-    // > c.f. https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+    // > 参考 https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
     it("sortによる配列要素の並べかえ", (next) => {
       /* #@range_begin(sort_in_array) */
       var array = [5,3,4,1,2];
@@ -473,8 +473,6 @@ describe('変数とデータの関係', () => {
     );
     next();
   });
-  // <a name="environment_demo"> **変数バインディングと環境** </a>
-  // ![変数バインディングと環境](images/environment.gif) 
   describe('環境と値', () => {
     it('関数本体での自由変数', (next) => {
       // **リスト4.23** 関数本体での自由変数
@@ -607,6 +605,8 @@ describe('参照透過性の仕組み', () => {
       /* #@range_end(assign_to_variable) */
       next();
     });
+    // <a name="mechanism-of-assignment"> **代入の仕組み** </a>
+    // ![代入の仕組み](images/mechanism-of-assignment.gif) 
   });
 });
 

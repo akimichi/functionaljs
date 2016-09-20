@@ -220,12 +220,12 @@ describe('関数型プログラミングの特徴', () => {
           x = x + 1; // 代入で変数を更新する
           return x + y;
         };
+        /* #@range_end(assignment_breaks_referential_transparency)  */
         expect(
           add(1)
         ).to.eql(
           2
         );
-        /* #@range_end(assignment_breaks_referential_transparency)  */
         next();
       });
       // **リスト2.3** 命令的な階乗関数
@@ -829,10 +829,10 @@ describe('関数型プログラミングの利点', () => {
   describe('テストが容易である', () => {
     // **リスト2.32** 単体テストの書き方の例
     it('単体テストの書き方の例', (next) => {
-      /* #@range_begin(expect_example) */
       var succ = (n) => {
         return n + 1;
       };
+      /* #@range_begin(expect_example) */
       expect(
         succ(1) // テストしたい式を書く
       ).to.eql(

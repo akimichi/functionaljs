@@ -1303,7 +1303,7 @@ describe('クロージャーを使う', () => {
       /* #@range_begin(church_one) */
       var one = (f) => {
         return (x) => {
-          return f(x);
+          return f(x); // f関数を1回適用する
         };
       };
       /* #@range_end(church_one) */
@@ -2705,7 +2705,7 @@ describe('モナドを作る', () => {
     });
     describe('外界を引数に持たないIOモナド', () => {
       var fs = require('fs');
-      // **リスト7.99**外界を明示しないIOモナドの定義
+      // **リスト7.99** 外界を明示しないIOモナドの定義
       /* #@range_begin(io_monad_definition) */
       var IO = {
         /* unit:: T => IO[T] */

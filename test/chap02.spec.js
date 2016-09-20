@@ -4,7 +4,7 @@
 // ========
 
 // ## 目次
-// > * [関数型プログラミングの特徴](http://akimichi.github.io/functionaljs/chap02.spec.html#features-of_functional-programming)
+// > * [関数型プログラミングの特徴](http://akimichi.github.io/functionaljs/chap02.spec.html#features-of-functional-programming)
 // >   - [ファーストクラスオブジェクトとしての関数](http://akimichi.github.io/functionaljs/chap02.spec.html#first-class-object)
 // >   - [参照透過性](http://akimichi.github.io/functionaljs/chap02.spec.html#referential-transparency)
 // > * [関数型プログラミングの利点](http://akimichi.github.io/functionaljs/chap02.spec.html#advantages-of-functional-programming)

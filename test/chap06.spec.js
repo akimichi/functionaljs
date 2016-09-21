@@ -231,15 +231,15 @@ describe('関数の基本', () => {
         },
         /* head:: STREAM[T] => T */
         /* ストリーム型headの定義は、リスト型headと同じ */
-        head: (astream) => {
-          return stream.match(astream,{
+        head: (aStream) => {
+          return stream.match(aStream, {
             empty: (_) => { return null; },
             cons: (value, tailThunk) => { return value; }
           });
         },
         /* tail:: STREAM[T] => STREAM[T] */
-        tail: (astream) => {
-          return stream.match(astream,{
+        tail: (aStream) => {
+          return stream.match(aStream, {
             empty: (_) => { return null; },
             cons: (head, tailThunk) => {
               return tailThunk(); // ここで初めてサンクを評価する
@@ -281,23 +281,23 @@ describe('関数の基本', () => {
           },
           /* head:: STREAM[T] => T */
           /* ストリーム型headの定義は、リスト型headと同じ */
-          head: (astream) => {
-            return match(astream,{
+          head: (aStream) => {
+            return match(aStream, {
               empty: (_) => { return null; },
               cons: (value, tailThunk) => { return value; }
             });
           },
           /* tail:: STREAM[T] => STREAM[T] */
-          tail: (astream) => {
-            return match(astream,{
+          tail: (aStream) => {
+            return match(aStream, {
               empty: (_) => { return null; },
               cons: (head, tailThunk) => {
                 return tailThunk();  // ここで初めてサンクを評価する
               }
             });
           },
-          take: (astream, n) => {
-            return match(astream,{
+          take: (aStream, n) => {
+            return match(aStream, {
               empty: (_) => {
                 return list.empty();
               },
@@ -353,14 +353,14 @@ describe('関数の基本', () => {
                 return pattern.cons(head,tailThunk);
               };
             },
-            head: (astream) => {
-              return match(astream,{
+            head: (aStream) => {
+              return match(aStream, {
                 empty: (_) => { return null; },
                 cons: (value, tailThunk) => { return value; }
               });
             },
-            tail: (astream) => {
-              return match(astream,{
+            tail: (aStream) => {
+              return match(aStream, {
                 empty: (_) => { return null; },
                 cons: (head, tailThunk) => {
                   return tailThunk();  // ここで初めてサンクを評価する
@@ -370,8 +370,8 @@ describe('関数の基本', () => {
             // ストリームのtake関数
             /* #@range_begin(stream_take) */
             /* take:: (STREAM[T], NUM) => LIST[T] */
-            take: (astream, n) => {
-              return stream.match(astream,{
+            take: (aStream, n) => {
+              return stream.match(aStream, {
                 empty: (_) => {              // ストリームが空のケース
                   return list.empty();
                 },
@@ -389,8 +389,8 @@ describe('関数の基本', () => {
 	    ,
             /* #@range_begin(stream_filter) */
             /* filter :: (STREAM[T], FUN[T => BOOL]) => STREAM[T] */
-            filter: (astream,predicate) => {
-              return match(astream,{
+            filter: (aStream,predicate) => {
+              return match(aStream, {
                 empty: (_) => {
                   return stream.empty();
                 },
@@ -535,7 +535,7 @@ describe('関数と参照透過性', () => {
        という文字列をファイルに書き込んでおく */
     fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
-    /* 第1回目のファイルの読み込み */
+    /* 1回目のファイルの読み込み */
     var text = fs.readFileSync("test/resources/file.txt",'utf8');
     expect(
       fs.readFileSync("test/resources/file.txt", 'utf8')
@@ -546,7 +546,7 @@ describe('関数と参照透過性', () => {
     fs.writeFileSync('test/resources/file.txt',
                      "This is another test.");
 
-    /* 第2回目のファイルの読み込み */
+    /* 2回目のファイルの読み込み */
     expect(
       fs.readFileSync("test/resources/file.txt", 'utf8')
     ).to.eql(/* 最初の readFileSync関数の結果と異なっている */

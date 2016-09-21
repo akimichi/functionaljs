@@ -17,7 +17,7 @@ var match = (data, pattern) => {
 
 // listモジュール
 var list  = {
-  match : (data, pattern) => {
+  match: (data, pattern) => {
     return data.call(list, pattern);
   },
   empty: (_) => {
@@ -31,7 +31,7 @@ var list  = {
     };
   },
   head: (alist) => {
-    return match(alist, {
+    return list.match(alist, {
       empty: (_) => {
         return null;
       },
@@ -41,7 +41,7 @@ var list  = {
     });
   },
   tail: (alist) => {
-    return match(alist, {
+    return list.match(alist, {
       empty: (_) => {
         return null;
       },
@@ -51,7 +51,7 @@ var list  = {
     });
   },
   isEmpty: (alist) => {
-    return match(alist, {
+    return list.match(alist, {
       empty: (_) => {
         return true;
       },
@@ -67,7 +67,7 @@ var list  = {
   // ~~~
   append: (xs) => {
     return (ys) => {
-      return match(xs, {
+      return list.match(xs, {
         empty: (_) => {
           return ys;
         },
@@ -81,7 +81,7 @@ var list  = {
   map: (alist) => {
     var self = this;
     return (transform) => {
-      return match(alist,{
+      return list.match(alist, {
         empty: (_) => {
           return list.empty();
         },
@@ -94,7 +94,7 @@ var list  = {
   reverse: (alist) => {
     var self = this;
     var reverseAux = (alist, accumulator) => {
-      return match(alist, {
+      return list.match(alist, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -107,7 +107,7 @@ var list  = {
   },
   toArray: (alist) => {
     var toArrayAux = (alist,accumulator) => {
-      return match(alist, {
+      return list.match(alist, {
         empty: (_) => {
           return accumulator;  // 空のリストの場合は終了
         },
@@ -146,7 +146,7 @@ var stream = {
   },
   /* head:: STREAM -> MAYBE[STREAM] */
   head: (lazyList) => {
-    return match(lazyList,{
+    return match(lazyList, {
       empty: (_) => {
         return null;
       },
@@ -157,7 +157,7 @@ var stream = {
   },
   /* tail:: STREAM -> MAYBE[STREAM] */
   tail: (lazyList) => {
-    return match(lazyList,{
+    return match(lazyList, {
       empty: (_) => {
         return null;
       },
@@ -167,7 +167,7 @@ var stream = {
     });
   },
   isEmpty: (lazyList) => {
-    return match(lazyList,{
+    return match(lazyList, {
       empty: (_) => {
         return true;
       },
@@ -179,7 +179,7 @@ var stream = {
   /* ### stream#map */
   map: (lazyList) => {
     return (transform) => {
-      return match(lazyList,{
+      return match(lazyList, {
         empty: (_) => {
           return stream.empty();
         },
@@ -197,7 +197,7 @@ var stream = {
     return (number) => {
       expect(number).to.a('number');
       expect(number).to.be.greaterThan(-1);
-      return match(lazyList,{
+      return match(lazyList, {
         empty: (_) => {
           return stream.empty();
         },
@@ -221,7 +221,7 @@ var stream = {
   forAll: (astream) => {
     return (predicate) => {
       var forAllHelper = (astream) => { // 補助関数
-        return match(astream,{
+        return match(astream, {
           empty: (_) => {
             return true; 
           },
@@ -230,7 +230,7 @@ var stream = {
           }
         });
       };
-      return match(astream,{
+      return match(astream, {
         empty: (_) => {
           return false; // 空のストリームの場合は、必ず false が返る
         },
@@ -624,12 +624,12 @@ describe('関数を合成する', () => {
     it('再帰によるlast', (next) => {
       /* #@range_begin(list_last_recursive) */
       var last = (alist) => {
-        return match(alist, {
+        return list.match(alist, {
           empty: (_) => { // alistが空の場合
             return null;
           },
           cons: (head, tail) => { // alistが空でない場合
-            return match(tail, {
+            return list.match(tail, {
               empty: (_) => { // alistの要素がただ1個の場合
                 return head;
               },
@@ -710,7 +710,7 @@ describe('関数を合成する', () => {
     };
     var sum = (alist) => {
       var sumHelper = (alist, accumulator) => {
-        return match(alist,{
+        return list.match(alist, {
           empty: (_) => {
             return accumulator;
           },
@@ -770,7 +770,7 @@ describe('関数を合成する', () => {
     };
     var sum = (alist) => {
       var sumHelper = (alist, accumulator) => {
-        return match(alist,{
+        return list.match(alist, {
           empty: (_) => {
             return accumulator;
           },
@@ -841,7 +841,7 @@ describe('関数を合成する', () => {
     );
     var map = (alist) => {
       return (transform) => {
-        return match(alist,{
+        return list.match(alist, {
           empty: (_) => {
             return list.empty();
           },
@@ -1149,7 +1149,7 @@ describe('クロージャーを使う', () => {
               },
               /* head:: STREAM -> MAYBE[STREAM] */
               head: (lazyList) => {
-                return match(lazyList,{
+                return match(lazyList, {
                   empty: (_) => {
                     return null;
                   },
@@ -1160,7 +1160,7 @@ describe('クロージャーを使う', () => {
               },
               /* tail:: STREAM -> MAYBE[STREAM] */
               tail: (lazyList) => {
-                return match(lazyList,{
+                return match(lazyList, {
                   empty: (_) => {
                     return null;
                   },
@@ -1170,12 +1170,12 @@ describe('クロージャーを使う', () => {
                 });
               },
               toArray: (lazyList) => {
-                return match(lazyList,{
+                return match(lazyList, {
                   empty: (_) => {
                     return [];
                   },
                   cons: (head,tailThunk) => {
-                    return match(tailThunk(),{
+                    return match(tailThunk(), {
                       empty: (_) => {
                         return [head];
                       },
@@ -1192,7 +1192,7 @@ describe('クロージャーを使う', () => {
                 return (number) => {
                   expect(number).to.a('number');
                   expect(number).to.be.greaterThan(-1);
-                  return match(lazyList,{
+                  return match(lazyList, {
                     empty: (_) => {
                       return stream.empty();
                     },
@@ -1213,7 +1213,7 @@ describe('クロージャーを使う', () => {
               /* filter:: FUN[T => BOOL] => STREAM[T] => STREAM[T] */
               filter: (predicate) => {
                 return (aStream) => {
-                  return stream.match(aStream,{
+                  return stream.match(aStream, {
                     empty: (_) => {
                       return stream.empty();
                     },
@@ -1248,7 +1248,7 @@ describe('クロージャーを使う', () => {
               generate: (astream) => {
                 var theStream = astream;
                 return (_) => {
-                  return match(theStream,{
+                  return match(theStream, {
                     empty: (_) => {
                       return null; 
                     },
@@ -1510,7 +1510,7 @@ describe('関数を渡す', () => {
       /* map:: FUN[T => T] => LIST[T] =>  LIST[T] */
       var map = (callback) => {
         return (alist) => {
-          return match(alist,{
+          return list.match(alist, {
             empty: (_) => {
               return list.empty();
             },
@@ -1579,7 +1579,7 @@ describe('関数を渡す', () => {
           /* #@range_begin(list_sum) */
           sum: (alist) => {
             return (accumulator) => {
-              return match(alist,{
+              return list.match(alist, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1595,7 +1595,7 @@ describe('関数を渡す', () => {
           sumWithCallback: (alist) => {
             return (accumulator) => {
               return (CALLBACK) => { // コールバック関数を受け取る
-                return match(alist,{
+                return list.match(alist, {
                   empty: (_) => {
                     return accumulator;
                   },
@@ -1652,7 +1652,7 @@ describe('関数を渡す', () => {
           /* #@range_begin(list_length) */
           length: (alist) => {
             return (accumulator) => {
-              return match(alist,{
+              return list.match(alist, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1668,7 +1668,7 @@ describe('関数を渡す', () => {
           lengthWithCallback: (alist) => {
             return (accumulator) => {
               return (CALLBACK) => { // コールバック関数を受け取る
-                return match(alist,{
+                return list.match(alist, {
                   empty: (_) => {
                     return accumulator;
                   },
@@ -1712,7 +1712,7 @@ describe('関数を渡す', () => {
         var productWithCallback = (alist) => {
           return (accumulator) => {
             return (CALLBACK) => {
-              return match(alist,{
+              return list.match(alist, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1743,7 +1743,7 @@ describe('関数を渡す', () => {
         var reverserWithCallback = (alist) => {
           return (accumulator) => {
             return (CALLBACK) => {
-              return match(alist,{
+              return list.match(alist, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1781,7 +1781,7 @@ describe('関数を渡す', () => {
         var allWithCallback = (alist) => {
           return (accumulator) => {
             return (CALLBACK) => {
-              return match(alist,{
+              return list.match(alist, {
                 empty: (_) => {
                   return accumulator;
                 },
@@ -1824,7 +1824,7 @@ describe('関数を渡す', () => {
     var foldr = (alist) => {
       return (accumulator) => {
         return (callback) => {
-          return match(alist,{
+          return list.match(alist, {
             empty: (_) => {
               return accumulator;
             },
@@ -1914,7 +1914,7 @@ describe('関数を渡す', () => {
         },
         toArray: (alist) => {
           var toArrayAux = (alist,accumulator) => {
-            return match(alist, {
+            return list.match(alist, {
               empty: (_) => {
                 return accumulator;  
               },
@@ -1929,7 +1929,7 @@ describe('関数を渡す', () => {
         /* listのappend関数は、2つのリストを連結する */
         append: (xs) => {
           return (ys) => {
-            return match(xs, {
+            return list.match(xs, {
               empty: (_) => {
                 return ys;
               },
@@ -2312,23 +2312,23 @@ describe('関数を渡す', () => {
     // #### 非決定計算機を作る
     describe("非決定計算機を作る", () => {
       var exp = {
-        match : (anExp, pattern) => {
+        match: (anExp, pattern) => {
           return anExp.call(exp, pattern);
         },
         // 非決定計算機の式
         /* #@range_begin(amb_expression) */
-        amb : (alist) => {
+        amb: (alist) => {
           return (pattern) => {
             return pattern.amb(alist);
           };
         },
         /* #@range_end(amb_expression) */
-        num : (n) => {
+        num: (n) => {
           return (pattern) => {
             return pattern.num(n);
           };
         },
-        add : (exp1, exp2) => {
+        add: (exp1, exp2) => {
           return (pattern) => {
             return pattern.add(exp1, exp2);
           };
@@ -2765,7 +2765,7 @@ describe('モナドを作る', () => {
         /* flatMap:: MAYBE[T] => FUN[T => MAYBE[U]] => MAYBE[U] */
         flatMap: (instanceM) => {
           return (transform) => {
-            return maybe.match(instanceM,{
+            return maybe.match(instanceM, {
               /* 正常な値の場合は、transform関数を計算する */
               just: (value) => { 
                 return transform(value);
@@ -2780,7 +2780,7 @@ describe('モナドを作る', () => {
         /* ヘルパー関数  */
         getOrElse: (instanceM) => {
           return (alternate) => {
-            return maybe.match(instanceM,{
+            return maybe.match(instanceM, {
               just: (value) => {
                 return value;
               },
@@ -2793,9 +2793,9 @@ describe('モナドを作る', () => {
         /* #@range_end(maybe_monad) */
         /* #@range_begin(maybe_monad_helper) */
         isEqual: (maybeA,maybeB) => {
-          return maybe.match(maybeA,{
+          return maybe.match(maybeA, {
             just: (valueA) => {
-              return maybe.match(maybeB,{
+              return maybe.match(maybeB, {
                 just: (valueB) => {
                   return (valueA === valueB);
                 },
@@ -2805,7 +2805,7 @@ describe('モナドを作る', () => {
               });
             },
             nothing: (_) => {
-              return maybe.match(maybeB,{
+              return maybe.match(maybeB, {
                 just: (_) => {
                   return false;
                 },
@@ -2818,7 +2818,7 @@ describe('モナドを作る', () => {
         },
         map: (maybeInstance) => {
           return (transform) => {
-            return maybe.match(maybeInstance,{
+            return maybe.match(maybeInstance, {
               just: (value) => {
                 return MAYBE.unit(transform(value));
               },
@@ -2902,7 +2902,7 @@ describe('モナドを作る', () => {
           return (actionAB) => { // actionAB:: FUN[T => IO[U]]
             return (world) => {
               var newPair = instanceA(world); // 現在の外界のなかで instanceAのIOアクションを実行する
-              return pair.match(newPair,{
+              return pair.match(newPair, {
                 cons: (value, newWorld) => {
                   return actionAB(value)(newWorld); // 新しい外界のなかで、actionAB(value)で作られたIOアクションを実行する
                 }
@@ -2948,27 +2948,27 @@ describe('モナドを作る', () => {
       /* #@range_begin(io_monad_definition) */
       var IO = {
         /* unit:: T => IO[T] */
-        unit : (any) => {
+        unit: (any) => {
           return (_) =>  { // 外界を明示する必要はない
             return any;
           };
         },
         /* flatMap:: IO[T] => FUN[T => IO[U]] => IO[U] */
-        flatMap : (instanceA) => {
+        flatMap: (instanceA) => {
           return (actionAB) => { // actionAB:: a -> IO[b]
             return IO.unit(IO.run(actionAB(IO.run(instanceA))));
           };
         },
         /* done:: T => IO[T] */
-        done : (any) => {
+        done: (any) => {
           return IO.unit();
         },
         /* run:: IO[A] => A */
-        run : (instance) => {
+        run: (instance) => {
           return instance();
         },
         /* readFile:: STRING => IO[STRING] */
-        readFile : (path) => {
+        readFile: (path) => {
           return (_) => {
             var fs = require('fs');
             var content = fs.readFileSync(path, 'utf8');
@@ -2976,13 +2976,13 @@ describe('モナドを作る', () => {
           };
         },
         /* println:: STRING => IO[null] */
-        println : (message) => {
+        println: (message) => {
           return (_) => {
             console.log(message);
             return IO.unit(null)();
           };
         },
-        writeFile : (path) => {
+        writeFile: (path) => {
           return (content) => {
             return (_) => {
               var fs = require('fs');
@@ -3034,7 +3034,7 @@ describe('モナドを作る', () => {
         // puts list = seqs (map putc list)
         // ~~~
         IO.puts = (alist) => {
-          return match(alist, {
+          return list.match(alist, {
             empty: () => {
               return IO.done();
             },

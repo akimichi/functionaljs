@@ -8,7 +8,7 @@ module.exports = {
       return pattern.cons(left, right);
     };
   },
-  match : (data, pattern) => {
+  match: (data, pattern) => {
     return data( pattern);
   },
   // ペアの右側を取得する

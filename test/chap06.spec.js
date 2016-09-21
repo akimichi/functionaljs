@@ -384,8 +384,9 @@ describe('関数の基本', () => {
                   }
                 }
               });
-            },
+            }
             /* #@range_end(stream_take) */
+	    ,
             /* #@range_begin(stream_filter) */
             /* filter :: (STREAM[T], FUN[T => BOOL]) => STREAM[T] */
             filter: (astream,predicate) => {

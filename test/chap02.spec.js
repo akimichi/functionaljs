@@ -963,7 +963,7 @@ describe('関数型プログラミングの利点', () => {
             /* #@range_begin(enumFrom) */
             var enumFrom = (n) => {
               return [n, (_) => { // ストリームを返す
-                return enumFrom(n + 1);
+                return enumFrom(succ(n));
               }];
             };
             /* #@range_end(enumFrom) */

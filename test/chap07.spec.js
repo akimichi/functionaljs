@@ -2137,7 +2137,7 @@ describe('関数を渡す', () => {
           return continues(n + 1);
         };
         /* 継続渡しのadd関数 */
-        var add = (n,m, continues) => { 
+        var add = (n, m, continues) => { 
           return continues(n + m);
         };
         /* 継続渡しのsucc関数とadd関数を使って 

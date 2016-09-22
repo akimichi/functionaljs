@@ -671,14 +671,7 @@ abc1
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(infinite_integer) */</span>
-          <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
-            <span class="hljs-keyword">return</span> stream.cons(n, (_) =&gt; {
-              <span class="hljs-keyword">return</span> enumFrom(n + <span class="hljs-number">1</span>);
-            });
-          };
-          <span class="hljs-comment">/* #@range_end(infinite_integer) */</span>
-          <span class="hljs-comment">/* #@range_begin(infinite_ones_test) */</span>
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-comment">/* #@range_begin(infinite_ones_test) */</span>
           expect(
             stream.head(ones) <span class="hljs-comment">// 最初の要素を取りだす</span>
           ).to.eql(
@@ -690,6 +683,26 @@ abc1
             <span class="hljs-number">1</span>
           );
           <span class="hljs-comment">/* #@range_end(infinite_ones_test) */</span>
+          <span class="hljs-keyword">var</span> succ = (n) =&gt; {
+            <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
+          };
+          <span class="hljs-comment">/* #@range_begin(infinite_integer) */</span>
+          <span class="hljs-keyword">var</span> enumFrom = (n) =&gt; {
+            <span class="hljs-keyword">return</span> stream.cons(n, (_) =&gt; {
+              <span class="hljs-keyword">return</span> enumFrom(succ(<span class="hljs-number">1</span>));
+            });
+          };
+          <span class="hljs-comment">/* #@range_end(infinite_integer) */</span>
+          expect(
+            stream.head(enumFrom(<span class="hljs-number">1</span>)) <span class="hljs-comment">// 最初の要素を取りだす</span>
+          ).to.eql(
+            <span class="hljs-number">1</span>
+          );
+          expect(
+            stream.head(stream.tail(enumFrom(<span class="hljs-number">1</span>)))  <span class="hljs-comment">// 2番目の要素を取りだす</span>
+          ).to.eql(
+            <span class="hljs-number">2</span>
+          );
           next();
         });
         it(<span class="hljs-string">"無限の整数列をテストする"</span>, (next) =&gt; {

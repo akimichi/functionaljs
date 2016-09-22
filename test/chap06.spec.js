@@ -324,7 +324,6 @@ describe('関数の基本', () => {
             return ones; // onesを再帰的に呼び出す
           });
           /* #@range_end(infinite_ones) */
-          // **リスト6.16** 無限に連続する整数列を生成するenumFrom関数
           /* #@range_begin(infinite_ones_test) */
           expect(
             stream.head(ones) // 最初の要素を取りだす
@@ -337,13 +336,12 @@ describe('関数の基本', () => {
             1
           );
           /* #@range_end(infinite_ones_test) */
-          var succ = (n) => {
-            return n + 1;
-          };
+
+          // **リスト6.19** 無限に連続する整数列を生成するenumFrom関数
           /* #@range_begin(infinite_integer) */
           var enumFrom = (n) => {
             return stream.cons(n, (_) => {
-              return enumFrom(succ(1));
+              return enumFrom(n + 1);
             });
           };
           /* #@range_end(infinite_integer) */

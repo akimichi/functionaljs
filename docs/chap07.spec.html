@@ -2216,7 +2216,7 @@ $$</p>
             <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(church_one) */</span>
       <span class="hljs-keyword">var</span> one = (f) =&gt; {
         <span class="hljs-keyword">return</span> (x) =&gt; {
-          <span class="hljs-keyword">return</span> f(x);
+          <span class="hljs-keyword">return</span> f(x); <span class="hljs-comment">// f関数を1回適用する</span>
         };
       };
       <span class="hljs-comment">/* #@range_end(church_one) */</span>
@@ -4450,7 +4450,7 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
-              <p><strong>リスト7.99</strong>外界を明示しないIOモナドの定義</p>
+              <p><strong>リスト7.99</strong> 外界を明示しないIOモナドの定義</p>
 
             </div>
             

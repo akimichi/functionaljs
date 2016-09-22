@@ -548,12 +548,12 @@ node&gt; array
           x = x + <span class="hljs-number">1</span>; <span class="hljs-comment">// 代入で変数を更新する</span>
           <span class="hljs-keyword">return</span> x + y;
         };
+        <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
         expect(
           add(<span class="hljs-number">1</span>)
         ).to.eql(
           <span class="hljs-number">2</span>
         );
-        <span class="hljs-comment">/* #@range_end(assignment_breaks_referential_transparency)  */</span>
         next();
       });</pre></div></div>
             
@@ -1819,10 +1819,10 @@ node&gt; array
             </div>
             
             <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'単体テストの書き方の例'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(expect_example) */</span>
       <span class="hljs-keyword">var</span> succ = (n) =&gt; {
         <span class="hljs-keyword">return</span> n + <span class="hljs-number">1</span>;
       };
+      <span class="hljs-comment">/* #@range_begin(expect_example) */</span>
       expect(
         succ(<span class="hljs-number">1</span>) <span class="hljs-comment">// テストしたい式を書く</span>
       ).to.eql(

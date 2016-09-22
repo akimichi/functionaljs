@@ -683,10 +683,13 @@ describe('関数型プログラミングの利点', () => {
           });
           describe('無限ストリームを作る', () => {
             // **リスト2.22** enumFrom関数 
+            var succ = (n) => {
+              return n + 1;
+            };
             /* #@range_begin(enumFrom) */
             var enumFrom = (n) => {
               return [n, (_) => { // ストリームを返す
-                return enumFrom(n + 1);
+                return enumFrom(succ(n));
               }];
             };
             /* #@range_end(enumFrom) */
@@ -782,6 +785,16 @@ describe('関数型プログラミングの利点', () => {
                 };
               };
               /* #@range_end(stream_elemAt) */
+              expect(
+                elemAt(1)(evenStream)
+              ).to.eql(
+                2
+              );
+              expect(
+                elemAt(2)(evenStream)
+              ).to.eql(
+                4
+              );
               // **リスト2.29** 3番目の偶数を求める
               expect(
                 /* #@range_begin(third_element_of_evenStream) */

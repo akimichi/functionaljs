@@ -2,6 +2,9 @@
 
 このレポジトリは、リック・テレコム社刊行の「関数型プログラミングの基礎知識」のサンプルコードをおさめたものです。
 
+プロジェクトページは、http://akimichi.github.io/functionaljs/
+
+
 ## 利用法 
 
 まず最初に本レポジトリをクローンして、そのディレクトリに入ります。
@@ -14,103 +17,6 @@ $ cd functionaljs
 テスト環境の構築には、 1) docker を使う 2) 個別にインストールする、 の2つの方法があります。
 dockerを利用したほうが確実です。
 
-
-### dockerを使う
-
-まず最初に下記のコマンドでdockerイメージを生成します。
-末尾のピリオド(.) も忘れずに入力してください。
-
-~~~
-docker build -t="ric/functionaljs:v1" .
-~~~
-
-#### 単体テストを実行する
-
-テストを実行するには、作成されたイメージをもとに dockerコンテナを起動します。
-
-node.jsのコードをテストする。
-
-~~~
-docker run -it --rm --workdir="/workspace/nodejs" ric/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
-~~~
-
-scala のコードをテストする
-
-~~~
-docker run -it --rm --workdir="/workspace/scala" ric/functionaljs:v1 /bin/bash -c "sbt test"
-~~~
-
-haskell のコードをテストする
-
-~~~
-docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bash -c "stack test"
-~~~
-
-#### REPLを実行する 
-
-コンテナにログインする
-
-~~~
-docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
-~~~
-
-これでコンテナ内の /workspace ディレクトリにログインしました。
-
-node.jsのREPLを試すには、以下のように nodejsのディレクトリに移動して nodeコマンド を呼びだします。
-コンソールを抜けるときは Ctrl-C を2回続けて押します。
-
-~~~
-cd nodejs/
-node
-
-> 1 + 2
-3
-> 
-(^C again to quit)
-~~~
-
-scala のREPLを試すには、 scalaのディレクトリに移動して、 sbt console を起動します。
-コンソールを抜けるには、:q を入力します。
-
-~~~
-cd scala
-sbt console
-
-[info] Loading project definition from /workspace/scala/project
-[info] Set current project to Functional Book Test Project (in build file:/workspace/scala/)
-[info] Starting scala interpreter...
-[info] 
-Welcome to Scala version 2.9.1.final (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_80).
-Type in expressions to have them evaluated.
-Type :help for more information.
-
-scala> 1 + 2
-res0: Int = 3
-
-scala> :q
-~~~
-
-haskellのREPLを試すには、 haskell のディレクトリに移動して、 ghci を起動します。
-コンソールを抜けるには、:q を入力します。
-
-~~~
-cd haskell
-ghci
-
-GHCi, version 7.10.2: http://www.haskell.org/ghc/  :? for help
-Prelude> 1 + 2
-3
-Prelude> :q
-Leaving GHCi.
-~~~
-
-<!-- ~~~ -->
-<!-- docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i -->
-<!-- root@ca7528c7f2e5:/workspace# cd nodejs && gulp test  -->
-<!-- root@ca7528c7f2e5:/workspace# mocha --harmony test -->
-<!-- root@ca7528c7f2e5:/workspace# cd scala && sbt test -->
-<!-- root@ca7528c7f2e5:/workspace# cd haskell && stack test  -->
-<!-- ~~~ -->
 
 
 ### ローカル環境にテスト環境を個別にインストールする
@@ -211,8 +117,109 @@ $ stack test
 $ gulp haskell-test
 ~~~
 
-## プロジェクトページ
+
+#### github pages
+
+~~~
+$ gulp doc; gulp deploy
+~~~
 
 
-http://akimichi.github.io/functionaljs/
+### dockerを使う
+
+まず最初に下記のコマンドでdockerイメージを生成します。
+末尾のピリオド(.) も忘れずに入力してください。
+
+~~~
+docker build -t="ric/functionaljs:v1" .
+~~~
+
+#### 単体テストを実行する
+
+テストを実行するには、作成されたイメージをもとに dockerコンテナを起動します。
+
+node.jsのコードをテストする。
+
+~~~
+docker run -it --rm --workdir="/workspace/nodejs" ric/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
+~~~
+
+scala のコードをテストする
+
+~~~
+docker run -it --rm --workdir="/workspace/scala" ric/functionaljs:v1 /bin/bash -c "sbt test"
+~~~
+
+haskell のコードをテストする
+
+~~~
+docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bash -c "stack test"
+~~~
+
+#### REPLを実行する 
+
+コンテナにログインする
+
+~~~
+docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
+~~~
+
+これでコンテナ内の /workspace ディレクトリにログインしました。
+
+node.jsのREPLを試すには、以下のように nodejsのディレクトリに移動して nodeコマンド を呼びだします。
+コンソールを抜けるときは Ctrl-C を2回続けて押します。
+
+~~~
+cd nodejs/
+node
+
+> 1 + 2
+3
+> 
+(^C again to quit)
+~~~
+
+scala のREPLを試すには、 scalaのディレクトリに移動して、 sbt console を起動します。
+コンソールを抜けるには、:q を入力します。
+
+~~~
+cd scala
+sbt console
+
+[info] Loading project definition from /workspace/scala/project
+[info] Set current project to Functional Book Test Project (in build file:/workspace/scala/)
+[info] Starting scala interpreter...
+[info] 
+Welcome to Scala version 2.9.1.final (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_80).
+Type in expressions to have them evaluated.
+Type :help for more information.
+
+scala> 1 + 2
+res0: Int = 3
+
+scala> :q
+~~~
+
+haskellのREPLを試すには、 haskell のディレクトリに移動して、 ghci を起動します。
+コンソールを抜けるには、:q を入力します。
+
+~~~
+cd haskell
+ghci
+
+GHCi, version 7.10.2: http://www.haskell.org/ghc/  :? for help
+Prelude> 1 + 2
+3
+Prelude> :q
+Leaving GHCi.
+~~~
+
+<!-- ~~~ -->
+<!-- docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i -->
+<!-- root@ca7528c7f2e5:/workspace# cd nodejs && gulp test  -->
+<!-- root@ca7528c7f2e5:/workspace# mocha --harmony test -->
+<!-- root@ca7528c7f2e5:/workspace# cd scala && sbt test -->
+<!-- root@ca7528c7f2e5:/workspace# cd haskell && stack test  -->
+<!-- ~~~ -->
+
 

@@ -30,9 +30,3 @@ net.createServer((socket) => {
 }).listen(3000, localhost);
 /* #@range_end(tarai_server) */
 
-// var sleep = (sec) => {
-//   var until = new Date().getTime() + (sec * 1000);
-//   while (new Date().getTime() <= until) {
-//     ;
-//   }
-// };

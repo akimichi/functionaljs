@@ -1954,6 +1954,8 @@ describe('関数を渡す', () => {
       /* #@range_end(tarai_function) */
       next();
     });
+    // <a name="tarai_system"> taraiサーバークライアント</a>
+    // ![](images/tarai-system.gif) 
   });
   // ### <section id='continuation'>継続で未来を渡す</section>
   // > https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A

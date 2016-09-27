@@ -243,6 +243,7 @@ describe('条文分岐の種類と特徴', () => {
       };
       /* #@range_end(list_function_using_algebraic_datatype) */
 
+      // <a name="match_reduction_demo"> **head(cons(1, empty()))の簡約** </a>
       // ![head(cons(1, empty()))の簡約](images/match-reduction.gif) 
 
       // **リスト5.15** 代数的データ構造のリストの関数のテスト

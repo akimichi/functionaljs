@@ -144,7 +144,7 @@ describe('関数型モデル', () => {
       };
       /* #@range_end(recursive_add) */
       // <a name="add_reduction_demo"> add(3,2)の簡約 </a>
-      // ![add関数の簡約](images/add_reduction.gif) 
+      // ![add関数の簡約](images/add-reduction.gif) 
       expect(
         add(2,1)
       ).to.eql(

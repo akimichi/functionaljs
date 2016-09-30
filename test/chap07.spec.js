@@ -688,7 +688,7 @@ describe('関数を合成する', () => {
       /* #@range_begin(Y_combinator_test) */
       var factorial = Y((fact) => {
         return (n) => {
-          if (n == 0) {
+          if (n === 0) {
             return 1;
           } else {
             return n * fact(n - 1);

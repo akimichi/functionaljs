@@ -1428,7 +1428,7 @@ $$</p>
             <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(Y_combinator_test) */</span>
       <span class="hljs-keyword">var</span> factorial = Y((fact) =&gt; {
         <span class="hljs-keyword">return</span> (n) =&gt; {
-          <span class="hljs-keyword">if</span> (n == <span class="hljs-number">0</span>) {
+          <span class="hljs-keyword">if</span> (n === <span class="hljs-number">0</span>) {
             <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
           } <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">return</span> n * fact(n - <span class="hljs-number">1</span>);

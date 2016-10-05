@@ -836,7 +836,7 @@ describe('コンビネータで関数を組み合わせる', () => {
       /* #@range_begin(Y_combinator_test) */
       var factorial = Y((fact) => {
         return (n) => {
-          if (n == 0) {
+          if (n === 0) {
             return 1;
           } else {
             return n * fact(n - 1);

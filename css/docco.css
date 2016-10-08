@@ -572,3 +572,27 @@ td {
       font-family: Monaco, Consolas, "Lucida Console", monospace;
       margin: 0; padding: 0;
     }
+
+ul.toc {
+  list-style: none;
+  padding:0 0 5px 0;;
+  margin:0;
+}
+ul.toc > uul
+    list-style: none;
+    padding:0 0 5px 0;;
+    margin:0;
+  }
+ul.toc > li > div {
+  -moz-box-sizing: border-box;    /* firefox */
+  -ms-box-sizing: border-box;     /* ie */
+  -webkit-box-sizing: border-box; /* webkit */
+  -khtml-box-sizing: border-box;  /* konqueror */
+  box-sizing: border-box;         /* css3 */
+}
+
+div.toc {
+  background: #ffffe0;
+  margin: 0;
+  padding: 1px 0 1px 1em;
+}

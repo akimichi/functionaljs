@@ -515,3 +515,60 @@ pre .hljs-tex .hljs-formula {
   text-transform: uppercase;
   margin: 30px 0 15px 0;
 }
+
+
+table {
+  border: 2px #999 solid;
+  outline: 0;
+}
+td {
+  border: 1px solid #999;
+  outline: 0;
+}
+ td.docs, th.docs {
+    max-width: 450px;
+    min-width: 450px;
+    min-height: 5px;
+    padding: 10px 25px 1px 50px;
+    overflow-x: hidden;
+    vertical-align: top;
+    text-align: left;
+  }
+    .docs pre {
+      margin: 15px 0 15px;
+      padding-left: 15px;
+    }
+    .docs p tt, .docs p code {
+      background: #f8f8ff;
+      border: 1px solid #dedede;
+      font-size: 12px;
+      padding: 0 0.2em;
+    }
+    .pilwrap {
+      position: relative;
+    }
+      .pilcrow {
+        font: 12px Arial;
+        text-decoration: none;
+        color: #454545;
+        position: absolute;
+        top: 3px; left: -20px;
+        padding: 1px 2px;
+        opacity: 0;
+        -webkit-transition: opacity 0.2s linear;
+      }
+        td.docs:hover .pilcrow {
+          opacity: 1;
+        }
+  td.code, th.code {
+    padding: 14px 15px 16px 25px;
+    width: 100%;
+    vertical-align: top;
+    background: #f5f5ff;
+    border-left: 1px solid #e5e5ee;
+  }
+    pre, tt, code {
+      font-size: 12px; line-height: 18px;
+      font-family: Monaco, Consolas, "Lucida Console", monospace;
+      margin: 0; padding: 0;
+    }

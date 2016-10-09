@@ -3,11 +3,25 @@
 // 第2章 なぜ関数型プログラミングが重要か
 // ========
 
-// ## 目次
-// > * [関数型プログラミングの特徴](http://akimichi.github.io/functionaljs/chap02.spec.html#features-of-functional-programming)
-// >   - [ファーストクラスオブジェクトとしての関数](http://akimichi.github.io/functionaljs/chap02.spec.html#first-class-object)
-// >   - [参照透過性](http://akimichi.github.io/functionaljs/chap02.spec.html#referential-transparency)
-// > * [関数型プログラミングの利点](http://akimichi.github.io/functionaljs/chap02.spec.html#advantages-of-functional-programming)
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#features-of-functional-programming">2.2 関数型プログラミングの特徴</a>
+//     <ul>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#first-class-object">ファーストクラスオブジェクトとしての関数</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#referential-transparency">参照透過性</a></li>
+//     </ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#advantages-of-functional-programming">2.3 関数型プログラミングの利点</a>
+//     <ul>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#modularity">高いモジュール性</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#testability">テストが容易である</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap02.spec.html#provable">コードの正しさを証明できる</a></li>
+//     </ul>
+//   </li>
+// </ul>
+// </div>
+
 
 var expect = require('expect.js');
 
@@ -121,8 +135,10 @@ describe('関数型プログラミングの特徴', () => {
   });
   // ### <section id='referential-transparency'>参照透過性</section>
   describe('参照透過性', () => {
-    // #### 参照透明性が成立する場面
-    describe('参照透明性が成立する場面', () => {
+    // > 参考資料: [Wikipediaの記事](https://ja.wikipedia.org/wiki/%E5%8F%82%E7%85%A7%E9%80%8F%E9%81%8E%E6%80%A7)
+
+    // #### 参照透過性が成立する場面
+    describe('参照透過性が成立する場面', () => {
       // 値の参照透過性
       it('値の参照透過性', (next) => {
         expect(
@@ -413,7 +429,7 @@ describe('関数型プログラミングの利点', () => {
       return f(g(arg));
     };
   };
-  // ### 高いモジュール性
+  // ### <section id='modularity'>高いモジュール性</section>
   describe('モジュール性とは何か', () => {
     // #### 部品の汎用性
     describe('部品の汎用性', () => {
@@ -609,6 +625,7 @@ describe('関数型プログラミングの利点', () => {
         });
       });
       // ##### 関数による遅延評価
+      // 
       describe('関数による遅延評価', () => {
         // 評価戦略の種類
         describe('評価戦略の種類', () => {
@@ -838,7 +855,7 @@ describe('関数型プログラミングの利点', () => {
       });
     });
   });
-  // ### テストが容易である
+  // ### <section id='testability'>テストが容易である</section>
   describe('テストが容易である', () => {
     // **リスト2.32** 単体テストの書き方の例
     it('単体テストの書き方の例', (next) => {
@@ -925,7 +942,7 @@ describe('関数型プログラミングの利点', () => {
       });
     });
   });
-  // ### コードの正しさを証明できる
+  // ### <section id='provable'>コードの正しさを証明できる</section>
   describe('コードの正しさを証明できる', () => {
     // #### プロパティテストで正しさを検証する
     describe('プロパティテストで正しさを検証する', () => {
@@ -1007,4 +1024,4 @@ describe('関数型プログラミングの利点', () => {
   });
 });
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap03.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap03.spec.html) 

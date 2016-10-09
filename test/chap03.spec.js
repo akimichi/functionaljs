@@ -4,17 +4,22 @@
 // 第3章 心の準備
 // ========
 
-// ## 目次
-// > * [DRY原則](http://akimichi.github.io/functionaljs/chap03.spec.html#DRY-principle)
-// > * [抽象化への指向](http://akimichi.github.io/functionaljs/chap03.spec.html#abstraction-oriented)
-// > * [セマンティクスを意識する](http://akimichi.github.io/functionaljs/chap03.spec.html#semantics-conscious)
-// > * [テストに親しむ](http://akimichi.github.io/functionaljs/chap03.spec.html#test-driven)
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#DRY-principle">3.1 DRY原則</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#abstraction-oriented">3.2 抽象化への指向</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#semantics-conscious">3.3 セマンティクスを意識する</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap03.spec.html#test-driven">3.4 テストに親しむ</a></li>
+// </ul>
+// </div>
+
 
 var expect = require('expect.js');
 
 // ## 3.1 <section id='DRY-principle'>DRY原則</section>
 // 
-// 参考 [DRY原則の利用: コードの重複と密結合の間](https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling)
+// > 参考資料: [DRY原則の利用: コードの重複と密結合の間](https://www.infoq.com/jp/news/2012/05/DRY-code-duplication-coupling)
 describe('DRY原則', () => {
   var add = (x, y) => {
     return x + y;
@@ -233,7 +238,7 @@ describe('セマンティクスを意識する', () => {
 // ## 3.4 <section id='test-driven'>テストに親しむ</section>
 describe('テストに親しむ', () => {
   // ### 単体テストの仕組み
-  // > 参考 [単体テスト](https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88)
+  // > 参考資料: [単体テスト](https://ja.wikipedia.org/wiki/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88)
   describe('単体テストの仕組み', () => {
     // **リスト3.12** アサート関数の例
     //
@@ -246,7 +251,7 @@ describe('テストに親しむ', () => {
       next();
     });
     // expectライブラリを使う場合
-    // > 参考 https://github.com/Automattic/expect.js
+    // > 参考資料: https://github.com/Automattic/expect.js
     it('expectによる表明', (next) => {
       /* #@range_begin(expect_assertion) */
       var expect = require('expect.js');
@@ -261,4 +266,4 @@ describe('テストに親しむ', () => {
   });
 });
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap04.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap04.spec.html) 

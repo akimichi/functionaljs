@@ -3,14 +3,22 @@
 // 第6章 関数を利用する
 // ========
 
-// ## 目次
-// > * [関数の基本](http://akimichi.github.io/functionaljs/chap06.spec.html#function-basics)
-// >   - [関数を定義する](http://akimichi.github.io/functionaljs/chap06.spec.html#function-definition)
-// >   - [関数を適用する](http://akimichi.github.io/functionaljs/chap06.spec.html#function-application)
-// > * [関数と参照透過性](http://akimichi.github.io/functionaljs/chap06.spec.html#function-and-referential-transparency)
-// >   - [関数の純粋性](http://akimichi.github.io/functionaljs/chap06.spec.html#purity-of-function)
-// >   - [副作用への対処](http://akimichi.github.io/functionaljs/chap06.spec.html#coping-sideeffect)
-
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap06.spec.html#function-basics">6.1 関数の基本</a>
+//     <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap06.spec.html#function-definition">関数を定義する</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap06.spec.html#function-application">関数を適用する</a></li></ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap06.spec.html#function-and-referential-transparency">6.2 関数と参照透過性</a>
+//      <ul>
+//         <li><a href="http://akimichi.github.io/functionaljs/chap06.spec.html#purity-of-function">関数の純粋性</a></li>
+//         <li><a href="http://akimichi.github.io/functionaljs/chap06.spec.html#coping-sideeffect">副作用への対処</a></li>
+//      </ul>
+//   </li>
+// </ul>
+// </div>
 
 var expect = require('expect.js');
 
@@ -618,4 +626,4 @@ describe('関数と参照透過性', () => {
   });
 });
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap07.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap07.spec.html) 

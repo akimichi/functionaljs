@@ -3,21 +3,31 @@
 // 第4章 データの種類と特徴
 // ========
 
-// ## 目次
-// > * [型とは何か](http://akimichi.github.io/functionaljs/chap04.spec.html#what-is-type)
-// > * [基本型](http://akimichi.github.io/functionaljs/chap04.spec.html#basic-type)
-// > * [合成型](http://akimichi.github.io/functionaljs/chap04.spec.html#composite-type)
-// >   - [オブジェクト型](http://akimichi.github.io/functionaljs/chap04.spec.html#object-type)
-// >   - [配列型](http://akimichi.github.io/functionaljs/chap04.spec.html#array-type)
-// >   - [関数型](http://akimichi.github.io/functionaljs/chap04.spec.html#function-type)
-// >   - [抽象データ型](http://akimichi.github.io/functionaljs/chap04.spec.html#abstract-datatype)
-// >   - [合成型の可変性](http://akimichi.github.io/functionaljs/chap04.spec.html#mutability-of-composite-type)
-// > * [変数とデータの関係](http://akimichi.github.io/functionaljs/chap04.spec.html#variable-and-data)
-// >   - [変数のバインド](http://akimichi.github.io/functionaljs/chap04.spec.html#variable-binding)
-// >   - [変数のスコープ](http://akimichi.github.io/functionaljs/chap04.spec.html#variable-scope)
-// > * [参照透過性の仕組み](http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-referential-transparency)
-// >   - [不変なデータの仕組み](http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-immutability)
-// >   - [代入の仕組みと効果](http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-assingment)
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#what-is-type">4.1 型とは何か</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#basic-type">4.2 基本型</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#composite-type">4.3 合成型</a>
+//     <ul>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#object-type">オブジェクト型</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#array-type">配列型</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#function-type">関数型</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#abstract-datatype">抽象データ型</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mutability-of-composite-type">合成型の可変性</a></li>
+//    </ul></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#variable-and-data">4.4 変数とデータの関係</a>
+//     <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#variable-binding">変数のバインド</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#variable-scope">変数のスコープ</a></li></ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-referential-transparency">4.5 参照透過性の仕組み</a>
+//      <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-immutability">不変なデータの仕組み</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap04.spec.html#mechanism-of-assingment">代入の仕組みと効果</a></li></ul>
+//   </li>
+// </ul>
+// </div>
 
 var expect = require('expect.js');
 
@@ -107,7 +117,7 @@ describe('基本型', () => {
 // 合成型は、内部に構造を持つ
 describe('合成型', () => {
   // ### <section id='object-type'>オブジェクト型</section>
-  // > 参考 [オブジェクトを利用する](https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects)
+  // > 参考資料: [オブジェクトを利用する](https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Working_with_Objects)
   describe('オブジェクト型', () => {
     describe('アドレス帳の例', () => {
       // **リスト4.4** オブジェクト型の例
@@ -179,7 +189,7 @@ describe('合成型', () => {
     });
   });
   // ### <section id='array-type'>配列型</section>
-  // > 参考 https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array  
+  // > 参考資料: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array  
   describe('配列型', () => {
     // **リスト4.7** 配列の基本操作
     it("配列の基本操作", (next) => {
@@ -208,7 +218,7 @@ describe('合成型', () => {
     // **リスト4.8** sortによる配列要素の並べかえ
     //
     // > [5,3,4,1,2]の配列を昇順に並べかえる
-    // > 参考 https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+    // > 参考資料: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
     it("sortによる配列要素の並べかえ", (next) => {
       /* #@range_begin(sort_in_array) */
       var array = [5,3,4,1,2];
@@ -327,7 +337,7 @@ describe('合成型', () => {
     });
   });
   // ### <section id='abstract-datatype'>抽象データ型</section>
-  // > 参考 [抽象データ型](https://ja.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B)
+  // > 参考資料: [抽象データ型](https://ja.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B)
   describe('抽象データ型', () => {
     // **リスト4.16** 具体的なリストの利用法
     it('具体的なリストの利用法', (next) => {
@@ -610,4 +620,4 @@ describe('参照透過性の仕組み', () => {
   });
 });
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap05.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap05.spec.html) 

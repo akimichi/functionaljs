@@ -319,7 +319,7 @@ node&gt; resultExpression
               </div>
               <h3 id="-section-id-switch-statement-switch-section-"><section id='switch-statement'>条件分岐としてのswitch文</section></h3>
 <blockquote>
-<p>参考 <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch">https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch</a></p>
+<p>参考資料: <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch">https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch</a></p>
 </blockquote>
 
             </div>
@@ -386,15 +386,15 @@ node&gt; resultExpression
               </div>
               <h4 id="-">代数的データ型とパターンマッチ</h4>
 <blockquote>
-<p>参考 <a href="https://ja.wikipedia.org/wiki/%E4%BB%A3%E6%95%B0%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B">代数的データ型</a></p>
+<p>参考資料: <a href="https://ja.wikipedia.org/wiki/%E4%BB%A3%E6%95%B0%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B">代数的データ型</a></p>
 </blockquote>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">'代数的データ型とパターンマッチ'</span>, () =&gt; {
-    <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
-      <span class="hljs-keyword">return</span> data.call(pattern, pattern);
-    };</pre></div></div>
+            <div class="content"><div class='highlight'><pre>   describe(<span class="hljs-string">'代数的データ型とパターンマッチ'</span>, () =&gt; {
+     <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
+       <span class="hljs-keyword">return</span> data.call(pattern, pattern);
+     };</pre></div></div>
             
         </li>
         
@@ -409,20 +409,20 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">'代数的データ構造によるリスト'</span>, (next) =&gt; {
-      <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* リストの代数的データ型 */</span>
-      <span class="hljs-keyword">var</span> empty = () =&gt; { <span class="hljs-comment">// 空のリスト</span>
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.empty();
-        };
-      };
-      <span class="hljs-keyword">var</span> cons = (value, list) =&gt; { <span class="hljs-comment">// 空でないリスト</span>
-        <span class="hljs-keyword">return</span> (pattern) =&gt; {
-          <span class="hljs-keyword">return</span> pattern.cons(value, list);
-        };
-      };
-      <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype) */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>     it(<span class="hljs-string">'代数的データ構造によるリスト'</span>, (next) =&gt; {
+       <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype) */</span>
+       <span class="hljs-comment">/* リストの代数的データ型 */</span>
+       <span class="hljs-keyword">var</span> empty = () =&gt; { <span class="hljs-comment">// 空のリスト</span>
+         <span class="hljs-keyword">return</span> (pattern) =&gt; {
+           <span class="hljs-keyword">return</span> pattern.empty();
+         };
+       };
+       <span class="hljs-keyword">var</span> cons = (value, list) =&gt; { <span class="hljs-comment">// 空でないリスト</span>
+         <span class="hljs-keyword">return</span> (pattern) =&gt; {
+           <span class="hljs-keyword">return</span> pattern.cons(value, list);
+         };
+       };
+       <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype) */</span></pre></div></div>
             
         </li>
         
@@ -437,12 +437,12 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(match_in_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* 代数的データ型に対してパターンマッチを実現する関数 */</span>
-      <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
-        <span class="hljs-keyword">return</span> data(pattern);
-      };
-      <span class="hljs-comment">/* #@range_end(match_in_algebraic_datatype) */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>       <span class="hljs-comment">/* #@range_begin(match_in_algebraic_datatype) */</span>
+       <span class="hljs-comment">/* 代数的データ型に対してパターンマッチを実現する関数 */</span>
+       <span class="hljs-keyword">var</span> match = (data, pattern) =&gt; {
+         <span class="hljs-keyword">return</span> data(pattern);
+       };
+       <span class="hljs-comment">/* #@range_end(match_in_algebraic_datatype) */</span></pre></div></div>
             
         </li>
         
@@ -457,47 +457,47 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span>
-      <span class="hljs-comment">/* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
-         判定する */</span>
-      <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
-        <span class="hljs-comment">/* match関数で分岐する */</span>
-        <span class="hljs-keyword">return</span> match(alist, { 
-          <span class="hljs-comment">/* emptyにマッチするケース */</span>
-          empty: (_) =&gt; {          
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-          },
-          <span class="hljs-comment">/* consにマッチするケース */</span>
-          cons: (head, tail) =&gt; {  <span class="hljs-comment">// headとtailにそれぞれ先頭と後尾が入る</span>
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-          }
-        });
-      };
-      <span class="hljs-comment">/* head関数は、引数alistに渡されたリストの先頭の要素を返す */</span>
-      <span class="hljs-keyword">var</span> head = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> match(alist, {
-          <span class="hljs-comment">/* 空のリストに先頭要素はない */</span>
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> head;
-          }
-        });
-      };
-      <span class="hljs-comment">/* tail関数は、引数alistに渡されたリストの後尾のリストを返す */</span>
-      <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
-        <span class="hljs-keyword">return</span> match(alist, {
-          <span class="hljs-comment">/* 空のリストに後尾はない */</span>
-          empty: (_) =&gt; {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  
-          },
-          cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> tail;
-          }
-        });
-      };
-      <span class="hljs-comment">/* #@range_end(list_function_using_algebraic_datatype) */</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>       <span class="hljs-comment">/* #@range_begin(list_function_using_algebraic_datatype) */</span>
+       <span class="hljs-comment">/* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
+          判定する */</span>
+       <span class="hljs-keyword">var</span> isEmpty = (alist) =&gt; {
+         <span class="hljs-comment">/* match関数で分岐する */</span>
+         <span class="hljs-keyword">return</span> match(alist, { 
+           <span class="hljs-comment">/* emptyにマッチするケース */</span>
+           empty: (_) =&gt; {          
+             <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+           },
+           <span class="hljs-comment">/* consにマッチするケース */</span>
+           cons: (head, tail) =&gt; {  <span class="hljs-comment">// headとtailにそれぞれ先頭と後尾が入る</span>
+             <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+           }
+         });
+       };
+       <span class="hljs-comment">/* head関数は、引数alistに渡されたリストの先頭の要素を返す */</span>
+       <span class="hljs-keyword">var</span> head = (alist) =&gt; {
+         <span class="hljs-keyword">return</span> match(alist, {
+           <span class="hljs-comment">/* 空のリストに先頭要素はない */</span>
+           empty: (_) =&gt; {
+             <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; 
+           },
+           cons: (head, tail) =&gt; {
+             <span class="hljs-keyword">return</span> head;
+           }
+         });
+       };
+       <span class="hljs-comment">/* tail関数は、引数alistに渡されたリストの後尾のリストを返す */</span>
+       <span class="hljs-keyword">var</span> tail = (alist) =&gt; {
+         <span class="hljs-keyword">return</span> match(alist, {
+           <span class="hljs-comment">/* 空のリストに後尾はない */</span>
+           empty: (_) =&gt; {
+             <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  
+           },
+           cons: (head, tail) =&gt; {
+             <span class="hljs-keyword">return</span> tail;
+           }
+         });
+       };
+       <span class="hljs-comment">/* #@range_end(list_function_using_algebraic_datatype) */</span></pre></div></div>
             
         </li>
         
@@ -526,41 +526,41 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype_test) */</span>
-      <span class="hljs-comment">/* emptyは空のリストか */</span>
-      expect(
-        isEmpty(empty())                    
-      ).to.eql(
-        <span class="hljs-literal">true</span>
-      );
-      <span class="hljs-comment">/* cons(1,empty())は空のリストか */</span>
-      expect(
-        isEmpty(cons(<span class="hljs-number">1</span>,empty()))            
-      ).to.eql(
-        <span class="hljs-literal">false</span>
-      );
-      <span class="hljs-comment">/* cons(1,empty())の先頭要素は1である */</span>
-      expect(
-        head(cons(<span class="hljs-number">1</span>,empty()))               
-      ).to.eql(
-        <span class="hljs-number">1</span>
-      );
-      <span class="hljs-comment">/* cons(1,cons(2,empty()))の2番目の要素は2である */</span>
-      expect(
-        head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty())))) 
-      ).to.eql(
-        <span class="hljs-number">2</span>
-      );
-      <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype_test) */</span>
-      expect(
-        isEmpty(tail(cons(<span class="hljs-number">1</span>,empty())))     <span class="hljs-comment">// [1]の末尾要素は空のリストである</span>
-      ).to.be(
-        <span class="hljs-literal">true</span>
-      );
-      next();
-    });
-  });
-});</pre></div></div>
+            <div class="content"><div class='highlight'><pre>       <span class="hljs-comment">/* #@range_begin(list_in_algebraic_datatype_test) */</span>
+       <span class="hljs-comment">/* emptyは空のリストか */</span>
+       expect(
+         isEmpty(empty())                    
+       ).to.eql(
+         <span class="hljs-literal">true</span>
+       );
+       <span class="hljs-comment">/* cons(1,empty())は空のリストか */</span>
+       expect(
+         isEmpty(cons(<span class="hljs-number">1</span>,empty()))            
+       ).to.eql(
+         <span class="hljs-literal">false</span>
+       );
+       <span class="hljs-comment">/* cons(1,empty())の先頭要素は1である */</span>
+       expect(
+         head(cons(<span class="hljs-number">1</span>,empty()))               
+       ).to.eql(
+         <span class="hljs-number">1</span>
+       );
+       <span class="hljs-comment">/* cons(1,cons(2,empty()))の2番目の要素は2である */</span>
+       expect(
+         head(tail(cons(<span class="hljs-number">1</span>,cons(<span class="hljs-number">2</span>,empty())))) 
+       ).to.eql(
+         <span class="hljs-number">2</span>
+       );
+       <span class="hljs-comment">/* #@range_end(list_in_algebraic_datatype_test) */</span>
+       expect(
+         isEmpty(tail(cons(<span class="hljs-number">1</span>,empty())))     <span class="hljs-comment">// [1]の末尾要素は空のリストである</span>
+       ).to.be(
+         <span class="hljs-literal">true</span>
+       );
+       next();
+     });
+   });
+ });</pre></div></div>
             
         </li>
         
@@ -575,7 +575,7 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"反復処理の種類と特徴"</span>, () =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre> describe(<span class="hljs-string">"反復処理の種類と特徴"</span>, () =&gt; {</pre></div></div>
             
         </li>
         
@@ -590,21 +590,21 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"while文の例"</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(while_counter) */</span>
-    <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;         <span class="hljs-comment">// 変数の初期化</span>
-    <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {   <span class="hljs-comment">// 反復の条件</span>
-      counter = counter + <span class="hljs-number">1</span>; <span class="hljs-comment">// 変数の更新</span>
-    }
-    <span class="hljs-comment">/* テスト */</span>
-    expect(
-      counter
-    ).to.eql(
-      <span class="hljs-number">10</span>
-    );
-    <span class="hljs-comment">/* #@range_end(while_counter) */</span>
-    next();
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>   it(<span class="hljs-string">"while文の例"</span>, (next) =&gt; {
+     <span class="hljs-comment">/* #@range_begin(while_counter) */</span>
+     <span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;         <span class="hljs-comment">// 変数の初期化</span>
+     <span class="hljs-keyword">while</span> (counter &lt; <span class="hljs-number">10</span>) {   <span class="hljs-comment">// 反復の条件</span>
+       counter = counter + <span class="hljs-number">1</span>; <span class="hljs-comment">// 変数の更新</span>
+     }
+     <span class="hljs-comment">/* テスト */</span>
+     expect(
+       counter
+     ).to.eql(
+       <span class="hljs-number">10</span>
+     );
+     <span class="hljs-comment">/* #@range_end(while_counter) */</span>
+     next();
+   });</pre></div></div>
             
         </li>
         
@@ -619,20 +619,20 @@ node&gt; resultExpression
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"for文の例"</span>, (next) =&gt; {
-    <span class="hljs-comment">/* #@range_begin(for_example) */</span>
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>; counter &lt; <span class="hljs-number">10</span>; counter += <span class="hljs-number">1</span>) {
-      ;
-    }
-    <span class="hljs-comment">/* テスト */</span>
-    expect(
-      counter
-    ).to.eql(
-      <span class="hljs-number">10</span>
-    );
-    <span class="hljs-comment">/* #@range_end(for_example) */</span>
-    next();
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>   it(<span class="hljs-string">"for文の例"</span>, (next) =&gt; {
+     <span class="hljs-comment">/* #@range_begin(for_example) */</span>
+     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>; counter &lt; <span class="hljs-number">10</span>; counter += <span class="hljs-number">1</span>) {
+       ;
+     }
+     <span class="hljs-comment">/* テスト */</span>
+     expect(
+       counter
+     ).to.eql(
+       <span class="hljs-number">10</span>
+     );
+     <span class="hljs-comment">/* #@range_end(for_example) */</span>
+     next();
+   });</pre></div></div>
             
         </li>
         
@@ -644,6 +644,9 @@ node&gt; resultExpression
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p><strong>リスト5.18</strong> forEachメソッドの例</p>
+<blockquote>
+<p>参考資料: <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach</a> </p>
+</blockquote>
 
             </div>
             

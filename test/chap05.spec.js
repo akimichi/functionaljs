@@ -3,15 +3,22 @@
 // 第5章 プログラムをコントロールする仕組み
 // ============================
 
-// ## 目次
-// > * [条文分岐の種類と特徴](http://akimichi.github.io/functionaljs/chap05.spec.html#conditional-statements)
-// >   - [条件分岐としてのif文](http://akimichi.github.io/functionaljs/chap05.spec.html#if-statement)
-// >   - [条件分岐としてのswitch文](http://akimichi.github.io/functionaljs/chap05.spec.html#switch-statement)
-// > * [反復処理の種類と特徴](http://akimichi.github.io/functionaljs/chap05.spec.html#loop-statements)
-// > * [再帰による反復処理](http://akimichi.github.io/functionaljs/chap05.spec.html#recursion)
-// >   - [再帰呼び出しの条件](http://akimichi.github.io/functionaljs/chap05.spec.html#requirements-of-recursion)
-// >   - [再帰呼び出しの利点](http://akimichi.github.io/functionaljs/chap05.spec.html#advantages-of-recursion)
-
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#conditional-statements">5.1 条文分岐の種類と特徴</a>
+//      <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#if-statement">条件分岐としてのif文</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#switch-statement">条件分岐としてのswitch文</a></li></ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#loop-statements">5.2 反復処理の種類と特徴</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#recursion">5.3 再帰による反復処理</a>
+//      <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#requirements-of-recursion">再帰呼び出しの条件</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap05.spec.html#advantages-of-recursion">再帰呼び出しの利点</a></li>
+//   </li>
+// </ul>
+// </div>
 
 var expect = require('expect.js');
 
@@ -145,7 +152,7 @@ describe('条文分岐の種類と特徴', () => {
     });
   });
   // ### <section id='switch-statement'>条件分岐としてのswitch文</section>
-  // > 参考 https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch
+  // > 参考資料: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Statements/switch
   describe('条件分岐としてのswitch文', () => {
     // #### switch文の問題点
     it("switch文の問題点", (next) => {
@@ -171,152 +178,153 @@ describe('条文分岐の種類と特徴', () => {
     });
   });
   // #### 代数的データ型とパターンマッチ
-  // > 参考 [代数的データ型](https://ja.wikipedia.org/wiki/%E4%BB%A3%E6%95%B0%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B)
-  describe('代数的データ型とパターンマッチ', () => {
-    var match = (data, pattern) => {
-      return data.call(pattern, pattern);
-    };
-    // **リスト5.12** 代数的データ構造によるリスト
-    it('代数的データ構造によるリスト', (next) => {
-      /* #@range_begin(list_in_algebraic_datatype) */
-      /* リストの代数的データ型 */
-      var empty = () => { // 空のリスト
-        return (pattern) => {
-          return pattern.empty();
-        };
-      };
-      var cons = (value, list) => { // 空でないリスト
-        return (pattern) => {
-          return pattern.cons(value, list);
-        };
-      };
-      /* #@range_end(list_in_algebraic_datatype) */
+  // > 参考資料: [代数的データ型](https://ja.wikipedia.org/wiki/%E4%BB%A3%E6%95%B0%E7%9A%84%E3%83%87%E3%83%BC%E3%82%BF%E5%9E%8B)
+   describe('代数的データ型とパターンマッチ', () => {
+     var match = (data, pattern) => {
+       return data.call(pattern, pattern);
+     };
+     // **リスト5.12** 代数的データ構造によるリスト
+     it('代数的データ構造によるリスト', (next) => {
+       /* #@range_begin(list_in_algebraic_datatype) */
+       /* リストの代数的データ型 */
+       var empty = () => { // 空のリスト
+         return (pattern) => {
+           return pattern.empty();
+         };
+       };
+       var cons = (value, list) => { // 空でないリスト
+         return (pattern) => {
+           return pattern.cons(value, list);
+         };
+       };
+       /* #@range_end(list_in_algebraic_datatype) */
 
-      // **リスト5.13** 代数的データ構造のmatch関数
-      /* #@range_begin(match_in_algebraic_datatype) */
-      /* 代数的データ型に対してパターンマッチを実現する関数 */
-      var match = (data, pattern) => {
-        return data(pattern);
-      };
-      /* #@range_end(match_in_algebraic_datatype) */
+       // **リスト5.13** 代数的データ構造のmatch関数
+       /* #@range_begin(match_in_algebraic_datatype) */
+       /* 代数的データ型に対してパターンマッチを実現する関数 */
+       var match = (data, pattern) => {
+         return data(pattern);
+       };
+       /* #@range_end(match_in_algebraic_datatype) */
 
-      // **リスト5.14** リストの関数定義
-      /* #@range_begin(list_function_using_algebraic_datatype) */
-      /* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
-         判定する */
-      var isEmpty = (alist) => {
-        /* match関数で分岐する */
-        return match(alist, { 
-          /* emptyにマッチするケース */
-          empty: (_) => {          
-            return true;
-          },
-          /* consにマッチするケース */
-          cons: (head, tail) => {  // headとtailにそれぞれ先頭と後尾が入る
-            return false;
-          }
-        });
-      };
-      /* head関数は、引数alistに渡されたリストの先頭の要素を返す */
-      var head = (alist) => {
-        return match(alist, {
-          /* 空のリストに先頭要素はない */
-          empty: (_) => {
-            return null; 
-          },
-          cons: (head, tail) => {
-            return head;
-          }
-        });
-      };
-      /* tail関数は、引数alistに渡されたリストの後尾のリストを返す */
-      var tail = (alist) => {
-        return match(alist, {
-          /* 空のリストに後尾はない */
-          empty: (_) => {
-            return null;  
-          },
-          cons: (head, tail) => {
-            return tail;
-          }
-        });
-      };
-      /* #@range_end(list_function_using_algebraic_datatype) */
+       // **リスト5.14** リストの関数定義
+       /* #@range_begin(list_function_using_algebraic_datatype) */
+       /* isEmpty関数は、引数alistに渡されたリストが空のリストかどうかを
+          判定する */
+       var isEmpty = (alist) => {
+         /* match関数で分岐する */
+         return match(alist, { 
+           /* emptyにマッチするケース */
+           empty: (_) => {          
+             return true;
+           },
+           /* consにマッチするケース */
+           cons: (head, tail) => {  // headとtailにそれぞれ先頭と後尾が入る
+             return false;
+           }
+         });
+       };
+       /* head関数は、引数alistに渡されたリストの先頭の要素を返す */
+       var head = (alist) => {
+         return match(alist, {
+           /* 空のリストに先頭要素はない */
+           empty: (_) => {
+             return null; 
+           },
+           cons: (head, tail) => {
+             return head;
+           }
+         });
+       };
+       /* tail関数は、引数alistに渡されたリストの後尾のリストを返す */
+       var tail = (alist) => {
+         return match(alist, {
+           /* 空のリストに後尾はない */
+           empty: (_) => {
+             return null;  
+           },
+           cons: (head, tail) => {
+             return tail;
+           }
+         });
+       };
+       /* #@range_end(list_function_using_algebraic_datatype) */
 
-      // <a name="match_reduction_demo"> **head(cons(1, empty()))の簡約** </a>
-      // ![head(cons(1, empty()))の簡約](images/match-reduction.gif) 
+       // <a name="match_reduction_demo"> **head(cons(1, empty()))の簡約** </a>
+       // ![head(cons(1, empty()))の簡約](images/match-reduction.gif) 
 
-      // **リスト5.15** 代数的データ構造のリストの関数のテスト
-      /* #@range_begin(list_in_algebraic_datatype_test) */
-      /* emptyは空のリストか */
-      expect(
-        isEmpty(empty())                    
-      ).to.eql(
-        true
-      );
-      /* cons(1,empty())は空のリストか */
-      expect(
-        isEmpty(cons(1,empty()))            
-      ).to.eql(
-        false
-      );
-      /* cons(1,empty())の先頭要素は1である */
-      expect(
-        head(cons(1,empty()))               
-      ).to.eql(
-        1
-      );
-      /* cons(1,cons(2,empty()))の2番目の要素は2である */
-      expect(
-        head(tail(cons(1,cons(2,empty())))) 
-      ).to.eql(
-        2
-      );
-      /* #@range_end(list_in_algebraic_datatype_test) */
-      expect(
-        isEmpty(tail(cons(1,empty())))     // [1]の末尾要素は空のリストである
-      ).to.be(
-        true
-      );
-      next();
-    });
-  });
-});
+       // **リスト5.15** 代数的データ構造のリストの関数のテスト
+       /* #@range_begin(list_in_algebraic_datatype_test) */
+       /* emptyは空のリストか */
+       expect(
+         isEmpty(empty())                    
+       ).to.eql(
+         true
+       );
+       /* cons(1,empty())は空のリストか */
+       expect(
+         isEmpty(cons(1,empty()))            
+       ).to.eql(
+         false
+       );
+       /* cons(1,empty())の先頭要素は1である */
+       expect(
+         head(cons(1,empty()))               
+       ).to.eql(
+         1
+       );
+       /* cons(1,cons(2,empty()))の2番目の要素は2である */
+       expect(
+         head(tail(cons(1,cons(2,empty())))) 
+       ).to.eql(
+         2
+       );
+       /* #@range_end(list_in_algebraic_datatype_test) */
+       expect(
+         isEmpty(tail(cons(1,empty())))     // [1]の末尾要素は空のリストである
+       ).to.be(
+         true
+       );
+       next();
+     });
+   });
+ });
 
-// ## 5.2 <section id='loop-statements'>反復処理の種類と特徴</section>
-describe("反復処理の種類と特徴", () => {
-  // **リスト5.16** while文の例
-  it("while文の例", (next) => {
-    /* #@range_begin(while_counter) */
-    var counter = 0;         // 変数の初期化
-    while (counter < 10) {   // 反復の条件
-      counter = counter + 1; // 変数の更新
-    }
-    /* テスト */
-    expect(
-      counter
-    ).to.eql(
-      10
-    );
-    /* #@range_end(while_counter) */
-    next();
-  });
-  // **リスト5.17** for文の例
-  it("for文の例", (next) => {
-    /* #@range_begin(for_example) */
-    for (var counter = 0; counter < 10; counter += 1) {
-      ;
-    }
-    /* テスト */
-    expect(
-      counter
-    ).to.eql(
-      10
-    );
-    /* #@range_end(for_example) */
-    next();
-  });
-  // **リスト5.18** forEachメソッドの例
+ // ## 5.2 <section id='loop-statements'>反復処理の種類と特徴</section>
+ describe("反復処理の種類と特徴", () => {
+   // **リスト5.16** while文の例
+   it("while文の例", (next) => {
+     /* #@range_begin(while_counter) */
+     var counter = 0;         // 変数の初期化
+     while (counter < 10) {   // 反復の条件
+       counter = counter + 1; // 変数の更新
+     }
+     /* テスト */
+     expect(
+       counter
+     ).to.eql(
+       10
+     );
+     /* #@range_end(while_counter) */
+     next();
+   });
+   // **リスト5.17** for文の例
+   it("for文の例", (next) => {
+     /* #@range_begin(for_example) */
+     for (var counter = 0; counter < 10; counter += 1) {
+       ;
+     }
+     /* テスト */
+     expect(
+       counter
+     ).to.eql(
+       10
+     );
+     /* #@range_end(for_example) */
+     next();
+   });
+   // **リスト5.18** forEachメソッドの例
+   // > 参考資料: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach 
   it("forEach文によるlength", (next) => {
     /* #@range_begin(forEach_length) */
     var length = (array) => {
@@ -691,4 +699,4 @@ describe('再帰による反復処理', () => {
   });
 }); 
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap06.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap06.spec.html) 

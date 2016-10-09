@@ -3,14 +3,21 @@
 // 第1章 「計算」とは
 // ========
 
-// ## 目次
-// > * [命令型モデル](http://akimichi.github.io/functionaljs/chap01.spec.html#imperative_model)
-// >   - [チューリング機械](http://akimichi.github.io/functionaljs/chap01.spec.html#turing_machine)
-// > * [関数型モデル](http://akimichi.github.io/functionaljs/chap01.spec.html#functional_model)
-// >   - [置換ルール](http://akimichi.github.io/functionaljs/chap01.spec.html#substitution_model)
-// >   - [関数の定義](http://akimichi.github.io/functionaljs/chap01.spec.html#function_definition)
-// >   - [関数型モデルを使うメリット](http://akimichi.github.io/functionaljs/chap01.spec.html#advantages_of_functional_model)
-
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#imperative_model">1.2 命令型モデル</a>
+//     <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#turing_machine">チューリング機械</a></li>
+//     </ul></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#functional_model">1.3 関数型モデル</a>
+//      <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#substitution_model">置換ルール</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#function_definition">関数の定義</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap01.spec.html#advantages_of_functional_model">関数型モデルを使うメリット</a></li>
+//      </ul>
+// </ul>
+// </div>
 
 /* アサートライブラリー expect.js の読み込み */
 var expect = require('expect.js');
@@ -19,7 +26,7 @@ var expect = require('expect.js');
 describe('命令型モデル', () => {
   // ###  <section id='turing_machine'>チューリング機械</section>
   describe('チューリング機械 turing machine', () => {
-    // チューリング機械を現実の装置として製作したもの
+    // > 参考資料: チューリング機械を現実の装置として製作したもの
     // [![IMAGE ALT TEXT](http://img.youtube.com/vi/E3keLeMwfHY/0.jpg)](https://www.youtube.com/watch?v=E3keLeMwfHY "チューリングマシンの動画")
     /* [A turing machine in 133 bytes of javascript](http://swizec.com/blog/a-turing-machine-in-133-bytes-of-javascript/swizec/3069) を参考にしている */
 
@@ -314,4 +321,4 @@ describe('関数型モデル', () => {
   });
 });
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap02.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap02.spec.html) 

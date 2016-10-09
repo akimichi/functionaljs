@@ -3,24 +3,36 @@
 // 第7章 高階関数を活用する
 // =======
 
-// ## 目次
-// > * [カリー化で関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#currying)
-// > * [コンビネータで関数を組み合わせる](http://akimichi.github.io/functionaljs/chap07.spec.html#combinator)
-// >   - [コンビネータの作り方](http://akimichi.github.io/functionaljs/chap07.spec.html#combinator-creation)
-// >   - [関数を合成する](http://akimichi.github.io/functionaljs/chap07.spec.html#composing-function)
-// > * [クロージャーを使う](http://akimichi.github.io/functionaljs/chap07.spec.html#closure)
-// >   - [クロージャーの仕組み](http://akimichi.github.io/functionaljs/chap07.spec.html#mechanism-of-closure)
-// >   - [クロージャーで状態をカプセル化する](http://akimichi.github.io/functionaljs/chap07.spec.html#encapsulation-with-closure)
-// >   - [クロージャーの純粋性](http://akimichi.github.io/functionaljs/chap07.spec.html#pure-closure)
-// > * [関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#passing-function)
-// >   - [コールバックで処理をモジュール化する](http://akimichi.github.io/functionaljs/chap07.spec.html#callback)
-// >   - [畳み込み関数に関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#folding)
-// >   - [非同期処理にコールバック関数を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#asynchronous)
-// >   - [継続で未来を渡す](http://akimichi.github.io/functionaljs/chap07.spec.html#continuation)
-// > * [モナドを作る](http://akimichi.github.io/functionaljs/chap07.spec.html#monad)
-// >   - [恒等モナド](http://akimichi.github.io/functionaljs/chap07.spec.html#identity-monad)
-// >   - [Maybeモナドでエラーを処理する](http://akimichi.github.io/functionaljs/chap07.spec.html#maybe-monad)
-// >   - [IOモナドで副作用を閉じ込める](http://akimichi.github.io/functionaljs/chap07.spec.html#io-monad)
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#currying">7.2 カリー化で関数を渡す</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#combinator">7.3 コンビネータで関数を組み合わせる</a>
+//     <ul>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#combinator-creation">コンビネータの作り方</a></li>
+//       <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#composing-function">関数を合成する</a></li></ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#closure">7.4 クロージャーを使う</a>
+//      <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#mechanism-of-closure">クロージャーの仕組み</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#encapsulation-with-closure">クロージャーで状態をカプセル化する</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#pure-closure">クロージャーの純粋性</a></li></ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#passing-function">7.5 関数を渡す</a>
+//      <ul>
+//         <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#callback">コールバックで処理をモジュール化する</a></li>
+//         <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#folding">畳み込み関数に関数を渡す</a></li>
+//         <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#asynchronous">非同期処理にコールバック関数を渡す</a></li>
+//         <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#continuation">継続で未来を渡す</a></li></ul>
+//   </li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#monad">7.6 モナドを作る</a>
+//     <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#identity-monad">恒等モナド</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#maybe-monad">Maybeモナドでエラーを処理する</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap07.spec.html#io-monad">IOモナドで副作用を閉じ込める</a></li></ul>
+//   </li>
+// </ul>
+// </div>
 
 var expect = require('expect.js');
 
@@ -235,7 +247,7 @@ var stream = {
 // ## 7.2 <section id='currying'>カリー化で関数を渡す</section>
 describe('カリー化で関数を渡す', () => {
   // **リスト7.1** multipleOf関数の定義
-  // > multipleOf(n,m)でnの倍数がmかどうかを判定する
+  // > multipleOf関数は、multipleOf(n,m)でnの倍数がmかどうかを判定する
   it('multipleOf関数の定義', (next) => {
     /* #@range_begin(multipleOf_uncurried) */
     var multipleOf = (n,m) => {
@@ -300,7 +312,7 @@ describe('カリー化で関数を渡す', () => {
   });
   it('カリー化された指数関数', (next) => {
     // **リスト7.6** 指数関数の例
-    // > exponential(b)(n)でbのn乗を計算する
+    // > exponential関数は、exponential(b)(n)でbのn乗を計算する
     /* #@range_begin(exponential_curried) */
     var exponential = (base) => {
       return (index) => {
@@ -324,7 +336,7 @@ describe('カリー化で関数を渡す', () => {
       4
     );
     // **リスト7.7** flip関数の定義
-    // > flip(fun)(x)(y)とすれば、fun(y)(x)を実行する
+    // > flip関数は、flip(fun)(x)(y)でfun(y)(x)を実行する
     /* #@range_begin(flip_definition) */
     var flip = (fun) => {
       return  (x) => {
@@ -645,14 +657,14 @@ describe('コンビネータで関数を組み合わせる', () => {
       });
       // **表7.1** 関数合成による様々な関数定義
       // 
-      // |関数名	   ||関数合成による定義	               |
-      // |:------------||------------------------------:|
-      // |length      ||sum . map(alwaysOne)             |
-      // |last        ||head . reverse                   |
-      // |init        ||reverse . tail . reverse            |
-      // |all(predicate) ||and . map(predicate)          |
-      // |any(predicate) ||or . map(predicate)           |
-      // |none(predicate)||and . map(not(predicate))     |
+      // |関数名	     |関数合成による定義	               |
+      // |:--------------|------------------------------:|
+      // |length         |sum . map(alwaysOne)             |
+      // |last           |head . reverse                   |
+      // |init           |reverse . tail . reverse            |
+      // |all(predicate) |and . map(predicate)          |
+      // |any(predicate) |or . map(predicate)           |
+      // |none(predicate)|and . map(not(predicate))     |
       describe('関数合成による様々な関数定義', () => {
         var alwaysOne = (x) => {
           return 1;
@@ -855,7 +867,8 @@ describe('コンビネータで関数を組み合わせる', () => {
 }); // コンビネータ
 
 
-// ## <section id='closure'>クロージャーを使う</section>
+// ## <section id='closure'>7.4 クロージャーを使う</section>
+// > 参考資料: [Wikipediaでのクロージャーの解説](https://ja.wikipedia.org/wiki/%E3%82%AF%E3%83%AD%E3%83%BC%E3%82%B8%E3%83%A3)
 describe('クロージャーを使う', () => {
   var compose = (f,g) => {
     return (arg) => {
@@ -1219,6 +1232,7 @@ describe('クロージャーを使う', () => {
           });
         });
         // #### コラム：ECMAScript2015（ES6）におけるジェネレータ
+        // > 参考資料: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Generator 
         it('ECMAScript2015（ES6）におけるジェネレータ', (next) => {
           // **リスト7.40** ECMAScript2015のジェネレータ
           /* #@range_begin(es6_generator) */
@@ -1676,13 +1690,13 @@ describe('関数を渡す', () => {
       });
       // **表7.2** 反復処理における蓄積変数の初期値とコールバック関数の関係
       //
-      // |関数名	   |蓄積変数の初期値 | 関数合成による定義	                      ||
-      // |:------------|--------------|-------------------------------------------||
-      // |sum          |0             |(n) => { return (m) => { return n + m;};}  ||
-      // |length       |0             |(n) => { return (m) => { return 1 + m;};}  ||
-      // |product      |1             |(n) => { return (m) => { return n ＊ m;};}  ||
-      // |all          |true          |(n) => { return (m) => { return n ＆＆ m;};} ||
-      // |any          |true          |(n) => { return (m) => { return n ｜｜ m;};}||
+      // |関数名	   |蓄積変数の初期値 | 関数合成による定義	                       |
+      // |:------------|:------------:|:--------------------------------------------|
+      // |sum          |0             |(n) => { return (m) => { return n + m;};}   |
+      // |length       |0             |(n) => { return (m) => { return 1 + m;};}   |
+      // |product      |1             |(n) => { return (m) => { return n ＊ m;};}   |
+      // |all          |true          |(n) => { return (m) => { return n ＆＆ m;};} |
+      // |any          |true          |(n) => { return (m) => { return n ｜｜ m;};} |
       //
       describe('反復処理における蓄積変数の初期値とコールバック関数の関係', () => {
         it("foldrでproductを作る", (next) => {
@@ -1910,6 +1924,7 @@ describe('関数を渡す', () => {
       });
     });
     // #### コラム：配列の畳み込み関数
+    // > 参考資料: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce
     describe("コラム：配列の畳み込み関数", () => {
       // **リスト7.62** reduceメソッドによるfromArray関数
       it("reduceメソッドによるfromArray関数", (next) => {
@@ -1958,7 +1973,7 @@ describe('関数を渡す', () => {
     // ![](images/tarai-system.gif) 
   });
   // ### <section id='continuation'>継続で未来を渡す</section>
-  // > https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A
+  // > 参考資料: [Wikipediaの記事](https://ja.wikipedia.org/wiki/%E7%B6%99%E7%B6%9A)
   describe('継続で未来を渡す', () => {
     // #### 継続とは何か
     describe('継続とは何か', () => {
@@ -2102,10 +2117,8 @@ describe('関数を渡す', () => {
       }); 
     }); 
     // #### 非決定計算機を作る
-    // > SICPの非決定計算の章は、http://sicp.iijlab.net/fulltext/x430.html 
-
+    // > 参考資料: [SICPの非決定計算の章](http://sicp.iijlab.net/fulltext/x430.html)
     // **リスト7.74** 決定性計算機
-    // > 非決定性計算機の前に、決定性計算機を復習
     describe("決定計算機", () => {
       // 式の代数的データ構造
       var exp = {
@@ -2530,6 +2543,7 @@ describe('モナドを作る', () => {
     });
   });
   // ### <section id='maybe-monad'>Maybeモナドでエラーを処理する</section>
+  // > 参考資料: https://en.wikibooks.org/wiki/Haskell/Understanding_monads/Maybe
   describe('Maybeモナドでエラーを処理する', () => {
     describe('Maybeモナドを作る', () => {
       // **リスト7.91** Maybeの代数的構造
@@ -2617,6 +2631,7 @@ describe('モナドを作る', () => {
     });
   });
   // ### <section id='io-monad'>IOモナドで副作用を閉じ込める</section>
+  // > 参考資料: https://en.wikibooks.org/wiki/Haskell/Understanding_monads/IO
   describe('IOモナドで副作用を閉じ込める', () => {
     var match = (data, pattern) => {
       return data.call(pattern, pattern);
@@ -2874,4 +2889,4 @@ describe('モナドを作る', () => {
   }); // IOモナドで副作用を閉じ込める
 }); // モナド
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) [次章に移る](http://akimichi.github.io/functionaljs/chap08.spec.html) 
+// [目次に戻る](index.html) [次章に移る](chap08.spec.html) 

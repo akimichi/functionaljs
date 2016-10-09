@@ -2,14 +2,24 @@
 
 // 第8章 関数型言語を作る
 // ========
-// ## 目次
-// > * [抽象構文木を作る](http://akimichi.github.io/functionaljs/chap08.spec.html#abstract-syntax-tree)
-// > * [環境を作る](http://akimichi.github.io/functionaljs/chap08.spec.html#environment)
-// > * [評価器を作る](http://akimichi.github.io/functionaljs/chap08.spec.html#evaluator)
-// >   - [恒等モナドによる評価器](http://akimichi.github.io/functionaljs/chap08.spec.html#identity-monad-evaluator)
-// >   - [ログ出力評価器](http://akimichi.github.io/functionaljs/chap08.spec.html#logger-monad-evaluator)
+
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/chap08.spec.html#abstract-syntax-tree">8.2 抽象構文木を作る</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap08.spec.html#environment">8.3 環境を作る</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/chap08.spec.html#evaluator">8.4 評価器を作る</a>
+//      <ul>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap08.spec.html#identity-monad-evaluator">恒等モナドによる評価器</a></li>
+//        <li><a href="http://akimichi.github.io/functionaljs/chap08.spec.html#logger-monad-evaluator">ログ出力評価器</a></li></ul>
+//   </li>
+// </ul>
+// </div>
+
 
 var expect = require('expect.js');
+
+// 以下のコードで利用されるpairモジュールとlistモジュールをあらかじめ定義しておく
 
 // pairモジュール 
 var pair = {
@@ -111,6 +121,7 @@ var list  = {
 };
 
 // ## 8.2 <section id='abstract-syntax-tree'>抽象構文木を作る</section>
+// > 参考資料: [Wikipediaの記事](https://ja.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E6%A7%8B%E6%96%87%E6%9C%A8)
 describe('抽象構文木を作る', () => {
   // **リスト8.2** 式の代数的データ構造
   describe('式の代数的データ構造', () => {
@@ -259,6 +270,7 @@ describe('環境を作る', () => {
 });
 
 // ## 8.4 <section id='evaluator'>評価器を作る</section>
+// > 参考資料: [The Essence of Functional Programming](https://www.google.co.jp/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwiw25uwks7PAhVBF5QKHQjDBfEQFggcMAA&url=http%3A%2F%2Fwww.eliza.ch%2Fdoc%2Fwadler92essence_of_FP.pdf&usg=AFQjCNFX6YZ2kqhIuqGGysZCyMQwaWAAfQ&sig2=0GWjNVeqVkXjUCr6B20DLA&bvm=bv.135258522,d.dGo)
 describe('評価器を作る', () => {
   /* 「環境」モジュール */
   var env = {
@@ -780,6 +792,6 @@ describe('評価器を作る', () => {
 });
 
 
-// [目次に戻る](http://akimichi.github.io/functionaljs/) 
+// [目次に戻る](index.html) 
 
 

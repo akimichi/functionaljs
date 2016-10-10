@@ -43,3 +43,6 @@ node_modules/
 project/
 target/
 .publish/
+
+# vim swap
+*.swp

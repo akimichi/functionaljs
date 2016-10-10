@@ -5,15 +5,62 @@
 
 var fs = require('fs');
 var expect = require('expect.js');
-var pair = require('./monad.js').pair;
-var ID = require('./monad.js').ID;
 
+var pair = {
+  match : (data, pattern) => {
+    return data(pattern);
+  },
+  cons: (left, right) => {
+    return (pattern) => {
+      return pattern.cons(left, right);
+    };
+  },
+  right: (tuple) => {
+    return pair.match(tuple, {
+      cons: (left, right) => {
+        return right;
+      }
+    });
+  },
+  left: (tuple) => {
+    return pair.match(tuple, {
+      cons: (left, right) => {
+        return left;
+      }
+    });
+  }
+};
 
+// ## IDモナド
+var ID = {
+  /* unit:: T => ID[T] */
+  unit: (value) => {  // 単なる identity関数と同じ
+    return value;
+  },
+  /* flatMap:: ID[T] => FUN[T => ID[T]] => ID[T] */
+  flatMap: (instanceM) => {
+    return (transform) => {
+      return transform(instanceM); // 単なる関数適用と同じ
+    };
+  }
+};
+
+// ### IDモナドのテスト
+describe("IDモナドをテストする",() => {
+  it("ID#unit", (next) => {
+    expect(
+      ID.unit(1)
+    ).to.eql(
+      1
+    );
+    next();
+  });
+});
 
 // ## Maybeモナド
 var Maybe = {
   match: (data, pattern) => {
-     return data.call(Maybe,pattern);
+     return data(pattern);
   },
   just : (value) => {
     return (pattern) => {
@@ -27,6 +74,19 @@ var Maybe = {
   },
   unit : (value) => {
     return Maybe.just(value);
+  },
+  map : (maybeInstance) => {
+    return (transform) => {
+      expect(transform).to.a('function');
+      return Maybe.match(maybeInstance,{
+        nothing: (_) => {
+          return Maybe.nothing(_);
+        },
+        just: (value) => {
+          return Maybe.unit(transform(value));
+        }
+      });
+    };
   },
   flatMap : (maybeInstance) => {
     return (transform) => {
@@ -86,19 +146,6 @@ var Maybe = {
               return true;
             }
           });
-        }
-      });
-    };
-  },
-  map : (maybeInstance) => {
-    return (transform) => {
-      expect(transform).to.a('function');
-      return Maybe.match(maybeInstance,{
-        just: (value) => {
-          return Maybe.unit(transform(value));
-        },
-        nothing: (_) => {
-          return Maybe.nothing(_);
         }
       });
     };
@@ -181,9 +228,6 @@ var List  = {
       return pattern.cons(value, alist);
     };
   },
-  unit: (value) => {
-    return List.cons(value, List.empty());
-  },
   head: (alist) => {
     return List.match(alist, {
       empty: (_) => {
@@ -236,8 +280,11 @@ var List  = {
   // concat [] = []
   // concat (xs:xss) = xs ++ concat xss
   // ~~~
-  concat: (list_of_list) => {
-    return List.foldr(list_of_list)(List.empty())(List.append);
+  concat: (xss) => {
+    return List.foldr(xss)(List.empty())(List.append);
+  },
+  join: (xss) => {
+    return List.concat(xss);
   },
   // ~~~haskell
   // flatten :: [[a]] -> [a]
@@ -264,13 +311,17 @@ var List  = {
       });
     };
   },
+  unit: (value) => {
+    return List.cons(value, List.empty());
+  },
   // ~~~haskell
   // xs >>= f = concat (map f xs)
   // ~~~
   flatMap: (instanceM) => {
     return (transform) => { // FUN[T->LIST[T]]
       expect(transform).to.a('function');
-      return List.concat(List.map(instanceM)(transform));
+      return List.join(List.map(instanceM)(transform));
+      // return List.concat(List.map(instanceM)(transform));
     };
   },
   /* #@range_end(list_monad_definition) */
@@ -421,6 +472,96 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
+  it("'List#map'", (next) => {
+    /* list = [1,2,3,4] */
+    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
+    expect(
+      List.toArray(List.map(theList)((item) => {
+        return item * 2;
+      }))
+    ).to.eql(
+      [2,4,6,8]
+    );
+    next();
+  });
+  it("'List#unit'", (next) => {
+    /* list = [1] */
+    expect(
+      List.toArray(List.unit(1))
+    ).to.eql(
+      [1]
+    );
+    expect(
+      List.toArray(List.unit(null))
+    ).to.eql(
+      [null]
+    );
+    next();
+  });
+  describe("List#flatMap", () => {
+    it("[1]の要素の2倍は、[2]", (next) => {
+      // ~~~haskell
+      // Prelude> [1] >>= \x -> [x * 2]
+      // [2]
+      // ~~~
+      var theList = List.cons(1, List.empty());
+      expect(
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.unit(item * 2); 
+        }))
+      ).to.eql(
+        [2]
+      );
+      next();
+    });
+    it("[]の要素の2倍は、[]", (next) => {
+      // ~~~haskell
+      // Prelude> [] >>= \x -> [x * 2]
+      // []
+      // ~~~
+      var emptyList = List.empty();
+      expect(
+        List.toArray(List.flatMap(emptyList)((item) => {
+          return List.unit(item * 2); 
+        }))
+      ).to.eql(
+        []
+      );
+      next();
+    });
+    it("[1,2]と[1,2]のそれぞれの要素を足して3になる組み合わせを求める", (next) => {
+      var list1 = List.cons(1, List.cons(2,
+                                         List.empty()));
+      var list2 = List.cons(1, List.cons(2,
+                                         List.empty()));
+      expect(
+        List.toArray(List.flatMap(list1)((item1) => {
+          return List.flatMap(list2)((item2) => {
+            if(item1 + item2 === 3) {
+              return List.unit([item1, item2]);
+            } else {
+              return List.empty();
+            }
+          });
+        }))
+      ).to.eql(
+        [[1,2],[2,1]]
+      );
+      next();
+    });
+    it("'List#flatMap'", (next) => {
+      // list = [1,2,3]
+      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
+      expect(
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.append(List.unit(item))(List.unit(- item));
+        }))
+      ).to.eql(
+        [1,-1,2,-2,3,-3]
+      );
+      next();
+    });
+  });
   it("'List#toArray'", (next) => {
     /* list = [1,2,3,4] */
     var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
@@ -458,98 +599,6 @@ describe('Listモナドのテスト', () => {
       );
       next();
     });
-  });
-  it("'List#map'", (next) => {
-    /* list = [1,2,3,4] */
-    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-    expect(
-      List.toArray(List.map(theList)((item) => {
-        return item * 2;
-      }))
-    ).to.eql(
-      [2,4,6,8]
-    );
-    next();
-  });
-  describe("List#flatMap", () => {
-    it("条件でフィルターする", (next) => {
-      var list1 = List.cons(1, List.cons(2,
-                                         List.empty()));
-      var list2 = List.cons(1, List.cons(2,
-                                         List.empty()));
-      expect(
-        List.toArray(List.flatMap(list1)((item1) => {
-          return List.flatMap(list2)((item2) => {
-            if(item1 + item2 === 3) {
-              return List.unit([item1, item2]);
-            } else {
-              return List.empty();
-            }
-          });
-        }))
-      ).to.eql(
-        [[1,2],[2,1]]
-      );
-      next();
-    });
-    it("'List#flatMap'", (next) => {
-      // list = [1]
-      var theList = List.cons(1, List.empty());
-      expect(
-        List.toArray(List.flatMap(theList)((item) => {
-          return List.unit(item * 2); 
-        }))
-      ).to.eql(
-        [2]
-      );
-      var emptyList = List.empty();
-      expect(
-        List.toArray(List.flatMap(emptyList)((item) => {
-          return List.unit(item * 2); 
-        }))
-      ).to.eql(
-        []
-      );
-      next();
-    });
-    it("'List#flatMap'", (next) => {
-      // list = [1,2,3]
-      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
-      expect(
-        List.toArray(List.flatMap(theList)((item) => {
-          return List.append(List.unit(item))(List.unit(- item));
-        }))
-      ).to.eql(
-        [1,-1,2,-2,3,-3]
-      );
-      next();
-    });
-  });
-  it("'List#unit'", (next) => {
-    /* list = [1] */
-    expect(
-      List.toArray(List.unit(1))
-    ).to.eql(
-      [1]
-    );
-    expect(
-      List.toArray(List.unit(null))
-    ).to.eql(
-      [null]
-    );
-    next();
-  });
-  it("'List#flatMap'", (next) => {
-    /* list = [1,2,3] */
-    var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
-    expect(
-      List.toArray(List.flatMap(theList)((item) => {
-        return List.append(List.unit(item))(List.unit(- item));
-      }))
-    ).to.eql(
-      [1,-1,2,-2,3,-3]
-    );
-    next();
   });
   describe("Listモナドを活用する",() => {
     it("フィルターとして使う", (next) => {

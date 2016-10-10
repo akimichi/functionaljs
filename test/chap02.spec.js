@@ -422,6 +422,7 @@ describe('関数型プログラミングの特徴', () => {
   });
 });
 // ## 2.3 <section id='advantages-of-functional-programming'>関数型プログラミングの利点</section>
+// > 参考資料: [Why Functional Programming Matters](https://www.google.co.jp/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwijj-fo-8zPAhWFmpQKHWI4C7UQFggcMAA&url=https%3A%2F%2Fwww.cs.kent.ac.uk%2Fpeople%2Fstaff%2Fdat%2Fmiranda%2Fwhyfp90.pdf&usg=AFQjCNHb88MH2uDvwjCn94-VGVe6GjAM5Q&sig2=4hvyUIdaYiW5Qxc8H51Kwg)
 describe('関数型プログラミングの利点', () => {
   /* 下記テストで利用される関数をあらかじめ定義しておく */
   var compose = (f,g) => {

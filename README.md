@@ -1,9 +1,8 @@
-# 「関数型プログラミングの基礎知識」サンプルコード
+# 「関数型プログラミングの基礎」サンプルコード
 
-このレポジトリは、リック・テレコム社刊行の「関数型プログラミングの基礎知識」のサンプルコードをおさめたものです。
+このレポジトリは、リック・テレコム社刊行の「関数型プログラミングの基礎」のサンプルコードをおさめたものです。
 
-プロジェクトページは、http://akimichi.github.io/functionaljs/
-
+github pagesによるサイトは、http://akimichi.github.io/functionaljs/ です。
 
 ## 利用法 
 
@@ -14,10 +13,7 @@ $ git clone git@github.com:akimichi/functionaljs.git
 $ cd functionaljs
 ~~~
 
-テスト環境の構築には、 1) docker を使う 2) 個別にインストールする、 の2つの方法があります。
-dockerを利用したほうが確実です。
-
-
+テスト環境の構築には、 1) 個別にインストールする, 2) docker を使う 、 の2つの方法があります。
 
 ### ローカル環境にテスト環境を個別にインストールする
 
@@ -124,14 +120,33 @@ $ gulp haskell-test
 $ gulp doc; gulp deploy
 ~~~
 
-
 ### dockerを使う
 
-まず最初に下記のコマンドでdockerイメージを生成します。
+dockerを使って、各種のテスト環境を構築できます。
+あらかじめdockerをインストールしておいてください。
+この方法は、dockerさえインストールしておけば確実に環境を構築できるという利点があります。
+ただし、dockerイメージは約4GBあるのでディスク容量の少ないマシンでの利用には注意してください。
+
+
+#### dockerイメージを準備する
+
+dockerコンテナを動かす前に、dockerイメージを準備する必要があります。
+dockerイメージを取得するには、2つの方法があります。
+ひとつは docker hub からダウンロードする方法で、もうひとつはDockerfileから自分で作成する方法です。
+
+docker hubからイメージをダウンロードするには、pullコマンドを利用します。
+
+~~~
+$ docker pull emile/functionaljs
+~~~
+
+
+このgithubレポジトリにあるDockerfileを使って、イメージを作成できます。
+下記のようなコマンドでdockerイメージを生成します。
 末尾のピリオド(.) も忘れずに入力してください。
 
 ~~~
-docker build -t="ric/functionaljs:v1" .
+$ docker build -t="emile/functionaljs:v1" .
 ~~~
 
 #### 単体テストを実行する
@@ -141,19 +156,19 @@ docker build -t="ric/functionaljs:v1" .
 node.jsのコードをテストする。
 
 ~~~
-docker run -it --rm --workdir="/workspace/nodejs" ric/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
+$ docker run -it --rm --workdir="/workspace/nodejs" emile/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
 ~~~
 
 scala のコードをテストする
 
 ~~~
-docker run -it --rm --workdir="/workspace/scala" ric/functionaljs:v1 /bin/bash -c "sbt test"
+$ docker run -it --rm --workdir="/workspace/scala" emile/functionaljs:v1 /bin/bash -c "sbt test"
 ~~~
 
 haskell のコードをテストする
 
 ~~~
-docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bash -c "stack test"
+$ docker run -it --rm  --workdir="/workspace/haskell" emile/functionaljs:v1 /bin/bash -c "stack test"
 ~~~
 
 #### REPLを実行する 
@@ -161,7 +176,7 @@ docker run -it --rm  --workdir="/workspace/haskell" ric/functionaljs:v1 /bin/bas
 コンテナにログインする
 
 ~~~
-docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i
+$ docker run -it  --workdir="/workspace" emile/functionaljs:v1 bash --login -i
 ~~~
 
 これでコンテナ内の /workspace ディレクトリにログインしました。
@@ -214,12 +229,5 @@ Prelude> :q
 Leaving GHCi.
 ~~~
 
-<!-- ~~~ -->
-<!-- docker run -it  --workdir="/workspace" ric/functionaljs:v1 bash --login -i -->
-<!-- root@ca7528c7f2e5:/workspace# cd nodejs && gulp test  -->
-<!-- root@ca7528c7f2e5:/workspace# mocha --harmony test -->
-<!-- root@ca7528c7f2e5:/workspace# cd scala && sbt test -->
-<!-- root@ca7528c7f2e5:/workspace# cd haskell && stack test  -->
-<!-- ~~~ -->
 
 

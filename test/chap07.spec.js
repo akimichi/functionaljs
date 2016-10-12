@@ -534,7 +534,7 @@ describe('コンビネータで関数を組み合わせる', () => {
   });
   // ### <section id='composing-function'>関数を合成する</section>
   // $$ 
-  //    f \circ g 
+  //    (f \circ g) x = f(g(x))
   // $$
   describe('関数を合成する', () => {
     // **リスト7.16** 関数合成の定義

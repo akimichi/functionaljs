@@ -561,6 +561,56 @@ describe('Listモナドのテスト', () => {
       );
       next();
     });
+    it("素数を求める", (next) => {
+      var enumFromTo = (x,y) => {
+        if(x > y) {
+          return List.empty();
+        } else {
+          return List.cons(x, enumFromTo(x+1,y));
+        }
+      };
+      // ~~~haskell
+      // factors :: Int -> [Int]
+      // factors n = [x | x <- [1..n], n `mod` x == 0]
+      // ~~~
+      var factors = (n) => {
+        return List.flatMap(enumFromTo(1,n))((x) => {
+          if((n % x) === 0){
+            return List.unit(x);
+          } else {
+            return List.empty(); 
+          }
+        });
+      };
+      expect(
+        List.toArray(factors(15))
+      ).to.eql(
+        [1,3,5,15]
+      );
+      expect(
+        List.toArray(factors(7))
+      ).to.eql(
+        [1,7]
+      );
+      // ~~~haskell
+      // isPrime :: Int -> Bool
+      // isPrime n = factors n == [1,n]
+      // ~~~
+      var isPrime = (n) => {
+        return List.toArray(factors(n)) === List.toArray(enumFromTo(1,n));
+      };
+      expect(
+        isPrime(15)
+      ).to.eql(
+        false
+      );
+      expect(
+        isPrime(13)
+      ).to.eql(
+        false
+      );
+      next();
+    });
   });
   it("'List#toArray'", (next) => {
     /* list = [1,2,3,4] */
@@ -1686,3 +1736,5 @@ describe("Stateモナドをテストする",() => {
 // instance MonadCont (Cont r) where 
 //     callCC f = Cont $ \k -> runCont (f (\a -> Cont $ \_ -> k a)) k
 // ~~~
+
+// [目次に戻る](index.html) 

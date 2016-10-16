@@ -2961,7 +2961,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="10" visible="true" active="true">
+  <dia:layer name="10" visible="true">
     <dia:object type="Standard - Box" version="0" id="O91">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -3610,7 +3610,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="11" visible="false">
+  <dia:layer name="11" visible="true">
     <dia:object type="Standard - Box" version="0" id="O111">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -4325,7 +4325,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="12" visible="false">
+  <dia:layer name="12" visible="true">
     <dia:object type="Standard - Box" version="0" id="O133">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -5109,7 +5109,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="13" visible="false">
+  <dia:layer name="13" visible="true">
     <dia:object type="Standard - Box" version="0" id="O157">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -5956,7 +5956,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="14" visible="false">
+  <dia:layer name="14" visible="true">
     <dia:object type="Standard - Box" version="0" id="O183">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -6872,7 +6872,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="15" visible="false">
+  <dia:layer name="15" visible="true">
     <dia:object type="Standard - Box" version="0" id="O211">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -7851,7 +7851,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="16" visible="false">
+  <dia:layer name="16" visible="true">
     <dia:object type="Standard - Box" version="0" id="O241">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -8896,7 +8896,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="17" visible="false">
+  <dia:layer name="17" visible="true">
     <dia:object type="Standard - Box" version="0" id="O273">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -10007,7 +10007,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="18" visible="false">
+  <dia:layer name="18" visible="true">
     <dia:object type="Standard - Box" version="0" id="O307">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -11184,7 +11184,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="19" visible="false">
+  <dia:layer name="19" visible="true">
     <dia:object type="Standard - Box" version="0" id="O343">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>
@@ -12427,7 +12427,7 @@
       </dia:attribute>
     </dia:object>
   </dia:layer>
-  <dia:layer name="20" visible="false">
+  <dia:layer name="20" visible="true" active="true">
     <dia:object type="Standard - Box" version="0" id="O381">
       <dia:attribute name="obj_pos">
         <dia:point val="5,5"/>

@@ -1152,11 +1152,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p>length関数の抽象的な定義</p>
+              <p>length関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'length関数の抽象的な定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'length関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> alwaysOne = (x) =&gt; {
             <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
           };
@@ -1195,11 +1195,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
-              <p>last関数の抽象的な定義</p>
+              <p>last関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'last関数の抽象的な定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'last関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> last = (alist) =&gt; {
             <span class="hljs-keyword">return</span> compose(list.head,
                            list.reverse)(alist);
@@ -1221,11 +1221,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
-              <p>init関数の抽象的な定義</p>
+              <p>init関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'init関数の抽象的な定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'init関数の義'</span>, (next) =&gt; {
           <span class="hljs-comment">/* init = reverse . tail . reverse  */</span>
           <span class="hljs-keyword">var</span> init = (alist) =&gt; {
             <span class="hljs-keyword">return</span> compose(list.reverse,
@@ -1251,11 +1251,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>all関数の抽象的な定義</p>
+              <p>all関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'all関数の抽象的な定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'all関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> and = (alist) =&gt; {
             <span class="hljs-keyword">return</span> list.match(alist, {
               empty: (_) =&gt; {
@@ -1291,11 +1291,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
-              <p>any関数の抽象的な定義</p>
+              <p>any関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'any関数の抽象的な定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'any関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> or = (alist) =&gt; {
             <span class="hljs-keyword">return</span> list.match(alist, {
               empty: (_) =&gt; {
@@ -1338,11 +1338,11 @@ $$</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
-              <p>none関数の抽象的な定義</p>
+              <p>none関数の定義</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'none関数の抽象的な定義'</span>, (next) =&gt; {
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'none関数の定義'</span>, (next) =&gt; {
           <span class="hljs-keyword">var</span> and = (alist) =&gt; {
             <span class="hljs-keyword">return</span> list.match(alist, {
               empty: (_) =&gt; {

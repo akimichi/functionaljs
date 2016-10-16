@@ -673,8 +673,8 @@ describe('コンビネータで関数を組み合わせる', () => {
                               list.cons(2,
                                         list.cons(3,
                                                   list.empty())));
-        // length関数の抽象的な定義
-        it('length関数の抽象的な定義', (next) => {
+        // length関数の定義
+        it('length関数の定義', (next) => {
           var alwaysOne = (x) => {
             return 1;
           };
@@ -703,8 +703,8 @@ describe('コンビネータで関数を組み合わせる', () => {
           );
           next();
         });
-        // last関数の抽象的な定義
-        it('last関数の抽象的な定義', (next) => {
+        // last関数の定義
+        it('last関数の定義', (next) => {
           var last = (alist) => {
             return compose(list.head,
                            list.reverse)(alist);
@@ -716,8 +716,8 @@ describe('コンビネータで関数を組み合わせる', () => {
           );
           next();
         });
-        // init関数の抽象的な定義
-        it('init関数の抽象的な定義', (next) => {
+        // init関数の定義
+        it('init関数の義', (next) => {
           /* init = reverse . tail . reverse  */
           var init = (alist) => {
             return compose(list.reverse,
@@ -733,8 +733,8 @@ describe('コンビネータで関数を組み合わせる', () => {
           );
           next();
         });
-        // all関数の抽象的な定義
-        it('all関数の抽象的な定義', (next) => {
+        // all関数の定義
+        it('all関数の定義', (next) => {
           var and = (alist) => {
             return list.match(alist, {
               empty: (_) => {
@@ -760,8 +760,8 @@ describe('コンビネータで関数を組み合わせる', () => {
           );
           next();
         });
-        // any関数の抽象的な定義
-        it('any関数の抽象的な定義', (next) => {
+        // any関数の定義
+        it('any関数の定義', (next) => {
           var or = (alist) => {
             return list.match(alist, {
               empty: (_) => {
@@ -794,8 +794,8 @@ describe('コンビネータで関数を組み合わせる', () => {
           );
           next();
         });
-        // none関数の抽象的な定義
-        it('none関数の抽象的な定義', (next) => {
+        // none関数の定義
+        it('none関数の定義', (next) => {
           var and = (alist) => {
             return list.match(alist, {
               empty: (_) => {

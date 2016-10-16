@@ -34,16 +34,9 @@ gulp.task('scala-test', function (cb) {
   });
 });
 
-// gulp.task('cabal-configure', function (cb) {
-//   runSequence('stack build',
-//               'cabal configure',
-//               cb);
-// });
-
 gulp.task('haskell-test', function (cb) {
   exec('stack test', function (err, stdout, stderr) {
     console.log(stdout);
-    // console.log(stderr);
     exec('stack test', function (err, stdout, stderr) {
       cb(err);
     });

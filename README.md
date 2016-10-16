@@ -47,33 +47,33 @@ $ nvm install v0.12.0
 
 ### テストの実行 
 
-#### node.js のテスト
-
 ローカル環境に nvm がインストールされていることが必要です。
 
+レポジトリをクローンしたディレクトリに移動します。
+
 ~~~
-$ git clone git@github.com:akimichi/functionaljs.git
-$ cd functionaljs
+cd functionajs
+~~~
+
+~~~
 $ nvm use
 $ npm install
 ~~~
 
-テストを実行するには
+テストを実行するには [gulp](http://gulpjs.com/) を利用します。
+gulpコマンドを利用するため、以下のようにgulpをグローバルにインストールします。
 
 ~~~
-$ ./node_modules/.bin/gulp js-test
+$ npm install -g gulp
 ~~~
 
-ドキュメントを生成するには
+JavaScriptのコードをテストするには、以下のようにします。
 
 ~~~
-$ ./node_modules/.bin/gulp doc
+$ gulp js-test
 ~~~
 
-#### scalaとhaskellのテスト
-
-以下のdockerによるインストールを参照ください。
-
+scalaとhaskellのコードをテストするには、以下のdockerによるインストールを参照ください。
 
 ### dockerを使う
 
@@ -94,15 +94,7 @@ dockerイメージを取得するには、2つの方法があります。
 docker hubからイメージをダウンロードするには、pullコマンドを利用します。
 
 ~~~
-$ docker pull emile/functionaljs
-~~~
-
-このgithubレポジトリにあるDockerfileを使って、イメージを作成できます。
-下記のようなコマンドでdockerイメージを生成します。
-末尾のピリオド(.) も忘れずに入力してください。
-
-~~~
-$ docker build -t="emile/functionaljs:v1" .
+$ docker pull emile/functionaljs:v1
 ~~~
 
 #### 単体テストを実行する

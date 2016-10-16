@@ -1,12 +1,12 @@
 # 「関数型プログラミングの基礎」サンプルコード
 
-このレポジトリは、リック・テレコム社刊行の「関数型プログラミングの基礎」のサンプルコードをおさめたものです。
+このレポジトリは、リック・テレコム社刊行の[「関数型プログラミングの基礎」](https://www.amazon.co.jp/%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%9F%BA%E7%A4%8E-JavaScript%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E5%AD%A6%E3%81%B6-%E7%AB%8B%E5%B7%9D%E5%AF%9F%E7%90%86/dp/4865940596/ref=sr_1_1?ie=UTF8&qid=1476598423&sr=8-1&keywords=%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)のサンプルコードをおさめたものです。
 
-github pagesによるサイトは、http://akimichi.github.io/functionaljs/ です。
+github pagesによるサイトは、http://akimichi.github.io/functionaljs/ になります。
 
 ## 利用法 
 
-まず最初に本レポジトリをクローンして、そのディレクトリに入ります。
+サンプルコードを利用するには、まず最初に本レポジトリをクローンし、次にそのディレクトリに入ります。
 
 ~~~
 $ git clone git@github.com:akimichi/functionaljs.git
@@ -17,32 +17,32 @@ $ cd functionaljs
 
 ### ローカル環境にテスト環境を個別にインストールする
 
+ここでは ubuntu が動作している環境にテスト環境をインストールする方法を説明します。
+他のOSについては、書籍を参照ください。
+
 #### node.js のインストール
 
-nvm のインストール
+node.jsのインストールは、[nvm](https://github.com/creationix/nvm)を用います。
 
-node.js v0.12.0 のインストール
-
-#### scala のインストール
-
-sbtのインストール
-
-#### haskell のインストール
-
-cabal
-
-stack
-
-c.f. http://docs.haskellstack.org/en/stable/install_and_upgrade.html#ubuntu
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 575159689BEFB442
-sudo apt-get update && sudo apt-get install stack -y
-
-stack build
-stack setup
-stack test
+nvmをインストールするには、curlコマンドを用いて次のようにするのが簡便です。
 
 ~~~
-$ stack build
+$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
+~~~
+
+あるいはwgetコマンドを用いる場合は、次のようになります。
+
+~~~
+$ wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
+~~~
+
+上記の方法はスクリプトが移動したなどの理由で失敗することがあります。
+もしインストールに失敗する場合は、https://github.com/creationix/nvm を参考にして最新の方法でインストールしてください。
+
+次に、node.js v0.12.0 をインストールします。
+
+~~~
+$ nvm install v0.12.0
 ~~~
 
 ### テストの実行 
@@ -70,55 +70,10 @@ $ ./node_modules/.bin/gulp js-test
 $ ./node_modules/.bin/gulp doc
 ~~~
 
-#### scalaのテスト
+#### scalaとhaskellのテスト
 
-scalaのコードをテストする
+以下のdockerによるインストールを参照ください。
 
-~~~
-$ sbt test
-~~~
-
-以下のようなエラーでコンパイルが失敗する場合があります。
-
-~~~
-[error] error while loading CharSequence, class file '/usr/lib/jvm/java-8-oracle/jre/lib/rt.jar(java/lang/CharSequence.class)' is broken
-~~~
-
-そのときは、旧いバージョンのjavaを使ってください。
-例えば ubuntu では、以下のようにして使用するjavaのバージョンを切りかえます。
-
-~~~
-sudo update-alternatives --config java
-~~~
-
-
-もしくは、 gulp を使って
-
-~~~
-$ gulp scala-test
-~~~
-
-#### haskellのテスト
-
-haskellのコードをテストする
-
-~~~
-$ stack build
-$ stack test
-~~~
-
-もしくは、 gulp を使って
-
-~~~
-$ gulp haskell-test
-~~~
-
-
-#### github pages
-
-~~~
-$ gulp doc; gulp deploy
-~~~
 
 ### dockerを使う
 
@@ -127,6 +82,8 @@ dockerを使って、各種のテスト環境を構築できます。
 この方法は、dockerさえインストールしておけば確実に環境を構築できるという利点があります。
 ただし、dockerイメージは約4GBあるのでディスク容量の少ないマシンでの利用には注意してください。
 
+なお、dockerを使ったインストールは、リック・テレコム社が推奨する方法では**ありません**。
+インストール時の問題等のついては、 https://github.com/akimichi/functionaljs/issues に投稿してください。
 
 #### dockerイメージを準備する
 
@@ -139,7 +96,6 @@ docker hubからイメージをダウンロードするには、pullコマンド
 ~~~
 $ docker pull emile/functionaljs
 ~~~
-
 
 このgithubレポジトリにあるDockerfileを使って、イメージを作成できます。
 下記のようなコマンドでdockerイメージを生成します。

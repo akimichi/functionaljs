@@ -75,6 +75,11 @@ var Maybe = {
   unit : (value) => {
     return Maybe.just(value);
   },
+  // ~~~haskell
+  // instance Functor Maybe where
+  // fmap _ Nothing = Nothing
+  // fmap f (Just x) = Just (f x)
+  // ~~~
   map : (maybeInstance) => {
     return (transform) => {
       expect(transform).to.a('function');
@@ -83,7 +88,7 @@ var Maybe = {
           return Maybe.nothing(_);
         },
         just: (value) => {
-          return Maybe.unit(transform(value));
+          return Maybe.just(transform(value));
         }
       });
     };
@@ -154,6 +159,32 @@ var Maybe = {
 
 // ### Maybeモナドのテスト
 describe("Maybeモナドをテストする",() => {
+  it("Maybe#map", (next) => {
+    var succ = (n) => { return n + 1;};
+    // ~~~haskell
+    // > fmap (+1) nothing
+    // Nothing
+    // ~~~
+    expect(
+      Maybe.isEqual(
+        Maybe.map(Maybe.nothing())(succ)
+      )(
+        Maybe.nothing()
+      )
+    ).to.eql(
+      true
+    );
+    expect(
+      Maybe.isEqual(
+        Maybe.map(Maybe.just(1))(succ)
+      )(
+        Maybe.just(2)
+      )
+    ).to.eql(
+      true
+    );
+    next();
+  });
   it("Maybe#flatMap", (next) => {
     Maybe.match(Maybe.flatMap(Maybe.just(1))((a) => {
       return Maybe.unit(a);

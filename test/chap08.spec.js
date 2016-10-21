@@ -21,7 +21,7 @@ var expect = require('expect.js');
 
 // 以下のコードで利用されるpairモジュールとlistモジュールをあらかじめ定義しておく
 
-// pairモジュール 
+// **pairモジュール**
 var pair = {
   match : (data, pattern) => {
     return data.call(pair, pattern);
@@ -47,7 +47,7 @@ var pair = {
   }
 };
 
-// listモジュール
+// **listモジュール**
 var list  = {
   match : (data, pattern) => {
     return data.call(list, pattern);

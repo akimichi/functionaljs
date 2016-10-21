@@ -153,15 +153,19 @@ describe('関数型モデル', () => {
       // <a name="add_reduction_demo"> add(3,2)の簡約 </a>
       // ![add関数の簡約](images/add-reduction.gif) 
       expect(
-        add(2,1)
+        add(3,2)
       ).to.eql(
-        3
+        5
       );
       next();
     });
     // #### コラム 再帰と漸化式
     it('再帰と漸化式', (next) => {
       // **リスト 1.6 漸化式の例 **
+      // 
+      // $$ a(n) = a(n-1) + 3$$
+      // 
+      // ただし、 $$ a(1) = 1 $$
       /* #@range_begin(recursion) */
       var a = (n) => {
         if(n === 1) {

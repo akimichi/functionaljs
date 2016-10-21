@@ -1566,6 +1566,9 @@ describe('関数を渡す', () => {
       // sum関数の定義
       it('sum関数の定義', (next) => {
         var list = {
+          match: (data, pattern) => {
+            return data.call(list, pattern);
+          },
           empty: (_) => {
             return (pattern) => {
               return pattern.empty();
@@ -1639,6 +1642,9 @@ describe('関数を渡す', () => {
       // length関数の定義
       it('length関数の定義', (next) => {
         var list = {
+          match: (data, pattern) => {
+            return data.call(list, pattern);
+          },
           empty: (_) => {
             return (pattern) => {
               return pattern.empty();
@@ -1902,6 +1908,9 @@ describe('関数を渡す', () => {
     // foldr関数によるreverse関数の定義
     it("foldr関数によるreverse関数の定義", (next) => {
       var list = {
+        match: (data, pattern) => {
+          return data.call(list, pattern);
+        },
         empty: (_) => {
           return (pattern) => {
             return pattern.empty();

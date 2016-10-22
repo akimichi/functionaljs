@@ -8,7 +8,7 @@ var expect = require('expect.js');
 
 var pair = {
   match : (data, pattern) => {
-    return data(pattern);
+    return data.call(pair,pattern);
   },
   cons: (left, right) => {
     return (pattern) => {
@@ -58,6 +58,11 @@ describe("IDモナドをテストする",() => {
 });
 
 // ## Maybeモナド
+// ~~~haskell
+// instance Monad Maybe where
+//   Nothing  >>= _ = Nothing
+//   (Just x) >>= f = f x
+// ~~~
 var Maybe = {
   match: (data, pattern) => {
      return data(pattern);
@@ -77,8 +82,8 @@ var Maybe = {
   },
   // ~~~haskell
   // instance Functor Maybe where
-  // fmap _ Nothing = Nothing
-  // fmap f (Just x) = Just (f x)
+  //    fmap _ Nothing = Nothing
+  //    fmap f (Just x) = Just (f x)
   // ~~~
   map : (maybeInstance) => {
     return (transform) => {
@@ -224,12 +229,20 @@ describe("Maybeモナドをテストする",() => {
     var justTwo = Maybe.just(2);
     var justThree = Maybe.just(3);
     expect(
-      Maybe.isEqual(add(justOne,justTwo))(justThree)
+      Maybe.isEqual(
+        add(justOne,justTwo)
+      )(
+        justThree
+      )
     ).to.eql(
       true
     );
     expect(
-      Maybe.isEqual(add(justOne,Maybe.nothing()))(Maybe.nothing())
+      Maybe.isEqual(
+        add(justOne,Maybe.nothing())
+      )(
+        Maybe.nothing()
+      )
     ).to.eql(
       true
     );
@@ -1225,11 +1238,11 @@ describe('Streamモナドのテスト', () => {
       next();
     });
     it("二段階のflatMap", (next) => {
-      /*
-        scala> val nestedNumbers = List(List(1, 2), List(3, 4))
-        scala> nestedNumbers.flatMap(x => x.map(_ * 2))
-        res0: List[Int] = List(2, 4, 6, 8)
-      */
+      // ~~~scala
+      // scala> val nestedNumbers = List(List(1, 2), List(3, 4))
+      // scala> nestedNumbers.flatMap(x => x.map(_ * 2))
+      // res0: List[Int] = List(2, 4, 6, 8)
+      // ~~~
       var innerStream12 = Stream.cons(1, (_) => {
         return Stream.cons(2,(_) => {
           return Stream.empty();
@@ -1618,8 +1631,6 @@ var Variant = {
 var State = {
   // ### State#unit
   //
-  // unit :: a -> State s a
-  // unit x s = (x,s)
   // ~~~scheme
   //   (unitM (x)   (lambda (s) (values x s)))
   //   (define (unit value)
@@ -1693,9 +1704,11 @@ var State = {
   mkState: (f) => {  // f :: (s -> (a,s)) 
     return State.flatMap(f);
   },
+  // ~~~haskell
   // get :: State s s
   // get s = (s,s)
   // ~~~
+  //
   // ~~~scala
   // def get[S]: State[S,S] = State(s => (s,s))
   // ~~~
@@ -1752,8 +1765,215 @@ describe("Stateモナドをテストする",() => {
   });
 });
 
-// ## STモナド
 
+// ## STモナド
+// ~~~haskell
+// newtype ST a = S(State -> (a, State))
+//
+// app :: ST a -> State -> (a,State)
+// app (S st) x = st x
+//
+// instance Monad ST where
+//   -- (>>=) :: ST a -> (a -> ST b) -> ST b
+//   st >>= f = S(\state -> 
+//                   let (x, state') = app st state 
+//                   in app (f x) state'
+//               )
+//   unit :: a -> ST a
+//   unit x = S(\s -> (x,s))
+// ~~~
+//
+var ST = {
+  unit: (value) => { 
+    return (state) => { 
+      return pair.cons(value,state);
+    };
+  },
+  app: (st) => {
+    return (state) => {
+      return st(state);
+    };
+  },
+  flatMap: (instanceM) => {
+    return (f) => { // f:: ST a
+      expect(f).to.a('function');
+      return (state) => {
+        var newState = ST.app(instanceM)(state);
+        return pair.match(newState,{
+          cons:(x, state_) => {
+            return ST.app(f(x))(state_);
+          }
+        });
+      };
+    };
+  },
+  // ~~~haskell
+  // (<*>) :: ST(a -> b) -> ST a -> ST b
+  // stf <*> stx = S(\s ->
+  //   let (f,s') = app stf s
+  //       (x,s'') = app stx s' 
+  //   in (f x, s'')
+  // ~~~
+  apply: (stf) => {
+    return (stx) => {
+      return (state) => {
+        var newStf = ST.app(stf)(state);
+        var newStx = ST.app(stx)(state);
+        return pair.cons(
+          pair.left(newStf)(pair.left(newStx)),
+          pair.right(newStx));
+      };
+    };
+  },
+  fresh: (state) => {
+    return pair.cons(state, state + 1);
+  }
+};
+// ### STモナドのテスト
+describe("STモナドをテストする",() => {
+  describe("Treeの例",() => {
+    // ~~~haskell
+    // data Tree a = Leaf a | Node (Tree a) (Tree a)
+    // ~~~
+    var Tree = {
+      match: (data, pattern) => {
+       return data.call(data, pattern);
+      },
+      leaf: (value) => {
+         return (pattern) => {
+           return pattern.leaf(value);
+         };
+      },
+      node: (left, right) => {
+         return (pattern) => {
+           return pattern.node(left, right);
+         };
+      },
+      toArray: (tree) => {
+        return Tree.match(tree,{
+          leaf:(value) => {
+            return value;
+          },
+          node:(left, right) => {
+            return [Tree.toArray(left), Tree.toArray(right)];
+          }
+        });
+      },
+      // ~~~haskell
+      // fmap f (Leaf x) = Leaf (f x)
+      // fmap f (Node left right) = Node (fmap f left) (fmap f right)
+      // ~~~
+      map: (f) => {
+        return (tree) => {
+          return Tree.match(tree,{
+            leaf:(value) => {
+              return Tree.leaf(f(value));
+            },
+            node:(left, right) => {
+              return Tree.node(Tree.map(f)(left),Tree.map(f)(right) );
+            }
+          });
+        };
+      },
+      fresh: (state) => {
+        return pair.cons(state, state + 1);
+      }
+    };
+    it('Tree.toArray', (next) => {
+      expect(
+        Tree.toArray(Tree.leaf(1))
+      ).to.eql(
+        1
+      );
+      expect(
+        Tree.toArray(Tree.node(Tree.leaf(1),Tree.leaf(2)))
+      ).to.eql(
+        [1,2]
+      );
+      expect(
+        Tree.toArray(Tree.node(Tree.leaf(1),
+                               Tree.node(Tree.leaf(2),Tree.leaf(3))))
+      ).to.eql(
+        [1,[2,3]]
+      );
+      next();
+    });
+    it('rlabel', (next) => {
+      // ~~~haskell
+      // rlabel :: (TREE, STATE) -> (TREE,STATE)
+      // ~~~
+      var rlabel = (tree, state) => {
+        return Tree.match(tree,{
+          leaf:(value) => {
+            return pair.cons(Tree.leaf(state), state + 1);
+          },
+          node:(left, right) => {
+            var leftNode = rlabel(left, state);
+            var rightNode = rlabel(right, pair.right(leftNode));
+            return pair.cons(Tree.node(pair.left(leftNode), 
+                                       pair.left(rightNode)), 
+                             pair.right(rightNode));
+          }
+        });
+      };
+      expect(
+        Tree.toArray(pair.left(rlabel(Tree.leaf(1),0)))
+      ).to.eql(
+        0
+      );
+      expect(
+        Tree.toArray(pair.left(rlabel(Tree.node(Tree.leaf("a"),Tree.leaf("b")),0)))
+      ).to.eql(
+        [0,1]
+      );
+      next();
+    });
+    it('mlabel', (next) => {
+      var fresh = (state) => {
+        return pair.cons(state, state + 1);
+      };
+      // ~~~haskell
+      // mlabel :: Tree a -> ST(Tree Int)
+      // mlabel (Leaf _) = do n <- fresh
+      //                      return (Leaf n)
+      // mlabel (Node left right) = do left' <- mlabel left
+      //                               right' <- mlabel right
+      //                               return (Node left' right')
+      // ~~~
+      var mlabel = (tree) => {
+        return Tree.match(tree,{
+          leaf:(_) => {
+            return ST.flatMap(fresh)((n) => {
+              return ST.unit(Tree.leaf(n));
+            });
+          },
+          node:(left, right) => {
+            return ST.flatMap(mlabel(left))((left_) => {
+              return ST.flatMap(mlabel(right))((right_) => {
+                return ST.unit(Tree.node(left_, right_));
+              });
+            });
+          }
+        });
+      }; 
+      expect(
+        Tree.toArray(
+          pair.left(ST.app(mlabel(Tree.leaf(1)))(0))
+        )
+      ).to.eql(
+        0
+      );
+      expect(
+        Tree.toArray(
+          pair.left(ST.app(mlabel(Tree.node(Tree.leaf("a"),Tree.leaf("b"))))(0))
+        )
+      ).to.eql(
+        [0,1]
+      );
+      next();
+    });
+  });
+});
 // ## Contモナド
 // ~~~haskell
 // newtype Cont r a = Cont { runCont :: ((a -> r) -> r) } -- r は計算全体の最終の型

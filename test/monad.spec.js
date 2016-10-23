@@ -1285,26 +1285,70 @@ describe('Streamモナドのテスト', () => {
 // ~~~haskell
 // newtype Reader e a = Reader { runReader :: e -> a }
 //
-// instance Monad (Reader r) where
+// instance Monad (Reader env) where
 //     return a = Reader $ \_ -> a
-//     m >>= f  = Reader $ \r -> runReader (f (runReader m r)) r
+//     m >>= f  = Reader $ \env -> runReader (f (runReader m env)) env
 // ~~~
-
 var Reader = {
   unit: (x) => {
-    return (_) => {
-      return x;
+    return {
+      run: (_) => {
+        return x;
+      }
     };
   },
-  flatMap: (instanceM) => {
-    return (transform) => {
-      return (w) => {
-        return transform(instanceM(w))(w);
+  flatMap: (reader) => {
+    return (f) => { // transform:: a -> a
+      return {
+        run: (env) => {
+          return f(reader.run(env)).run(env);
+        }
       };
+      // return (env) => {
+      //   return Reader.run(transform(Reader.run(reader)(env)))(env);
+      // };
+      // return Reader.unit((env) => {
+      //   return Reader.run(transform(Reader.run(instanceM)(env)))(env);
+      // });
+      // return (env) => {
+      //   return Reader.unit(Reader.run(transform(Reader.run(instanceM)(env)))(env));
+      // };
+    };
+  },
+  // runReader :: Reader r a -> r -> a
+  // run: (reader) => {
+  //   return reader.run();
+  // },
+  // ask = Reader id
+  ask: (x) => {
+    return {
+      run: (env) => {
+        return env;
+      }
     };
   }
 };
+
 describe("Readerモナドをテストする",() => {
+  it("add10", (next) => {
+    // main = print $ runReader add10 1
+    // --
+    // add10 :: Reader Int Int
+    // add10 = do
+    //   x <- ask                          -- 環境変数(x=1)を得る
+    //   y <- local (+1) add10             -- localの使用例, y=12
+    //   s <- reader . length . show $ x   -- 返り値は自由である例
+    //  return (x+10)    
+    var add10 = Reader.flatMap(Reader.ask())((x) => {
+      return Reader.unit(x + 10);
+    });
+    expect(
+      add10.run(1)
+    ).to.eql(
+      11
+    );
+    next();
+  });
 });
 
 // ## IOモナド
@@ -1549,224 +1593,12 @@ describe("Maybeと一緒に使う", () => {
   /* #@range_end(list_maybe) */
 });
 
-// ## Variantモナド
-var Variant = {
-  unit: (value, key) => {
-    return (pattern) => {
-      return pattern[key](value);
-    };
-  },
-  flatMap: (instance) => {
-    return (transform) => {
-      return instance(transform);
-    };
-  },
-  // match: (instance, pattern) => {
-  //   return flip(Variant.flatMap)(pattern)(instance);
-  // }
-};
-// describe("Variantモナド", () => {
-//   it("Maybe", (next) => {
-//     var just = (value) => {
-//       return variant.unit(value, 'just');
-//     }; 
-//     var nothing = (_) => {
-//       return variant.unit(null, 'nothing');
-//     }; 
-//     var isEqual = (maybeA) => {
-//       return (maybeB) => {
-//         return variant.match(maybeA,{
-//           just: (valueA) => {
-//             return variant.match(maybeB,{
-//               just: (valueB) => {
-//                 return (valueA === valueB);
-//               },
-//               nothing: (_) => {
-//                 return false;
-//               }
-//             });
-//           },
-//           nothing: (_) => {
-//             return variant.match(maybeB,{
-//               just: (_) => {
-//                 return false;
-//               },
-//               nothing: (_) => {
-//                 return true;
-//               }
-//             });
-//           }
-//         });
-//       };
-//     };
-//     var add = (maybeA,maybeB) => {
-//       return variant.flatMap(maybeA)((a) => {
-//         return variant.flatMap(maybeB)((b) => {
-//           return variant.unit(a + b);
-//         });
-//       });
-//     };
-//     var justOne = just(1);
-//     var justTwo = just(2);
-//     var justThree = just(3);
-//     expect(
-//       isEqual(add(justOne,justTwo))(justThree)
-//     ).to.eql(
-//       true
-//     );
-//     next();
-//   });
-// });
-
-// ## Stateモナド
-// Stateモナドとは、状態付き計算を包んだモナドである。
-// 
-// ~~~haskell
-// instance Monad (State s) where                        
-//   return x = State $ \s -> (x, s)
-//   (State h) >>= f = State $ \s -> let (a, newState) = h s
-//     (State g) = f a 
-//       in g newState  
-// ~~~
-var State = {
-  // ### State#unit
-  //
-  // ~~~scheme
-  //   (unitM (x)   (lambda (s) (values x s)))
-  //   (define (unit value)
-  //      (lambda ()
-  //         value)
-  // ~~~
-  unit: (value) => { 
-    return (state) => { // run::STATE => PAIR[VALUE, STATE]
-      return pair.cons(value,state);
-    };
-  },
-  // ### State#evalState
-  /* run:: State[A] => A */
-  // ~~~haskell
-  evalState: (instanceM) => {
-    return (state) => {
-      return pair.match(instanceM(state),{
-        cons:(value, state) => {
-          return value;
-        }
-      });
-    };
-  },
-  // ### State#runState
-  /* runState:: State[A] => A */
-  // ~~~haskell
-  runState: (instanceM) => {
-    return (state) => {
-      return instanceM(state); // Stateモナドのインスタンス(アクション)を現在の状態に適用する
-    };
-  },
-  // ### State#flatMap
-  // flatMap:: State[T,S] => FUNC[S => STATE[T,U]] => STATE[T,U]
-  // ~~~haskell
-  //   (State h) >>= f = State $ \s -> let (a, newState) = h s
-  //                                       (State g) = f a
-  //                                   in g newState
-  // ~~~
-  // ~~~haskell
-  // newtype State s a = State { runState :: s -> (a, s) }
-  //
-  // instance Monad (State s) where
-  //     return a = State $ \s -> (a, s)
-  //     m >>= k  = State $ \s -> let
-  //             (a, s') = runState m s
-  //             in runState (k a) s'
-  // ~~~
-  flatMap: (h) => {
-    expect(h).to.a('function');
-    return (transform) => { // transform:: S => STATE[T,U]
-      return (state) => {
-        expect(transform).to.a('function');
-        return pair.match(State.runState(h)(state),{
-          cons:(value, newstate) => {
-            return State.runState(transform(value))(newstate);
-          }
-        });
-      };
-    };
-  },
-  // ### monad.state#mkState
-  // ~~~haskell
-  // mkState :: (s -> (a,s)) -> State s a
-  // mkState f = do {
-  //             s <- get;
-  //             let (a, s') = f s;
-  //             put s';
-  //             return a
-  //           }
-  // ~~~
-  mkState: (f) => {  // f :: (s -> (a,s)) 
-    return State.flatMap(f);
-  },
-  // ~~~haskell
-  // get :: State s s
-  // get s = (s,s)
-  // ~~~
-  //
-  // ~~~scala
-  // def get[S]: State[S,S] = State(s => (s,s))
-  // ~~~
-  get: (state) => {
-    return pair.cons(state,state);
-  },
-  //
-  // put :: s -> State s ()
-  // put x s = ((),x)
-  put: (value) => {
-    return () => {
-      return  null;
-    };
-  }
-};
-
-// ### Stateモナドのテスト
-describe("Stateモナドをテストする",() => {
-  describe("スタックの例",() => {
-    var Stack = {
-      pop: (alist) => {
-        return List.match(alist, {
-          cons:(head, tail) => {
-            return pair.cons(head, tail);
-          }
-        });
-      },
-      push: (n) => {
-        return (alist) => {
-          return List.match(alist, {
-            cons:(head, tail) => {
-              return pair.cons(null, List.cons(n,tail));
-            }
-          });
-        };
-      }
-    };
-    // it("スタッフの操作",(next) => {
-    //   var stackManipulation = (stack) => {
-    //     return State.flatMap(stack)(Stack.push(3));
-    //   };
-    //   // var stackManipulation = (stack) => {
-    //   //   return State.flatMap(State.flatMap(stack)(Stack.push(3)))((_) => {
-    //   //     return Stack.pop(3);
-    //   //   });
-    //   // };
-    //   expect(
-    //     State.evalState(stackManipulation(List.cons(1,List.cons(2,List.empty()))))
-    //   ).to.eql(
-    //     [0]
-    //   );
-    //   next();
-    // });
-  });
-});
 
 
 // ## STモナド
+// 
+// Programming in Haskell(2版),p.168..p.172 を参照。
+//
 // ~~~haskell
 // newtype ST a = S(State -> (a, State))
 //
@@ -1814,17 +1646,17 @@ var ST = {
   //       (x,s'') = app stx s' 
   //   in (f x, s'')
   // ~~~
-  apply: (stf) => {
-    return (stx) => {
-      return (state) => {
-        var newStf = ST.app(stf)(state);
-        var newStx = ST.app(stx)(state);
-        return pair.cons(
-          pair.left(newStf)(pair.left(newStx)),
-          pair.right(newStx));
-      };
-    };
-  },
+  // apply: (stf) => {
+  //   return (stx) => {
+  //     return (state) => {
+  //       var newStf = ST.app(stf)(state);
+  //       var newStx = ST.app(stx)(state);
+  //       return pair.cons(
+  //         pair.left(newStf)(pair.left(newStx)),
+  //         pair.right(newStx));
+  //     };
+  //   };
+  // },
   fresh: (state) => {
     return pair.cons(state, state + 1);
   }

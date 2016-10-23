@@ -126,7 +126,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 ENV PATH="${HOME}/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.10.2/bin:${PATH}"
 
 WORKDIR /workspace/haskell
-# RUN mkdir -p src/main/haskell
 RUN wget https://www.stackage.org/lts/cabal.config
 
 # install stackage
@@ -138,6 +137,11 @@ COPY functionaljs.cabal Setup.hs LICENSE /workspace/haskell/
 RUN stack init
 RUN stack setup
 # RUN stack build
+
+# cabal
+RUN cabal update
+RUN cabal install 'cabal-install >= 0.10'
+RUN cabal install
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

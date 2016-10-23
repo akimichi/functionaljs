@@ -87,6 +87,8 @@ dockerを使って、各種のテスト環境を構築できます。
 
 #### dockerイメージを準備する
 
+##### docker hubから取得する
+
 dockerコンテナを動かす前に、dockerイメージを準備する必要があります。
 dockerイメージを取得するには、2つの方法があります。
 ひとつは docker hub からダウンロードする方法で、もうひとつはDockerfileから自分で作成する方法です。
@@ -94,8 +96,17 @@ dockerイメージを取得するには、2つの方法があります。
 docker hubからイメージをダウンロードするには、pullコマンドを利用します。
 
 ~~~
-$ docker pull emile/functionaljs:v1
+$ docker pull akimichi/functionaljs:v1
 ~~~
+
+##### dockerのイメージを自分で作成する
+
+usernameには基本的にユーザー名がはいります。
+
+~~~
+$ docker build -t="username/functionaljs:v1" .
+~~~
+
 
 #### 単体テストを実行する
 
@@ -104,19 +115,19 @@ $ docker pull emile/functionaljs:v1
 node.jsのコードをテストする。
 
 ~~~
-$ docker run -it --rm --workdir="/workspace/nodejs" emile/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
+$ docker run -it --rm --workdir="/workspace/nodejs" akimichi/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
 ~~~
 
 scala のコードをテストする
 
 ~~~
-$ docker run -it --rm --workdir="/workspace/scala" emile/functionaljs:v1 /bin/bash -c "sbt test"
+$ docker run -it --rm --workdir="/workspace/scala" akimichi/functionaljs:v1 /bin/bash -c "sbt test"
 ~~~
 
 haskell のコードをテストする
 
 ~~~
-$ docker run -it --rm  --workdir="/workspace/haskell" emile/functionaljs:v1 /bin/bash -c "stack test"
+$ docker run -it --rm  --workdir="/workspace/haskell" akimichi/functionaljs:v1 /bin/bash -c "stack test"
 ~~~
 
 #### REPLを実行する 
@@ -124,7 +135,7 @@ $ docker run -it --rm  --workdir="/workspace/haskell" emile/functionaljs:v1 /bin
 コンテナにログインする
 
 ~~~
-$ docker run -it  --workdir="/workspace" emile/functionaljs:v1 bash --login -i
+$ docker run -it  --workdir="/workspace" akimichi/functionaljs:v1 bash --login -i
 ~~~
 
 これでコンテナ内の /workspace ディレクトリにログインしました。

@@ -1,11 +1,10 @@
 FROM phusion/baseimage:0.9.11
 # c.f. https://github.com/phusion/baseimage-docker
 MAINTAINER Akimichi Tatsukawa <akimichi.tatsukawa@gmail.com>
-ENV REFRESHED_AT 2016-1-15(Fri)
+ENV REFRESHED_AT 2016-10-24(Mon)
 ## Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
-# ENV HOME /root
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 RUN sed -i~ -e 's;http://archive.ubuntu.com/ubuntu;http://ftp.jaist.ac.jp/pub/Linux/ubuntu;' /etc/apt/sources.list
@@ -77,13 +76,18 @@ RUN sbt update
 # Install nvm with node and npm
 ###############################
 ENV NODE_VERSION 0.12.0
-COPY test /workspace/nodejs/test
-COPY lib /workspace/nodejs/lib
-COPY .nvmrc gulpfile.js package.json /workspace/nodejs/
-## install node.js 
+
+# COPY test /workspace/nodejs/test
+# COPY lib /workspace/nodejs/lib
+# COPY .nvmrc gulpfile.js package.json /workspace/nodejs/
+RUN touch $HOME/.ssh/known_hosts
+RUN ssh-keyscan github.com >> $HOME/.ssh/known_hosts
+RUN git clone https://github.com/akimichi/functionaljs.git /workspace/nodejs
+
+# install node.js 
 WORKDIR /workspace/nodejs
-RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update -qq
+RUN add-apt-repository ppa:chris-lea/node.js && \
+    apt-get update -qq
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs 
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -101,9 +105,9 @@ RUN bash \
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/v$NODE_VERSION/bin:$PATH
 
-RUN npm install -g node-gyp &&\
-    npm install -g mocha &&\
-    npm install -g gulp &&\
+RUN npm install -g node-gyp && \
+    npm install -g mocha && \
+    npm install -g gulp && \
     npm install -g coffee-script
 WORKDIR /workspace
 RUN cd /workspace/nodejs && npm install
@@ -111,7 +115,6 @@ RUN cd /workspace/nodejs && npm install
 #################
 # install haskell
 #################
-
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get dist-upgrade -qqy && \
@@ -136,7 +139,6 @@ COPY src /workspace/haskell/src/
 COPY functionaljs.cabal Setup.hs LICENSE /workspace/haskell/
 RUN stack init
 RUN stack setup
-# RUN stack build
 
 # cabal
 RUN cabal update

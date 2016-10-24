@@ -96,7 +96,7 @@ dockerイメージを取得するには、2つの方法があります。
 docker hubからイメージをダウンロードするには、pullコマンドを利用します。
 
 ~~~
-$ dcker pull emile/functionaljs:v1
+$ docker pull emile/functionaljs:v1
 ~~~
 
 ##### dockerのイメージを自分で作成する
@@ -112,19 +112,19 @@ $ docker build -t="username/functionaljs:v1" .
 
 テストを実行するには、作成されたイメージをもとに dockerコンテナを起動します。
 
-node.jsのコードをテストする。
+以下のコマンドでnode.jsのコードをテストする。
 
 ~~~
 $ docker run -it --rm --workdir="/workspace/nodejs" emile/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
 ~~~
 
-scala のコードをテストする
+以下のコマンドでscala のコードをテストする。
 
 ~~~
 $ docker run -it --rm --workdir="/workspace/scala" emile/functionaljs:v1 /bin/bash -c "sbt test"
 ~~~
 
-haskell のコードをテストする
+以下のコマンドでhaskell のコードをテストする
 
 ~~~
 $ docker run -it --rm  --workdir="/workspace/haskell" emile/functionaljs:v1 /bin/bash -c "stack test"
@@ -132,7 +132,7 @@ $ docker run -it --rm  --workdir="/workspace/haskell" emile/functionaljs:v1 /bin
 
 #### REPLを実行する 
 
-コンテナにログインする
+対話的環境 REPL を実行するには、まずコンテナにログインします。
 
 ~~~
 $ docker run -it  --workdir="/workspace" emile/functionaljs:v1 bash --login -i

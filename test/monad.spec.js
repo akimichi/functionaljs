@@ -32,6 +32,7 @@ var pair = {
 };
 
 // ## IDモナド
+// ### IDモナドの定義
 var ID = {
   /* unit:: T => ID[T] */
   unit: (value) => {  // 単なる identity関数と同じ
@@ -58,6 +59,7 @@ describe("IDモナドをテストする",() => {
 });
 
 // ## Maybeモナド
+// ### Maybeモナドの定義
 // ~~~haskell
 // instance Monad Maybe where
 //   Nothing  >>= _ = Nothing
@@ -251,6 +253,7 @@ describe("Maybeモナドをテストする",() => {
 });
 
 // ## Listモナド
+// ### Listモナドの定義
 // ~~~haskell
 // instance Monad [] where
 //   xs >>= f = concat (map f xs)
@@ -812,11 +815,12 @@ describe('Listモナドのテスト', () => {
 });
 
 // ## Streamモナド
+// ### Streamモナドの定義
 var Stream = {
   match: (data, pattern) => {
      return data.call(Stream,pattern);
   },
-  // ### Stream#unit
+  // Stream#unit
   /* unit:: ANY -> STREAM */
   unit: (value) => {
     if(value != null){
@@ -872,7 +876,7 @@ var Stream = {
       }
     });
   },
-  // ### Stream#toArray
+  // Stream#toArray
   toArray: (lazyList) => {
     return Stream.match(lazyList,{
       empty: (_) => {
@@ -887,7 +891,7 @@ var Stream = {
       }
     });
   },
-  // ### Stream#map
+  // Stream#map
   map: (lazyList) => {
     return (transform) => {
       return Stream.match(lazyList,{
@@ -901,7 +905,7 @@ var Stream = {
       });
     };
   },
-  // ## Stream#append
+  // Stream#append
   append: (xs) => {
     return (ysThunk) => {
       return Stream.match(xs,{
@@ -916,7 +920,7 @@ var Stream = {
       });
     };
   },
-  // ## Stream#concat
+  // Stream#concat
   /* concat:: STREAM[STREAM[T]] -> STREAM[T] */
   concat: (astream) => {
     return Stream.match(astream,{
@@ -928,7 +932,7 @@ var Stream = {
       }
     });
   },
-  // ## Stream#flatten
+  // Stream#flatten
   /* flatten :: STREAM[STREAM[T]] => STREAM[T] */
   flatten: (lazyList) => {
     return Stream.match(lazyList,{
@@ -942,7 +946,7 @@ var Stream = {
       }
     });
   },
-  // ### Stream#flatMap
+  // Stream#flatMap
   // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
   // ~~~haskell
   // flatMap xs f = flatten (map f xs)
@@ -952,7 +956,7 @@ var Stream = {
       return Stream.flatten(Stream.map(lazyList)(transform));
     };
   },
-  // ### monad.stream#foldr
+  // monad.stream#foldr
   foldr: (instanceM) => {
     return (accumulator) => {
       return (glue) => {
@@ -1282,6 +1286,7 @@ describe('Streamモナドのテスト', () => {
 }); // Streamモナド
 
 // ## Readerモナド
+// ### Readerモナドの定義
 // ~~~haskell
 // newtype Reader e a = Reader { runReader :: e -> a }
 //
@@ -1320,16 +1325,18 @@ var Reader = {
   }
 };
 
+// ### Readerモナドのテスト
 describe("Readerモナドをテストする",() => {
   it("add10", (next) => {
-    // main = print $ runReader add10 1
-    // --
+    // ~~~haskell
     // add10 :: Reader Int Int
     // add10 = do
     //   x <- ask                          -- 環境変数(x=1)を得る
     //   y <- local (+1) add10             -- localの使用例, y=12
     //   s <- reader . length . show $ x   -- 返り値は自由である例
     //  return (x+10)    
+    // main = print $ runReader add10 1
+    // ~~~
     var add10 = Reader.flatMap(Reader.ask())((x) => {
       return Reader.unit(x + 10);
     });
@@ -1343,6 +1350,7 @@ describe("Readerモナドをテストする",() => {
 });
 
 // ## Writerモナド
+// ### Writerモナドの定義
 // ~~~haskell
 // newtype Writer w a = Writer { run :: (a,w) }
 //
@@ -1374,8 +1382,10 @@ var Writer = {
       };
     };
   },
+  // ~~~haskell
   // tell :: Monoid w => w -> Writer w ()  -- tell関数は、値wをもとにログを作成する
   // tell s = Writer ((), s)
+  // ~~~
   tell: (s) => {
     return {
       run: (_) => {
@@ -1385,6 +1395,7 @@ var Writer = {
   }
 };
 
+// ### Writerモナドのテスト
 describe("Writerモナドをテストする",() => {
   // ~~~haskell
   // factW :: Int -> Writer [Int] Int
@@ -1449,6 +1460,7 @@ describe("Writerモナドをテストする",() => {
 });
 
 // ## IOモナド
+// ### IOモナドの定義
 var IO = {
   // unit:: T => IO[T]
   unit : (any) => {
@@ -1462,16 +1474,16 @@ var IO = {
       return IO.unit(IO.run(actionAB(IO.run(instanceA))));
     };
   },
-  // ### IO.done関数
+  // IO.done関数
   // 
-  // IOアクションを何も実行しない
+  // > IOアクションを何も実行しない
   /* done:: T => IO[T] */
   done : (any) => {
     return IO.unit();
   },
-  // ### IO.run関数
+  // IO.run関数
   //
-  // IOアクションを実行する
+  // > IOアクションを実行する
   /* run:: IO[A] => A */
   run : (instanceM) => {
     return instanceM();
@@ -1626,6 +1638,7 @@ describe("Maybeと一緒に使う", () => {
 
 
 // ## STモナド
+// ### STモナドの定義
 // 
 // Programming in Haskell(2版),p.168..p.172 を参照。
 //
@@ -1676,17 +1689,6 @@ var ST = {
   //       (x,s'') = app stx s' 
   //   in (f x, s'')
   // ~~~
-  // apply: (stf) => {
-  //   return (stx) => {
-  //     return (state) => {
-  //       var newStf = ST.app(stf)(state);
-  //       var newStx = ST.app(stx)(state);
-  //       return pair.cons(
-  //         pair.left(newStf)(pair.left(newStx)),
-  //         pair.right(newStx));
-  //     };
-  //   };
-  // },
   fresh: (state) => {
     return pair.cons(state, state + 1);
   }

@@ -31,8 +31,8 @@ var pair = {
   }
 };
 
-// ## IDモナド
-// ### IDモナドの定義
+// ## 恒等モナド
+// ### 恒等モナドの定義
 var ID = {
   /* unit:: T => ID[T] */
   unit: (value) => {  // 単なる identity関数と同じ
@@ -46,8 +46,8 @@ var ID = {
   }
 };
 
-// ### IDモナドのテスト
-describe("IDモナドをテストする",() => {
+// ### 恒等モナドのテスト
+describe("恒等モナドをテストする",() => {
   it("ID#unit", (next) => {
     expect(
       ID.unit(1)
@@ -79,9 +79,25 @@ var Maybe = {
       return pattern.nothing(_);
     };
   },
+  // Maybe#unit
   unit : (value) => {
     return Maybe.just(value);
   },
+  // Maybe#flatMap
+  flatMap : (maybeInstance) => {
+    return (transform) => {
+      expect(transform).to.a('function');
+      return Maybe.match(maybeInstance,{
+        just: (value) => {
+          return transform(value);
+        },
+        nothing: (_) => {
+          return Maybe.nothing(_);
+        }
+      });
+    };
+  },
+  // Maybe#map
   // ~~~haskell
   // instance Functor Maybe where
   //    fmap _ Nothing = Nothing
@@ -100,29 +116,8 @@ var Maybe = {
       });
     };
   },
-  flatMap : (maybeInstance) => {
-    return (transform) => {
-      expect(transform).to.a('function');
-      return Maybe.match(maybeInstance,{
-        just: (value) => {
-          return transform(value);
-        },
-        nothing: (_) => {
-          return Maybe.nothing(_);
-        }
-      });
-    };
-  },
   get: (maybe) => {
     return Maybe.getOrElse(maybe)(null);
-    // return Maybe.match(maybe,{
-    //   just: (value) => {
-    //     return value;
-    //   },
-    //   nothing: (_) => {
-    //     return null;
-    //   }
-    // });
   },
   getOrElse: (instance) => {
     return (alternate) => {
@@ -166,32 +161,6 @@ var Maybe = {
 
 // ### Maybeモナドのテスト
 describe("Maybeモナドをテストする",() => {
-  it("Maybe#map", (next) => {
-    var succ = (n) => { return n + 1;};
-    // ~~~haskell
-    // > fmap (+1) nothing
-    // Nothing
-    // ~~~
-    expect(
-      Maybe.isEqual(
-        Maybe.map(Maybe.nothing())(succ)
-      )(
-        Maybe.nothing()
-      )
-    ).to.eql(
-      true
-    );
-    expect(
-      Maybe.isEqual(
-        Maybe.map(Maybe.just(1))(succ)
-      )(
-        Maybe.just(2)
-      )
-    ).to.eql(
-      true
-    );
-    next();
-  });
   it("Maybe#flatMap", (next) => {
     Maybe.match(Maybe.flatMap(Maybe.just(1))((a) => {
       return Maybe.unit(a);
@@ -217,6 +186,32 @@ describe("Maybeモナドをテストする",() => {
        expect(true).to.be.ok();
       }
     });
+    next();
+  });
+  it("Maybe#map", (next) => {
+    var succ = (n) => { return n + 1;};
+    // ~~~haskell
+    // > fmap (+1) nothing
+    // Nothing
+    // ~~~
+    expect(
+      Maybe.isEqual(
+        Maybe.map(Maybe.nothing())(succ)
+      )(
+        Maybe.nothing()
+      )
+    ).to.eql(
+      true
+    );
+    expect(
+      Maybe.isEqual(
+        Maybe.map(Maybe.just(1))(succ)
+      )(
+        Maybe.just(2)
+      )
+    ).to.eql(
+      true
+    );
     next();
   });
   it("add(maybe, maybe)", (next) => {
@@ -252,6 +247,104 @@ describe("Maybeモナドをテストする",() => {
   });
 });
 
+// ## Eitherモナド
+//
+// ### Eitherモナドの定義
+var Either  = {
+  // ~~~haskell
+  // data  Either a b  =  Left a | Right b
+  // ~~~
+  match: (data, pattern) => {
+     return data.call(data,pattern);
+  },
+  left : (value) => {
+    return (pattern) => {
+      return pattern.left(value);
+    };
+  },
+  right : (value) => {
+    return (pattern) => {
+      return pattern.right(value);
+    };
+  },
+  // ~~~haskell
+  // instance Monad (Either a b) where
+  //   return x = Right x
+  //   Right x >>= f = f x
+  //   Left x >>= Left x
+  // ~~~
+  // Either#unit
+  unit : (value) => {
+    return Either.right(value);
+  },
+  // Either#flatMap
+  flatMap : (instanceM) => {
+    return (transform) => {
+      expect(transform).to.a('function');
+      return Either.match(instanceM,{
+        right: (value) => {
+          return transform(value);
+        },
+        left: (value) => {
+          return Either.left(value);
+        }
+      });
+    };
+  },
+  // Either#map
+  // ~~~haskell
+  // instance Functor (Either a) where
+  //   fmap f (Right x) = Right (f x)
+  //   fmap f (Left x) = Left x
+  // ~~~
+  map: (instanceM) => {
+    return (transform) => {
+      return Either.match(instanceM,{
+        right: (value) => {
+          return Either.right(transform(value));
+        },
+        left: (value) => {
+          return Either.left(value);
+        }
+      });
+    };
+  }
+};
+// ### Eitherモナドのテスト
+describe("Eitherモナドをテストする",() => {
+  it("数値のときだけ計算が成功する", (next) => {
+    Either.match(Either.flatMap(Either.left("wrong"))((n) => {
+      return Either.unit(n + 1);
+    }),{
+      right: (value) => {
+        expect().fail();
+      },
+      left: (value) => {
+        expect(
+          value
+        ).to.eql(
+          "wrong"
+        );
+      }
+    });
+    Either.match(Either.flatMap(Either.unit(2))((n) => {
+      return Either.unit(n + 1);
+    }),{
+      right: (value) => {
+        expect(
+          value
+        ).to.eql(
+          3
+        );
+      },
+      left: (value) => {
+        expect().fail();
+      }
+    });
+    next();
+  });
+});
+
 // ## Listモナド
 // ### Listモナドの定義
 // ~~~haskell
@@ -260,7 +353,6 @@ describe("Maybeモナドをテストする",() => {
 //   return x = [x]
 //   fail s   = []
 // ~~~
-
 var List  = {
   match: (data, pattern) => {
     return data.call(List,pattern);

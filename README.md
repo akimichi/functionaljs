@@ -1,6 +1,6 @@
 # 「関数型プログラミングの基礎」サンプルコード
 
-このレポジトリは、リック・テレコム社刊行の[「関数型プログラミングの基礎」](https://www.amazon.co.jp/%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%9F%BA%E7%A4%8E-JavaScript%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E5%AD%A6%E3%81%B6-%E7%AB%8B%E5%B7%9D%E5%AF%9F%E7%90%86/dp/4865940596/ref=sr_1_1?ie=UTF8&qid=1476598423&sr=8-1&keywords=%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)のサンプルコードをおさめたものです。
+このレポジトリは、リックテレコム社刊行の[「関数型プログラミングの基礎」](https://www.amazon.co.jp/%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E3%81%AE%E5%9F%BA%E7%A4%8E-JavaScript%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E5%AD%A6%E3%81%B6-%E7%AB%8B%E5%B7%9D%E5%AF%9F%E7%90%86/dp/4865940596/ref=sr_1_1?ie=UTF8&qid=1476598423&sr=8-1&keywords=%E9%96%A2%E6%95%B0%E5%9E%8B%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0)のサンプルコードをおさめたものです。
 
 github pagesによるサイトは、http://akimichi.github.io/functionaljs/ になります。
 
@@ -82,8 +82,8 @@ dockerを使って、各種のテスト環境を構築できます。
 この方法は、dockerさえインストールしておけば確実に環境を構築できるという利点があります。
 ただし、dockerイメージは約4GBあるのでディスク容量の少ないマシンでの利用には注意してください。
 
-なお、dockerを使ったインストールは、リック・テレコム社が推奨する方法では**ありません**。
-インストール時の問題等のついては、 https://github.com/akimichi/functionaljs/issues に投稿してください。
+なお、dockerを使ったインストールは、リックテレコム社が推奨する方法では**ありません**。
+インストール時の問題等のついては、 https://github.com/emile/functionaljs/issues に投稿してください。
 
 #### dockerイメージを準備する
 
@@ -96,7 +96,7 @@ dockerイメージを取得するには、2つの方法があります。
 docker hubからイメージをダウンロードするには、pullコマンドを利用します。
 
 ~~~
-$ docker pull akimichi/functionaljs:v1
+$ dcker pull emile/functionaljs:v1
 ~~~
 
 ##### dockerのイメージを自分で作成する
@@ -115,19 +115,19 @@ $ docker build -t="username/functionaljs:v1" .
 node.jsのコードをテストする。
 
 ~~~
-$ docker run -it --rm --workdir="/workspace/nodejs" akimichi/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
+$ docker run -it --rm --workdir="/workspace/nodejs" emile/functionaljs:v1 /bin/bash --login -i -c "gulp --harmony js-test"
 ~~~
 
 scala のコードをテストする
 
 ~~~
-$ docker run -it --rm --workdir="/workspace/scala" akimichi/functionaljs:v1 /bin/bash -c "sbt test"
+$ docker run -it --rm --workdir="/workspace/scala" emile/functionaljs:v1 /bin/bash -c "sbt test"
 ~~~
 
 haskell のコードをテストする
 
 ~~~
-$ docker run -it --rm  --workdir="/workspace/haskell" akimichi/functionaljs:v1 /bin/bash -c "stack test"
+$ docker run -it --rm  --workdir="/workspace/haskell" emile/functionaljs:v1 /bin/bash -c "stack test"
 ~~~
 
 #### REPLを実行する 
@@ -135,7 +135,7 @@ $ docker run -it --rm  --workdir="/workspace/haskell" akimichi/functionaljs:v1 /
 コンテナにログインする
 
 ~~~
-$ docker run -it  --workdir="/workspace" akimichi/functionaljs:v1 bash --login -i
+$ docker run -it  --workdir="/workspace" emile/functionaljs:v1 bash --login -i
 ~~~
 
 これでコンテナ内の /workspace ディレクトリにログインしました。

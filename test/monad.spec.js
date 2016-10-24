@@ -1351,6 +1351,19 @@ describe("Readerモナドをテストする",() => {
   });
 });
 
+// ## Writerモナド
+// ~~~haskell
+// newtype Writer w a = Writer { run :: (a,w) }
+//
+// instance (Monoid w) => Monad (Writer w) where
+//     return a = Writer (a, empty)
+//     (Writer (a, v)) >>= f  = let (Writer (b, v')) = f x
+//                              in Writer (b, v `append`v')
+// ~~~
+var Writer = {
+
+};
+
 // ## IOモナド
 var IO = {
   // unit:: T => IO[T]

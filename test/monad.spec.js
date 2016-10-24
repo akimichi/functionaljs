@@ -8,7 +8,7 @@ var expect = require('expect.js');
 
 var pair = {
   match : (data, pattern) => {
-    return data.call(pair,pattern);
+    return data.call(data,pattern);
   },
   cons: (left, right) => {
     return (pattern) => {
@@ -1304,15 +1304,6 @@ var Reader = {
           return f(reader.run(env)).run(env);
         }
       };
-      // return (env) => {
-      //   return Reader.run(transform(Reader.run(reader)(env)))(env);
-      // };
-      // return Reader.unit((env) => {
-      //   return Reader.run(transform(Reader.run(instanceM)(env)))(env);
-      // });
-      // return (env) => {
-      //   return Reader.unit(Reader.run(transform(Reader.run(instanceM)(env)))(env));
-      // };
     };
   },
   // runReader :: Reader r a -> r -> a
@@ -1357,12 +1348,105 @@ describe("Readerモナドをテストする",() => {
 //
 // instance (Monoid w) => Monad (Writer w) where
 //     return a = Writer (a, empty)
-//     (Writer (a, v)) >>= f  = let (Writer (b, v')) = f x
+//     (Writer (a, v)) >>= f  = let (Writer (b, v')) = f a
 //                              in Writer (b, v `append`v')
 // ~~~
 var Writer = {
-
+  unit: (a) => {
+    return {
+      run: (_) => {
+        return pair.cons(List.empty(),a);
+      }
+    };
+  },
+  flatMap: (writer) => {
+    var writerPair = writer.run();
+    var v = pair.left(writerPair);
+    var a = pair.right(writerPair);
+    return (f) => { // transform:: a -> a
+      var newPair = f(a).run();
+      var v_ = pair.left(newPair);
+      var b = pair.right(newPair);
+      return {
+        run: () => {
+          return pair.cons(List.append(v)(v_),b);
+        }
+      };
+    };
+  },
+  // tell :: Monoid w => w -> Writer w ()  -- tell関数は、値wをもとにログを作成する
+  // tell s = Writer ((), s)
+  tell: (s) => {
+    return {
+      run: (_) => {
+        return pair.cons(s, List.empty());
+      }
+    };
+  }
 };
+
+describe("Writerモナドをテストする",() => {
+  // ~~~haskell
+  // factW :: Int -> Writer [Int] Int
+  // factW 0 = tell [0] >> return 1
+  // factW n = do
+  //   tell [n]
+  //   n1 <- factW (pred n)
+  //   return $ n * n1
+  // ~~~
+  // 実行する場合はrunWriter
+  // ~~~haskell
+  // *Main> runWriter $ factW 5
+  // (120,[5,4,3,2,1,0])
+  // ~~~
+  it("factorial", (next) => {
+    var pred = (n) => {
+      return n - 1;
+    };
+    var factorial = (n) => {
+      if(n === 0) {
+        return Writer.flatMap(Writer.tell(List.unit(0)))((_) => {
+          return Writer.unit(1);
+        });
+      } else {
+        return Writer.flatMap(Writer.tell(List.unit(n)))((_) => {
+          return Writer.flatMap(factorial(pred(n)))((n1) => {
+            return Writer.unit(n * n1);
+          });
+        });
+      }
+    };
+    pair.match(factorial(0).run(),{
+      cons: (left, right) => {
+        expect(
+          List.toArray(left)
+        ).to.eql(
+          [0]
+        );
+        expect(
+          right
+        ).to.eql(
+          1
+        );
+      }
+    });
+    pair.match(factorial(5).run(),{
+      cons: (left, right) => {
+        expect(
+          List.toArray(left)
+        ).to.eql(
+          [5,4,3,2,1,0]
+        );
+        expect(
+          right
+        ).to.eql(
+          120
+        );
+      }
+    });
+    next();
+  });
+});
 
 // ## IOモナド
 var IO = {
@@ -1461,73 +1545,6 @@ describe("IOモナドをテストする",() => {
 });
 
 
-describe('Treeモナド', () => {
-  var tree  = {
-    match: (data, pattern) => {
-      return data.call(tree,pattern);
-    },
-    leaf: (value) => {
-      return (pattern) => {
-        return pattern.leaf(value);
-      };
-    },
-    node: (treeL, treeR) => {
-      return (pattern) => {
-        return pattern.node(treeL, treeR);
-      };
-    },
-    unit: (value) => {
-      return tree.leaf(value);
-    },
-    flatMap: (instanceM) => {
-      return (transform) => {
-        return tree.match(instanceM,{
-          leaf: (value) => {
-            return transform(value);
-          },
-          node: (treeL, treeR) => {
-            return tree.node(tree.flatMap(treeL)(transform),
-                             tree.flatMap(treeL)(transform));
-          }
-        }); 
-      };
-    },
-    map: (instanceM) => {
-      return (transform) => {
-        return tree.match(instanceM,{
-          leaf: (value) => {
-            return tree.leaf(transform(value));
-          },
-          node: (treeL, treeR) => {
-            return tree.node(tree.map(treeL)(transform),
-                             tree.map(treeL)(transform));
-          }
-        }); 
-      };
-    }
-  };
-});
-
-describe('Consoleモナド', () => {
-  /* unit:: A -> IO A */
-  var unit = (any) => {
-    return (_) => {
-      return any;
-    };
-  };
-  /* flatMap:: IO a -> (a -> IO b) -> IO b */
-  var flatMap = (instanceA) => {
-    return (actionAB) => { // actionAB:: a -> IO b
-      return unit(run(actionAB(run(instanceA))));
-    };
-  };
-
-  /* run:: IO A -> A */
-  var run = (instance) => {
-    return instance();
-  };
-  expect(run(unit(1))).to.eql(1);
-});
 
 describe("Maybeと一緒に使う", () => {
   it("[just(1),just(2)]", (next) => {
@@ -1819,18 +1836,5 @@ describe("STモナドをテストする",() => {
     });
   });
 });
-// ## Contモナド
-// ~~~haskell
-// newtype Cont r a = Cont { runCont :: ((a -> r) -> r) } -- r は計算全体の最終の型
-//
-// instance Monad (Cont r) where 
-//     return a       = Cont $ \k -> k a                       -- i.e. return a = \k -> k a 
-//     (Cont c) >>= f = Cont $ \k -> c (\a -> runCont (f a) k) -- i.e. c >>= f = \k -> c (\a -> f a k) 
-// class (Monad m) => MonadCont m where 
-//     callCC :: ((a -> m b) -> m a) -> m a 
-//
-// instance MonadCont (Cont r) where 
-//     callCC f = Cont $ \k -> runCont (f (\a -> Cont $ \_ -> k a)) k
-// ~~~
 
 // [目次に戻る](index.html) 

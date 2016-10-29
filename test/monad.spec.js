@@ -1,7 +1,7 @@
 "use strict";
 
-// モナド
-// =====
+// さまざまなモナド
+// =============
 
 var fs = require('fs');
 var expect = require('expect.js');
@@ -463,7 +463,6 @@ var List  = {
       // return List.concat(List.map(instanceM)(transform));
     };
   },
-  /* #@range_end(list_monad_definition) */
   // 1段階のリストしか配列に変更できない
   toArray: (alist) => {
     return List.foldr(alist)([])((item) => {
@@ -496,18 +495,33 @@ var List  = {
 
 // ### Listモナドのテスト
 describe('Listモナドのテスト', () => {
-  it("'List#empty'", (next) => {
-    List.match(List.empty,{
-      empty: (_) => {
-        expect(true).ok();
-      },
-      cons: (x,xs) => {
-        expect().fail();
-      }
+  describe('List.matchでリストをパターンマッチする', () => {
+    // matchでList#emptyをマッチさせる
+    it("matchでList#emptyをマッチさせる", (next) => {
+      List.match(List.empty,{
+        empty: (_) => {
+          expect(true).ok();
+        },
+        cons: (x,xs) => {
+          expect().fail();
+        }
+      });
+      next();
     });
-    next();
+    // matchでList#consをマッチさせる
+    it("matchでList#consをマッチさせる", (next) => {
+      List.match(List.cons(1,List.empty()),{
+        empty: (_) => {
+          expect().fail();
+        },
+        cons: (x,xs) => {
+          expect(x).to.eql(1);
+        }
+      });
+      next();
+    });
   });
-  it("'List#isEmpty'", (next) => {
+  it("List#isEmptyは、リストが空かどうかを判定する", (next) => {
     expect(
       List.isEmpty(List.empty())
     ).to.eql(
@@ -518,17 +532,6 @@ describe('Listモナドのテスト', () => {
     ).to.eql(
       false
     );
-    next();
-  });
-  it("'List#cons'", (next) => {
-    List.match(List.cons(1,List.empty()),{
-      empty: (_) => {
-        expect().fail();
-      },
-      cons: (x,xs) => {
-        expect(x).to.eql(1);
-      }
-    });
     next();
   });
   it("'List#head'", (next) => {
@@ -566,11 +569,12 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
-  it("'List#concat'", (next) => {
-    /* list = [[1,2],[3,4]] */
+  // List#concatで２つのリストを連結する
+  it("List#concatで２つのリストを連結する", (next) => {
     var one_two = List.cons(1,List.cons(2,List.empty()));
     var three_four = List.cons(3,List.cons(4,List.empty()));
 
+    /* list_of_list = [[1,2],[3,4]] */
     var list_of_list = List.cons(one_two,
                                  List.cons(three_four, List.empty()));
     /* concated_list = [1,2,3,4] */
@@ -689,7 +693,7 @@ describe('Listモナドのテスト', () => {
       next();
     });
     it("'List#flatMap'", (next) => {
-      // list = [1,2,3]
+      /* theList = [1,2,3] */
       var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
       expect(
         List.toArray(List.flatMap(theList)((item) => {
@@ -700,7 +704,39 @@ describe('Listモナドのテスト', () => {
       );
       next();
     });
-    it("素数を求める", (next) => {
+  });
+  // List#toArrayでリストを配列に変換する
+  describe("List#toArrayでリストを配列に変換する", () => {
+    it("1段階のリストを配列に変換する", (next) => {
+      /* theList = [1,2,3,4] */
+      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
+      expect(
+        List.toArray(theList)
+      ).to.eql(
+        [1,2,3,4]
+      );
+      next();
+    });
+    it("2段階のリストを配列に変換する", (next) => {
+      /* nestedList = [[1],[2]] */
+      var nestedList = List.cons(List.cons(1,List.empty()),
+                                 List.cons(List.cons(2,List.empty()),
+                                           List.empty()));
+      expect(
+        List.toArray(List.flatMap(nestedList)((alist) => {
+          return List.flatMap(alist)((item) => {
+            return List.unit(item);
+          });
+        }))
+      ).to.eql(
+        [1,2]
+      );
+      next();
+    });
+  });
+  describe("Listモナドを活用する",() => {
+    // 素数を判定するisPrimeを定義する
+    it("素数を判定するisPrimeを定義する", (next) => {
       var enumFromTo = (x,y) => {
         if(x > y) {
           return List.empty();
@@ -731,6 +767,7 @@ describe('Listモナドのテスト', () => {
       ).to.eql(
         [1,7]
       );
+      // isPrime関数
       // ~~~haskell
       // isPrime :: Int -> Bool
       // isPrime n = factors n == [1,n]
@@ -750,46 +787,6 @@ describe('Listモナドのテスト', () => {
       );
       next();
     });
-  });
-  it("'List#toArray'", (next) => {
-    /* list = [1,2,3,4] */
-    var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-    expect(
-      List.toArray(theList)
-    ).to.eql(
-      [1,2,3,4]
-    );
-    next();
-  });
-  describe("'List#toArray'", () => {
-    it("1段階のリストを配列に変換する", (next) => {
-      // list = [1,2,3,4]
-      var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
-      expect(
-        List.toArray(theList)
-      ).to.eql(
-        [1,2,3,4]
-      );
-      next();
-    });
-    it("2段階のリストを配列に変換する", (next) => {
-      // list = [[1],[2]] 
-      var nestedList = List.cons(List.cons(1,List.empty()),
-                                 List.cons(List.cons(2,List.empty()),
-                                           List.empty()));
-      expect(
-        List.toArray(List.flatMap(nestedList)((alist) => {
-          return List.flatMap(alist)((item) => {
-            return List.unit(item);
-          });
-        }))
-      ).to.eql(
-        [1,2]
-      );
-      next();
-    });
-  });
-  describe("Listモナドを活用する",() => {
     it("フィルターとして使う", (next) => {
       var even = (n) => {
         if(n % 2 === 0) {
@@ -826,7 +823,6 @@ describe('Listモナドのテスト', () => {
       );
       next();
     });
-    /* #@range_begin(list_maybe) */
     describe("Maybeと一緒に使う", () => {
       it("[just(1)]", (next) => {
         var theList = List.cons(Maybe.just(1),
@@ -858,50 +854,6 @@ describe('Listモナドのテスト', () => {
         );
         next();
       });
-      // it("[nothing()]", (next) => {
-      //   // var theList = list.unit(maybe.nothing());
-      //   var theList = list.cons(maybe.nothing(null),
-      //                           list.empty());
-      //   var justList = list.flatMap(theList)((listItem) => {
-      //     return maybe.flatMap(listItem)((value) => {
-      //       return list.unit(value);
-      //       // return list.unit(value);
-      //     });
-      //   });
-      //   expect(
-      //     list.toArray(justList)
-      //   ).to.eql(
-      //     []
-      //   );
-      //   next();
-      // });
-      // it("[just(1),nothing()]", (next) => {
-      //   // theList:: LIST[MAYBE[NUM]]
-      //   //           [just(1), nothing()]
-      //   var theList = list.cons(maybe.just(1),
-      //                           list.cons(maybe.nothing(),list.empty()));
-      //   var justList = list.flatMap(theList)((maybeItem) => {
-      //     return maybe.flatMap(maybeItem)((value) => {
-      //       return list.unit(value);
-      //     });
-      //   });
-      //   expect(
-      //     list.toArray(justList)
-      //   ).to.eql(
-      //     [2,4]
-      //   );
-      //   // expect(
-      //   //   list.toArray(list.flatMap.call(list,theList)((maybeItem) => {
-      //   //     return maybe.flatMap.call(maybe,maybeItem)((value) => {
-      //   //       return list.unit.call(list,value);
-      //   //     });
-      //   //   }))
-      //   // ).to.eql(
-      //   //   [2,4]
-      //   // );
-      //   next();
-      // });
-      /* #@range_end(list_maybe) */
     });
   });
 });
@@ -1239,7 +1191,6 @@ describe('Streamモナドのテスト', () => {
       next();
     });
     it("無限の整数列を作る", (next) => {
-      /* #@range_begin(ones_infinite_sequence) */
       var ones = Stream.cons(1, (_) => {
         return ones;
       });
@@ -1253,7 +1204,6 @@ describe('Streamモナドのテスト', () => {
       ).to.eql(
         1
       );
-      /* #@range_end(ones_infinite_sequence) */
       var twoes = Stream.map(ones)((item) => {
         return item * 2;
       });
@@ -1389,6 +1339,7 @@ describe('Streamモナドのテスト', () => {
 var Reader = {
   unit: (x) => {
     return {
+      // runReader :: Reader r a -> r -> a
       run: (_) => {
         return x;
       }
@@ -1403,10 +1354,6 @@ var Reader = {
       };
     };
   },
-  // runReader :: Reader r a -> r -> a
-  // run: (reader) => {
-  //   return reader.run();
-  // },
   // ask = Reader id
   ask: (x) => {
     return {
@@ -1681,52 +1628,7 @@ describe("Maybeと一緒に使う", () => {
     );
     next();
   });
-  // it("[nothing()]", (next) => {
-  //   // var theList = list.unit(maybe.nothing());
-  //   var theList = list.cons(maybe.nothing(1),
-  //                           list.empty());
-  //   // var justList = list.map(theList)(maybe.unit);
-  //   var justList = list.flatMap(theList)((maybeItem) => {
-  //     return maybe.flatMap(maybeItem)((value) => {
-  //       return list.unit(value);
-  //     });
-  //   });
-  //   expect(
-  //     list.toArray(justList)
-  //   ).to.eql(
-  //     []
-  //   );
-  //   next();
-  // });
-  // it("[just(1),nothing()]", (next) => {
-  //   // theList:: LIST[MAYBE[NUM]]
-  //   //           [just(1), nothing()]
-  //   var theList = list.cons(maybe.just(1),
-  //                           list.cons(maybe.nothing(),list.empty()));
-  //   var justList = list.flatMap(theList)((maybeItem) => {
-  //     return maybe.flatMap(maybeItem)((value) => {
-  //       return list.unit(value);
-  //     });
-  //   });
-  //   expect(
-  //     list.toArray(justList)
-  //   ).to.eql(
-  //     [2,4]
-  //   );
-  //   // expect(
-  //   //   list.toArray(list.flatMap.call(list,theList)((maybeItem) => {
-  //   //     return maybe.flatMap.call(maybe,maybeItem)((value) => {
-  //   //       return list.unit.call(list,value);
-  //   //     });
-  //   //   }))
-  //   // ).to.eql(
-  //   //   [2,4]
-  //   // );
-  //   next();
-  // });
-  /* #@range_end(list_maybe) */
 });
-
 
 
 // ## STモナド
@@ -1785,6 +1687,7 @@ var ST = {
     return pair.cons(state, state + 1);
   }
 };
+
 // ### STモナドのテスト
 describe("STモナドをテストする",() => {
   describe("Treeの例",() => {
@@ -1931,4 +1834,151 @@ describe("STモナドをテストする",() => {
   });
 });
 
+// ## Contモナド
+// ### Contモナドの定義
+// 
+//
+// ~~~haskell
+// newtype Cont r a = Cont { runCont :: ((a -> r) -> r) } -- r は計算全体の最終の型
+// instance Monad (Cont r) where 
+//     return a       = Cont $ \k -> k a                       
+//     -- i.e. return a = \k -> k a 
+//     (Cont c) >>= f = Cont $ \k -> c (\a -> runCont (f a) k) 
+//     -- i.e. m >>= f = \k -> m (\a -> f a k) 
+// ~~~
+//
+// instance Monad (Cont r) where
+//     return x = Cont (\k -> k x)
+//     m >>= f = Cont (\k -> runCont m (\a -> runCont (f a) k))
+
+var Cont = {
+  unit: (k) => {  // k:: a -> r
+    return (n) => {
+      return k(n);
+    };
+  },
+  flatMap: (m) => {
+    return (f) => { // f:: Int -> Cont r Int
+      expect(f).to.a('function');
+      return Cont.unit((k) => {
+        return m((a) => {
+          return f(a)(k);
+        });
+      });
+    };
+  },
+  // ~~~haskell
+  // class Monad m => MonadCont m where
+  //   callCC :: ((a -> m a) -> m a) -> m a
+  // instance MonadCont (Cont r) where
+  //   callCC f = Cont $ \k -> runCont (f (\a -> Cont $ \_ -> k a)) k
+  //   -- i.e.  callCC f = \k -> ((f (\a -> \_ -> k a)) k)
+  // ~~~
+  callCC: (f) => {
+    return (k) =>{ 
+      return f((a) => {
+        return (_) => {
+          return k(a);
+        }; 
+      })(k);
+    };
+  }
+};
+
+// ### Contモナドのテスト
+describe("Contモナドをテストする",() => {
+  // ~~~haskell
+  // *Main> let s3 = Cont (square 3)
+  // *Main> print =: runCont s3
+  // 9 
+  // ~~~
+  var identity = (x) => {
+    return x;
+  };
+  it('square', (next) => {
+    // ~~~haskell
+    // square :: Int -> ((Int -> r) -> r)
+    // square x = \k -> k (x * x)
+    // ~~~
+    var squareCPS = (n) => {
+      return (k) => {
+        return k(n * n);
+      }; 
+    };
+    var square3 = Cont.unit(squareCPS(3));
+    expect(
+      square3(identity)
+    ).to.eql(
+      9
+    );
+    next();
+  });
+  it('pythagoras', (next) => {
+    // ~~~haskell
+    // squareCont x = Cont (\k -> k (x * x))
+    // addCont x y = Cont (\k -> k (x + y))
+    // pythagoras2 :: Int -> Int -> Cont r Int
+    // pythagoras2 n m = do
+    //     x <- squareCont n
+    //     y <- squareCont m
+    //     result <- addCont x y
+    //     return result
+    // $ ghci cps.hs 
+    // *Main> print =: runCont (pythagoras2 2 3)
+    // 13
+    // ~~~
+    var addCont = (x,y) => {
+      return Cont.unit((k) => {
+        return k(x + y);
+      }); 
+    };
+    // ~~~haskell
+    // *Main> let { m :: Cont r Int; m = return 3 }
+    // *Main> let { f :: Int -> Cont r Int; f x = Cont (square x) }
+    // *Main> let result = m >>= f
+    // *Main> print =: runCont result
+    // 9 
+    // ~~~
+    var squareCont = (n) => {
+      return Cont.unit((k) => {
+        return k(n * n);
+      }); 
+    };
+    expect(
+      squareCont(2)(identity)
+    ).to.eql(
+      4
+    );
+    var m = Cont.unit((k) => {
+      return k(3);
+    });
+    var f = (x) => {
+      return squareCont(x);
+    };
+    expect(
+      Cont.flatMap(m)((k) => {
+        return squareCont(k);
+      })(identity)
+    ).to.eql(
+      9
+    );
+    var pythagoras2 = (n,m) => {
+      return Cont.flatMap(squareCont(n))((x) => {
+        return Cont.flatMap(squareCont(m))((y) => {
+          return Cont.flatMap(addCont(x,y))((answer) => {
+            return Cont.unit((k) => {
+              return k(answer);
+            });
+          });
+        });
+      });
+    };
+    expect(
+      pythagoras2(2,3)(identity)
+    ).to.eql(
+      13
+    );
+    next();
+  });
+});
 // [目次に戻る](index.html) 

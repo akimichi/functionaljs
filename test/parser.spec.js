@@ -105,4 +105,19 @@ describe('パーサーコンビネーター', () => {
       next();
     });
   });
+  describe("派生したパーサー", (next) => {
+    it("digit", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.digit.call(Parser)
+          )(String.toList("123"))
+        )
+      ).to.eql(
+        '[(1,[2,3,nil]),nil]'
+      );
+
+      next();
+    });
+  });
 });

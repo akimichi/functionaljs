@@ -14,6 +14,14 @@ describe('Data', () => {
         expect(true).to.eql(true);
       }
     });
+    Data.type(1,{
+      pair: (_) => {
+        expect().fail(); 
+      },
+      number: (value) => {
+        expect(value).to.eql(1);
+      }
+    });
     next();
   });
   describe('Data#match', () => {

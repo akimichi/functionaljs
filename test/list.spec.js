@@ -18,7 +18,47 @@ describe("Listのテスト", () => {
     );
     next();
   });
-  
+  it("isEmpty", (next) => {
+    expect(
+      List.isEmpty(List.empty())
+    ).to.eql(
+      true
+    );
+    expect(
+      List.isEmpty(List.cons(1,List.cons(2,List.empty())))
+    ).to.eql(
+      false
+    );
+    next();
+  });
+  it("match", (next) => {
+    var list = List.cons(1,List.cons(2,List.empty()));
+    list.match({
+      cons: (head, tail) => {
+        expect(
+          head
+        ).to.eql(
+          1
+        );
+      }
+    });
+    next();
+  });
+  describe("foldr", () => {
+    it("'list#foldr'", (next) => {
+      var ints = List.cons(1,List.cons(2,List.empty()));
+      expect(
+        List.foldr(ints)(0)((item) => {
+          return (accumulator) => {
+            return item + accumulator;
+          };
+        })
+      ).to.eql(
+        3
+      );
+      next();
+    });
+  });
 });
 // describe("listのテスト", function() {
 //   var toArray = list.toArray.bind(list);

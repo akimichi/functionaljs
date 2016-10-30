@@ -119,5 +119,18 @@ describe('パーサーコンビネーター', () => {
 
       next();
     });
+    it("string", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.string(String.toList("abc"))
+          )(String.toList("abcdef"))
+        )
+      ).to.eql(
+        '[([a,b,c,nil],[d,e,f,nil]),nil]'
+      );
+
+      next();
+    });
   });
 });

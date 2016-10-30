@@ -58,7 +58,7 @@ gulp.task('doc', function() {
     languages:  {},
     marked:     null
   };
-  return gulp.src("./test/*.js")
+  return gulp.src(["./test/*.js","./lib/*.js"])
     .pipe(docco(options))
     .pipe(gulp.dest('./docs'));
 });

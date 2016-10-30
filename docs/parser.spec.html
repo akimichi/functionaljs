@@ -48,54 +48,73 @@
 <span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/list.js'</span>);
 <span class="hljs-keyword">var</span> Pair = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pair.js'</span>);
 <span class="hljs-keyword">var</span> <span class="hljs-built_in">String</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/string.js'</span>);
+<span class="hljs-keyword">var</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/data.js'</span>);
+<span class="hljs-keyword">var</span> PP = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pprinter.js'</span>);
+<span class="hljs-keyword">var</span> Parser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/parser.js'</span>);
 
-<span class="hljs-keyword">var</span> ParserResult = {
-  unit: (value) =&gt; {
-    <span class="hljs-keyword">return</span> List.empty();
-  }
-};
-
-<span class="hljs-keyword">var</span> Parser = {
-  parse: (parser) =&gt; {
-    <span class="hljs-keyword">return</span> (input) =&gt; {
-      <span class="hljs-keyword">return</span> parser(input);
-    };
-  },
-  item: (input) =&gt; {
-    <span class="hljs-keyword">return</span> List.match(input,{
-      empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> List.empty();
-      },
-      cons: (head, tail) =&gt; {
-        <span class="hljs-keyword">return</span> List.unit(Pair.cons(head, tail));
-      }
-    });
-  }
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>describe(‘パーサーコンビネーター’, () =&gt; {
-  describe(“parse”, (next) =&gt; {
-    it(“item”, (next) =&gt; {
+describe(<span class="hljs-string">'パーサーコンビネーター'</span>, () =&gt; {
+  <span class="hljs-keyword">var</span> abc = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+  describe(<span class="hljs-string">"parse"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"pure"</span>, (next) =&gt; {
       expect(
-        List.toArray(Parser.item(List.empty()))
+        PP.print(Parser.parse(Parser.pure(<span class="hljs-number">1</span>))(abc))
       ).to.eql(
-        1
+        <span class="hljs-string">'[(1,[a,b,c,nil]),nil]'</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"item"</span>, (next) =&gt; {
+      expect(
+        PP.print(Parser.item(List.empty()))
+      ).to.eql(
+        <span class="hljs-string">'[]'</span>
+      );
+      expect(
+        PP.print(Parser.item(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>)))
+      ).to.eql(
+        <span class="hljs-string">'[(a,[b,c,nil]),nil]'</span>
       );
       next();
     });
   });
-});</p>
+  describe(<span class="hljs-string">"fmap"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"toUpper"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+      <span class="hljs-keyword">var</span> toUpper = (s) =&gt; {
+        <span class="hljs-keyword">return</span> s.toUpperCase();
+      };
+      expect(
+        PP.print(
+          Parser.parse(Parser.fmap(toUpper)(Parser.item))(input)
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(A,[b,c,nil]),nil]'</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">"monad"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"three"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abcdef"</span>);
+      <span class="hljs-keyword">var</span> three = Parser.flatMap(Parser.item)((x) =&gt; {
+        <span class="hljs-keyword">return</span> Parser.flatMap(Parser.item)((_) =&gt; {
+          <span class="hljs-keyword">return</span> Parser.flatMap(Parser.item)((z) =&gt; {
+            <span class="hljs-keyword">return</span> Parser.pure(Pair.cons(x,z));
+          });
+        });
+      });
+      expect(
+        PP.print(
+          three(input)
+        )
+      ).to.eql(
+        <span class="hljs-string">'[((a,c),[d,e,f,nil]),nil]'</span>
+      );
 
-            </div>
+      next();
+    });
+  });
+});</pre></div></div>
             
         </li>
         

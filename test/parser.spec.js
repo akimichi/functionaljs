@@ -70,4 +70,39 @@ describe('パーサーコンビネーター', () => {
       next();
     });
   });
+  describe("alternative", (next) => {
+    it("empty", (next) => {
+      var input = String.toList("abc");
+      expect(
+        PP.print(
+          Parser.parse(Parser.empty)(input)
+        )
+      ).to.eql(
+        '[]'
+      );
+      next();
+    });
+    it("alt", (next) => {
+      var input = String.toList("abc");
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.alt(Parser.item)(Parser.pure("d"))
+          )(input)
+        )
+      ).to.eql(
+        '[(a,[b,c,nil]),nil]'
+      );
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.alt(Parser.empty)(Parser.pure("d"))
+          )(input)
+        )
+      ).to.eql(
+        '[(d,[a,b,c,nil]),nil]'
+      );
+      next();
+    });
+  });
 });

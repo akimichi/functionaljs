@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>data.spec.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>data.spec.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+<span class="hljs-keyword">var</span> Pair = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pair.js'</span>);
+<span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/list.js'</span>);
+<span class="hljs-keyword">var</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/data.js'</span>);
+
+
+describe(<span class="hljs-string">'Data'</span>, () =&gt; {
+  <span class="hljs-keyword">var</span> tuple = Pair.cons(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);
+  it(<span class="hljs-string">"Data#type"</span>, (next) =&gt; {
+    Data.type(tuple,{
+      pair: (_) =&gt; {
+        expect(<span class="hljs-literal">true</span>).to.eql(<span class="hljs-literal">true</span>);
+      }
+    });
+    Data.type(<span class="hljs-number">1</span>,{
+      pair: (_) =&gt; {
+        expect().fail(); 
+      },
+      number: (value) =&gt; {
+        expect(value).to.eql(<span class="hljs-number">1</span>);
+      }
+    });
+    next();
+  });
+  describe(<span class="hljs-string">'Data#match'</span>, () =&gt; {
+    it(<span class="hljs-string">"Data#match(pair)"</span>, (next) =&gt; {
+      Data.match(tuple,{
+        cons: (x,y) =&gt; {
+          expect(x).to.eql(<span class="hljs-number">1</span>);
+        }
+      });
+      next();
+    });
+    it(<span class="hljs-string">"Data#match(list)"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> list = List.cons(<span class="hljs-number">1</span>,List.empty());
+      Data.match(list,{
+        cons: (x,y) =&gt; {
+          expect(x).to.eql(<span class="hljs-number">1</span>);
+        }
+      });
+      next();
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  <!-- <div id="footer">  目次に戻る。 </div> -->
+  <!-- </div> -->
+</body>
+</html>

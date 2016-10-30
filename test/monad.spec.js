@@ -1327,6 +1327,9 @@ describe('Streamモナドのテスト', () => {
   });
 }); // Streamモナド
 
+
+
+
 // ## Readerモナド
 // ### Readerモナドの定義
 // ~~~haskell

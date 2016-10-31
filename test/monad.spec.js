@@ -5,31 +5,7 @@
 
 var fs = require('fs');
 var expect = require('expect.js');
-
-var pair = {
-  match : (data, pattern) => {
-    return data.call(data,pattern);
-  },
-  cons: (left, right) => {
-    return (pattern) => {
-      return pattern.cons(left, right);
-    };
-  },
-  right: (tuple) => {
-    return pair.match(tuple, {
-      cons: (left, right) => {
-        return right;
-      }
-    });
-  },
-  left: (tuple) => {
-    return pair.match(tuple, {
-      cons: (left, right) => {
-        return left;
-      }
-    });
-  }
-};
+var Pair = require('../lib/pair.js');
 
 // ## 恒等モナド
 // ### 恒等モナドの定義
@@ -1405,21 +1381,21 @@ var Writer = {
   unit: (a) => {
     return {
       run: (_) => {
-        return pair.cons(List.empty(),a);
+        return Pair.cons(List.empty(),a);
       }
     };
   },
   flatMap: (writer) => {
     var writerPair = writer.run();
-    var v = pair.left(writerPair);
-    var a = pair.right(writerPair);
+    var v = Pair.left(writerPair);
+    var a = Pair.right(writerPair);
     return (f) => { // transform:: a -> a
       var newPair = f(a).run();
-      var v_ = pair.left(newPair);
-      var b = pair.right(newPair);
+      var v_ = Pair.left(newPair);
+      var b = Pair.right(newPair);
       return {
         run: () => {
-          return pair.cons(List.append(v)(v_),b);
+          return Pair.cons(List.append(v)(v_),b);
         }
       };
     };
@@ -1431,7 +1407,7 @@ var Writer = {
   tell: (s) => {
     return {
       run: (_) => {
-        return pair.cons(s, List.empty());
+        return Pair.cons(s, List.empty());
       }
     };
   }
@@ -1469,7 +1445,7 @@ describe("Writerモナドをテストする",() => {
         });
       }
     };
-    pair.match(factorial(0).run(),{
+    factorial(0).run().match({
       cons: (left, right) => {
         expect(
           List.toArray(left)
@@ -1483,7 +1459,7 @@ describe("Writerモナドをテストする",() => {
         );
       }
     });
-    pair.match(factorial(5).run(),{
+    factorial(5).run().match({
       cons: (left, right) => {
         expect(
           List.toArray(left)
@@ -1658,7 +1634,7 @@ describe("Maybeと一緒に使う", () => {
 var ST = {
   unit: (value) => { 
     return (state) => { 
-      return pair.cons(value,state);
+      return Pair.cons(value,state);
     };
   },
   app: (st) => {
@@ -1671,7 +1647,7 @@ var ST = {
       expect(f).to.a('function');
       return (state) => {
         var newState = ST.app(instanceM)(state);
-        return pair.match(newState,{
+        return newState.match({
           cons:(x, state_) => {
             return ST.app(f(x))(state_);
           }
@@ -1687,7 +1663,7 @@ var ST = {
   //   in (f x, s'')
   // ~~~
   fresh: (state) => {
-    return pair.cons(state, state + 1);
+    return Pair.cons(state, state + 1);
   }
 };
 
@@ -1738,7 +1714,7 @@ describe("STモナドをテストする",() => {
         };
       },
       fresh: (state) => {
-        return pair.cons(state, state + 1);
+        return Pair.cons(state, state + 1);
       }
     };
     it('Tree.toArray', (next) => {
@@ -1767,24 +1743,24 @@ describe("STモナドをテストする",() => {
       var rlabel = (tree, state) => {
         return Tree.match(tree,{
           leaf:(value) => {
-            return pair.cons(Tree.leaf(state), state + 1);
+            return Pair.cons(Tree.leaf(state), state + 1);
           },
           node:(left, right) => {
             var leftNode = rlabel(left, state);
-            var rightNode = rlabel(right, pair.right(leftNode));
-            return pair.cons(Tree.node(pair.left(leftNode), 
-                                       pair.left(rightNode)), 
-                             pair.right(rightNode));
+            var rightNode = rlabel(right, Pair.right(leftNode));
+            return Pair.cons(Tree.node(Pair.left(leftNode), 
+                                       Pair.left(rightNode)), 
+                             Pair.right(rightNode));
           }
         });
       };
       expect(
-        Tree.toArray(pair.left(rlabel(Tree.leaf(1),0)))
+        Tree.toArray(Pair.left(rlabel(Tree.leaf(1),0)))
       ).to.eql(
         0
       );
       expect(
-        Tree.toArray(pair.left(rlabel(Tree.node(Tree.leaf("a"),Tree.leaf("b")),0)))
+        Tree.toArray(Pair.left(rlabel(Tree.node(Tree.leaf("a"),Tree.leaf("b")),0)))
       ).to.eql(
         [0,1]
       );
@@ -1792,7 +1768,7 @@ describe("STモナドをテストする",() => {
     });
     it('mlabel', (next) => {
       var fresh = (state) => {
-        return pair.cons(state, state + 1);
+        return Pair.cons(state, state + 1);
       };
       // ~~~haskell
       // mlabel :: Tree a -> ST(Tree Int)
@@ -1820,14 +1796,14 @@ describe("STモナドをテストする",() => {
       }; 
       expect(
         Tree.toArray(
-          pair.left(ST.app(mlabel(Tree.leaf(1)))(0))
+          Pair.left(ST.app(mlabel(Tree.leaf(1)))(0))
         )
       ).to.eql(
         0
       );
       expect(
         Tree.toArray(
-          pair.left(ST.app(mlabel(Tree.node(Tree.leaf("a"),Tree.leaf("b"))))(0))
+          Pair.left(ST.app(mlabel(Tree.node(Tree.leaf("a"),Tree.leaf("b"))))(0))
         )
       ).to.eql(
         [0,1]

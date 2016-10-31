@@ -114,6 +114,69 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       next();
     });
   });
+  describe(<span class="hljs-string">"alternative"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"empty"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+      expect(
+        PP.print(
+          Parser.parse(Parser.empty)(input)
+        )
+      ).to.eql(
+        <span class="hljs-string">'[]'</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"alt"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.alt(Parser.item)(Parser.pure(<span class="hljs-string">"d"</span>))
+          )(input)
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(a,[b,c,nil]),nil]'</span>
+      );
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.alt(Parser.empty)(Parser.pure(<span class="hljs-string">"d"</span>))
+          )(input)
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(d,[a,b,c,nil]),nil]'</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">"派生したパーサー"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"digit"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.digit.call(Parser)
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(1,[2,3,nil]),nil]'</span>
+      );
+
+      next();
+    });
+    it(<span class="hljs-string">"string"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.string(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>))
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abcdef"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[([a,b,c,nil],[d,e,f,nil]),nil]'</span>
+      );
+
+      next();
+    });
+  });
 });</pre></div></div>
             
         </li>

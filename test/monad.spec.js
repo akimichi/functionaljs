@@ -2,18 +2,40 @@
 
 // さまざまなモナド
 // =============
+// ここでは、本書で紹介できなかったさまざまなモナドを紹介する。
+// 参考までに、Haskellでの定義も随時併記する。
+
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#id_monad"> 恒等モナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#maybe_monad"> Maybeモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#either_monad"> Eitherモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#list_monad"> Listモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#stream_monad"> Streamモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#reader_monad"> Readerモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#writer_monad"> Writerモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#io_monad"> IOモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#st_monad"> STモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#cont_monad"> Contモナド</a>
+// </ul>
+// </div>
+
 
 var fs = require('fs');
 var expect = require('expect.js');
+// Pair型の読込
 var Pair = require('../lib/pair.js');
 
-// ## 恒等モナド
+// ## <section id='id_monad'>恒等モナド</section>
 // ### 恒等モナドの定義
 var ID = {
+  // **ID#unit**
   /* unit:: T => ID[T] */
   unit: (value) => {  // 単なる identity関数と同じ
     return value;
   },
+  // **ID#flatMap**
   /* flatMap:: ID[T] => FUN[T => ID[T]] => ID[T] */
   flatMap: (instanceM) => {
     return (transform) => {
@@ -24,7 +46,8 @@ var ID = {
 
 // ### 恒等モナドのテスト
 describe("恒等モナドをテストする",() => {
-  it("ID#unit", (next) => {
+  // **ID#unit**をテストする
+  it("ID#unitをテストする", (next) => {
     expect(
       ID.unit(1)
     ).to.eql(
@@ -34,7 +57,7 @@ describe("恒等モナドをテストする",() => {
   });
 });
 
-// ## Maybeモナド
+// ## <section id='maybe_monad'>Maybeモナド</section>
 // ### Maybeモナドの定義
 // ~~~haskell
 // instance Monad Maybe where
@@ -55,11 +78,11 @@ var Maybe = {
       return pattern.nothing(_);
     };
   },
-  // Maybe#unit
+  // **Maybe#unit**
   unit : (value) => {
     return Maybe.just(value);
   },
-  // Maybe#flatMap
+  // **Maybe#flatMap**
   flatMap : (maybeInstance) => {
     return (transform) => {
       expect(transform).to.a('function');
@@ -73,7 +96,7 @@ var Maybe = {
       });
     };
   },
-  // Maybe#map
+  // **Maybe#map**
   // ~~~haskell
   // instance Functor Maybe where
   //    fmap _ Nothing = Nothing
@@ -137,7 +160,8 @@ var Maybe = {
 
 // ### Maybeモナドのテスト
 describe("Maybeモナドをテストする",() => {
-  it("Maybe#flatMap", (next) => {
+  // **Maybe#flatMap**をテストする
+  it("Maybe#flatMapをテストする", (next) => {
     Maybe.match(Maybe.flatMap(Maybe.just(1))((a) => {
       return Maybe.unit(a);
     }),{
@@ -164,7 +188,8 @@ describe("Maybeモナドをテストする",() => {
     });
     next();
   });
-  it("Maybe#map", (next) => {
+  // **Maybe#map**をテストする
+  it("Maybe#mapをテストする", (next) => {
     var succ = (n) => { return n + 1;};
     // ~~~haskell
     // > fmap (+1) nothing
@@ -190,7 +215,8 @@ describe("Maybeモナドをテストする",() => {
     );
     next();
   });
-  it("add(maybe, maybe)", (next) => {
+  // add関数でMaybeインスンスを足しあわせる
+  it("add関数でMaybeインスンスを足しあわせる", (next) => {
     var add = (maybeA,maybeB) => {
       return Maybe.flatMap(maybeA)((a) => {
         return Maybe.flatMap(maybeB)((b) => {
@@ -223,8 +249,7 @@ describe("Maybeモナドをテストする",() => {
   });
 });
 
-// ## Eitherモナド
-//
+// ## <section id='either_monad'>Eitherモナド</section>
 // ### Eitherモナドの定義
 var Either  = {
   // ~~~haskell
@@ -249,11 +274,11 @@ var Either  = {
   //   Right x >>= f = f x
   //   Left x >>= Left x
   // ~~~
-  // Either#unit
+  // **Either#unit**
   unit : (value) => {
     return Either.right(value);
   },
-  // Either#flatMap
+  // **Either#flatMap**
   flatMap : (instanceM) => {
     return (transform) => {
       expect(transform).to.a('function');
@@ -267,7 +292,7 @@ var Either  = {
       });
     };
   },
-  // Either#map
+  // **Either#map**
   // ~~~haskell
   // instance Functor (Either a) where
   //   fmap f (Right x) = Right (f x)
@@ -288,7 +313,8 @@ var Either  = {
 };
 // ### Eitherモナドのテスト
 describe("Eitherモナドをテストする",() => {
-  it("数値のときだけ計算が成功する", (next) => {
+  // 数値のときだけ計算が成功するテスト
+  it("数値のときだけ計算が成功するテスト", (next) => {
     Either.match(Either.flatMap(Either.left("wrong"))((n) => {
       return Either.unit(n + 1);
     }),{
@@ -321,7 +347,7 @@ describe("Eitherモナドをテストする",() => {
   });
 });
 
-// ## Listモナド
+// ## <section id='list_monad'>Listモナド</section>
 // ### Listモナドの定義
 // ~~~haskell
 // instance Monad [] where
@@ -373,11 +399,12 @@ var List  = {
       }
     });
   },
-  // append:: LIST[T] -> LIST[T] -> LIST[T]
+  // **List#append**
   // ~~~haskell
   // append [] ys = ys
   // append (x:xs) ys = x : (xs ++ ys)
   // ~~~
+  /* append:: LIST[T] -> LIST[T] -> LIST[T] */
   append: (xs) => {
     return (ys) => {
       return List.match(xs, {
@@ -390,17 +417,20 @@ var List  = {
       });
     };
   },
-  // concat:: LIST[LIST[T]] -> LIST[T]
+  // **List#concat**
   // ~~~haskell
   // concat [] = []
   // concat (xs:xss) = xs ++ concat xss
   // ~~~
+  /* concat:: LIST[LIST[T]] -> LIST[T] */
   concat: (xss) => {
     return List.foldr(xss)(List.empty())(List.append);
   },
   join: (xss) => {
     return List.concat(xss);
   },
+  // **List#flatten**
+  //
   // ~~~haskell
   // flatten :: [[a]] -> [a]
   // flatten =  foldr (++) []
@@ -408,11 +438,12 @@ var List  = {
   flatten: (instanceMM) => {
     return List.concat(instanceMM);
   },
-  // map:: LIST[T] -> FUN[T->U] -> LIST[U]
+  // **List#map**
   // ~~~haskell
   // map [] _ = []
   // map (x:xs) f = f x : map xs f
   // ~~~
+  /* map:: LIST[T] -> FUN[T->U] -> LIST[U] */
   map: (instanceM) => {
     return (transform) => {
       return List.match(instanceM,{
@@ -429,6 +460,7 @@ var List  = {
   unit: (value) => {
     return List.cons(value, List.empty());
   },
+  // **List#flatMap**
   // ~~~haskell
   // xs >>= f = concat (map f xs)
   // ~~~
@@ -436,10 +468,9 @@ var List  = {
     return (transform) => { // FUN[T->LIST[T]]
       expect(transform).to.a('function');
       return List.join(List.map(instanceM)(transform));
-      // return List.concat(List.map(instanceM)(transform));
     };
   },
-  // 1段階のリストしか配列に変更できない
+  /* 1段階のリストしか配列に変更できない */
   toArray: (alist) => {
     return List.foldr(alist)([])((item) => {
       return (accumulator) => {
@@ -447,11 +478,12 @@ var List  = {
       };
     });
   },
-  // foldr:: LIST[T] -> T -> FUN[T -> U -> U] -> T
+  // **List#foldr**
   // ~~~haskell
   // foldr []     z _ = z
   // foldr (x:xs) z f = f x (foldr xs z f) 
   // ~~~
+  /* foldr:: LIST[T] -> T -> FUN[T -> U -> U] -> T */
   foldr: (alist) => {         // alist:: LIST[T]
     return (accumulator) => { // accumulator:: T
       return (glue) => {      // glue:: FUN[T -> U -> U] 
@@ -471,8 +503,8 @@ var List  = {
 
 // ### Listモナドのテスト
 describe('Listモナドのテスト', () => {
+  // **List#match**でリストをパターンマッチする
   describe('List.matchでリストをパターンマッチする', () => {
-    // matchでList#emptyをマッチさせる
     it("matchでList#emptyをマッチさせる", (next) => {
       List.match(List.empty,{
         empty: (_) => {
@@ -484,7 +516,6 @@ describe('Listモナドのテスト', () => {
       });
       next();
     });
-    // matchでList#consをマッチさせる
     it("matchでList#consをマッチさせる", (next) => {
       List.match(List.cons(1,List.empty()),{
         empty: (_) => {
@@ -497,6 +528,7 @@ describe('Listモナドのテスト', () => {
       next();
     });
   });
+  // **List#isEmpty**は、リストが空かどうかを判定する
   it("List#isEmptyは、リストが空かどうかを判定する", (next) => {
     expect(
       List.isEmpty(List.empty())
@@ -545,7 +577,7 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
-  // List#concatで２つのリストを連結する
+  // **List#concat**で２つのリストを連結する
   it("List#concatで２つのリストを連結する", (next) => {
     var one_two = List.cons(1,List.cons(2,List.empty()));
     var three_four = List.cons(3,List.cons(4,List.empty()));
@@ -577,7 +609,8 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
-  it("'List#foldr'", (next) => {
+  // **List#foldr**をテストする
+  it("List#foldrをテストする", (next) => {
     /* list = [1,2,3,4] */
     var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
@@ -591,7 +624,8 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
-  it("'List#map'", (next) => {
+  // **List#map**をテストする
+  it("List#mapをテストする", (next) => {
     /* list = [1,2,3,4] */
     var theList = List.cons(1,List.cons(2,List.cons(3,List.cons(4,List.empty()),List.empty)));
     expect(
@@ -603,7 +637,7 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
-  it("'List#unit'", (next) => {
+  it("List#unit", (next) => {
     /* list = [1] */
     expect(
       List.toArray(List.unit(1))
@@ -617,7 +651,20 @@ describe('Listモナドのテスト', () => {
     );
     next();
   });
-  describe("List#flatMap", () => {
+  // **List#flatMap**をテストする
+  describe("List#flatMapをテストする", () => {
+    it("'List#flatMap'", (next) => {
+      /* theList = [1,2,3] */
+      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
+      expect(
+        List.toArray(List.flatMap(theList)((item) => {
+          return List.append(List.unit(item))(List.unit(- item));
+        }))
+      ).to.eql(
+        [1,-1,2,-2,3,-3]
+      );
+      next();
+    });
     it("[1]の要素の2倍は、[2]", (next) => {
       // ~~~haskell
       // Prelude> [1] >>= \x -> [x * 2]
@@ -668,20 +715,8 @@ describe('Listモナドのテスト', () => {
       );
       next();
     });
-    it("'List#flatMap'", (next) => {
-      /* theList = [1,2,3] */
-      var theList = List.cons(1,List.cons(2, List.cons(3, List.empty())));
-      expect(
-        List.toArray(List.flatMap(theList)((item) => {
-          return List.append(List.unit(item))(List.unit(- item));
-        }))
-      ).to.eql(
-        [1,-1,2,-2,3,-3]
-      );
-      next();
-    });
   });
-  // List#toArrayでリストを配列に変換する
+  // **List#toArray**でリストを配列に変換する
   describe("List#toArrayでリストを配列に変換する", () => {
     it("1段階のリストを配列に変換する", (next) => {
       /* theList = [1,2,3,4] */
@@ -834,13 +869,13 @@ describe('Listモナドのテスト', () => {
   });
 });
 
-// ## Streamモナド
+// ## <section id='stream_monad'>Streamモナド</section>
 // ### Streamモナドの定義
 var Stream = {
   match: (data, pattern) => {
      return data.call(Stream,pattern);
   },
-  // Stream#unit
+  // **Stream#unit**
   /* unit:: ANY -> STREAM */
   unit: (value) => {
     if(value != null){
@@ -896,7 +931,7 @@ var Stream = {
       }
     });
   },
-  // Stream#toArray
+  // **Stream#toArray**
   toArray: (lazyList) => {
     return Stream.match(lazyList,{
       empty: (_) => {
@@ -911,7 +946,7 @@ var Stream = {
       }
     });
   },
-  // Stream#map
+  // **Stream#map**
   map: (lazyList) => {
     return (transform) => {
       return Stream.match(lazyList,{
@@ -925,7 +960,7 @@ var Stream = {
       });
     };
   },
-  // Stream#append
+  // **Stream#append**
   append: (xs) => {
     return (ysThunk) => {
       return Stream.match(xs,{
@@ -940,7 +975,7 @@ var Stream = {
       });
     };
   },
-  // Stream#concat
+  // **Stream#concat**
   /* concat:: STREAM[STREAM[T]] -> STREAM[T] */
   concat: (astream) => {
     return Stream.match(astream,{
@@ -952,7 +987,7 @@ var Stream = {
       }
     });
   },
-  // Stream#flatten
+  // **Stream#flatten**
   /* flatten :: STREAM[STREAM[T]] => STREAM[T] */
   flatten: (lazyList) => {
     return Stream.match(lazyList,{
@@ -966,17 +1001,17 @@ var Stream = {
       }
     });
   },
-  // Stream#flatMap
-  // flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T]
+  // **Stream#flatMap**
   // ~~~haskell
   // flatMap xs f = flatten (map f xs)
   //~~~
+  /* flatMap:: STREAM[T] -> FUNC[T->STREAM[T]] -> STREAM[T] */
   flatMap: (lazyList) => {
     return (transform) => {
       return Stream.flatten(Stream.map(lazyList)(transform));
     };
   },
-  // monad.stream#foldr
+  // **Stream#foldr**
   foldr: (instanceM) => {
     return (accumulator) => {
       return (glue) => {
@@ -1166,6 +1201,7 @@ describe('Streamモナドのテスト', () => {
       );
       next();
     });
+    // Streamモナドで無限の整数列を作る
     it("無限の整数列を作る", (next) => {
       var ones = Stream.cons(1, (_) => {
         return ones;
@@ -1303,10 +1339,9 @@ describe('Streamモナドのテスト', () => {
   });
 }); // Streamモナド
 
-
-
-
-// ## Readerモナド
+// ## <section id='reader_monad'>Readerモナド</section>
+//   c.f. [グローバル変数の代わりに使えるReaderモナドとWriterモナド](http://itpro.nikkeibp.co.jp/article/COLUMN/20090303/325807/?rt=nocnt)
+//
 // ### Readerモナドの定義
 // ~~~haskell
 // newtype Reader e a = Reader { runReader :: e -> a }
@@ -1318,8 +1353,7 @@ describe('Streamモナドのテスト', () => {
 var Reader = {
   unit: (x) => {
     return {
-      // runReader :: Reader r a -> r -> a
-      run: (_) => {
+      run: (_) => { // runReader :: Reader r a -> r -> a
         return x;
       }
     };
@@ -1333,7 +1367,11 @@ var Reader = {
       };
     };
   },
+  // **ask**
+  // ~~~haskell
+  // ask :: Reader r r
   // ask = Reader id
+  // ~~~
   ask: (x) => {
     return {
       run: (env) => {
@@ -1367,7 +1405,8 @@ describe("Readerモナドをテストする",() => {
   });
 });
 
-// ## Writerモナド
+// ## <section id='writer_monad'>Writerモナド</section>
+// c.f. [グローバル変数の代わりに使えるReaderモナドとWriterモナド（3/4）](http://itpro.nikkeibp.co.jp/article/COLUMN/20090303/325807/?P=3&rt=nocnt)
 // ### Writerモナドの定義
 // ~~~haskell
 // newtype Writer w a = Writer { run :: (a,w) }
@@ -1415,6 +1454,8 @@ var Writer = {
 
 // ### Writerモナドのテスト
 describe("Writerモナドをテストする",() => {
+  // Writerモナドを用いたfactorialの例
+  //
   // ~~~haskell
   // factW :: Int -> Writer [Int] Int
   // factW 0 = tell [0] >> return 1
@@ -1428,7 +1469,7 @@ describe("Writerモナドをテストする",() => {
   // *Main> runWriter $ factW 5
   // (120,[5,4,3,2,1,0])
   // ~~~
-  it("factorial", (next) => {
+  it("Writerモナドを用いたfactorialの例", (next) => {
     var pred = (n) => {
       return n - 1;
     };
@@ -1477,10 +1518,10 @@ describe("Writerモナドをテストする",() => {
   });
 });
 
-// ## IOモナド
+// ## <section id='io_monad'>IOモナド</section>
 // ### IOモナドの定義
 var IO = {
-  // unit:: T => IO[T]
+  /* unit:: T => IO[T] */
   unit : (any) => {
     return (_) =>  { // 外界は明示する必要はありません
       return any;
@@ -1492,34 +1533,37 @@ var IO = {
       return IO.unit(IO.run(actionAB(IO.run(instanceA))));
     };
   },
-  // IO.done関数
+  // **IO#done**関数
   // 
   // > IOアクションを何も実行しない
   /* done:: T => IO[T] */
   done : (any) => {
     return IO.unit();
   },
-  // IO.run関数
+  // **IO#run**関数
   //
   // > IOアクションを実行する
   /* run:: IO[A] => A */
   run : (instanceM) => {
     return instanceM();
   },
-  // readFile:: STRING => IO[STRING]
+  // **IO#readFile**
+  /* readFile:: STRING => IO[STRING] */
   readFile : (path) => {
     return (_) => {
       var content = fs.readFileSync(path, 'utf8');
       return IO.unit(content)(_);
     };
   },
-  // println:: STRING => IO[null]
+  // **IO#println**
+  /* println:: STRING => IO[null] */
   println : (message) => {
     return (_) => {
       console.log(message);
       return IO.unit(null)(_);
     };
   },
+  // **IO#writeFile**
   writeFile : (path) => {
     return (content) => {
       return (_) => {
@@ -1528,7 +1572,8 @@ var IO = {
       };
     };
   },
-  // IO.seq:: IO[a] => IO[b] => IO[b]
+  // **IO#seq**
+  /* IO.seq:: IO[a] => IO[b] => IO[b] */
   seq: (instanceA) => {
     return (instanceB) => {
       return IO.flatMap(instanceA)((a) => {
@@ -1539,17 +1584,19 @@ var IO = {
   seqs: (alist) => {
     return List.foldr(alist)(List.empty())(IO.done());
   },
-  // IO.putc:: CHAR => IO[]
+  // **IO#putc**
+  /* IO.putc:: CHAR => IO[] */
   putc: (character) => {
     return (io) => {
       process.stdout.write(character);
       return null;
     };
   },
-  // IO.puts:: LIST[CHAR] => IO[]
+  // **IO#puts**
   // ~~~haskell
   // puts list = seqs (map putc list)
   // ~~~
+  /* IO.puts:: LIST[CHAR] => IO[] */
   puts: (alist) => {
     return List.match(alist, {
       empty: () => {
@@ -1560,7 +1607,8 @@ var IO = {
       }
     });
   },
-  // IO.getc :: IO[CHAR]
+  // **IO#getc**
+  /* IO.getc :: IO[CHAR] */
   getc: () => {
     var continuation = () => {
       var chunk = process.stdin.read();
@@ -1571,7 +1619,26 @@ var IO = {
   }
 };
 
+// ### IOモナドをテストする
 describe("IOモナドをテストする",() => {
+  // IOモナドで参照透過性を確保する
+  it('IOモナドで参照透過性を確保する', (next) => {
+    // 本文では割愛したが、IOモナドが入出力についても参照透過性を確保していることを単体テストで示す
+    expect(
+      IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
+        return IO.flatMap(IO.println(content))((_) => {
+          return IO.done(_);
+        });
+      })()
+    ).to.eql(
+      IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
+        return IO.flatMap(IO.println(content))((_) => {
+          return IO.done(_);
+        });
+      })()
+    );
+    next();
+  });
 });
 
 
@@ -1610,7 +1677,7 @@ describe("Maybeと一緒に使う", () => {
 });
 
 
-// ## STモナド
+// ## <section id='st_monad'>STモナド</section>
 // ### STモナドの定義
 // 
 // Programming in Haskell(2版),p.168..p.172 を参照。
@@ -1813,7 +1880,7 @@ describe("STモナドをテストする",() => {
   });
 });
 
-// ## Contモナド
+// ## <section id='cont_monad'>Contモナド</section>
 // ### Contモナドの定義
 // 
 //

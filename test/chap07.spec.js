@@ -2866,25 +2866,6 @@ describe('モナドを作る', () => {
           next();
         });
       });
-      // IOモナドで参照透過性を確保する
-      //
-      // 本文では割愛したが、IOモナドが入出力についても参照透過性を確保していることを単体テストで示す
-      it('IOモナドで参照透過性を確保する', (next) => {
-        expect(
-          IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
-            return IO.flatMap(IO.println(content))((_) => {
-              return IO.done(_);
-            });
-          })()
-        ).to.eql(
-          IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
-            return IO.flatMap(IO.println(content))((_) => {
-              return IO.done(_);
-            });
-          })()
-        );
-        next();
-      });
     });
   }); // IOモナドで副作用を閉じ込める
 }); // モナド

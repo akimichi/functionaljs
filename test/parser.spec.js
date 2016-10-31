@@ -116,6 +116,18 @@ describe('パーサーコンビネーター', () => {
       ).to.eql(
         '[(1,[2,3,nil]),nil]'
       );
+      next();
+    });
+    it("alphanum", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.alphanum.call(Parser)
+          )(String.toList("123"))
+        )
+      ).to.eql(
+        '[(1,[2,3,nil]),nil]'
+      );
 
       next();
     });
@@ -132,5 +144,97 @@ describe('パーサーコンビネーター', () => {
 
       next();
     });
+  });
+  describe("manyパーサ", (next) => {
+    it("many digit", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.many(Parser.digit.call(Parser))
+          )(String.toList("123abc"))
+        )
+      ).to.eql(
+        '[([1,2,3,nil],[a,b,c,nil]),nil]'
+      );
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.many(Parser.digit.call(Parser))
+          )(String.toList("abc"))
+        )
+      ).to.eql(
+        '[([],[a,b,c,nil]),nil]'
+      );
+      next();
+    });
+    it("some digit", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.some(Parser.digit.call(Parser))
+          )(String.toList("abc"))
+        )
+      ).to.eql(
+        '[]'
+      );
+      next();
+    });
+  });
+  it("ident", (next) => {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.ident.call(Parser)
+        )(String.toList("abc def"))
+      )
+    ).to.eql(
+      '[([a,b,c,nil],[ ,d,e,f,nil]),nil]'
+    );
+    next();
+  });
+  it("nat", (next) => {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.nat.call(Parser)
+        )(String.toList("123"))
+      )
+    ).to.eql(
+      '[(123,[]),nil]'
+    );
+    next();
+  });
+  it("space", (next) => {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.space.call(Parser)
+        )(String.toList("   abc"))
+      )
+    ).to.eql(
+      '[((),[a,b,c,nil]),nil]'
+    );
+    next();
+  });
+  it("int", (next) => {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.int.call(Parser)
+        )(String.toList("-123 abc"))
+      )
+    ).to.eql(
+      '[(-123,[a,b,c,nil]),nil]'
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.int.call(Parser)
+        )(String.toList("123 abc"))
+      )
+    ).to.eql(
+      '[(123,[a,b,c,nil]),nil]'
+    );
+    next();
   });
 });

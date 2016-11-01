@@ -9,6 +9,15 @@
   <script type="text/javascript" async
           src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
   </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
 </head>
 <body>
   <div id="container">
@@ -4650,7 +4659,10 @@ $$</p>
           );
           next();
         });
-      });</pre></div></div>
+      });
+    });
+  }); <span class="hljs-comment">// IOモナドで副作用を閉じ込める</span>
+}); <span class="hljs-comment">// モナド</span></pre></div></div>
             
         </li>
         
@@ -4660,40 +4672,6 @@ $$</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-133">&#182;</a>
-              </div>
-              <p>IOモナドで参照透過性を確保する</p>
-<p>本文では割愛したが、IOモナドが入出力についても参照透過性を確保していることを単体テストで示す</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      it(<span class="hljs-string">'IOモナドで参照透過性を確保する'</span>, (next) =&gt; {
-        expect(
-          IO.flatMap(IO.readFile(<span class="hljs-string">"./test/resources/file.txt"</span>))((content) =&gt; {
-            <span class="hljs-keyword">return</span> IO.flatMap(IO.println(content))((_) =&gt; {
-              <span class="hljs-keyword">return</span> IO.done(_);
-            });
-          })()
-        ).to.eql(
-          IO.flatMap(IO.readFile(<span class="hljs-string">"./test/resources/file.txt"</span>))((content) =&gt; {
-            <span class="hljs-keyword">return</span> IO.flatMap(IO.println(content))((_) =&gt; {
-              <span class="hljs-keyword">return</span> IO.done(_);
-            });
-          })()
-        );
-        next();
-      });
-    });
-  }); <span class="hljs-comment">// IOモナドで副作用を閉じ込める</span>
-}); <span class="hljs-comment">// モナド</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-134">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p><a href="index.html">目次に戻る</a> <a href="chap08.spec.html">次章に移る</a> </p>
 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>string.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>string.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+<span class="hljs-keyword">var</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./data.js'</span>);
+<span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./list.js'</span>);
+
+<span class="hljs-built_in">module</span>.exports = {
+  head: (str) =&gt; {
+    expect(str).to.a(<span class="hljs-string">'string'</span>);
+    <span class="hljs-keyword">return</span> str[<span class="hljs-number">0</span>];
+  },
+  tail: (str) =&gt; {
+    expect(str).to.a(<span class="hljs-string">'string'</span>);
+    <span class="hljs-keyword">return</span> str.substring(<span class="hljs-number">1</span>);
+  },
+  isEmpty: (str) =&gt; {
+    <span class="hljs-keyword">return</span> str.length === <span class="hljs-number">0</span>;
+  },
+  isChar: (str) =&gt; {
+    <span class="hljs-keyword">return</span> str.length === <span class="hljs-number">1</span>;
+  },
+  <span class="hljs-comment">/* 文字列を文字のリストに変換する */</span>
+  toList: (str) =&gt; {
+    expect(str).to.a(<span class="hljs-string">'string'</span>);
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">if</span>(self.isChar(str) === <span class="hljs-literal">true</span>) {
+      <span class="hljs-keyword">return</span> List.cons(str,
+                       List.empty());
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> List.cons(self.head(str), 
+                       self.toList(self.tail(str)));
+    }
+  }
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  <!-- <div id="footer">  目次に戻る。 </div> -->
+  <!-- </div> -->
+</body>
+</html>

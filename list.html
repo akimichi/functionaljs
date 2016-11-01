@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>list.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>list.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+<span class="hljs-keyword">var</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./data.js'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>var string = require(‘./string’);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-built_in">module</span>.exports = {
+  type : (pattern) =&gt; {
+    <span class="hljs-keyword">return</span> pattern.list();    
+  },
+  match : (data,pattern) =&gt; {
+    <span class="hljs-keyword">return</span> pattern(data);    
+  },
+  empty: (_) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      type: (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.list();
+      },
+      match: (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.empty();
+      }
+    };
+  },
+  cons: (head, tail) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      type: (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.list();
+      },
+      match: (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.cons(head, tail);
+      }
+    };
+  },
+  unit: (value) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.cons(value, self.empty());
+  },
+  head: (data) =&gt; {
+    <span class="hljs-keyword">return</span> data.match({
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+      },
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> head;
+      }
+    });
+  },
+  tail: (data) =&gt; {
+    <span class="hljs-keyword">return</span> data.match({
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+      },
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> tail;
+      }
+    });
+  },
+  isEmpty: (list) =&gt; {
+    <span class="hljs-keyword">return</span> list.match({
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      },
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h3 id="monad-list-flatten">monad.list#flatten</h3>
+<pre><code class="lang-haskell"><span class="hljs-title">flatten</span> :: [[a]] -&gt; [a]
+<span class="hljs-title">flatten</span> =  foldr (++) []
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  flatten: (instanceMM) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.match(instanceMM,{
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> self.empty();
+      },
+      cons: (head,tail) =&gt; {
+        <span class="hljs-keyword">return</span> self.concat(head)(self.flatten(tail));
+      }
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>map:: LIST[T] -&gt; FUNC[T -&gt; T] -&gt; LIST[T]
+map: (alist) =&gt; {
+  var self = this;
+  return (transform) =&gt; {
+    return this.match(alist,{
+      empty: (_) =&gt; {
+        return this.empty();
+      },
+      cons: (head,tail) =&gt; {
+        return this.cons(transform(head),this.map(tail)(transform));
+      }
+    });
+  };
+},</p>
+<h3 id="monad-list-map">monad.list.map</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  map: (instanceM) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> self.match(instanceM,{
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> self.empty();
+        },
+        cons: (head,tail) =&gt; {
+          <span class="hljs-keyword">return</span> self.cons(transform(head),self.map(tail)(transform));
+        }
+      });
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h3 id="monad-list-flatmap">monad.list#flatMap</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  flatMap: (instanceM) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (transform) =&gt; { <span class="hljs-comment">// FUNC[T-&gt;STREAM[T]]</span>
+      <span class="hljs-keyword">return</span> self.flatten(self.map(instanceM)(transform));
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>append:: LIST[T] -&gt; LIST[T] -&gt; LIST[T]
+append [] ys = ys
+append (x:xs) ys = x : (xs ++ ys)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  append: (xs) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (ys) =&gt; {
+      <span class="hljs-keyword">return</span> self.match(xs, {
+        empty: (_) =&gt; {
+          <span class="hljs-keyword">return</span> ys;
+        },
+        cons: (head, tail) =&gt; {
+          <span class="hljs-keyword">return</span> self.cons(head, self.append(tail)(ys)); 
+        }
+      });
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>list#concat
+concat:: LIST[LIST[T]] -&gt; LIST[T]
+concat [] = []
+concat (xs:xss) = append(xs, xss)
+or,
+concat xss = foldr xss [] append</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  concat: (xss) =&gt; {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.match(xss,{
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.empty();
+      },
+      cons: (xs,xss) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.append(xs,xss);
+      }
+    });
+  },
+  last: (alist) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.match(alist, {
+      empty: (_) =&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+      },
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> self.match(tail, {
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> head;
+          },
+          cons: (head, _) =&gt; {
+            <span class="hljs-keyword">return</span> self.last(tail);
+          }
+        });
+      }
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>join:: LIST[LIST[T]] -&gt; LIST[T]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  join: (list_of_list) =&gt; {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.concat(list_of_list);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>foldr:: LIST[T] -&gt; T -&gt; FUNC[T -&gt; LIST] -&gt; T</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  foldr: (alist) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (accumulator) =&gt; {
+      <span class="hljs-keyword">return</span> (glue) =&gt; {
+        expect(glue).to.a(<span class="hljs-string">'function'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>return Data.match({</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> alist.match({
+          empty: (_) =&gt; {
+            <span class="hljs-keyword">return</span> accumulator;
+          },
+          cons: (head, tail) =&gt; {
+            <span class="hljs-keyword">return</span> glue(head)(self.foldr(tail)(accumulator)(glue));
+          }
+        });
+      };
+    };
+  },
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>  /<em> #@range_begin(list_reverse) </em>/
+  // foldl:: LIST[T] -&gt; T -&gt; FUNC[T -&gt; LIST] -&gt; T
+  // foldl: (alist) =&gt; {
+  //   var self = this;
+  //   return (accumulator) =&gt; {
+  //     return (glue) =&gt; {
+  //       expect(glue).to.a(‘function’);
+  //       return alist.match({
+  //         empty: (_) =&gt; {
+  //           return accumulator;
+  //         },
+  //         cons: (head, tail) =&gt; {
+  //           return glue(head)(self.foldr(tail)(accumulator)(glue));
+  //         }
+  //       });
+  //     };
+  //   };
+  // },
+  /<em> #@range_begin(list_reverse) </em>/
+  reverse: (alist) =&gt; {
+    var self = this;
+    var reverseAux = (alist, accumulator) =&gt; {
+      return this.match(alist, {
+        empty: (_) =&gt; {
+          return accumulator;  // 空のリストの場合は終了
+        },
+        cons: (head, tail) =&gt; {
+          return reverseAux(tail, this.cons(head, accumulator));
+        }
+      });
+    };
+    return reverseAux(alist, this.empty());
+  },
+  /<em> #@range_end(list_reverse) </em>/
+  // ## list.filter
+  /<em> #@range_begin(list_filter) </em>/
+  filter: (alist) =&gt; {
+    return (predicate) =&gt; {
+      return this.match(alist,{
+        empty: (<em>) =&gt; {
+          return this.empty();
+        },
+        cons: (head,tail) =&gt; {
+          if(predicate(head)){
+            return this.cons(head,(</em>) =&gt; {
+              return this.filter(tail)(predicate);
+            });
+          } else {
+            return this.filter(tail)(predicate);
+          }
+        }
+      });
+    };
+  },
+  // list#length
+  length: (alist) =&gt; {
+    return this.match(alist,{
+      empty: (<em>) =&gt; {
+        return 0;
+      },
+      cons: (head,tail) =&gt; {
+        return this.foldr(alist)(0)((item) =&gt; {
+          return (accumulator) =&gt; {
+            return 1 + accumulator;
+          };
+        });
+      }
+    });
+  },
+  any: (alist) =&gt; {
+    return (predicate) =&gt; {
+      expect(predicate).to.a(‘function’);
+      return this.match(alist,{
+        empty: (</em>) =&gt; {
+          return false;
+        },
+        cons: (head,tail) =&gt; {
+          if(predicate(head)) {
+            return true;
+          } else {
+            return this.any(tail)(predicate);
+          }
+        }
+      });
+      // return compose(self.list.or.bind(self))(self.flip.bind(self)(self.list.map.bind(self))(predicate))(list);
+    };
+  },
+  /<em> #@range_end(list_filter) </em>/
+  toArray: (alist) =&gt; {
+    var toArrayAux = (alist,accumulator) =&gt; {
+      return this.match(alist, {
+        empty: (_) =&gt; {
+          return accumulator;  // 空のリストの場合は終了
+        },
+        cons: (head, tail) =&gt; {
+          return toArrayAux(tail, accumulator.concat(head));
+        }
+      });
+    };
+    return toArrayAux(alist, []);
+  },
+  fromArray: (array) =&gt; {
+    var self = this;
+    expect(array).to.an(‘array’);
+    return array.reduce((accumulator, item) =&gt; {
+      return self.append(accumulator)(self.cons(item, self.empty()));
+    }, self.empty());
+  },
+  /<em> #@range_begin(list_fromString) </em>/
+  fromString: (str) =&gt; {
+    var self = this;
+    expect(str).to.a(‘string’);
+    if(string.isEmpty(str)) {
+      return self.empty();
+    } else {
+      return self.cons(string.head(str), self.fromString(string.tail(str)));
+    }
+  },
+  /<em> #@range_end(list_fromString) </em>/
+  at: (alist) =&gt; {
+    return (index) =&gt; {
+      expect(index).to.a(‘number’);
+      expect(index).to.be.greaterThan(-1);
+      if (index === 0) {
+        return this.head(alist);
+      } else {
+          return this.at(this.tail(alist))(index - 1);
+      }
+    };
+  },
+  take: (alist) =&gt; {
+    return (n) =&gt; {
+      expect(n).to.a(‘number’);
+      expect(n).to.be.greaterThan(-1);
+      if (n === 0) {
+        return this.empty();
+      } else {
+        return this.cons(this.head)(this.take(this.tail)(n-1));
+      }
+    };
+  },
+  // ## list#drop
+  // drop :: List =&gt; List
+  drop: function(list){
+    var self = this;
+    return (n) =&gt; {
+      expect(n).to.be.a(‘number’);
+      expect(n).to.be.greaterThan(-1);
+      if (n === 0)
+        return list;
+      else {
+        if(self.this.isEmpty.bind(self)(list))
+          return self.this.empty;
+        else {
+          var tail = this.tail;
+          return self.this.drop.bind(self)(tail)(n-1);
+        }
+      }
+    };
+  },
+  /<em> #@range_begin(list_generate) </em>/
+  generate: (alist) =&gt; {
+    var theList = alist;
+    return (<em>) =&gt; {
+      return this.match(theList,{
+        empty: (</em>) =&gt; {
+          return null; 
+        },
+        cons: (head,tail) =&gt; {
+          theList = tail;
+          return head;
+        }
+      });
+    };
+  },
+  /<em> #@range_end(list_generate) </em>/
+  // lines: (alist) =&gt; {
+  //   var self = this;
+  //   // var alist = self.fromString(astring);
+  //   // self.match(alist,{
+  //   //   empty: (_) =&gt; {
+  //   //   },
+  //   //   cons: (head, tail) =&gt; {
+  //   //     if(head === “\n”) {
+  //   //       return 
+  //   return self.foldr(alist)(self.unit(self.empty()))((item) =&gt; {
+  //     return (accumulator) =&gt; {
+  //       if(item === “\n”) {
+  //         return self.match(alist,{
+  //           empty: () =&gt; {
+  //             return accumulator;
+  //           },
+  //           cons: (head, tail) =&gt; {
+  //             return self.append(accumulator)(self.lines(tail));
+  //           }
+  //         });
+  //       } else {
+  //         return self.match(accumulator,{
+  //           empty: () =&gt; {
+  //             return accumulator;
+  //           },
+  //           cons: (head, tail) =&gt; {
+  //             self.append(self.last(accumulator))(self.unit(item))
+  //           }
+  //         });
+  //       }</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>  // }
+};</p>
+
+            </div>
+            
+        </li>
+        
+    </ul>
+  <!-- <div id="footer">  目次に戻る。 </div> -->
+  <!-- </div> -->
+</body>
+</html>

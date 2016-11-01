@@ -66,8 +66,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>ここでは、本書で紹介できなかったさまざまなモナドを紹介する。
-参考までに、Haskellでの定義も随時併記する。</p>
+              <p>ここでは、本書で紹介できなかったさまざまなモナドを紹介します。
+参考までに、Haskellでの定義も随時併記しています。</p>
 
             </div>
             
@@ -1376,9 +1376,12 @@
                 <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>isPrime関数</p>
+<blockquote>
+<p>isPrime(n) で n が素数かどうかを判定します。</p>
 <pre><code class="lang-haskell"><span class="hljs-title">isPrime</span> :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Bool</span>
 <span class="hljs-title">isPrime</span> n = factors n == [<span class="hljs-number">1</span>,n]
 </code></pre>
+</blockquote>
 
             </div>
             
@@ -2104,7 +2107,13 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
 <h3 id="reader-">Readerモナドの定義</h3>
 <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Reader</span> e a = <span class="hljs-type">Reader</span> <span class="hljs-container">{ <span class="hljs-title">runReader</span> :: <span class="hljs-title">e</span> -&gt; <span class="hljs-title">a</span> }</span></span>
 <span class="hljs-class">
-<span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Reader</span> <span class="hljs-title">env</span>)</span> <span class="hljs-keyword">where</span></span>
+<span class="hljs-keyword">class</span> <span class="hljs-type">MonadReader</span> e m | m -&gt; e <span class="hljs-keyword">where</span></span> 
+    ask   :: m e
+    local :: (e -&gt; e) -&gt; m a -&gt; m a 
+<span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">MonadReader</span> <span class="hljs-container">(<span class="hljs-type">Reader</span> <span class="hljs-title">e</span>)</span> <span class="hljs-keyword">where</span></span> 
+    ask       = <span class="hljs-type">Reader</span> id 
+    local f c = <span class="hljs-type">Reader</span> $ \e -&gt; runReader c (f e) 
+<span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Reader</span> <span class="hljs-title">env</span>)</span> <span class="hljs-keyword">where</span></span>
     return a = <span class="hljs-type">Reader</span> $ \_ -&gt; a
     m &gt;&gt;= f  = <span class="hljs-type">Reader</span> $ \env -&gt; runReader (f (runReader m env)) env
 </code></pre>
@@ -2151,8 +2160,7 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         <span class="hljs-keyword">return</span> env;
       }
     };
-  }
-};</pre></div></div>
+  },</pre></div></div>
             
         </li>
         
@@ -2163,12 +2171,20 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
-              <h3 id="reader-">Readerモナドのテスト</h3>
+              <p>local f c = Reader $ \e -&gt; runReader c (f e) </p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Readerモナドをテストする"</span>,() =&gt; {
-  it(<span class="hljs-string">"add10"</span>, (next) =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  local: (f) =&gt; {
+    <span class="hljs-keyword">return</span> (config) =&gt; {
+      <span class="hljs-keyword">return</span> {
+        run: (env) =&gt; {
+          <span class="hljs-keyword">return</span> config.run(f(env));
+        }
+      };
+    };
+  }
+};</pre></div></div>
             
         </li>
         
@@ -2179,24 +2195,23 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
-              <pre><code class="lang-haskell"><span class="hljs-title">add10</span> :: <span class="hljs-type">Reader</span> <span class="hljs-type">Int</span> <span class="hljs-type">Int</span>
-<span class="hljs-title">add10</span> = <span class="hljs-keyword">do</span>
-  x &lt;- ask                          <span class="hljs-comment">-- 環境変数(x=1)を得る</span>
-  y &lt;- local (+<span class="hljs-number">1</span>) add10             <span class="hljs-comment">-- localの使用例, y=12</span>
-  s &lt;- reader . length . show $ x   <span class="hljs-comment">-- 返り値は自由である例</span>
- return (x+<span class="hljs-number">10</span>)    
-<span class="hljs-title">main</span> = print $ runReader add10 <span class="hljs-number">1</span>
-</code></pre>
+              <h3 id="reader-">Readerモナドのテスト</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> add10 = Reader.flatMap(Reader.ask())((x) =&gt; {
-      <span class="hljs-keyword">return</span> Reader.unit(x + <span class="hljs-number">10</span>);
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Readerモナドをテストする"</span>,() =&gt; {
+  it(<span class="hljs-string">"データベースのコネクションを模倣する"</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> config = {
+      host: <span class="hljs-string">"127.0.0.1"</span>,
+      port: <span class="hljs-string">"27017"</span>
+    }; 
+    <span class="hljs-keyword">var</span> connect = Reader.flatMap(Reader.ask())((config) =&gt; {
+      <span class="hljs-keyword">return</span> Reader.unit(config.host + <span class="hljs-string">":"</span> + config.port);
     });
     expect(
-      add10.run(<span class="hljs-number">1</span>)
+      connect.run(config)
     ).to.eql(
-      <span class="hljs-number">11</span>
+      <span class="hljs-string">"127.0.0.1:27017"</span>
     );
     next();
   });
@@ -2630,7 +2645,7 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
-              <p>本文では割愛したが、IOモナドが入出力についても参照透過性を確保していることを単体テストで示す</p>
+              <p>本文では割愛しましたが、IOモナドが入出力に対して参照透過性を確保していることを単体テストで示します。</p>
 
             </div>
             
@@ -2697,7 +2712,7 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
               </div>
               <h2 id="-section-id-st_monad-st-section-"><section id='st_monad'>STモナド</section></h2>
 <h3 id="st-">STモナドの定義</h3>
-<p>Programming in Haskell(2版),p.168..p.172 を参照。</p>
+<p><a href="https://www.amazon.co.jp/Programming-Haskell-Graham-Hutton/dp/1316626229/ref=pd_sim_14_26?_encoding=UTF8&amp;psc=1&amp;refRID=ZT8DRRF420JN97H9H4DW">Programming in Haskell(2版)</a>,p.168〜p.172 を参照してください。</p>
 <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">ST</span> a = <span class="hljs-type">S</span><span class="hljs-container">(<span class="hljs-type">State</span> -&gt; (<span class="hljs-title">a</span>, <span class="hljs-type">State</span>)</span>)</span>
 
 <span class="hljs-title">app</span> :: <span class="hljs-type">ST</span> a -&gt; <span class="hljs-type">State</span> -&gt; (a,<span class="hljs-type">State</span>)
@@ -2979,6 +2994,7 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
                 <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <h2 id="-section-id-cont_monad-cont-section-"><section id='cont_monad'>Contモナド</section></h2>
+<p>Contモナド(継続モナド)は、中断や再開が可能な計算をモデル化します。</p>
 <h3 id="cont-">Contモナドの定義</h3>
 <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Cont</span> r a = <span class="hljs-type">Cont</span> <span class="hljs-container">{ <span class="hljs-title">runCont</span> :: ((<span class="hljs-title">a</span> -&gt; <span class="hljs-title">r</span>) -&gt; <span class="hljs-title">r</span>) }</span> <span class="hljs-comment">-- r は計算全体の最終の型</span></span>
 <span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Cont</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span> 
@@ -2987,21 +3003,18 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
     (<span class="hljs-type">Cont</span> c) &gt;&gt;= f = <span class="hljs-type">Cont</span> $ \k -&gt; c (\a -&gt; runCont (f a) k) 
     <span class="hljs-comment">-- i.e. m &gt;&gt;= f = \k -&gt; m (\a -&gt; f a k)</span>
 </code></pre>
-<p>instance Monad (Cont r) where
-    return x = Cont (\k -&gt; k x)
-    m &gt;&gt;= f = Cont (\k -&gt; runCont m (\a -&gt; runCont (f a) k))</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> Cont = {
   unit: (k) =&gt; {  <span class="hljs-comment">// k:: a -&gt; r</span>
-    <span class="hljs-keyword">return</span> (n) =&gt; {
-      <span class="hljs-keyword">return</span> k(n);
+    <span class="hljs-keyword">return</span> (a) =&gt; {
+      <span class="hljs-keyword">return</span> k(a);
     };
   },
   flatMap: (m) =&gt; {
-    <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: Int -&gt; Cont r Int</span>
+    <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; Cont r a</span>
       expect(f).to.a(<span class="hljs-string">'function'</span>);
       <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
         <span class="hljs-keyword">return</span> m((a) =&gt; {
@@ -3103,8 +3116,7 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
       <span class="hljs-number">9</span>
     );
     next();
-  });
-  it(<span class="hljs-string">'pythagoras'</span>, (next) =&gt; {</pre></div></div>
+  });</pre></div></div>
             
         </li>
         
@@ -3114,6 +3126,59 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              <p><strong>Cont.flatMap</strong>で算術演算を組み合わせる例</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'Cont.flatMapで算術演算を組み合わせる例'</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> addCPS = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
+        <span class="hljs-keyword">return</span> k(n + m);
+      }); 
+    };
+    expect(
+      addCPS(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)(identity)
+    ).to.eql(
+      <span class="hljs-number">5</span>
+    );
+    <span class="hljs-keyword">var</span> multiplyCPS = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
+        <span class="hljs-keyword">return</span> k(n * m);
+      }); 
+    };
+    <span class="hljs-keyword">var</span> subtractCPS = (n,m) =&gt; {
+      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
+        <span class="hljs-keyword">return</span> k(n - m);
+      });
+    };
+    <span class="hljs-comment">/* ((2 + 3) * 4) - 5 = 15 */</span>
+    expect(
+      Cont.flatMap(addCPS(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>))((addResult) =&gt; {
+        <span class="hljs-keyword">return</span> Cont.flatMap(multiplyCPS(addResult,<span class="hljs-number">4</span>))((multiplyResult) =&gt; {
+          <span class="hljs-keyword">return</span> Cont.flatMap(subtractCPS(multiplyResult,<span class="hljs-number">5</span>))((result) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
+              <span class="hljs-keyword">return</span> k(result);
+            });
+          });
+        });
+      })(identity)
+    ).to.eql(
+      <span class="hljs-number">15</span>
+    );
+
+    next();
+  });
+  it(<span class="hljs-string">'ピタゴラス数を計算する'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">squareCont</span> x = <span class="hljs-type">Cont</span> (\k -&gt; k (x * x))
 <span class="hljs-title">addCont</span> x y = <span class="hljs-type">Cont</span> (\k -&gt; k (x + y))
@@ -3139,11 +3204,11 @@ $ ghci cps.hs
         </li>
         
         
-        <li id="section-93">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <pre><code class="lang-haskell">*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> { m :: <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>; m = return <span class="hljs-number">3</span> }
 *<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> { f :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>; f x = <span class="hljs-type">Cont</span> (square x) }
@@ -3167,9 +3232,6 @@ $ ghci cps.hs
     <span class="hljs-keyword">var</span> m = Cont.unit((k) =&gt; {
       <span class="hljs-keyword">return</span> k(<span class="hljs-number">3</span>);
     });
-    <span class="hljs-keyword">var</span> f = (x) =&gt; {
-      <span class="hljs-keyword">return</span> squareCont(x);
-    };
     expect(
       Cont.flatMap(m)((k) =&gt; {
         <span class="hljs-keyword">return</span> squareCont(k);
@@ -3200,11 +3262,11 @@ $ ghci cps.hs
         </li>
         
         
-        <li id="section-94">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p><a href="index.html">目次に戻る</a> </p>
 

@@ -54,9 +54,16 @@
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> Data.type(data,{
       pair: () =&gt; {
-        <span class="hljs-keyword">var</span> left = self.print(Pair.left(data));
-        <span class="hljs-keyword">var</span> right = self.print(Pair.right(data));
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"("</span> + left + <span class="hljs-string">","</span> + right + <span class="hljs-string">")"</span>;
+        <span class="hljs-keyword">return</span> data.match({
+          empty: () =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"()"</span>;
+          },
+          cons: (l, r) =&gt; {
+            <span class="hljs-keyword">var</span> left = self.print(l);
+            <span class="hljs-keyword">var</span> right = self.print(r);
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"("</span> + left + <span class="hljs-string">","</span> + right + <span class="hljs-string">")"</span>;
+          }
+        });
       },
       list: () =&gt; {
         <span class="hljs-keyword">return</span> data.match({

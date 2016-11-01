@@ -93,6 +93,42 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
+              <p>&lt;<em>&gt; :: Parser (a -&gt; b) -&gt; Parser a -&gt; Parser b
+pg &lt;</em>&gt; px = P (\input -&gt; case parse pg input of
+                         [] -&gt; []
+                         [(g,out)] -&gt; parse (fmap g px) out)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  apply: (pg) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (px) =&gt; {
+      <span class="hljs-keyword">return</span> (input) =&gt; {
+        <span class="hljs-keyword">return</span> self.parse(pg)(input).match({
+          empty: () =&gt; {
+            <span class="hljs-keyword">return</span> List.empty();
+          },
+          cons: (pair,_) =&gt; {
+            <span class="hljs-keyword">return</span> pair.match({
+              cons: (g, out) =&gt; {
+                <span class="hljs-keyword">return</span> self.parse(self.fmap(g)(px))(out);
+              }
+            });
+          }
+        });
+      };
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
               <p>flatMap :: Parser a -&gt; (a -&gt; Parser b) -&gt; Parser b</p>
 
             </div>
@@ -120,11 +156,11 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>empty :: Parser a</p>
 
@@ -137,11 +173,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>alt :: Parser a -&gt; Parser a -&gt; Parser b</p>
 
@@ -172,11 +208,11 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>parse :: Parser a -&gt; String -&gt; [(a,String)]
 parse parser input = parser(input)</p>
@@ -192,11 +228,11 @@ parse parser input = parser(input)</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>fmap :: (a -&gt; b) -&gt; Parser a -&gt; Parser b</p>
 
@@ -226,11 +262,11 @@ parse parser input = parser(input)</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>item :: Parser String</p>
 
@@ -251,11 +287,11 @@ parse parser input = parser(input)</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>sat :: (String -&gt; Bool) -&gt; Parser String</p>
 
@@ -275,11 +311,11 @@ parse parser input = parser(input)</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>digit :: Parser String </p>
 
@@ -296,11 +332,11 @@ parse parser input = parser(input)</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>lower :: Parser String </p>
 
@@ -309,30 +345,13 @@ parse parser input = parser(input)</p>
             <div class="content"><div class='highlight'><pre>  lower: () =&gt; { 
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">var</span> isLower = (x) =&gt; {
-      <span class="hljs-keyword">return</span> x.match(<span class="hljs-regexp">/^[a-z]/</span>);
+      <span class="hljs-keyword">if</span>(x.match(<span class="hljs-regexp">/^[a-z]/</span>)){
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      } 
     };
     <span class="hljs-keyword">return</span> self.sat(isLower);
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>upper :: Parser String </p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  upper: () =&gt; { 
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">var</span> isUpper = (x) =&gt; {
-      <span class="hljs-keyword">return</span> x.match(<span class="hljs-regexp">/^[A-Z]/</span>);
-    };
-    <span class="hljs-keyword">return</span> self.sat(isUpper);
   },</pre></div></div>
             
         </li>
@@ -344,16 +363,20 @@ parse parser input = parser(input)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>letter :: Parser Char</p>
+              <p>upper :: Parser String </p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  letter: () =&gt; { 
+            <div class="content"><div class='highlight'><pre>  upper: () =&gt; { 
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">var</span> isAlpha = (x) =&gt; {
-      <span class="hljs-keyword">return</span> x.match(<span class="hljs-regexp">/^[a-zA-Z]/</span>);
+    <span class="hljs-keyword">var</span> isUpper = (x) =&gt; {
+      <span class="hljs-keyword">if</span>(x.match(<span class="hljs-regexp">/^[A-Z]/</span>)){
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      } 
     };
-    <span class="hljs-keyword">return</span> self.sat(isAlpha);
+    <span class="hljs-keyword">return</span> self.sat(isUpper);
   },</pre></div></div>
             
         </li>
@@ -365,16 +388,20 @@ parse parser input = parser(input)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>alphanum :: Parser Char</p>
+              <p>letter :: Parser Char</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  alphanum: () =&gt; { 
+            <div class="content"><div class='highlight'><pre>  letter: () =&gt; { 
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">var</span> isAlphaNum = (x) =&gt; {
-      <span class="hljs-keyword">return</span> x.match(<span class="hljs-regexp">/^[a-zA-Z0-9]/</span>);
+    <span class="hljs-keyword">var</span> isAlpha = (x) =&gt; {
+      <span class="hljs-keyword">if</span>(x.match(<span class="hljs-regexp">/^[a-zA-Z]/</span>)){
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      } 
     };
-    <span class="hljs-keyword">return</span> self.sat(isAlphaNum);
+    <span class="hljs-keyword">return</span> self.sat(isAlpha);
   },</pre></div></div>
             
         </li>
@@ -385,6 +412,34 @@ parse parser input = parser(input)</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>alphanum :: Parser Char</p>
+<blockquote>
+<p>Parses a letter or digit (a character between ‘0’ and ‘9’). Returns the parsed character.</p>
+</blockquote>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  alphanum: () =&gt; { 
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> isAlphaNum = (x) =&gt; {
+      <span class="hljs-keyword">if</span>(x.match(<span class="hljs-regexp">/^[a-zA-Z0-9]/</span>)) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      } 
+    };
+    <span class="hljs-keyword">return</span> self.sat(isAlphaNum);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>char :: Char -&gt; Parser Char</p>
 
@@ -405,11 +460,11 @@ parse parser input = parser(input)</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>string :: String -&gt; Parser String </p>
 
@@ -429,6 +484,135 @@ parse parser input = parser(input)</p>
         });
       }
     }); 
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>many :: f a -&gt; f [a]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  many: (x) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.alt(self.some(x))(self.pure(List.empty()));
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>some :: f a -&gt; f [a]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  some: (x) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.flatMap(x)((a) =&gt; {
+      <span class="hljs-keyword">return</span> self.flatMap(self.many(x))((b) =&gt; {
+        <span class="hljs-keyword">return</span> self.pure(List.cons(a,b));
+      });
+    }); 
+  },
+  ident: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.flatMap(self.lower.call(self))((x) =&gt; {
+      <span class="hljs-keyword">return</span> self.flatMap(self.many(self.alphanum.call(self)))((xs) =&gt; {
+        <span class="hljs-keyword">return</span> self.pure(List.cons(x,xs));
+      });
+    });
+  },
+  nat: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> read = (xs) =&gt; {
+      <span class="hljs-keyword">var</span> list2str = (xs) =&gt; {
+        <span class="hljs-keyword">return</span> List.foldr(xs)(<span class="hljs-string">""</span>)((x) =&gt; {
+          <span class="hljs-keyword">return</span> (accumulator) =&gt; {
+            <span class="hljs-keyword">return</span> x + accumulator;
+          };
+        });
+      };
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseInt</span>(list2str(xs),<span class="hljs-number">10</span>);
+    };
+    <span class="hljs-keyword">return</span> self.flatMap(self.some(self.digit.call(self)))((xs) =&gt; {
+      <span class="hljs-keyword">return</span> self.pure(read(xs));
+    });
+  },
+  space: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> isSpace = (x) =&gt; {
+      <span class="hljs-keyword">if</span>(x.match(<span class="hljs-regexp">/^[ \t]/</span>)) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      } 
+    };
+    <span class="hljs-keyword">return</span> self.flatMap(self.many(self.sat(isSpace)))((_) =&gt; {
+      <span class="hljs-keyword">return</span> self.pure(Pair.empty());
+    });
+  },
+  int: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.alt(
+      self.flatMap(self.char(<span class="hljs-string">"-"</span>))((_) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(self.nat.call(self))((n) =&gt; {
+          <span class="hljs-keyword">return</span> self.pure(-n);
+        });
+      })
+    )(
+      self.nat.call(self)
+    );
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>token :: Parser a -&gt; Parser a</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  token: (parser) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.flatMap(self.space.call(self))((_) =&gt; {
+      <span class="hljs-keyword">return</span> self.flatMap(parser)((v) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(self.space.call(self))((_) =&gt; {
+          <span class="hljs-keyword">return</span> self.pure(v);
+        });
+      });
+    });
+  },
+  identifier: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.token(self.ident.call(self));
+  },
+  natural: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.token(self.nat.call(self));
+  },
+  integer: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.token(self.int.call(self));
+  },
+  symbol: (xs) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.token(self.string(xs));
   }
 };</pre></div></div>
             

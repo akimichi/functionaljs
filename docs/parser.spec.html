@@ -160,6 +160,18 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       ).to.eql(
         <span class="hljs-string">'[(1,[2,3,nil]),nil]'</span>
       );
+      next();
+    });
+    it(<span class="hljs-string">"alphanum"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.alphanum.call(Parser)
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(1,[2,3,nil]),nil]'</span>
+      );
 
       next();
     });
@@ -176,6 +188,137 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
 
       next();
     });
+  });
+  describe(<span class="hljs-string">"manyパーサ"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"many digit"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.many(Parser.digit.call(Parser))
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123abc"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[([1,2,3,nil],[a,b,c,nil]),nil]'</span>
+      );
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.many(Parser.digit.call(Parser))
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[([],[a,b,c,nil]),nil]'</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"some digit"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.some(Parser.digit.call(Parser))
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[]'</span>
+      );
+      next();
+    });
+  });
+  it(<span class="hljs-string">"ident"</span>, (next) =&gt; {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.ident.call(Parser)
+        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc def"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[([a,b,c,nil],[ ,d,e,f,nil]),nil]'</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">"nat"</span>, (next) =&gt; {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.nat.call(Parser)
+        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(123,[]),nil]'</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">"space"</span>, (next) =&gt; {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.space.call(Parser)
+        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   abc"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[((),[a,b,c,nil]),nil]'</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">"int"</span>, (next) =&gt; {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.int.call(Parser)
+        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"-123 abc"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(-123,[a,b,c,nil]),nil]'</span>
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.int.call(Parser)
+        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123 abc"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(123,[a,b,c,nil]),nil]'</span>
+    );
+    next();
+  });
+  describe(<span class="hljs-string">"トークン"</span>, (next) =&gt; {
+    it(<span class="hljs-string">"identifier"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.identifier.call(Parser)
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   abc"</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[([a,b,c,nil],[]),nil]'</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"natural"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.natural.call(Parser)
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   123   "</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(123,[]),nil]'</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"integer"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.integer.call(Parser)
+          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   -123   "</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(-123,[]),nil]'</span>
+      );
+      next();
+    });
+    
   });
 });</pre></div></div>
             

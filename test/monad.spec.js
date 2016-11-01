@@ -2,8 +2,8 @@
 
 // さまざまなモナド
 // =============
-// ここでは、本書で紹介できなかったさまざまなモナドを紹介する。
-// 参考までに、Haskellでの定義も随時併記する。
+// ここでは、本書で紹介できなかったさまざまなモナドを紹介します。
+// 参考までに、Haskellでの定義も随時併記しています。
 
 // ## 小目次
 // <div class="toc">
@@ -779,6 +779,7 @@ describe('Listモナドのテスト', () => {
         [1,7]
       );
       // isPrime関数
+      // > isPrime(n) で n が素数かどうかを判定します。
       // ~~~haskell
       // isPrime :: Int -> Bool
       // isPrime n = factors n == [1,n]
@@ -1346,6 +1347,12 @@ describe('Streamモナドのテスト', () => {
 // ~~~haskell
 // newtype Reader e a = Reader { runReader :: e -> a }
 //
+// class MonadReader e m | m -> e where 
+//     ask   :: m e
+//     local :: (e -> e) -> m a -> m a 
+// instance MonadReader (Reader e) where 
+//     ask       = Reader id 
+//     local f c = Reader $ \e -> runReader c (f e) 
 // instance Monad (Reader env) where
 //     return a = Reader $ \_ -> a
 //     m >>= f  = Reader $ \env -> runReader (f (runReader m env)) env
@@ -1378,28 +1385,33 @@ var Reader = {
         return env;
       }
     };
+  },
+  // local f c = Reader $ \e -> runReader c (f e) 
+  local: (f) => {
+    return (config) => {
+      return {
+        run: (env) => {
+          return config.run(f(env));
+        }
+      };
+    };
   }
 };
 
 // ### Readerモナドのテスト
 describe("Readerモナドをテストする",() => {
-  it("add10", (next) => {
-    // ~~~haskell
-    // add10 :: Reader Int Int
-    // add10 = do
-    //   x <- ask                          -- 環境変数(x=1)を得る
-    //   y <- local (+1) add10             -- localの使用例, y=12
-    //   s <- reader . length . show $ x   -- 返り値は自由である例
-    //  return (x+10)    
-    // main = print $ runReader add10 1
-    // ~~~
-    var add10 = Reader.flatMap(Reader.ask())((x) => {
-      return Reader.unit(x + 10);
+  it("データベースのコネクションを模倣する", (next) => {
+    var config = {
+      host: "127.0.0.1",
+      port: "27017"
+    }; 
+    var connect = Reader.flatMap(Reader.ask())((config) => {
+      return Reader.unit(config.host + ":" + config.port);
     });
     expect(
-      add10.run(1)
+      connect.run(config)
     ).to.eql(
-      11
+      "127.0.0.1:27017"
     );
     next();
   });
@@ -1623,7 +1635,7 @@ var IO = {
 describe("IOモナドをテストする",() => {
   // IOモナドで参照透過性を確保する
   it('IOモナドで参照透過性を確保する', (next) => {
-    // 本文では割愛したが、IOモナドが入出力についても参照透過性を確保していることを単体テストで示す
+    // 本文では割愛しましたが、IOモナドが入出力に対して参照透過性を確保していることを単体テストで示します。
     expect(
       IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
         return IO.flatMap(IO.println(content))((_) => {
@@ -1680,7 +1692,7 @@ describe("Maybeと一緒に使う", () => {
 // ## <section id='st_monad'>STモナド</section>
 // ### STモナドの定義
 // 
-// Programming in Haskell(2版),p.168..p.172 を参照。
+// [Programming in Haskell(2版)](https://www.amazon.co.jp/Programming-Haskell-Graham-Hutton/dp/1316626229/ref=pd_sim_14_26?_encoding=UTF8&psc=1&refRID=ZT8DRRF420JN97H9H4DW),p.168〜p.172 を参照してください。
 //
 // ~~~haskell
 // newtype ST a = S(State -> (a, State))
@@ -1881,6 +1893,8 @@ describe("STモナドをテストする",() => {
 });
 
 // ## <section id='cont_monad'>Contモナド</section>
+// Contモナド(継続モナド)は、中断や再開が可能な計算をモデル化します。
+// 
 // ### Contモナドの定義
 // 
 //
@@ -1892,19 +1906,15 @@ describe("STモナドをテストする",() => {
 //     (Cont c) >>= f = Cont $ \k -> c (\a -> runCont (f a) k) 
 //     -- i.e. m >>= f = \k -> m (\a -> f a k) 
 // ~~~
-//
-// instance Monad (Cont r) where
-//     return x = Cont (\k -> k x)
-//     m >>= f = Cont (\k -> runCont m (\a -> runCont (f a) k))
 
 var Cont = {
   unit: (k) => {  // k:: a -> r
-    return (n) => {
-      return k(n);
+    return (a) => {
+      return k(a);
     };
   },
   flatMap: (m) => {
-    return (f) => { // f:: Int -> Cont r Int
+    return (f) => { // f:: a -> Cont r a
       expect(f).to.a('function');
       return Cont.unit((k) => {
         return m((a) => {
@@ -1959,7 +1969,46 @@ describe("Contモナドをテストする",() => {
     );
     next();
   });
-  it('pythagoras', (next) => {
+  // **Cont.flatMap**で算術演算を組み合わせる例
+  it('Cont.flatMapで算術演算を組み合わせる例', (next) => {
+    var addCPS = (n,m) => {
+      return Cont.unit((k) => {
+        return k(n + m);
+      }); 
+    };
+    expect(
+      addCPS(2,3)(identity)
+    ).to.eql(
+      5
+    );
+    var multiplyCPS = (n,m) => {
+      return Cont.unit((k) => {
+        return k(n * m);
+      }); 
+    };
+    var subtractCPS = (n,m) => {
+      return Cont.unit((k) => {
+        return k(n - m);
+      });
+    };
+    /* ((2 + 3) * 4) - 5 = 15 */
+    expect(
+      Cont.flatMap(addCPS(2,3))((addResult) => {
+        return Cont.flatMap(multiplyCPS(addResult,4))((multiplyResult) => {
+          return Cont.flatMap(subtractCPS(multiplyResult,5))((result) => {
+            return Cont.unit((k) => {
+              return k(result);
+            });
+          });
+        });
+      })(identity)
+    ).to.eql(
+      15
+    );
+
+    next();
+  });
+  it('ピタゴラス数を計算する', (next) => {
     // ~~~haskell
     // squareCont x = Cont (\k -> k (x * x))
     // addCont x y = Cont (\k -> k (x + y))
@@ -1998,9 +2047,6 @@ describe("Contモナドをテストする",() => {
     var m = Cont.unit((k) => {
       return k(3);
     });
-    var f = (x) => {
-      return squareCont(x);
-    };
     expect(
       Cont.flatMap(m)((k) => {
         return squareCont(k);

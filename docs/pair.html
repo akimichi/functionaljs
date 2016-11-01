@@ -60,8 +60,31 @@
               </div>
               <p>match : (data, pattern) =&gt; {
   return data( pattern);
-},
-pair の代数的データ構造</p>
+},</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  empty: (_) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      type: (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.pair();
+      },
+      match: (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.empty();
+      }
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>pair の代数的データ構造</p>
 
             </div>
             
@@ -79,11 +102,11 @@ pair の代数的データ構造</p>
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>ペアの右側を取得する</p>
 
@@ -100,11 +123,11 @@ pair の代数的データ構造</p>
         </li>
         
         
-        <li id="section-4">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>ペアの左側を取得する</p>
 

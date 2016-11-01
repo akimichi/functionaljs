@@ -237,4 +237,43 @@ describe('パーサーコンビネーター', () => {
     );
     next();
   });
+  describe("トークン", (next) => {
+    it("identifier", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.identifier.call(Parser)
+          )(String.toList("   abc"))
+        )
+      ).to.eql(
+        '[([a,b,c,nil],[]),nil]'
+      );
+      next();
+    });
+    it("natural", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.natural.call(Parser)
+          )(String.toList("   123   "))
+        )
+      ).to.eql(
+        '[(123,[]),nil]'
+      );
+      next();
+    });
+    it("integer", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.integer.call(Parser)
+          )(String.toList("   -123   "))
+        )
+      ).to.eql(
+        '[(-123,[]),nil]'
+      );
+      next();
+    });
+    
+  });
 });

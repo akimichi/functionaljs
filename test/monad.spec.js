@@ -1593,8 +1593,28 @@ var IO = {
       });
     };
   },
+  // ~~~haskell
+  // sequence_        :: [IO ()] -> IO ()
+  // sequence_ []     =  return ()
+  // sequence_ (a:as) =  do a
+  //                        sequence as
+  // ~~~
   seqs: (alist) => {
-    return List.foldr(alist)(List.empty())(IO.done());
+    var self = this;
+    return alist.match({
+      empty: () => {
+        // return self.unit(null);
+        return self.done();
+      },
+      cons: (head, tail) => {
+        return self.flatMap(head)((_) => {
+          return self.seqs(tail); 
+        }); 
+        // self.run(head);
+        // return self.seqs(tail); 
+      }
+    });
+    // return List.foldr(alist)(List.empty())(IO.done());
   },
   // **IO#putc**
   /* IO.putc:: CHAR => IO[] */
@@ -1716,11 +1736,6 @@ var ST = {
       return Pair.cons(value,state);
     };
   },
-  app: (st) => {
-    return (state) => {
-      return st(state);
-    };
-  },
   flatMap: (instanceM) => {
     return (f) => { // f:: ST a
       expect(f).to.a('function');
@@ -1741,6 +1756,11 @@ var ST = {
   //       (x,s'') = app stx s' 
   //   in (f x, s'')
   // ~~~
+  app: (st) => {
+    return (state) => {
+      return st(state);
+    };
+  },
   fresh: (state) => {
     return Pair.cons(state, state + 1);
   }
@@ -1943,14 +1963,14 @@ var Cont = {
 
 // ### Contモナドのテスト
 describe("Contモナドをテストする",() => {
+  var identity = (x) => {
+    return x;
+  };
   // ~~~haskell
   // *Main> let s3 = Cont (square 3)
   // *Main> print =: runCont s3
   // 9 
   // ~~~
-  var identity = (x) => {
-    return x;
-  };
   it('square', (next) => {
     // ~~~haskell
     // square :: Int -> ((Int -> r) -> r)

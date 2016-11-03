@@ -2,9 +2,11 @@
 
 var expect = require('expect.js');
 var List = require('../lib/list');
+var Pair = require('../lib/pair');
+var PP = require('../lib/pprinter');
 
 describe("Listのテスト", () => {
-  it("'cons'", (next) => {
+  it("List#cons", (next) => {
     var data = List.cons(1,List.cons(2,List.empty()));
     expect(
       List.head(data)
@@ -59,7 +61,91 @@ describe("Listのテスト", () => {
       next();
     });
   });
+  describe("リストを作る", () => {
+    it("fromArray", (next) => {
+      var alist = List.fromArray([1,2,3]);
+      expect(
+        List.head(alist)
+      ).to.eql(
+        1
+      );
+      next();
+    });
+    it("List#appendでリストを連結する", (next) => {
+      var alist = List.fromArray([1,2,3]);
+      var blist = List.fromArray([4,5,6]);
+      expect(
+        PP.print(List.append(alist)(blist))
+      ).to.eql(
+        "[1,2,3,4,5,6,nil]"
+      );
+      next();
+    });
+  });
+  describe("List#flatMap", () => {
+    it("Pairのリスト", (next) => {
+      // alist = [(1,2)]
+      var alist = List.fromArray([Pair.cons(1,2)]);
+      expect(
+        PP.print(List.flatMap(alist)((pair) => {
+          return List.unit(pair); 
+        }))
+      ).to.eql(
+        "[(1,2),nil]"
+      );
+      next();
+    });
+  });
+  describe("リストを操作する", () => {
+    it("List#filter", (next) => {
+      // alist = [(1,2)]
+      var alist = List.fromArray([1,2]);
+      expect(
+        PP.print(List.filter(alist)((item) => {
+          return (item % 2) === 0; 
+        }))
+      ).to.eql(
+        "[2,nil]"
+      );
+      next();
+    });
+  });
+  describe("リストを走査する", () => {
+    it("List#map", (next) => {
+      var even = (n) => {
+        return (n % 2) === 0;
+      };
+      expect(
+        List.toArray(List.map(List.cons(1,List.cons(2,List.empty())))(even))
+      ).to.eql(
+        [false,true]
+      );
+      next();
+    });
+    it("List#any", (next) => {
+      var even = (n) => {
+        return (n % 2) === 0;
+      };
+      expect(
+        List.any(List.cons(1,List.cons(2,List.empty())))(even)
+      ).to.eql(
+        true
+      );
+      next();
+    });
+    it("List#elem", (next) => {
+      // alist = [(1,2)]
+      var alist = List.cons(1,List.cons(2,List.empty()));
+      expect(
+        List.elem(alist)(1)
+      ).to.eql(
+        true
+      );
+      next();
+    });
+  });
 });
+
 // describe("listのテスト", function() {
 //   var toArray = list.toArray.bind(list);
 //   var fromArray = list.fromArray.bind(list);
@@ -147,47 +233,6 @@ describe("Listのテスト", () => {
 //   //     next();
 //   //   });
 //   // });
-//   // it("'cons' should construct a list object", function(next) {
-//   //   var list = __.list.cons.bind(__)(0)(__.list.empty);
-//   //   expect(
-//   //     list.head
-//   //   ).to.eql(
-//   //     0
-//   //   );
-//   //   expect(
-//   //     list.tail
-//   //   ).to.eql(
-//   //     __.list.empty
-//   //   );
-//   //   next();
-//   // });
-//   // it("'list#head' should return the head of a list", function(next) {
-//   //   var list = __.list.mkList.bind(__)([0,1,2,3]);
-//   //   expect(
-//   //     list.head
-//   //   ).to.eql(
-//   //     0
-//   //   );
-//   //   next();
-//   // });
-//   // it("'list#tail' should return the tail of a list", function(next) {
-//   //   var list = __.list.mkList.bind(__)([0,1,2,3]);
-//   //   expect(
-//   //     __.list.tail.bind(__)(list).head
-//   //   ).to.eql(
-//   //     1
-//   //   );
-//   //   next();
-//   // });
-//   // it("'list#toArray'", (next) => {
-//   //   var list = __.list.mkList.bind(__)([0,1,2,3]);
-//   //   expect(
-//   //     __.list.toArray.bind(__)(list)
-//   //   ).to.eql(
-//   //     [0,1,2,3]
-//   //   );
-//   //   next();
-//   // });
 //   // it("'list#last'", (next) => {
 //   //   var list = __.list.mkList.bind(__)([0,1,2,3]);
 //   //   expect(
@@ -269,30 +314,6 @@ describe("Listのテスト", () => {
 //   // // m1.flatMap { x =>  m2.map { y =>
 //   // //                             unit (x+y) }}
 //   // // ~~~
-//   // it("'list#flatMap'", function(next) {
-//   //   /*
-//   //   scala> val nestedNumbers = List(List(1, 2), List(3, 4))
-//   //   scala> nestedNumbers.flatMap(x => x.map(_ * 2))
-//   //   res0: List[Int] = List(2, 4, 6, 8)
-//   //    */
-//   //   var List = __.list.mkList.bind(__);
-//   //   var flatMap = __.list.flatMap.bind(__);
-//   //   var map = __.list.map.bind(__);
-//   //   var nestedNumbers = List([List([1, 2]), List([3, 4])]);
-//   //   var toArray = __.list.toArray.bind(__);
-//   //   var flattened = flatMap(nestedNumbers)(function(x){
-//   //     return map(x)(function(n){
-//   //       return n * 2;
-//   //     });
-//   //   });
-//   //   expect(
-//   //     toArray(flattened)
-//   //   ).to.eql(
-//   //     [2,4,6,8]
-//   //   );
-//   //   next();
-//   // });
-
 //   // it("'list#map'", function(next) {
 //   //   var list = __.list.mkList.bind(__)([0,1,2,3]);
 //   //   var result = __.list.map.bind(__)(list)(function(item){
@@ -608,44 +629,6 @@ describe("Listのテスト", () => {
 //   //     true
 //   //   );
 //   //   next();
-//   // });
-//   // describe("'list#append'", () => {
-//   //   var listX = mkList([0,2,4]);
-//   //   var listY = mkList([1,3,5]);
-//   //   it("append(xs)(ys)", (next) => {
-//   //     var appended = __.list.append.call(__,
-//   //                                        listX)(listY);
-//   //     expect(
-//   //       __.list.toArray.call(__,appended)
-//   //     ).to.eql(
-//   //       [ 0,2,4,1,3,5]
-//   //     );
-//   //     next();
-//   //   });
-//   //   it("append(xs)(empty) == xs", (next) => {
-//   //     var appended = __.list.append.call(__,listX)(empty);
-//   //     expect(
-//   //       __.list.toArray.call(__,appended)
-//   //     ).to.eql(
-//   //       [ 0, 2, 4 ]
-//   //     );
-//   //     next();
-//   //   });
-//   //   it("append(empty)(xs) == xs", (next) => {
-//   //     var appended = __.list.append.call(__,empty)(listX);
-//   //     expect(
-//   //       __.list.toArray.call(__,appended)
-//   //     ).to.eql(
-//   //       [ 0, 2, 4 ]
-//   //     );
-//   //     next();
-//   //   });
-//   //   it("append([0])([1]) == [0,1]", (next) => {
-//   //     expect(
-//   //       __.list.append.call(__,mkList([0]))(mkList([1])).isEqual(mkList([0,1]))
-//   //     ).to.ok();
-//   //     next();
-//   //   });
 //   // });
 //   // it("'list#merge'", function(next) {
 //   //   var listX = mkList([0,2,4]);

@@ -3078,22 +3078,7 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">var</span> Cont = {
-  unit: (k) =&gt; {  <span class="hljs-comment">// k:: a -&gt; r</span>
-    <span class="hljs-keyword">return</span> (a) =&gt; {
-      <span class="hljs-keyword">return</span> k(a);
-    };
-  },
-  flatMap: (m) =&gt; {
-    <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; Cont r a</span>
-      expect(f).to.a(<span class="hljs-string">'function'</span>);
-      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-        <span class="hljs-keyword">return</span> m((a) =&gt; {
-          <span class="hljs-keyword">return</span> f(a)(k);
-        });
-      });
-    };
-  },</pre></div></div>
+<span class="hljs-keyword">var</span> Cont = {</pre></div></div>
             
         </li>
         
@@ -3103,6 +3088,36 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell"><span class="hljs-title">return</span> a       = <span class="hljs-type">Cont</span> $ \k -&gt; k a
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unit: (a) =&gt; {
+    <span class="hljs-keyword">return</span> (k) =&gt; {
+      <span class="hljs-keyword">return</span> k(a);
+    };
+  },
+  flatMap: (m) =&gt; {
+    <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; Cont r a</span>
+      expect(f).to.a(<span class="hljs-string">'function'</span>);
+      <span class="hljs-keyword">return</span> (k) =&gt; {
+        <span class="hljs-keyword">return</span> m((a) =&gt; {
+          <span class="hljs-keyword">return</span> f(a)(k);
+        });
+      };
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span>
   callCC :: ((a -&gt; m a) -&gt; m a) -&gt; m a
@@ -3127,11 +3142,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-93">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <h3 id="cont-">Contモナドのテスト</h3>
 
@@ -3145,11 +3160,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-94">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <pre><code class="lang-haskell">*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> s3 = <span class="hljs-type">Cont</span> (square <span class="hljs-number">3</span>)
 *<span class="hljs-type">Main</span>&gt; print =: runCont s3
@@ -3163,11 +3178,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-95">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">square</span> :: <span class="hljs-type">Int</span> -&gt; ((<span class="hljs-type">Int</span> -&gt; r) -&gt; r)
 <span class="hljs-title">square</span> x = \k -&gt; k (x * x)
@@ -3175,12 +3190,10 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> squareCPS = (n) =&gt; {
-      <span class="hljs-keyword">return</span> (k) =&gt; {
-        <span class="hljs-keyword">return</span> k(n * n);
-      }; 
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> square = (n) =&gt; {
+      <span class="hljs-keyword">return</span> n * n;
     };
-    <span class="hljs-keyword">var</span> square3 = Cont.unit(squareCPS(<span class="hljs-number">3</span>));
+    <span class="hljs-keyword">var</span> square3 = Cont.unit(square(<span class="hljs-number">3</span>)); 
     expect(
       square3(identity)
     ).to.eql(
@@ -3192,11 +3205,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-96">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p><strong>Cont.flatMap</strong>で算術演算を組み合わせる例</p>
 
@@ -3204,9 +3217,10 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
             
             <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'Cont.flatMapで算術演算を組み合わせる例'</span>, (next) =&gt; {
     <span class="hljs-keyword">var</span> addCPS = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-        <span class="hljs-keyword">return</span> k(n + m);
-      }); 
+      <span class="hljs-keyword">var</span> add = (n,m) =&gt; {
+        <span class="hljs-keyword">return</span> n + m;
+      };
+      <span class="hljs-keyword">return</span> Cont.unit(add(n,m)); 
     };
     expect(
       addCPS(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)(identity)
@@ -3214,63 +3228,32 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
       <span class="hljs-number">5</span>
     );
     <span class="hljs-keyword">var</span> multiplyCPS = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-        <span class="hljs-keyword">return</span> k(n * m);
-      }); 
+      <span class="hljs-keyword">var</span> multiply = (n,m) =&gt; {
+        <span class="hljs-keyword">return</span> n * m;
+      };
+      <span class="hljs-keyword">return</span> Cont.unit(multiply(n,m)); 
     };
     <span class="hljs-keyword">var</span> subtractCPS = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-        <span class="hljs-keyword">return</span> k(n - m);
-      });
+      <span class="hljs-keyword">var</span> subtract = (n,m) =&gt; {
+        <span class="hljs-keyword">return</span> n - m;
+      };
+      <span class="hljs-keyword">return</span> Cont.unit(subtract(n,m)); 
     };
     <span class="hljs-comment">/* ((2 + 3) * 4) - 5 = 15 */</span>
     expect(
       Cont.flatMap(addCPS(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>))((addResult) =&gt; {
         <span class="hljs-keyword">return</span> Cont.flatMap(multiplyCPS(addResult,<span class="hljs-number">4</span>))((multiplyResult) =&gt; {
           <span class="hljs-keyword">return</span> Cont.flatMap(subtractCPS(multiplyResult,<span class="hljs-number">5</span>))((result) =&gt; {
-            <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-              <span class="hljs-keyword">return</span> k(result);
-            });
+            <span class="hljs-keyword">return</span> Cont.unit(result);
           });
         });
       })(identity)
     ).to.eql(
       <span class="hljs-number">15</span>
     );
-
     next();
   });
-  it(<span class="hljs-string">'ピタゴラス数を計算する'</span>, (next) =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-97">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
-              </div>
-              <pre><code class="lang-haskell"><span class="hljs-title">squareCont</span> x = <span class="hljs-type">Cont</span> (\k -&gt; k (x * x))
-<span class="hljs-title">addCont</span> x y = <span class="hljs-type">Cont</span> (\k -&gt; k (x + y))
-<span class="hljs-title">pythagoras2</span> :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>
-<span class="hljs-title">pythagoras2</span> n m = <span class="hljs-keyword">do</span>
-    x &lt;- squareCont n
-    y &lt;- squareCont m
-    result &lt;- addCont x y
-    return result
-$ ghci cps.hs 
-*<span class="hljs-type">Main</span>&gt; print =: runCont (pythagoras2 <span class="hljs-number">2</span> <span class="hljs-number">3</span>)
-<span class="hljs-number">13</span>
-</code></pre>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> addCont = (x,y) =&gt; {
-      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-        <span class="hljs-keyword">return</span> k(x + y);
-      }); 
-    };</pre></div></div>
+});</pre></div></div>
             
         </li>
         
@@ -3280,64 +3263,6 @@ $ ghci cps.hs
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-98">&#182;</a>
-              </div>
-              <pre><code class="lang-haskell">*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> { m :: <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>; m = return <span class="hljs-number">3</span> }
-*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> { f :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>; f x = <span class="hljs-type">Cont</span> (square x) }
-*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> result = m &gt;&gt;= f
-*<span class="hljs-type">Main</span>&gt; print =: runCont result
-<span class="hljs-number">9</span>
-</code></pre>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> squareCont = (n) =&gt; {
-      <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-        <span class="hljs-keyword">return</span> k(n * n);
-      }); 
-    };
-    expect(
-      squareCont(<span class="hljs-number">2</span>)(identity)
-    ).to.eql(
-      <span class="hljs-number">4</span>
-    );
-    <span class="hljs-keyword">var</span> m = Cont.unit((k) =&gt; {
-      <span class="hljs-keyword">return</span> k(<span class="hljs-number">3</span>);
-    });
-    expect(
-      Cont.flatMap(m)((k) =&gt; {
-        <span class="hljs-keyword">return</span> squareCont(k);
-      })(identity)
-    ).to.eql(
-      <span class="hljs-number">9</span>
-    );
-    <span class="hljs-keyword">var</span> pythagoras2 = (n,m) =&gt; {
-      <span class="hljs-keyword">return</span> Cont.flatMap(squareCont(n))((x) =&gt; {
-        <span class="hljs-keyword">return</span> Cont.flatMap(squareCont(m))((y) =&gt; {
-          <span class="hljs-keyword">return</span> Cont.flatMap(addCont(x,y))((answer) =&gt; {
-            <span class="hljs-keyword">return</span> Cont.unit((k) =&gt; {
-              <span class="hljs-keyword">return</span> k(answer);
-            });
-          });
-        });
-      });
-    };
-    expect(
-      pythagoras2(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)(identity)
-    ).to.eql(
-      <span class="hljs-number">13</span>
-    );
-    next();
-  });
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-99">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <p><a href="index.html">目次に戻る</a> </p>
 

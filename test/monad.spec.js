@@ -1928,19 +1928,22 @@ describe("STモナドをテストする",() => {
 // ~~~
 
 var Cont = {
-  unit: (k) => {  // k:: a -> r
-    return (a) => {
+  // ~~~haskell
+  // return a       = Cont $ \k -> k a
+  // ~~~
+  unit: (a) => {
+    return (k) => {
       return k(a);
     };
   },
   flatMap: (m) => {
     return (f) => { // f:: a -> Cont r a
       expect(f).to.a('function');
-      return Cont.unit((k) => {
+      return (k) => {
         return m((a) => {
           return f(a)(k);
         });
-      });
+      };
     };
   },
   // ~~~haskell
@@ -1976,12 +1979,10 @@ describe("Contモナドをテストする",() => {
     // square :: Int -> ((Int -> r) -> r)
     // square x = \k -> k (x * x)
     // ~~~
-    var squareCPS = (n) => {
-      return (k) => {
-        return k(n * n);
-      }; 
+    var square = (n) => {
+      return n * n;
     };
-    var square3 = Cont.unit(squareCPS(3));
+    var square3 = Cont.unit(square(3)); 
     expect(
       square3(identity)
     ).to.eql(
@@ -1992,9 +1993,10 @@ describe("Contモナドをテストする",() => {
   // **Cont.flatMap**で算術演算を組み合わせる例
   it('Cont.flatMapで算術演算を組み合わせる例', (next) => {
     var addCPS = (n,m) => {
-      return Cont.unit((k) => {
-        return k(n + m);
-      }); 
+      var add = (n,m) => {
+        return n + m;
+      };
+      return Cont.unit(add(n,m)); 
     };
     expect(
       addCPS(2,3)(identity)
@@ -2002,93 +2004,28 @@ describe("Contモナドをテストする",() => {
       5
     );
     var multiplyCPS = (n,m) => {
-      return Cont.unit((k) => {
-        return k(n * m);
-      }); 
+      var multiply = (n,m) => {
+        return n * m;
+      };
+      return Cont.unit(multiply(n,m)); 
     };
     var subtractCPS = (n,m) => {
-      return Cont.unit((k) => {
-        return k(n - m);
-      });
+      var subtract = (n,m) => {
+        return n - m;
+      };
+      return Cont.unit(subtract(n,m)); 
     };
     /* ((2 + 3) * 4) - 5 = 15 */
     expect(
       Cont.flatMap(addCPS(2,3))((addResult) => {
         return Cont.flatMap(multiplyCPS(addResult,4))((multiplyResult) => {
           return Cont.flatMap(subtractCPS(multiplyResult,5))((result) => {
-            return Cont.unit((k) => {
-              return k(result);
-            });
+            return Cont.unit(result);
           });
         });
       })(identity)
     ).to.eql(
       15
-    );
-
-    next();
-  });
-  it('ピタゴラス数を計算する', (next) => {
-    // ~~~haskell
-    // squareCont x = Cont (\k -> k (x * x))
-    // addCont x y = Cont (\k -> k (x + y))
-    // pythagoras2 :: Int -> Int -> Cont r Int
-    // pythagoras2 n m = do
-    //     x <- squareCont n
-    //     y <- squareCont m
-    //     result <- addCont x y
-    //     return result
-    // $ ghci cps.hs 
-    // *Main> print =: runCont (pythagoras2 2 3)
-    // 13
-    // ~~~
-    var addCont = (x,y) => {
-      return Cont.unit((k) => {
-        return k(x + y);
-      }); 
-    };
-    // ~~~haskell
-    // *Main> let { m :: Cont r Int; m = return 3 }
-    // *Main> let { f :: Int -> Cont r Int; f x = Cont (square x) }
-    // *Main> let result = m >>= f
-    // *Main> print =: runCont result
-    // 9 
-    // ~~~
-    var squareCont = (n) => {
-      return Cont.unit((k) => {
-        return k(n * n);
-      }); 
-    };
-    expect(
-      squareCont(2)(identity)
-    ).to.eql(
-      4
-    );
-    var m = Cont.unit((k) => {
-      return k(3);
-    });
-    expect(
-      Cont.flatMap(m)((k) => {
-        return squareCont(k);
-      })(identity)
-    ).to.eql(
-      9
-    );
-    var pythagoras2 = (n,m) => {
-      return Cont.flatMap(squareCont(n))((x) => {
-        return Cont.flatMap(squareCont(m))((y) => {
-          return Cont.flatMap(addCont(x,y))((answer) => {
-            return Cont.unit((k) => {
-              return k(answer);
-            });
-          });
-        });
-      });
-    };
-    expect(
-      pythagoras2(2,3)(identity)
-    ).to.eql(
-      13
     );
     next();
   });

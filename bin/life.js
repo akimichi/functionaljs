@@ -50,34 +50,63 @@ var isVacant = (board) => {
   };
 };
 
-var neighbors = (position) => {
-  var wrap = (position) => {
-    return position.match({
-      empty: (_) => {
-        return Pair.empty();
-      },
-      cons: (x,y) => {
-        return Pair.cons((x-1) % width + 1,
-                         (y-1) % height + 1);
-      }
-    });
-  };
+var wrap = (position) => {
   return position.match({
     empty: (_) => {
-      return List.empty();
+      return Pair.empty();
     },
     cons: (x,y) => {
-      return List.map(List.fromArray([Pair.cons(x-1,y-1),
-                                      Pair.cons(x,y-1),
-                                      Pair.cons(x+1,y-1),
-                                      Pair.cons(x-1,y),
-                                      Pair.cons(x+1,y),
-                                      Pair.cons(x-1,y+1),
-                                      Pair.cons(x,y+1),
-                                      Pair.cons(x+1,y+1)]))(wrap);
+      return Pair.cons(((x-1) % width) + 1,
+                       ((y-1) % height) + 1);
     }
   });
 };
+
+expect(
+  PP.print(wrap(Pair.cons(1,1)))
+).to.eql(
+  "(1,1)"
+);
+expect(
+  PP.print(wrap(Pair.cons(10,10)))
+).to.eql(
+  "(10,10)"
+);
+
+var neighbors = (position) => {
+  var x =  Pair.left(position);
+  var y =  Pair.right(position);
+  return List.map(List.fromArray([Pair.cons(x-1,y-1),
+                                  Pair.cons(x,y-1),
+                                  Pair.cons(x+1,y-1),
+                                  Pair.cons(x-1,y),
+                                  Pair.cons(x+1,y),
+                                  Pair.cons(x-1,y+1),
+                                  Pair.cons(x,y+1),
+                                  Pair.cons(x+1,y+1)]))(wrap);
+};
+
+expect(
+  PP.print(neighbors(Pair.cons(1,1)))
+).to.eql(
+  "[(0,0),(1,0),(2,0),(0,1),(2,1),(0,2),(1,2),(2,2),nil]"
+);
+expect(
+  PP.print(neighbors(Pair.cons(10,10)))
+).to.eql(
+  "[(9,9),(10,9),(1,9),(9,10),(1,10),(9,1),(10,1),(1,1),nil]"
+);
+expect(
+  PP.print(neighbors(Pair.cons(10,8)))
+).to.eql(
+  "[(9,7),(10,7),(1,7),(9,8),(1,8),(9,9),(10,9),(1,9),nil]"
+);
+
+// expect(
+//   PP.print(neighbors(Pair.cons(1,8)))
+// ).to.eql(
+//   "[(9,7),(10,7),(1,7),(9,8),(1,8),(9,9),(10,9),(1,9),nil]"
+// );
 
 var liveNeighbors = (board) => {
   return (position) => {
@@ -88,6 +117,17 @@ var liveNeighbors = (board) => {
     );
   };
 };
+
+expect(
+  liveNeighbors(List.fromArray([Pair.cons(10,9),Pair.cons(10,8),Pair.cons(10,7)]))(Pair.cons(9,8))
+).to.eql(
+  3
+);
+// expect(
+//   liveNeighbors(List.fromArray([Pair.cons(10,9),Pair.cons(10,8),Pair.cons(10,7)]))(Pair.cons(1,8))
+// ).to.eql(
+//   -1
+// );
 
 // survivors :: Board -> [Pos]
 // survivors board = [pos | pos <- board, elem (liveNeighbors board pos) [2,3]]
@@ -110,6 +150,16 @@ expect(
 ).to.eql(
   "[(4,3),(3,4),(4,4),nil]"
 );
+expect(
+  PP.print(survivors(List.fromArray([Pair.cons(10,9),Pair.cons(10,8),Pair.cons(10,7)])))
+).to.eql(
+  "[(10,8),nil]"
+);
+expect(
+  PP.print(survivors(List.fromArray([Pair.cons(9,9),Pair.cons(10,9),Pair.cons(1,9)])))
+).to.eql(
+  "[(10,9),nil]"
+);
 
 // births :: Board -> [Pos]
 // births board = [(x,y) | x <- [1..width],
@@ -124,16 +174,40 @@ var births = (board) => {
       return List.cons(n, listFromNtoM(n+1,m));
     }
   };
-  return List.flatMap(listFromNtoM(1,width))((x) => {
+  var wholeBoard =  List.flatMap(listFromNtoM(1,width))((x) => {
     return List.flatMap(listFromNtoM(1,height))((y) => {
-      var cell = Pair.cons(x,y);
-      if((isVacant(board)(cell) === true) && (liveNeighbors(board)(cell) === 3)){
-        return List.unit(cell);
-      } else {
-        return List.empty();
-      }
+      var position = Pair.cons(x,y);
+      return List.unit(position);
     });
   });
+  // expect(
+  //   PP.print(board)
+  // ).to.eql(
+  //   "[(4,3),(3,4),(4,4),nil]"
+  // );
+  // expect(
+  //   PP.print(wholeBoard)
+  // ).to.eql(
+  //   "[(4,3),(3,4),(4,4),nil]"
+  // );
+  return List.filter(wholeBoard)((position) => {
+    // if((isVacant(board)(position) === true) && (liveNeighbors(board)(position) === 3)){
+    if((isAlive(board)(position) === false) && (liveNeighbors(board)(position) === 3)){
+      return true; 
+    } else {
+      return false;
+    }
+  });
+  // return List.flatMap(listFromNtoM(1,width))((x) => {
+  //   return List.flatMap(listFromNtoM(1,height))((y) => {
+  //     var cell = Pair.cons(x,y);
+  //     if((isVacant(board)(cell) === true) && (liveNeighbors(board)(cell) === 3)){
+  //       return List.unit(cell);
+  //     } else {
+  //       return List.empty();
+  //     }
+  //   });
+  // });
 };
 
 expect(
@@ -141,6 +215,17 @@ expect(
 ).to.eql(
   "[(3,2),(5,3),nil]"
 );
+
+expect(
+  PP.print(births(List.fromArray([Pair.cons(9,9),Pair.cons(10,9),Pair.cons(1,9)])))
+).to.eql(
+  "[(10,8),(10,10),nil]"
+);
+// expect(
+//   PP.print(births(List.fromArray([Pair.cons(10,10),Pair.cons(10,9),Pair.cons(10,8)])))
+// ).to.eql(
+//   "[(3,2),(5,3),nil]"
+// );
 
 var nextGen = (board) => {
   return List.append(survivors(board))(births(board));
@@ -151,6 +236,15 @@ expect(
 ).to.eql(
   "[(4,3),(3,4),(4,4),(3,2),(5,3),nil]"
 );
+// expect(
+//   PP.print(nextGen(List.fromArray([Pair.cons(10,10),
+//                              Pair.cons(9,10),
+//                              Pair.cons(10,9),
+//                              Pair.cons(9,9)])))
+// ).to.eql(
+//   "[(4,3),(3,4),(4,4),(3,2),(5,3),nil]"
+// );
+
 // ## IOアクション
 
 // ### writeAt
@@ -171,9 +265,11 @@ var goto = (position) => {
 
 // ### showCells
 var showCells = (board) => {
-  return IO.seqs(List.flatMap(board)((position) => {
-    return List.unit(writeAt(position)(List.unit("O")));
-  }));
+  return () => {
+    return IO.seqs(List.flatMap(board)((position) => {
+      return List.unit(writeAt(position)(List.unit("O")));
+    }));
+  };
 };
 
 // ### 画面を消去するアクション
@@ -188,12 +284,14 @@ var cls = () => {
 //                 wait 50000000
 //                 life (nextgen board)
 var life = (board) => {
-  return IO.flatMap(cls())((_) => {
-    showCells(board);
-    return life(nextGen(board));
-    // return IO.flatMap(showCells(board))((_) => {
-    //   return life(nextGen(board));
-    // });
+  // return IO.flatMap(cls)((_) => {
+  return IO.flatMap(IO.run(cls))((_) => {
+    // showCells(board);
+    // return life(nextGen(board));
+    return IO.flatMap(showCells(board))((action) => {
+      IO.run(action);
+      return life(nextGen(board));
+    });
   });
   // return IO.seqs(List.cons(cls(),
   //                          List.cons(life(nextGen(board)),

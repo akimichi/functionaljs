@@ -380,6 +380,52 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         }
       });
     }
+  },
+  Cont: {
+    unit: (k) =&gt; {  <span class="hljs-comment">// k:: a -&gt; r</span>
+      <span class="hljs-keyword">return</span> (a) =&gt; {
+        <span class="hljs-keyword">return</span> k(a);
+      };
+    },
+    flatMap: (m) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; Cont r a</span>
+        expect(f).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> self.unit((k) =&gt; {
+          <span class="hljs-keyword">return</span> m((a) =&gt; {
+            <span class="hljs-keyword">return</span> f(a)(k);
+          });
+        });
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span>
+  callCC :: ((a -&gt; m a) -&gt; m a) -&gt; m a
+<span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">MonadCont</span> <span class="hljs-container">(<span class="hljs-type">Cont</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span>
+  callCC f = <span class="hljs-type">Cont</span> $ \k -&gt; runCont (f (\a -&gt; <span class="hljs-type">Cont</span> $ \_ -&gt; k a)) k
+  <span class="hljs-comment">-- i.e.  callCC f = \k -&gt; ((f (\a -&gt; \_ -&gt; k a)) k)</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    callCC: (f) =&gt; {
+      <span class="hljs-keyword">return</span> (k) =&gt;{ 
+        <span class="hljs-keyword">return</span> f((a) =&gt; {
+          <span class="hljs-keyword">return</span> (_) =&gt; {
+            <span class="hljs-keyword">return</span> k(a);
+          }; 
+        })(k);
+      };
+    }
   }
 };</pre></div></div>
             

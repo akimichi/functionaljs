@@ -46,9 +46,11 @@
 
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
 <span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/list'</span>);
+<span class="hljs-keyword">var</span> Pair = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pair'</span>);
+<span class="hljs-keyword">var</span> PP = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pprinter'</span>);
 
 describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
-  it(<span class="hljs-string">"'cons'"</span>, (next) =&gt; {
+  it(<span class="hljs-string">"List#cons"</span>, (next) =&gt; {
     <span class="hljs-keyword">var</span> data = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty()));
     expect(
       List.head(data)
@@ -103,7 +105,29 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
       next();
     });
   });
-});</pre></div></div>
+  describe(<span class="hljs-string">"リストを作る"</span>, () =&gt; {
+    it(<span class="hljs-string">"fromArray"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> alist = List.fromArray([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]);
+      expect(
+        List.head(alist)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"List#appendでリストを連結する"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> alist = List.fromArray([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]);
+      <span class="hljs-keyword">var</span> blist = List.fromArray([<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>]);
+      expect(
+        PP.print(List.append(alist)(blist))
+      ).to.eql(
+        <span class="hljs-string">"[1,2,3,4,5,6,nil]"</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">"List#flatMap"</span>, () =&gt; {
+    it(<span class="hljs-string">"Pairのリスト"</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
@@ -113,6 +137,106 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>alist = [(1,2)]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> alist = List.fromArray([Pair.cons(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)]);
+      expect(
+        PP.print(List.flatMap(alist)((pair) =&gt; {
+          <span class="hljs-keyword">return</span> List.unit(pair); 
+        }))
+      ).to.eql(
+        <span class="hljs-string">"[(1,2),nil]"</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">"リストを操作する"</span>, () =&gt; {
+    it(<span class="hljs-string">"List#filter"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>alist = [(1,2)]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> alist = List.fromArray([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>]);
+      expect(
+        PP.print(List.filter(alist)((item) =&gt; {
+          <span class="hljs-keyword">return</span> (item % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>; 
+        }))
+      ).to.eql(
+        <span class="hljs-string">"[2,nil]"</span>
+      );
+      next();
+    });
+  });
+  describe(<span class="hljs-string">"リストを走査する"</span>, () =&gt; {
+    it(<span class="hljs-string">"List#map"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> even = (n) =&gt; {
+        <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
+      };
+      expect(
+        List.toArray(List.map(List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty())))(even))
+      ).to.eql(
+        [<span class="hljs-literal">false</span>,<span class="hljs-literal">true</span>]
+      );
+      next();
+    });
+    it(<span class="hljs-string">"List#any"</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> even = (n) =&gt; {
+        <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
+      };
+      expect(
+        List.any(List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty())))(even)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"List#elem"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>alist = [(1,2)]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> alist = List.cons(<span class="hljs-number">1</span>,List.cons(<span class="hljs-number">2</span>,List.empty()));
+      expect(
+        List.elem(alist)(<span class="hljs-number">1</span>)
+      ).to.eql(
+        <span class="hljs-literal">true</span>
+      );
+      next();
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>describe(“listのテスト”, function() {
   var toArray = list.toArray.bind(list);
@@ -127,11 +251,11 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-3">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>  var fixtures = {
     ints: list.fromArray([0,1,2,3])
@@ -142,11 +266,11 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-4">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>  describe(“リストを作る”, () =&gt; {
     it(“fromArray”, (next) =&gt; {
@@ -223,47 +347,6 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
   //     next();
   //   });
   // });
-  // it(“‘cons’ should construct a list object”, function(next) {
-  //   var list = <strong>.list.cons.bind(</strong>)(0)(<strong>.list.empty);
-  //   expect(
-  //     list.head
-  //   ).to.eql(
-  //     0
-  //   );
-  //   expect(
-  //     list.tail
-  //   ).to.eql(
-  //     </strong>.list.empty
-  //   );
-  //   next();
-  // });
-  // it(“‘list#head’ should return the head of a list”, function(next) {
-  //   var list = <strong>.list.mkList.bind(</strong>)([0,1,2,3]);
-  //   expect(
-  //     list.head
-  //   ).to.eql(
-  //     0
-  //   );
-  //   next();
-  // });
-  // it(“‘list#tail’ should return the tail of a list”, function(next) {
-  //   var list = <strong>.list.mkList.bind(</strong>)([0,1,2,3]);
-  //   expect(
-  //     <strong>.list.tail.bind(</strong>)(list).head
-  //   ).to.eql(
-  //     1
-  //   );
-  //   next();
-  // });
-  // it(“‘list#toArray’”, (next) =&gt; {
-  //   var list = <strong>.list.mkList.bind(</strong>)([0,1,2,3]);
-  //   expect(
-  //     <strong>.list.toArray.bind(</strong>)(list)
-  //   ).to.eql(
-  //     [0,1,2,3]
-  //   );
-  //   next();
-  // });
   // it(“‘list#last’”, (next) =&gt; {
   //   var list = <strong>.list.mkList.bind(</strong>)([0,1,2,3]);
   //   expect(
@@ -298,11 +381,11 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-5">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>  // it(“‘list#concat’”, function(next) {
   //   var list1 = <strong>.list.mkList.bind(</strong>)([0,1]);
@@ -349,11 +432,11 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-6">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>  //   next();
   // });
@@ -367,42 +450,7 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
   // // m1.flatMap { x =&gt;  m2.map { y =&gt;
   // //                             unit (x+y) }}
   // // ~</del>
-  // it(“‘list#flatMap’”, function(next) {
-  //   /<em>
-  //   scala&gt; val nestedNumbers = List(List(1, 2), List(3, 4))
-  //   scala&gt; nestedNumbers.flatMap(x =&gt; x.map(_ </em> 2))
-  //   res0: List[Int] = List(2, 4, 6, 8)
-  //    <em>/
-  //   var List = <strong>.list.mkList.bind(</strong>);
-  //   var flatMap = <strong>.list.flatMap.bind(</strong>);
-  //   var map = <strong>.list.map.bind(</strong>);
-  //   var nestedNumbers = List([List([1, 2]), List([3, 4])]);
-  //   var toArray = <strong>.list.toArray.bind(</strong>);
-  //   var flattened = flatMap(nestedNumbers)(function(x){
-  //     return map(x)(function(n){
-  //       return n </em> 2;
-  //     });
-  //   });
-  //   expect(
-  //     toArray(flattened)
-  //   ).to.eql(
-  //     [2,4,6,8]
-  //   );
-  //   next();
-  // });</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>  // it(“‘list#map’”, function(next) {
+  // it(“‘list#map’”, function(next) {
   //   var list = <strong>.list.mkList.bind(</strong>)([0,1,2,3]);
   //   var result = <strong>.list.map.bind(</strong>)(list)(function(item){
   //     return item + 10;
@@ -718,44 +766,6 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
   //   );
   //   next();
   // });
-  // describe(“‘list#append’”, () =&gt; {
-  //   var listX = mkList([0,2,4]);
-  //   var listY = mkList([1,3,5]);
-  //   it(“append(xs)(ys)”, (next) =&gt; {
-  //     var appended = <strong>.list.append.call(</strong>,
-  //                                        listX)(listY);
-  //     expect(
-  //       <strong>.list.toArray.call(</strong>,appended)
-  //     ).to.eql(
-  //       [ 0,2,4,1,3,5]
-  //     );
-  //     next();
-  //   });
-  //   it(“append(xs)(empty) == xs”, (next) =&gt; {
-  //     var appended = <strong>.list.append.call(</strong>,listX)(empty);
-  //     expect(
-  //       <strong>.list.toArray.call(</strong>,appended)
-  //     ).to.eql(
-  //       [ 0, 2, 4 ]
-  //     );
-  //     next();
-  //   });
-  //   it(“append(empty)(xs) == xs”, (next) =&gt; {
-  //     var appended = <strong>.list.append.call(</strong>,empty)(listX);
-  //     expect(
-  //       <strong>.list.toArray.call(</strong>,appended)
-  //     ).to.eql(
-  //       [ 0, 2, 4 ]
-  //     );
-  //     next();
-  //   });
-  //   it(“append([0])([1]) == [0,1]”, (next) =&gt; {
-  //     expect(
-  //       <strong>.list.append.call(</strong>,mkList([0]))(mkList([1])).isEqual(mkList([0,1]))
-  //     ).to.ok();
-  //     next();
-  //   });
-  // });
   // it(“‘list#merge’”, function(next) {
   //   var listX = mkList([0,2,4]);
   //   var listY = mkList([1,3,5]);
@@ -830,11 +840,11 @@ describe(<span class="hljs-string">"Listのテスト"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>  //   //  fibonacci :: [Integer]
   //   //  fibonacci = unfoldr ([a,b] -&gt; Just(a+b,[b,b+a])) [0,1]

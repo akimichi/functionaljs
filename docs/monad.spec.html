@@ -2529,9 +2529,6 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         <span class="hljs-keyword">return</span> instanceB;
       });
     };
-  },
-  seqs: (alist) =&gt; {
-    <span class="hljs-keyword">return</span> List.foldr(alist)(List.empty())(IO.done());
   },</pre></div></div>
             
         </li>
@@ -2542,6 +2539,80 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell"><span class="hljs-title">sequence_</span>        :: [<span class="hljs-type">IO</span> ()] -&gt; <span class="hljs-type">IO</span> ()
+<span class="hljs-title">sequence_</span> []     =  return ()
+<span class="hljs-title">sequence_</span> (a:<span class="hljs-keyword">as</span>) =  <span class="hljs-keyword">do</span> a
+                       sequence <span class="hljs-keyword">as</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  seqs: (alist) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> alist.match({
+      empty: () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>return self.unit(null);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> self.done();
+      },
+      cons: (head, tail) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(head)((_) =&gt; {
+          <span class="hljs-keyword">return</span> self.seqs(tail); 
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>self.run(head);
+return self.seqs(tail); </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      }
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>return List.foldr(alist)(List.empty())(IO.done());</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p><strong>IO#putc</strong></p>
 
@@ -2558,11 +2629,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-75">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p><strong>IO#puts</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -2585,11 +2656,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-76">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p><strong>IO#getc</strong></p>
 
@@ -2609,11 +2680,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-77">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <h3 id="io-">IOモナドをテストする</h3>
 
@@ -2624,11 +2695,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-78">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p>IOモナドで参照透過性を確保する</p>
 
@@ -2639,11 +2710,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-79">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p>本文では割愛しましたが、IOモナドが入出力に対して参照透過性を確保していることを単体テストで示します。</p>
 
@@ -2704,11 +2775,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-80">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <h2 id="-section-id-st_monad-st-section-"><section id='st_monad'>STモナド</section></h2>
 <h3 id="st-">STモナドの定義</h3>
@@ -2736,11 +2807,6 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
       <span class="hljs-keyword">return</span> Pair.cons(value,state);
     };
   },
-  app: (st) =&gt; {
-    <span class="hljs-keyword">return</span> (state) =&gt; {
-      <span class="hljs-keyword">return</span> st(state);
-    };
-  },
   flatMap: (instanceM) =&gt; {
     <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: ST a</span>
       expect(f).to.a(<span class="hljs-string">'function'</span>);
@@ -2758,11 +2824,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-81">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <pre><code class="lang-haskell">(&lt;*&gt;) :: <span class="hljs-type">ST</span>(a -&gt; b) -&gt; <span class="hljs-type">ST</span> a -&gt; <span class="hljs-type">ST</span> b
 <span class="hljs-title">stf</span> &lt;*&gt; stx = <span class="hljs-type">S</span>(\s -&gt;
@@ -2773,7 +2839,12 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  fresh: (state) =&gt; {
+            <div class="content"><div class='highlight'><pre>  app: (st) =&gt; {
+    <span class="hljs-keyword">return</span> (state) =&gt; {
+      <span class="hljs-keyword">return</span> st(state);
+    };
+  },
+  fresh: (state) =&gt; {
     <span class="hljs-keyword">return</span> Pair.cons(state, state + <span class="hljs-number">1</span>);
   }
 };</pre></div></div>
@@ -2781,11 +2852,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-82">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <h3 id="st-">STモナドのテスト</h3>
 
@@ -2797,11 +2868,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-83">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">data</span> <span class="hljs-type">Tree</span> a = <span class="hljs-type">Leaf</span> a | <span class="hljs-type">Node</span> <span class="hljs-container">(<span class="hljs-type">Tree</span> <span class="hljs-title">a</span>)</span> <span class="hljs-container">(<span class="hljs-type">Tree</span> <span class="hljs-title">a</span>)</span></span>
 </code></pre>
@@ -2836,11 +2907,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-84">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">fmap</span> f (<span class="hljs-type">Leaf</span> x) = <span class="hljs-type">Leaf</span> (f x)
 <span class="hljs-title">fmap</span> f (<span class="hljs-type">Node</span> left right) = <span class="hljs-type">Node</span> (fmap f left) (fmap f right)
@@ -2888,11 +2959,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-85">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">rlabel</span> :: (<span class="hljs-type">TREE</span>, <span class="hljs-type">STATE</span>) -&gt; (<span class="hljs-type">TREE</span>,<span class="hljs-type">STATE</span>)
 </code></pre>
@@ -2933,11 +3004,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-86">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">mlabel</span> :: <span class="hljs-type">Tree</span> a -&gt; <span class="hljs-type">ST</span>(<span class="hljs-type">Tree</span> <span class="hljs-type">Int</span>)
 <span class="hljs-title">mlabel</span> (<span class="hljs-type">Leaf</span> _) = <span class="hljs-keyword">do</span> n &lt;- fresh
@@ -2987,11 +3058,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-87">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <h2 id="-section-id-cont_monad-cont-section-"><section id='cont_monad'>Contモナド</section></h2>
 <p>Contモナド(継続モナド)は、中断や再開が可能な計算をモデル化します。</p>
@@ -3027,11 +3098,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-88">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span>
   callCC :: ((a -&gt; m a) -&gt; m a) -&gt; m a
@@ -3056,26 +3127,29 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-89">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <h3 id="cont-">Contモナドのテスト</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Contモナドをテストする"</span>,() =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Contモナドをテストする"</span>,() =&gt; {
+  <span class="hljs-keyword">var</span> identity = (x) =&gt; {
+    <span class="hljs-keyword">return</span> x;
+  };</pre></div></div>
             
         </li>
         
         
-        <li id="section-90">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <pre><code class="lang-haskell">*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> s3 = <span class="hljs-type">Cont</span> (square <span class="hljs-number">3</span>)
 *<span class="hljs-type">Main</span>&gt; print =: runCont s3
@@ -3084,19 +3158,16 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> identity = (x) =&gt; {
-    <span class="hljs-keyword">return</span> x;
-  };
-  it(<span class="hljs-string">'square'</span>, (next) =&gt; {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">'square'</span>, (next) =&gt; {</pre></div></div>
             
         </li>
         
         
-        <li id="section-91">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">square</span> :: <span class="hljs-type">Int</span> -&gt; ((<span class="hljs-type">Int</span> -&gt; r) -&gt; r)
 <span class="hljs-title">square</span> x = \k -&gt; k (x * x)
@@ -3121,11 +3192,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-92">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p><strong>Cont.flatMap</strong>で算術演算を組み合わせる例</p>
 
@@ -3174,11 +3245,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-93">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">squareCont</span> x = <span class="hljs-type">Cont</span> (\k -&gt; k (x * x))
 <span class="hljs-title">addCont</span> x y = <span class="hljs-type">Cont</span> (\k -&gt; k (x + y))
@@ -3204,11 +3275,11 @@ $ ghci cps.hs
         </li>
         
         
-        <li id="section-94">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <pre><code class="lang-haskell">*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> { m :: <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>; m = return <span class="hljs-number">3</span> }
 *<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> { f :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Cont</span> r <span class="hljs-type">Int</span>; f x = <span class="hljs-type">Cont</span> (square x) }
@@ -3262,11 +3333,11 @@ $ ghci cps.hs
         </li>
         
         
-        <li id="section-95">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <p><a href="index.html">目次に戻る</a> </p>
 

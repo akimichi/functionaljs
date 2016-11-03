@@ -380,24 +380,7 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         }
       });
     }
-  },
-  Cont: {
-    unit: (k) =&gt; {  <span class="hljs-comment">// k:: a -&gt; r</span>
-      <span class="hljs-keyword">return</span> (a) =&gt; {
-        <span class="hljs-keyword">return</span> k(a);
-      };
-    },
-    flatMap: (m) =&gt; {
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; Cont r a</span>
-        expect(f).to.a(<span class="hljs-string">'function'</span>);
-        <span class="hljs-keyword">return</span> self.unit((k) =&gt; {
-          <span class="hljs-keyword">return</span> m((a) =&gt; {
-            <span class="hljs-keyword">return</span> f(a)(k);
-          });
-        });
-      };
-    },</pre></div></div>
+  },</pre></div></div>
             
         </li>
         
@@ -407,6 +390,43 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Cont</span> r a = <span class="hljs-type">Cont</span> <span class="hljs-container">{ <span class="hljs-title">runCont</span> :: ((<span class="hljs-title">a</span> -&gt; <span class="hljs-title">r</span>) -&gt; <span class="hljs-title">r</span>) }</span> <span class="hljs-comment">-- r は計算全体の最終の型</span></span>
+<span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Cont</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span> 
+    return a       = <span class="hljs-type">Cont</span> $ \k -&gt; k a                       
+    <span class="hljs-comment">-- i.e. return a = \k -&gt; k a </span>
+    (<span class="hljs-type">Cont</span> c) &gt;&gt;= f = <span class="hljs-type">Cont</span> $ \k -&gt; c (\a -&gt; runCont (f a) k) 
+    <span class="hljs-comment">-- i.e. m &gt;&gt;= f = \k -&gt; m (\a -&gt; f a k)</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Cont: {
+    unit: (a) =&gt; {
+      <span class="hljs-keyword">return</span> (k) =&gt; {
+        <span class="hljs-keyword">return</span> k(a);
+      };
+    },
+    flatMap: (m) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; Cont r a</span>
+        expect(f).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> (k) =&gt; {
+          <span class="hljs-keyword">return</span> m((a) =&gt; {
+            <span class="hljs-keyword">return</span> f(a)(k);
+          });
+        };
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span>
   callCC :: ((a -&gt; m a) -&gt; m a) -&gt; m a

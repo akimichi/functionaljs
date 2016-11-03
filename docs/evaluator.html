@@ -173,7 +173,7 @@
       });
     }
   },
-  CPS: {
+  Cont: {
     Exp: {
       <span class="hljs-comment">/* 式のパターンマッチ関数 */</span>
       match : (data, pattern) =&gt; { 
@@ -209,10 +209,7 @@
           <span class="hljs-keyword">return</span> pattern.add(expL, expR);
         };
       }
-    },
-    evaluate: (anExp, environment) =&gt; {
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">return</span> self.Exp.match(anExp,{</pre></div></div>
+    },</pre></div></div>
             
         </li>
         
@@ -222,6 +219,47 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Env: {
+  // 空の環境
+  empty: (variable) =&gt; {
+    return undefined;
+  },
+  /<em> 変数名に対応する値を環境から取りだす </em>/
+  // lookupEnv:: (STRING, ENV) =&gt; M[VALUE]
+  lookup: (identifier, environment) =&gt; {
+    return environment(identifier);
+  },
+  /<em> 環境を拡張する </em>/
+  // extendEnv:: (STRING, VALUE, ENV) =&gt; ENV 
+  extend: (identifier, value, environment) =&gt; {
+    var self = this;
+    expect(identifier).to.a(‘string’);
+    return (queryIdentifier) =&gt; {
+      expect(queryIdentifier).to.a(‘string’);
+      if(identifier === queryIdentifier) {
+        return value;
+      } else {
+        return self.lookup(queryIdentifier, environment);
+      }
+    };
+  }
+},</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    evaluate: (anExp, environment) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self.Exp.match(anExp,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>数値の評価</p>
 
@@ -234,56 +272,56 @@
         </li>
         
         
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>変数の評価</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        variable: (name) =&gt; {           
-          <span class="hljs-keyword">return</span> ID.unit(Env.lookup(name, environment));
-        },
-        <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
-        lambda: (variable, body) =&gt; {   
-          <span class="hljs-keyword">return</span> self.Exp.match(variable,{
-            variable: (name) =&gt; {
-              <span class="hljs-keyword">return</span> ID.unit((actualArg) =&gt; {
-                <span class="hljs-keyword">return</span> self.evaluate(body, 
-                                Env.extend(name, actualArg, environment));
-              });
-            }
-          });
-        },
-        <span class="hljs-comment">/* 関数適用の評価 */</span>
-        app: (lambda, arg) =&gt; {         
-          <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(lambda, environment))((closure) =&gt; {
-            <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(arg, environment))((actualArg) =&gt; {
-              <span class="hljs-keyword">return</span> closure(actualArg); 
-            });
-          });
-        },</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
+              <p>変数の評価</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        variable: (name) =&gt; {           
+          <span class="hljs-keyword">return</span> Cont.unit(Env.lookup(name, environment));
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
               <p>足し算の評価 </p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        add: (expL, expR) =&gt; {          
-          <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(expL, environment))((valueL) =&gt; {
-            <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(expR, environment))((valueR) =&gt; {
-              <span class="hljs-keyword">return</span> ID.unit(valueL + valueR); 
+          <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(expL, environment))((valueL) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(expR, environment))((valueR) =&gt; {
+              <span class="hljs-keyword">return</span> Cont.unit(valueL + valueR); 
+            });
+          });
+        },
+        <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
+        lambda: (variable, body) =&gt; {   
+          <span class="hljs-keyword">return</span> self.Exp.match(variable,{
+            variable: (name) =&gt; {
+              <span class="hljs-keyword">return</span> Cont.unit((actualArg) =&gt; {
+                <span class="hljs-keyword">return</span> self.evaluate(body, 
+                                     Env.extend(name, actualArg, environment));
+              });
+            }
+          });
+        },
+        <span class="hljs-comment">/* 関数適用の評価 */</span>
+        app: (lambda, arg) =&gt; {         
+          <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(lambda, environment))((closure) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(arg, environment))((actualArg) =&gt; {
+              <span class="hljs-keyword">return</span> closure(actualArg); 
             });
           });
         }

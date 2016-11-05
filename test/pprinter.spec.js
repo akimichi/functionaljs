@@ -6,7 +6,7 @@ var Pair = require('../lib/pair.js');
 var List = require('../lib/list.js');
 var PP = require('../lib/pprinter.js');
 
-describe('PretterPrinter', () => {
+describe('PrettyPrinter', () => {
   it("print", (next) => {
     var pair = Pair.cons(1,2);
     expect(

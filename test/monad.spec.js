@@ -2029,5 +2029,55 @@ describe("Contモナドをテストする",() => {
     );
     next();
   });
+  describe("callCCを利用する",() => {
+    it('square using callCC', (next) => {
+      // -- Without callCC
+      // square :: Int -> Cont r Int
+      // square n = return (n ˆ 2)
+      // -- With callCC
+      // squareCCC :: Int -> Cont r Int
+      // squareCCC n = callCC $ \k -> k (n ˆ 2) 
+      var squareCPS = (n) => {
+        return Cont.unit(n * n);
+      };
+      expect(
+        squareCPS(2)(identity)
+      ).to.eql(
+        4
+      );
+      var safeDivideCC = (n,m) => {
+        return Cont.callCC((k) => {
+          if(m !== 0) {
+            return k(n / m);
+          }
+          return k(null);
+        });
+      };
+      expect(
+        safeDivideCC(4,2)(identity)
+      ).to.eql(
+        2
+      );
+      expect(
+        safeDivideCC(4,0)(identity)
+      ).to.be(
+        null
+      );
+      next();
+    });
+    it('even', (next) => {
+      var even = (n) => {
+        return (n % 2) === 0;
+      };
+      expect(
+        even(3 * Cont.callCC((k) => {
+          return k(1 + 2);
+        }))
+      ).to.eql(
+        false
+      );
+      next();
+    });
+  });
 });
 // [目次に戻る](index.html) 

@@ -26,6 +26,8 @@ var fs = require('fs');
 var expect = require('expect.js');
 // Pair型の読込
 var Pair = require('../lib/pair.js');
+// String型の読込
+var String = require('../lib/string.js');
 
 // ## <section id='id_monad'>恒等モナド</section>
 // ### 恒等モナドの定義
@@ -1358,10 +1360,10 @@ describe('Streamモナドのテスト', () => {
 //     m >>= f  = Reader $ \env -> runReader (f (runReader m env)) env
 // ~~~
 var Reader = {
-  unit: (x) => {
+  unit: (a) => {
     return {
       run: (_) => { // runReader :: Reader r a -> r -> a
-        return x;
+        return a;
       }
     };
   },
@@ -1388,10 +1390,10 @@ var Reader = {
   },
   // local f c = Reader $ \e -> runReader c (f e) 
   local: (f) => {
-    return (config) => {
+    return (reader) => {
       return {
         run: (env) => {
-          return config.run(f(env));
+          return reader.run(f(env));
         }
       };
     };
@@ -1400,6 +1402,31 @@ var Reader = {
 
 // ### Readerモナドのテスト
 describe("Readerモナドをテストする",() => {
+  // localのテスト
+  // c.f. "Real World Haskell",p.432
+  it("localのテスト", (next) => {
+    var myName = (step) => {
+      return Reader.flatMap(Reader.ask())((name) => {
+        return Reader.unit(step + ", I am " + name);
+      });
+    };
+    var localExample = Reader.flatMap(myName("First"))((a) => {
+      var appendDy = (env) => {
+        return env + "dy";
+      };
+      return Reader.flatMap(Reader.local(appendDy)(myName("Second")))((b) => {
+        return Reader.flatMap(myName("Third"))((c) => {
+          return Reader.unit(a + ", " + b + ", " + c);
+        });
+      });
+    });
+    expect(
+      localExample.run("Fred")
+    ).to.eql(
+      "First, I am Fred, Second, I am Freddy, Third, I am Fred"
+    );
+    next();
+  });
   it("データベースのコネクションを模倣する", (next) => {
     var config = {
       host: "127.0.0.1",

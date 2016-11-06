@@ -117,6 +117,28 @@ var Maybe = {
       });
     };
   },
+  // -- | Promote a function to a monad.
+  // liftM :: (Monad m) => (a -> b) -> m a -> m b
+  // liftM f m  = do { x <- m1; return (f x) }
+  liftM: (f) => {
+    var self = this;
+    return (ma) => {
+      return self.flatMap(ma)((x) => {
+        return self.unit(f(x));
+      });
+    };
+  },
+  // (<*>) :: (Monad m) => m (a -> b) -> m a -> m b
+  apply: (mf) => {
+    var self = this;
+    return (ma) => {
+      return self.flatMap(mf)((f) => {
+        return self.flatMap(ma)((a) => {
+          return self.unit(f(a));
+        });
+      });
+    }; 
+  },
   get: (maybe) => {
     return Maybe.getOrElse(maybe)(null);
   },
@@ -206,11 +228,59 @@ describe("Maybeモナドをテストする",() => {
     ).to.eql(
       true
     );
+    // ~~~haskell
+    // > fmap (succ) (Just 1)
+    // Just 2
+    // ~~~
     expect(
       Maybe.isEqual(
         Maybe.map(Maybe.just(1))(succ)
       )(
         Maybe.just(2)
+      )
+    ).to.eql(
+      true
+    );
+    next();
+  });
+  // **Maybe#liftM**をテストする
+  it("Maybe#liftMをテストする", (next) => {
+    // ~~~haskell
+    // > liftM (+3) (Just 2)
+    // Just 5
+    // ~~~
+    var add3 = (n) => {
+      return n + 3;
+    };
+    var justTwo = Maybe.just(2);
+    var justFive = Maybe.just(5);
+    expect(
+      Maybe.isEqual(
+        Maybe.liftM(add3)(Maybe.unit(2)) 
+      )(
+        justFive
+      )
+    ).to.eql(
+      true
+    );
+    next();
+  });
+  // **Maybe#apply**をテストする
+  it("Maybe#applyをテストする", (next) => {
+    // ~~~haskell
+    // > Just (+3) <*> (Just 2)
+    // Just 5
+    // ~~~
+    var add3 = (n) => {
+      return n + 3;
+    };
+    var justTwo = Maybe.just(2);
+    var justFive = Maybe.just(5);
+    expect(
+      Maybe.isEqual(
+        Maybe.apply(Maybe.just(add3))(Maybe.unit(2)) 
+      )(
+        justFive
       )
     ).to.eql(
       true

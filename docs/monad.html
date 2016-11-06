@@ -50,6 +50,10 @@
 
 <span class="hljs-built_in">module</span>.exports = {
   ID: {
+    self: () =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self;
+    },
     unit: (value) =&gt; {
       <span class="hljs-keyword">return</span> value;
     },
@@ -59,6 +63,349 @@
         <span class="hljs-keyword">return</span> transform(instance);
       };
     }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h3 id="maybe-">Maybeモナドの定義</h3>
+<pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-type">Maybe</span> <span class="hljs-keyword">where</span></span>
+  <span class="hljs-type">Nothing</span>  &gt;&gt;= _ = <span class="hljs-type">Nothing</span>
+  (<span class="hljs-type">Just</span> x) &gt;&gt;= f = f x
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Maybe: {
+    match: (data, pattern) =&gt; {
+      <span class="hljs-keyword">return</span> data(pattern);
+    },
+    just : (value) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.just(value);
+      };
+    },
+    nothing : (_) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.nothing(_);
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><strong>Maybe#unit</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    unit : (value) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self.just(value);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><strong>Maybe#flatMap</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    flatMap : (maybeInstance) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (transform) =&gt; {
+        expect(transform).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> self.match(maybeInstance,{
+          just: (value) =&gt; {
+            <span class="hljs-keyword">return</span> transform(value);
+          },
+          nothing: (_) =&gt; {
+            <span class="hljs-keyword">return</span> self.nothing(_);
+          }
+        });
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>instance MonadPlus Maybe where
+         mzero                   = Nothing
+         Nothing <code>mplus</code> Nothing = Nothing 
+         Just x  <code>mplus</code> Nothing = Just x<br>         Nothing <code>mplus</code> Just x  = Just x 
+         Just x  <code>mplus</code> Just y  = Just x </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    zero: (_) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self.nothing();
+    },
+    plus: (x) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (y) =&gt; {
+        <span class="hljs-keyword">return</span> self.match(x,{
+          nothing: (_) =&gt; {
+            <span class="hljs-keyword">return</span> self.match(y,{
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> self.nothing();
+              },
+              just: (value) =&gt; {
+                <span class="hljs-keyword">return</span> y; 
+              }
+            });
+          },
+          just: (value) =&gt; {
+            <span class="hljs-keyword">return</span> x; 
+          }
+        });
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><strong>Maybe#map</strong></p>
+<pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Functor</span> <span class="hljs-type">Maybe</span> <span class="hljs-keyword">where</span></span>
+   fmap _ <span class="hljs-type">Nothing</span> = <span class="hljs-type">Nothing</span>
+   fmap f (<span class="hljs-type">Just</span> x) = <span class="hljs-type">Just</span> (f x)
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    map : (maybeInstance) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (transform) =&gt; {
+        expect(transform).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> self.match(maybeInstance,{
+          nothing: (_) =&gt; {
+            <span class="hljs-keyword">return</span> self.nothing(_);
+          },
+          just: (value) =&gt; {
+            <span class="hljs-keyword">return</span> self.just(transform(value));
+          }
+        });
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>– | Promote a function to a monad.
+liftM :: (Monad m) =&gt; (a1 -&gt; r) -&gt; m a1 -&gt; m r
+liftM   :: (Monad m) =&gt; (a1 -&gt; r) -&gt; m a1 -&gt; m r
+liftM f m1              = do { x1 &lt;- m1; return (f x1) }</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    liftM: (f) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (ma) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(ma)((x) =&gt; {
+          <span class="hljs-keyword">return</span> self.unit(f(x));
+        });
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>(&lt;*&gt;) :: (Monad m) =&gt; m (a -&gt; b) -&gt; m a -&gt; m b</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    apply: (mf) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (ma) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(mf)((f) =&gt; {
+          <span class="hljs-keyword">return</span> self.flatMap(ma)((a) =&gt; {
+            <span class="hljs-keyword">return</span> self.unit(f(a));
+          });
+        });
+      }; 
+    },
+    get: (maybe) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self.getOrElse(maybe)(<span class="hljs-literal">null</span>);
+    },
+    getOrElse: (instance) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (alternate) =&gt; {
+        <span class="hljs-keyword">return</span> self.match(instance,{
+          just: (value) =&gt; {
+            <span class="hljs-keyword">return</span> value;
+          },
+          nothing: (_) =&gt; {
+            <span class="hljs-keyword">return</span> alternate;
+          }
+        });
+      };
+    },
+    isEqual : (maybeA) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (maybeB) =&gt; {
+        <span class="hljs-keyword">return</span> self.match(maybeA,{
+          just: (valueA) =&gt; {
+            <span class="hljs-keyword">return</span> self.match(maybeB,{
+              just: (valueB) =&gt; {
+                <span class="hljs-keyword">return</span> (valueA === valueB);
+              },
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              }
+            });
+          },
+          nothing: (_) =&gt; {
+            <span class="hljs-keyword">return</span> self.match(maybeB,{
+              just: (_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+              },
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+              }
+            });
+          }
+        });
+      };
+    }
+  },
+  Either: {
+    match: (data, pattern) =&gt; {
+      <span class="hljs-keyword">return</span> data.call(data,pattern);
+    },
+    left : (value) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.left(value);
+      };
+    },
+    right : (value) =&gt; {
+      <span class="hljs-keyword">return</span> (pattern) =&gt; {
+        <span class="hljs-keyword">return</span> pattern.right(value);
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Either</span> <span class="hljs-title">a</span> <span class="hljs-title">b</span>)</span> <span class="hljs-keyword">where</span></span>
+  return x = <span class="hljs-type">Right</span> x
+  <span class="hljs-type">Right</span> x &gt;&gt;= f = f x
+  <span class="hljs-type">Left</span> x &gt;&gt;= <span class="hljs-type">Left</span> x
+</code></pre>
+<p><strong>Either#unit</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    unit : (value) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self.right(value);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>Either#flatMap</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    flatMap : (instanceM) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (transform) =&gt; {
+        expect(transform).to.a(<span class="hljs-string">'function'</span>);
+        <span class="hljs-keyword">return</span> self.match(instanceM,{
+          right: (value) =&gt; {
+            <span class="hljs-keyword">return</span> transform(value);
+          },
+          left: (value) =&gt; {
+            <span class="hljs-keyword">return</span> self.left(value);
+          }
+        });
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>Either#map</strong></p>
+<pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Functor</span> <span class="hljs-container">(<span class="hljs-type">Either</span> <span class="hljs-title">a</span>)</span> <span class="hljs-keyword">where</span></span>
+  fmap f (<span class="hljs-type">Right</span> x) = <span class="hljs-type">Right</span> (f x)
+  fmap f (<span class="hljs-type">Left</span> x) = <span class="hljs-type">Left</span> x
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  map: (instanceM) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      <span class="hljs-keyword">return</span> self.match(instanceM,{
+        right: (value) =&gt; {
+          <span class="hljs-keyword">return</span> self.right(transform(value));
+        },
+        left: (value) =&gt; {
+          <span class="hljs-keyword">return</span> self.left(value);
+        }
+      });
+    };
+  }
   },
   IO: {
     <span class="hljs-comment">/* unit:: T =&gt; IO[T] */</span>
@@ -78,11 +425,11 @@
         </li>
         
         
-        <li id="section-2">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p><strong>IO#done</strong>関数</p>
 <blockquote>
@@ -100,11 +447,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p><strong>IO#run</strong>関数</p>
 <blockquote>
@@ -121,11 +468,11 @@
         </li>
         
         
-        <li id="section-4">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p><strong>IO#readFile</strong></p>
 
@@ -143,11 +490,11 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p><strong>IO#println</strong></p>
 
@@ -165,11 +512,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p><strong>IO#writeFile</strong></p>
 
@@ -188,11 +535,11 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p><strong>IO#seq</strong></p>
 
@@ -211,11 +558,11 @@
         </li>
         
         
-        <li id="section-8">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>sequence<em>        :: [IO ()] -&gt; IO ()
 sequence</em> []     =  return ()
@@ -231,11 +578,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>return alist.match({
   empty: () =&gt; {
@@ -264,11 +611,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p><strong>IO#putc</strong></p>
 
@@ -285,11 +632,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><strong>IO#puts</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">putStr</span>                  :: <span class="hljs-type">String</span> -&gt; <span class="hljs-type">IO</span> ()
@@ -307,11 +654,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>return alist.match({
   empty: () =&gt; {
@@ -329,11 +676,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p><strong>IO#getc</strong></p>
 
@@ -352,11 +699,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">getLine</span>     :: <span class="hljs-type">IO</span> <span class="hljs-type">String</span>
 <span class="hljs-title">getLine</span>     =  <span class="hljs-keyword">do</span> c &lt;- getChar
@@ -385,11 +732,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">Cont</span> r a = <span class="hljs-type">Cont</span> <span class="hljs-container">{ <span class="hljs-title">runCont</span> :: ((<span class="hljs-title">a</span> -&gt; <span class="hljs-title">r</span>) -&gt; <span class="hljs-title">r</span>) }</span> <span class="hljs-comment">-- r は計算全体の最終の型</span></span>
 <span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Cont</span> <span class="hljs-title">r</span>)</span> <span class="hljs-keyword">where</span></span> 
@@ -422,11 +769,11 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span>
   callCC :: ((a -&gt; m a) -&gt; m a) -&gt; m a
@@ -438,7 +785,7 @@ seqs :: LIST[IO[()]] =&gt; IO[()]</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    callCC: (f) =&gt; {
-      <span class="hljs-keyword">return</span> (k) =&gt;{ 
+      <span class="hljs-keyword">return</span> (k) =&gt; { 
         <span class="hljs-keyword">return</span> f((a) =&gt; {
           <span class="hljs-keyword">return</span> (_) =&gt; {
             <span class="hljs-keyword">return</span> k(a);

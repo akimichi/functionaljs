@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>monad_transformer.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>monad_transformer.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
+<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+<span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./list.js'</span>);
+<span class="hljs-keyword">var</span> ID = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./monad.js'</span>).ID;
+<span class="hljs-keyword">var</span> Maybe = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./monad.js'</span>).Maybe;
+<span class="hljs-keyword">var</span> Either = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./monad.js'</span>).Either;
+
+<span class="hljs-built_in">module</span>.exports = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="maybet">MaybeT</h2>
+<p>Maybeモナド変換子</p>
+<pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">newtype</span> <span class="hljs-type">MaybeT</span> m a = <span class="hljs-type">MaybeT</span> <span class="hljs-container">{ <span class="hljs-title">runMaybeT</span> :: <span class="hljs-title">m</span> (<span class="hljs-type">Maybe</span> <span class="hljs-title">a</span>) }</span> </span>
+<span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">MaybeT</span> <span class="hljs-title">m</span>)</span> <span class="hljs-keyword">where</span></span>
+  return = <span class="hljs-type">MaybeT</span> . return . <span class="hljs-type">Just</span>
+  x &gt;&gt;= f = <span class="hljs-type">MaybeT</span> $ <span class="hljs-keyword">do</span> maybe_value &lt;- runMaybeT x
+                        <span class="hljs-keyword">case</span> maybe_value <span class="hljs-keyword">of</span>
+                            <span class="hljs-type">Nothing</span> -&gt; return <span class="hljs-type">Nothing</span>
+                            <span class="hljs-type">Just</span> value -&gt; runMaybeT $ f value
+<span class="hljs-class">
+<span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">MaybeT</span> <span class="hljs-title">m</span>)</span> <span class="hljs-keyword">where</span></span>
+  return x = <span class="hljs-type">MaybeT</span> $ return (<span class="hljs-type">Just</span> x)
+  m &gt;&gt;= k  = <span class="hljs-type">MaybeT</span> $ <span class="hljs-keyword">do</span> a &lt;- runMaybeT m
+                         <span class="hljs-keyword">case</span> a <span class="hljs-keyword">of</span>
+                           <span class="hljs-type">Nothing</span> -&gt; return <span class="hljs-type">Nothing</span>
+                           <span class="hljs-type">Just</span> v  -&gt; runMaybeT (k v)
+  fail _   = <span class="hljs-type">MaybeT</span> $ return <span class="hljs-type">Nothing</span>
+<span class="hljs-class">
+<span class="hljs-keyword">instance</span> <span class="hljs-type">MonadTrans</span> <span class="hljs-type">MaybeT</span> <span class="hljs-keyword">where</span></span>
+  lift m = <span class="hljs-type">MaybeT</span> $ m &gt;&gt;= (\x -&gt; return (<span class="hljs-type">Just</span> x))
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  MaybeT: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>run : (m) =&gt; {
+  var self = this;
+  return (a) =&gt; {
+    return m(Maybe.unit(a));
+  };
+},</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    fail : (_) =&gt; {
+      <span class="hljs-keyword">return</span> (Monad) =&gt; {
+        <span class="hljs-keyword">return</span> Monad.unit(Maybe.nothing());
+      };
+    },
+    unit : (x) =&gt; {
+      <span class="hljs-keyword">return</span> (Monad) =&gt; {
+        <span class="hljs-keyword">return</span> Monad.unit(Maybe.unit(x));</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>return Maybe.unit(Monad.unit(x));</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell">(&gt;&gt;=) :: <span class="hljs-type">MaybeT</span> m a -&gt; (a -&gt; <span class="hljs-type">MaybeT</span> m b) -&gt; <span class="hljs-type">MaybeT</span> m b
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    flatMap: (maybeT) =&gt; { <span class="hljs-comment">// MaybeT m a</span>
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; MaybeT m b</span>
+        <span class="hljs-keyword">return</span> (Monad) =&gt; {
+          <span class="hljs-keyword">return</span> Monad.flatMap(maybeT)((maybeInstance) =&gt; {
+            <span class="hljs-keyword">return</span> Maybe.match(maybeInstance,{
+              nothing: (_) =&gt; {
+                <span class="hljs-keyword">return</span> self.unit(Maybe.nothing())(Monad);
+              },
+              just: (v) =&gt; {
+                <span class="hljs-keyword">return</span> f(v);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>return self.unit(Maybe.unit(f(v)))(Monad);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              }
+            });
+          });
+        };
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>instance MonadTrans MaybeT where
+  lift m = MaybeT $ m &gt;&gt;= (\x -&gt; return (Just x))</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    lift: (m) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> m.self().flatMap(m)((x) =&gt; {
+        <span class="hljs-keyword">return</span> self.unit(Maybe.unit(x));
+      });
+    }
+  },
+  ErrorT: {
+    unit: (x) =&gt; {
+      <span class="hljs-keyword">return</span> (Monad) =&gt; {
+        <span class="hljs-keyword">return</span> Monad.unit(Either.unit(x));
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell">(&gt;&gt;=) :: <span class="hljs-type">ErrorT</span> m a -&gt; (a -&gt; <span class="hljs-type">ErrorT</span> m b) -&gt; <span class="hljs-type">ErrorT</span> m b
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    flatMap: (errorT) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (f) =&gt; { <span class="hljs-comment">// f:: a -&gt; MaybeT m b</span>
+        <span class="hljs-keyword">return</span> (Monad) =&gt; {
+          <span class="hljs-keyword">return</span> Monad.flatMap(errorT)((eitherInstance) =&gt; {
+            <span class="hljs-keyword">return</span> Either.match(eitherInstance,{
+              left: (l) =&gt; {
+                <span class="hljs-keyword">return</span> self.unit(Either.left(l))(Monad);
+              },
+              right: (r) =&gt; {
+                <span class="hljs-keyword">return</span> f(r);
+              }
+            });
+          });
+        };
+      };
+    },
+    throwError: (x) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> self.unit(Either.left(x));
+    },
+    catchError: (m) =&gt; {
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> (f) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(m)((eitherInstance) =&gt; {
+          <span class="hljs-keyword">return</span> Either.match(eitherInstance,{
+            left: (l) =&gt; {
+              <span class="hljs-keyword">return</span> f(l); 
+            },
+            right: (r) =&gt; {
+              <span class="hljs-keyword">return</span> self.unit(Either.right(r));
+            }
+          });
+        });
+      };
+    }
+  }
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  <!-- <div id="footer">  目次に戻る。 </div> -->
+  <!-- </div> -->
+</body>
+</html>

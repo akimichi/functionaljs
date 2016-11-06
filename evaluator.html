@@ -173,7 +173,7 @@
       });
     }
   },
-  CPS: {
+  Cont: {
     Exp: {
       <span class="hljs-comment">/* 式のパターンマッチ関数 */</span>
       match : (data, pattern) =&gt; { 
@@ -207,6 +207,12 @@
       add : (expL,expR) =&gt; {        
         <span class="hljs-keyword">return</span> (pattern) =&gt; {
           <span class="hljs-keyword">return</span> pattern.add(expL, expR);
+        };
+      },
+      <span class="hljs-comment">/* callccの式 */</span>
+      callcc: (name, exp) =&gt; {
+        <span class="hljs-keyword">return</span> (pattern) =&gt; {
+          <span class="hljs-keyword">return</span> pattern.callcc(name, exp);
         };
       }
     },
@@ -245,26 +251,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        variable: (name) =&gt; {           
-          <span class="hljs-keyword">return</span> ID.unit(Env.lookup(name, environment));
-        },
-        <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
-        lambda: (variable, body) =&gt; {   
-          <span class="hljs-keyword">return</span> self.Exp.match(variable,{
-            variable: (name) =&gt; {
-              <span class="hljs-keyword">return</span> ID.unit((actualArg) =&gt; {
-                <span class="hljs-keyword">return</span> self.evaluate(body, 
-                                Env.extend(name, actualArg, environment));
-              });
-            }
-          });
-        },
-        <span class="hljs-comment">/* 関数適用の評価 */</span>
-        app: (lambda, arg) =&gt; {         
-          <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(lambda, environment))((closure) =&gt; {
-            <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(arg, environment))((actualArg) =&gt; {
-              <span class="hljs-keyword">return</span> closure(actualArg); 
-            });
-          });
+          <span class="hljs-keyword">return</span> Cont.unit(Env.lookup(name, environment));
         },</pre></div></div>
             
         </li>
@@ -281,13 +268,61 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        add: (expL, expR) =&gt; {          
-          <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(expL, environment))((valueL) =&gt; {
-            <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(expR, environment))((valueR) =&gt; {
-              <span class="hljs-keyword">return</span> ID.unit(valueL + valueR); 
+          <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(expL, environment))((valueL) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(expR, environment))((valueR) =&gt; {
+              <span class="hljs-keyword">return</span> Cont.unit(valueL + valueR); 
             });
           });
-        }
-      });
+        },
+        <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
+        lambda: (variable, body) =&gt; {   
+          <span class="hljs-keyword">return</span> self.Exp.match(variable,{
+            variable: (name) =&gt; {
+              <span class="hljs-keyword">return</span> Cont.unit((actualArg) =&gt; {
+                <span class="hljs-keyword">return</span> self.evaluate(body, 
+                                     Env.extend(name, actualArg, environment));
+              });
+            }
+          });
+        },
+        <span class="hljs-comment">/* 関数適用の評価 */</span>
+        app: (lambda, arg) =&gt; {         
+          <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(lambda, environment))((closure) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(arg, environment))((actualArg) =&gt; {
+              <span class="hljs-keyword">return</span> closure(actualArg); 
+            });
+          });
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>callcc: (name, exp) =&gt; {
+  return Cont.flatMap()((_) =&gt; {</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>  };
+}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      });
     }
   }
 };</pre></div></div>

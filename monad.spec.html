@@ -127,6 +127,21 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
+              <p>String型の読込</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> <span class="hljs-built_in">String</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/string.js'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
               <h2 id="-section-id-id_monad-section-"><section id='id_monad'>恒等モナド</section></h2>
 <h3 id="-">恒等モナドの定義</h3>
 
@@ -137,11 +152,11 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p><strong>ID#unit</strong></p>
 
@@ -155,11 +170,11 @@
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p><strong>ID#flatMap</strong></p>
 
@@ -176,11 +191,11 @@
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <h3 id="-">恒等モナドのテスト</h3>
 
@@ -191,11 +206,11 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p><strong>ID#unit</strong>をテストする</p>
 
@@ -214,11 +229,11 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <h2 id="-section-id-maybe_monad-maybe-section-"><section id='maybe_monad'>Maybeモナド</section></h2>
 <h3 id="maybe-">Maybeモナドの定義</h3>
@@ -247,11 +262,11 @@
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p><strong>Maybe#unit</strong></p>
 
@@ -264,11 +279,11 @@
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p><strong>Maybe#flatMap</strong></p>
 
@@ -291,11 +306,11 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p><strong>Maybe#map</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Functor</span> <span class="hljs-type">Maybe</span> <span class="hljs-keyword">where</span></span>
@@ -317,6 +332,54 @@
         }
       });
     };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>– | Promote a function to a monad.
+liftM :: (Monad m) =&gt; (a -&gt; b) -&gt; m a -&gt; m b
+liftM f m  = do { x &lt;- m1; return (f x) }</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  liftM: (f) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (ma) =&gt; {
+      <span class="hljs-keyword">return</span> self.flatMap(ma)((x) =&gt; {
+        <span class="hljs-keyword">return</span> self.unit(f(x));
+      });
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>(&lt;*&gt;) :: (Monad m) =&gt; m (a -&gt; b) -&gt; m a -&gt; m b</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  apply: (mf) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> (ma) =&gt; {
+      <span class="hljs-keyword">return</span> self.flatMap(mf)((f) =&gt; {
+        <span class="hljs-keyword">return</span> self.flatMap(ma)((a) =&gt; {
+          <span class="hljs-keyword">return</span> self.unit(f(a));
+        });
+      });
+    }; 
   },
   get: (maybe) =&gt; {
     <span class="hljs-keyword">return</span> Maybe.getOrElse(maybe)(<span class="hljs-literal">null</span>);
@@ -364,11 +427,11 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <h3 id="maybe-">Maybeモナドのテスト</h3>
 
@@ -379,11 +442,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p><strong>Maybe#flatMap</strong>をテストする</p>
 
@@ -420,11 +483,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p><strong>Maybe#map</strong>をテストする</p>
 
@@ -436,11 +499,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <pre><code class="lang-haskell">&gt; fmap (+<span class="hljs-number">1</span>) nothing
 <span class="hljs-type">Nothing</span>
@@ -456,8 +519,24 @@
       )
     ).to.eql(
       <span class="hljs-literal">true</span>
-    );
-    expect(
+    );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell">&gt; fmap (succ) (<span class="hljs-type">Just</span> <span class="hljs-number">1</span>)
+<span class="hljs-type">Just</span> <span class="hljs-number">2</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    expect(
       Maybe.isEqual(
         Maybe.map(Maybe.just(<span class="hljs-number">1</span>))(succ)
       )(
@@ -472,11 +551,105 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><strong>Maybe#liftM</strong>をテストする</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"Maybe#liftMをテストする"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell">&gt; liftM (+<span class="hljs-number">3</span>) (<span class="hljs-type">Just</span> <span class="hljs-number">2</span>)
+<span class="hljs-type">Just</span> <span class="hljs-number">5</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> add3 = (n) =&gt; {
+      <span class="hljs-keyword">return</span> n + <span class="hljs-number">3</span>;
+    };
+    <span class="hljs-keyword">var</span> justTwo = Maybe.just(<span class="hljs-number">2</span>);
+    <span class="hljs-keyword">var</span> justFive = Maybe.just(<span class="hljs-number">5</span>);
+    expect(
+      Maybe.isEqual(
+        Maybe.liftM(add3)(Maybe.unit(<span class="hljs-number">2</span>)) 
+      )(
+        justFive
+      )
+    ).to.eql(
+      <span class="hljs-literal">true</span>
+    );
+    next();
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p><strong>Maybe#apply</strong>をテストする</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"Maybe#applyをテストする"</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <pre><code class="lang-haskell">&gt; <span class="hljs-type">Just</span> (+<span class="hljs-number">3</span>) &lt;*&gt; (<span class="hljs-type">Just</span> <span class="hljs-number">2</span>)
+<span class="hljs-type">Just</span> <span class="hljs-number">5</span>
+</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> add3 = (n) =&gt; {
+      <span class="hljs-keyword">return</span> n + <span class="hljs-number">3</span>;
+    };
+    <span class="hljs-keyword">var</span> justTwo = Maybe.just(<span class="hljs-number">2</span>);
+    <span class="hljs-keyword">var</span> justFive = Maybe.just(<span class="hljs-number">5</span>);
+    expect(
+      Maybe.isEqual(
+        Maybe.apply(Maybe.just(add3))(Maybe.unit(<span class="hljs-number">2</span>)) 
+      )(
+        justFive
+      )
+    ).to.eql(
+      <span class="hljs-literal">true</span>
+    );
+    next();
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>add関数でMaybeインスンスを足しあわせる</p>
 
@@ -518,11 +691,11 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <h2 id="-section-id-either_monad-either-section-"><section id='either_monad'>Eitherモナド</section></h2>
 <h3 id="either-">Eitherモナドの定義</h3>
@@ -534,11 +707,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">data</span>  <span class="hljs-type">Either</span> a b  =  <span class="hljs-type">Left</span> a | <span class="hljs-type">Right</span> b</span>
 </code></pre>
@@ -562,11 +735,11 @@
         </li>
         
         
-        <li id="section-22">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Monad</span> <span class="hljs-container">(<span class="hljs-type">Either</span> <span class="hljs-title">a</span> <span class="hljs-title">b</span>)</span> <span class="hljs-keyword">where</span></span>
   return x = <span class="hljs-type">Right</span> x
@@ -584,11 +757,11 @@
         </li>
         
         
-        <li id="section-23">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p><strong>Either#flatMap</strong></p>
 
@@ -611,11 +784,11 @@
         </li>
         
         
-        <li id="section-24">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p><strong>Either#map</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">instance</span> <span class="hljs-type">Functor</span> <span class="hljs-container">(<span class="hljs-type">Either</span> <span class="hljs-title">a</span>)</span> <span class="hljs-keyword">where</span></span>
@@ -642,11 +815,11 @@
         </li>
         
         
-        <li id="section-25">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <h3 id="either-">Eitherモナドのテスト</h3>
 
@@ -657,11 +830,11 @@
         </li>
         
         
-        <li id="section-26">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>数値のときだけ計算が成功するテスト</p>
 
@@ -703,11 +876,11 @@
         </li>
         
         
-        <li id="section-27">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h2 id="-section-id-list_monad-list-section-"><section id='list_monad'>Listモナド</section></h2>
 <h3 id="list-">Listモナドの定義</h3>
@@ -767,11 +940,11 @@
         </li>
         
         
-        <li id="section-28">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p><strong>List#append</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">append</span> [] ys = ys
@@ -797,11 +970,11 @@
         </li>
         
         
-        <li id="section-29">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p><strong>List#concat</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">concat</span> [] = []
@@ -821,11 +994,11 @@
         </li>
         
         
-        <li id="section-30">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p><strong>List#flatten</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">flatten</span> :: [[a]] -&gt; [a]
@@ -841,11 +1014,11 @@
         </li>
         
         
-        <li id="section-31">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p><strong>List#map</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">map</span> [] _ = []
@@ -875,11 +1048,11 @@
         </li>
         
         
-        <li id="section-32">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p><strong>List#flatMap</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">xs</span> &gt;&gt;= f = concat (map f xs)
@@ -905,11 +1078,11 @@
         </li>
         
         
-        <li id="section-33">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p><strong>List#foldr</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">foldr</span> []     z _ = z
@@ -939,11 +1112,11 @@
         </li>
         
         
-        <li id="section-34">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <h3 id="list-">Listモナドのテスト</h3>
 
@@ -954,11 +1127,11 @@
         </li>
         
         
-        <li id="section-35">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p><strong>List#match</strong>でリストをパターンマッチする</p>
 
@@ -992,11 +1165,11 @@
         </li>
         
         
-        <li id="section-36">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p><strong>List#isEmpty</strong>は、リストが空かどうかを判定する</p>
 
@@ -1054,11 +1227,11 @@
         </li>
         
         
-        <li id="section-37">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p><strong>List#concat</strong>で２つのリストを連結する</p>
 
@@ -1099,11 +1272,11 @@
         </li>
         
         
-        <li id="section-38">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p><strong>List#foldr</strong>をテストする</p>
 
@@ -1127,11 +1300,11 @@
         </li>
         
         
-        <li id="section-39">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p><strong>List#map</strong>をテストする</p>
 
@@ -1167,11 +1340,11 @@
         </li>
         
         
-        <li id="section-40">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p><strong>List#flatMap</strong>をテストする</p>
 
@@ -1195,11 +1368,11 @@
         </li>
         
         
-        <li id="section-41">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-type">Prelude</span>&gt; [<span class="hljs-number">1</span>] &gt;&gt;= \x -&gt; [x * <span class="hljs-number">2</span>]
 [<span class="hljs-number">2</span>]
@@ -1222,11 +1395,11 @@
         </li>
         
         
-        <li id="section-42">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-type">Prelude</span>&gt; [] &gt;&gt;= \x -&gt; [x * <span class="hljs-number">2</span>]
 []
@@ -1269,11 +1442,11 @@
         </li>
         
         
-        <li id="section-43">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p><strong>List#toArray</strong>でリストを配列に変換する</p>
 
@@ -1312,11 +1485,11 @@
         </li>
         
         
-        <li id="section-44">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>素数を判定するisPrimeを定義する</p>
 
@@ -1334,11 +1507,11 @@
         </li>
         
         
-        <li id="section-45">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">factors</span> :: <span class="hljs-type">Int</span> -&gt; [<span class="hljs-type">Int</span>]
 <span class="hljs-title">factors</span> n = [x | x &lt;- [<span class="hljs-number">1.</span>.n], n `mod` x == <span class="hljs-number">0</span>]
@@ -1369,11 +1542,11 @@
         </li>
         
         
-        <li id="section-46">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>isPrime関数</p>
 <blockquote>
@@ -1474,11 +1647,11 @@
         </li>
         
         
-        <li id="section-47">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <h2 id="-section-id-stream_monad-stream-section-"><section id='stream_monad'>Streamモナド</section></h2>
 <h3 id="stream-">Streamモナドの定義</h3>
@@ -1493,11 +1666,11 @@
         </li>
         
         
-        <li id="section-48">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p><strong>Stream#unit</strong></p>
 
@@ -1562,11 +1735,11 @@
         </li>
         
         
-        <li id="section-49">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p><strong>Stream#toArray</strong></p>
 
@@ -1590,11 +1763,11 @@
         </li>
         
         
-        <li id="section-50">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p><strong>Stream#map</strong></p>
 
@@ -1617,11 +1790,11 @@
         </li>
         
         
-        <li id="section-51">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p><strong>Stream#append</strong></p>
 
@@ -1645,11 +1818,11 @@
         </li>
         
         
-        <li id="section-52">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p><strong>Stream#concat</strong></p>
 
@@ -1670,11 +1843,11 @@
         </li>
         
         
-        <li id="section-53">
+        <li id="section-61">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p><strong>Stream#flatten</strong></p>
 
@@ -1697,11 +1870,11 @@
         </li>
         
         
-        <li id="section-54">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p><strong>Stream#flatMap</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">flatMap</span> xs f = flatten (map f xs)
@@ -1719,11 +1892,11 @@
         </li>
         
         
-        <li id="section-55">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p><strong>Stream#foldr</strong></p>
 
@@ -1749,11 +1922,11 @@
         </li>
         
         
-        <li id="section-56">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <h3 id="stream-">Streamモナドのテスト</h3>
 
@@ -1934,11 +2107,11 @@
         </li>
         
         
-        <li id="section-57">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>Streamモナドで無限の整数列を作る</p>
 
@@ -2042,11 +2215,11 @@
         </li>
         
         
-        <li id="section-58">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <pre><code class="lang-scala">scala&gt; <span class="hljs-keyword">val</span> nestedNumbers = <span class="hljs-type">List</span>(<span class="hljs-type">List</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), <span class="hljs-type">List</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>))
 scala&gt; nestedNumbers.flatMap(x =&gt; x.map(_ * <span class="hljs-number">2</span>))
@@ -2096,11 +2269,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-59">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <h2 id="-section-id-reader_monad-reader-section-"><section id='reader_monad'>Readerモナド</section></h2>
 <p>  c.f. <a href="http://itpro.nikkeibp.co.jp/article/COLUMN/20090303/325807/?rt=nocnt">グローバル変数の代わりに使えるReaderモナドとWriterモナド</a></p>
@@ -2121,10 +2294,10 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Reader = {
-  unit: (x) =&gt; {
+  unit: (a) =&gt; {
     <span class="hljs-keyword">return</span> {
       run: (_) =&gt; { <span class="hljs-comment">// runReader :: Reader r a -&gt; r -&gt; a</span>
-        <span class="hljs-keyword">return</span> x;
+        <span class="hljs-keyword">return</span> a;
       }
     };
   },
@@ -2141,11 +2314,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-60">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p><strong>ask</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">ask</span> :: <span class="hljs-type">Reader</span> r r
@@ -2165,21 +2338,21 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-61">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>local f c = Reader $ \e -&gt; runReader c (f e) </p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>  local: (f) =&gt; {
-    <span class="hljs-keyword">return</span> (config) =&gt; {
+    <span class="hljs-keyword">return</span> (reader) =&gt; {
       <span class="hljs-keyword">return</span> {
         run: (env) =&gt; {
-          <span class="hljs-keyword">return</span> config.run(f(env));
+          <span class="hljs-keyword">return</span> reader.run(f(env));
         }
       };
     };
@@ -2189,17 +2362,55 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-62">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <h3 id="reader-">Readerモナドのテスト</h3>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Readerモナドをテストする"</span>,() =&gt; {
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Readerモナドをテストする"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>localのテスト
+c.f. “Real World Haskell”,p.432</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"localのテスト"</span>, (next) =&gt; {
+    <span class="hljs-keyword">var</span> myName = (step) =&gt; {
+      <span class="hljs-keyword">return</span> Reader.flatMap(Reader.ask())((name) =&gt; {
+        <span class="hljs-keyword">return</span> Reader.unit(step + <span class="hljs-string">", I am "</span> + name);
+      });
+    };
+    <span class="hljs-keyword">var</span> localExample = Reader.flatMap(myName(<span class="hljs-string">"First"</span>))((a) =&gt; {
+      <span class="hljs-keyword">var</span> appendDy = (env) =&gt; {
+        <span class="hljs-keyword">return</span> env + <span class="hljs-string">"dy"</span>;
+      };
+      <span class="hljs-keyword">return</span> Reader.flatMap(Reader.local(appendDy)(myName(<span class="hljs-string">"Second"</span>)))((b) =&gt; {
+        <span class="hljs-keyword">return</span> Reader.flatMap(myName(<span class="hljs-string">"Third"</span>))((c) =&gt; {
+          <span class="hljs-keyword">return</span> Reader.unit(a + <span class="hljs-string">", "</span> + b + <span class="hljs-string">", "</span> + c);
+        });
+      });
+    });
+    expect(
+      localExample.run(<span class="hljs-string">"Fred"</span>)
+    ).to.eql(
+      <span class="hljs-string">"First, I am Fred, Second, I am Freddy, Third, I am Fred"</span>
+    );
+    next();
+  });
   it(<span class="hljs-string">"データベースのコネクションを模倣する"</span>, (next) =&gt; {
     <span class="hljs-keyword">var</span> config = {
       host: <span class="hljs-string">"127.0.0.1"</span>,
@@ -2220,11 +2431,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-63">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <h2 id="-section-id-writer_monad-writer-section-"><section id='writer_monad'>Writerモナド</section></h2>
 <p>c.f. <a href="http://itpro.nikkeibp.co.jp/article/COLUMN/20090303/325807/?P=3&amp;rt=nocnt">グローバル変数の代わりに使えるReaderモナドとWriterモナド（3/4）</a></p>
@@ -2266,11 +2477,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-64">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">tell</span> :: <span class="hljs-type">Monoid</span> w =&gt; w -&gt; <span class="hljs-type">Writer</span> w ()  <span class="hljs-comment">-- tell関数は、値wをもとにログを作成する</span>
 <span class="hljs-title">tell</span> s = <span class="hljs-type">Writer</span> ((), s)
@@ -2290,11 +2501,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-65">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <h3 id="writer-">Writerモナドのテスト</h3>
 
@@ -2305,11 +2516,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-66">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p>Writerモナドを用いたfactorialの例</p>
 <pre><code class="lang-haskell"><span class="hljs-title">factW</span> :: <span class="hljs-type">Int</span> -&gt; <span class="hljs-type">Writer</span> [<span class="hljs-type">Int</span>] <span class="hljs-type">Int</span>
@@ -2378,11 +2589,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-67">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <h2 id="-section-id-io_monad-io-section-"><section id='io_monad'>IOモナド</section></h2>
 <h3 id="io-">IOモナドの定義</h3>
@@ -2406,11 +2617,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-68">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p><strong>IO#done</strong>関数</p>
 <blockquote>
@@ -2427,11 +2638,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-69">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p><strong>IO#run</strong>関数</p>
 <blockquote>
@@ -2448,11 +2659,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-70">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p><strong>IO#readFile</strong></p>
 
@@ -2469,11 +2680,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-71">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p><strong>IO#println</strong></p>
 
@@ -2490,11 +2701,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-72">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p><strong>IO#writeFile</strong></p>
 
@@ -2512,11 +2723,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-73">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p><strong>IO#seq</strong></p>
 
@@ -2534,11 +2745,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-74">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">sequence_</span>        :: [<span class="hljs-type">IO</span> ()] -&gt; <span class="hljs-type">IO</span> ()
 <span class="hljs-title">sequence_</span> []     =  return ()
@@ -2556,11 +2767,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-75">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p>return self.unit(null);</p>
 
@@ -2576,11 +2787,11 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
         </li>
         
         
-        <li id="section-76">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <p>self.run(head);
 return self.seqs(tail); </p>
@@ -2593,11 +2804,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-77">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>return List.foldr(alist)(List.empty())(IO.done());</p>
 
@@ -2608,11 +2819,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p><strong>IO#putc</strong></p>
 
@@ -2629,11 +2840,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <p><strong>IO#puts</strong></p>
 <pre><code class="lang-haskell"><span class="hljs-title">puts</span> list = seqs (map putc list)
@@ -2656,11 +2867,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p><strong>IO#getc</strong></p>
 
@@ -2680,11 +2891,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <h3 id="io-">IOモナドをテストする</h3>
 
@@ -2695,11 +2906,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-82">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <p>IOモナドで参照透過性を確保する</p>
 
@@ -2710,11 +2921,11 @@ return self.seqs(tail); </p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <p>本文では割愛しましたが、IOモナドが入出力に対して参照透過性を確保していることを単体テストで示します。</p>
 
@@ -2775,11 +2986,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-84">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <h2 id="-section-id-st_monad-st-section-"><section id='st_monad'>STモナド</section></h2>
 <h3 id="st-">STモナドの定義</h3>
@@ -2824,11 +3035,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-85">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <pre><code class="lang-haskell">(&lt;*&gt;) :: <span class="hljs-type">ST</span>(a -&gt; b) -&gt; <span class="hljs-type">ST</span> a -&gt; <span class="hljs-type">ST</span> b
 <span class="hljs-title">stf</span> &lt;*&gt; stx = <span class="hljs-type">S</span>(\s -&gt;
@@ -2852,11 +3063,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-86">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <h3 id="st-">STモナドのテスト</h3>
 
@@ -2868,11 +3079,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-87">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-typedef"><span class="hljs-keyword">data</span> <span class="hljs-type">Tree</span> a = <span class="hljs-type">Leaf</span> a | <span class="hljs-type">Node</span> <span class="hljs-container">(<span class="hljs-type">Tree</span> <span class="hljs-title">a</span>)</span> <span class="hljs-container">(<span class="hljs-type">Tree</span> <span class="hljs-title">a</span>)</span></span>
 </code></pre>
@@ -2907,11 +3118,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-88">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">fmap</span> f (<span class="hljs-type">Leaf</span> x) = <span class="hljs-type">Leaf</span> (f x)
 <span class="hljs-title">fmap</span> f (<span class="hljs-type">Node</span> left right) = <span class="hljs-type">Node</span> (fmap f left) (fmap f right)
@@ -2959,11 +3170,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-89">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">rlabel</span> :: (<span class="hljs-type">TREE</span>, <span class="hljs-type">STATE</span>) -&gt; (<span class="hljs-type">TREE</span>,<span class="hljs-type">STATE</span>)
 </code></pre>
@@ -3004,11 +3215,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-90">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">mlabel</span> :: <span class="hljs-type">Tree</span> a -&gt; <span class="hljs-type">ST</span>(<span class="hljs-type">Tree</span> <span class="hljs-type">Int</span>)
 <span class="hljs-title">mlabel</span> (<span class="hljs-type">Leaf</span> _) = <span class="hljs-keyword">do</span> n &lt;- fresh
@@ -3058,11 +3269,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-91">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <h2 id="-section-id-cont_monad-cont-section-"><section id='cont_monad'>Contモナド</section></h2>
 <p>Contモナド(継続モナド)は、中断や再開が可能な計算をモデル化します。</p>
@@ -3083,11 +3294,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-92">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">return</span> a       = <span class="hljs-type">Cont</span> $ \k -&gt; k a
 </code></pre>
@@ -3113,11 +3324,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-93">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-type">Monad</span> m =&gt; <span class="hljs-type">MonadCont</span> m <span class="hljs-keyword">where</span></span>
   callCC :: ((a -&gt; m a) -&gt; m a) -&gt; m a
@@ -3142,11 +3353,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-94">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <h3 id="cont-">Contモナドのテスト</h3>
 
@@ -3160,11 +3371,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-95">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <pre><code class="lang-haskell">*<span class="hljs-type">Main</span>&gt; <span class="hljs-keyword">let</span> s3 = <span class="hljs-type">Cont</span> (square <span class="hljs-number">3</span>)
 *<span class="hljs-type">Main</span>&gt; print =: runCont s3
@@ -3178,11 +3389,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-96">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <pre><code class="lang-haskell"><span class="hljs-title">square</span> :: <span class="hljs-type">Int</span> -&gt; ((<span class="hljs-type">Int</span> -&gt; r) -&gt; r)
 <span class="hljs-title">square</span> x = \k -&gt; k (x * x)
@@ -3205,11 +3416,11 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
         </li>
         
         
-        <li id="section-97">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <p><strong>Cont.flatMap</strong>で算術演算を組み合わせる例</p>
 
@@ -3253,16 +3464,79 @@ describe(<span class="hljs-string">"Maybeと一緒に使う"</span>, () =&gt; {
     );
     next();
   });
+  describe(<span class="hljs-string">"callCCを利用する"</span>,() =&gt; {
+    it(<span class="hljs-string">'square using callCC'</span>, (next) =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-107">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-107">&#182;</a>
+              </div>
+              <p>– Without callCC
+square :: Int -&gt; Cont r Int
+square n = return (n ˆ 2)
+– With callCC
+squareCCC :: Int -&gt; Cont r Int
+squareCCC n = callCC $ \k -&gt; k (n ˆ 2) </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> squareCPS = (n) =&gt; {
+        <span class="hljs-keyword">return</span> Cont.unit(n * n);
+      };
+      expect(
+        squareCPS(<span class="hljs-number">2</span>)(identity)
+      ).to.eql(
+        <span class="hljs-number">4</span>
+      );
+      <span class="hljs-keyword">var</span> safeDivideCC = (n,m) =&gt; {
+        <span class="hljs-keyword">return</span> Cont.callCC((k) =&gt; {
+          <span class="hljs-keyword">if</span>(m !== <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span> k(n / m);
+          }
+          <span class="hljs-keyword">return</span> k(<span class="hljs-literal">null</span>);
+        });
+      };
+      expect(
+        safeDivideCC(<span class="hljs-number">4</span>,<span class="hljs-number">2</span>)(identity)
+      ).to.eql(
+        <span class="hljs-number">2</span>
+      );
+      expect(
+        safeDivideCC(<span class="hljs-number">4</span>,<span class="hljs-number">0</span>)(identity)
+      ).to.be(
+        <span class="hljs-literal">null</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'even'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> even = (n) =&gt; {
+        <span class="hljs-keyword">return</span> (n % <span class="hljs-number">2</span>) === <span class="hljs-number">0</span>;
+      };
+      expect(
+        even(<span class="hljs-number">3</span> * Cont.callCC((k) =&gt; {
+          <span class="hljs-keyword">return</span> k(<span class="hljs-number">1</span> + <span class="hljs-number">2</span>);
+        }))
+      ).to.eql(
+        <span class="hljs-literal">false</span>
+      );
+      next();
+    });
+  });
 });</pre></div></div>
             
         </li>
         
         
-        <li id="section-98">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p><a href="index.html">目次に戻る</a> </p>
 

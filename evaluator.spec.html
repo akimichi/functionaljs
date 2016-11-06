@@ -57,12 +57,27 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="id-">IDモナドによる評価器</h2>
+              <h2 id="id-">IDモナドによる評価器のテスト</h2>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'IDモナドによる評価器'</span>, () =&gt; {
-  <span class="hljs-keyword">var</span> I = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/evaluator.js'</span>).ID;
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'IDモナドによる評価器のテスト'</span>, () =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>恒等モナドをIとして読み込む</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> I = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/evaluator.js'</span>).ID;
+
   it(<span class="hljs-string">'数値を評価する'</span>, (next) =&gt; {
     expect(
       I.evaluate(I.Exp.num(<span class="hljs-number">2</span>), emptyEnv) 
@@ -112,11 +127,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <pre><code class="lang-js">((n) =&gt; {
    <span class="hljs-keyword">return</span> (m) =&gt; {
@@ -140,7 +155,87 @@
       ).to.eql(
         <span class="hljs-number">5</span>
       );
-      <span class="hljs-comment">/* #@range_end(curried_function_evaluation_test) */</span>
+      next();
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="cont-">Contモナドによる継続渡し評価器のテスト</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">'Contモナドによる評価器'</span>, () =&gt; {
+  <span class="hljs-keyword">var</span> K = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/evaluator.js'</span>).Cont;
+  <span class="hljs-keyword">var</span> identity = (any) =&gt; {
+    <span class="hljs-keyword">return</span> any;
+  };
+  it(<span class="hljs-string">'数値を評価する'</span>, (next) =&gt; {
+    expect(
+      K.evaluate(K.Exp.num(<span class="hljs-number">2</span>), emptyEnv)(identity)
+    ).to.eql(
+      <span class="hljs-number">2</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">'変数を評価する'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* 変数xを1に対応させた環境を作る */</span>
+    <span class="hljs-keyword">var</span> newEnv = Env.extend(<span class="hljs-string">"x"</span>, <span class="hljs-number">1</span>, emptyEnv); 
+    expect(
+      K.evaluate(K.Exp.variable(<span class="hljs-string">"x"</span>), newEnv)(identity)
+    ).to.eql(
+      <span class="hljs-number">1</span>
+    );
+    expect(
+      K.evaluate(K.Exp.variable(<span class="hljs-string">"y"</span>), newEnv)(identity)
+    ).to.be(
+      <span class="hljs-literal">undefined</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">'足し算の評価のテスト'</span>, (next) =&gt; {
+    <span class="hljs-comment">/* add(1,2) */</span>
+    <span class="hljs-keyword">var</span> addition = K.Exp.add(K.Exp.num(<span class="hljs-number">1</span>),K.Exp.num(<span class="hljs-number">2</span>));
+    expect(
+      K.evaluate(addition, emptyEnv)(identity)
+    ).to.eql(
+      <span class="hljs-number">3</span> 
+    );
+    next();
+  });
+  describe(<span class="hljs-string">'関数を評価する'</span>, () =&gt; {
+    it(<span class="hljs-string">'identity関数を評価する'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> id = K.Exp.lambda(K.Exp.variable(<span class="hljs-string">"x"</span>),
+                                  K.Exp.variable(<span class="hljs-string">"x"</span>));
+      expect(
+        K.evaluate(K.Exp.app(id,K.Exp.num(<span class="hljs-number">1</span>)), emptyEnv)(identity)
+      ).to.eql(
+        <span class="hljs-number">1</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">'カリー化関数の評価'</span>, (next) =&gt; {
+      <span class="hljs-keyword">var</span> expression = K.Exp.app(
+        K.Exp.app(
+          K.Exp.lambda(K.Exp.variable(<span class="hljs-string">"n"</span>),
+                     K.Exp.lambda(K.Exp.variable(<span class="hljs-string">"m"</span>),
+                                K.Exp.add(
+                                  K.Exp.variable(<span class="hljs-string">"n"</span>),K.Exp.variable(<span class="hljs-string">"m"</span>)))),
+          K.Exp.num(<span class="hljs-number">2</span>)),
+        K.Exp.num(<span class="hljs-number">3</span>));
+      expect(
+        K.evaluate(expression, emptyEnv)(identity)
+      ).to.eql(
+        <span class="hljs-number">5</span>
+      );
       next();
     });
   });

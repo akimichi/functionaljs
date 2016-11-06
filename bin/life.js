@@ -163,9 +163,9 @@ expect(
 
 // births :: Board -> [Pos]
 // births board = [(x,y) | x <- [1..width],
-//                            y <- [1..height],
-//                            isVacant board (x,y)
-//                            liveNeighbors board (x,y) === 3]
+//                         y <- [1..height],
+//                         isVacant board (x,y)
+//                         liveNeighbors board (x,y) === 3]
 var births = (board) => {
   var listFromNtoM = (n,m) => {
     if(n === m) {
@@ -180,24 +180,24 @@ var births = (board) => {
       return List.unit(position);
     });
   });
-  // expect(
-  //   PP.print(board)
-  // ).to.eql(
-  //   "[(4,3),(3,4),(4,4),nil]"
-  // );
-  // expect(
-  //   PP.print(wholeBoard)
-  // ).to.eql(
-  //   "[(4,3),(3,4),(4,4),nil]"
-  // );
-  return List.filter(wholeBoard)((position) => {
-    // if((isVacant(board)(position) === true) && (liveNeighbors(board)(position) === 3)){
-    if((isAlive(board)(position) === false) && (liveNeighbors(board)(position) === 3)){
-      return true; 
-    } else {
-      return false;
-    }
+  return List.flatMap(listFromNtoM(1,width))((x) => {
+    return List.flatMap(listFromNtoM(1,height))((y) => {
+      var cell = Pair.cons(x,y);
+      if((isVacant(board)(cell) === true) && (liveNeighbors(board)(cell) === 3)) {
+        return List.unit(cell);
+      } else {
+        return List.empty();
+      }
+    });
   });
+  // return List.filter(wholeBoard)((position) => {
+  //   // if((isVacant(board)(position) === true) && (liveNeighbors(board)(position) === 3)){
+  //   if((isAlive(board)(position) === false) && (liveNeighbors(board)(position) === 3)){
+  //     return true; 
+  //   } else {
+  //     return false;
+  //   }
+  // });
   // return List.flatMap(listFromNtoM(1,width))((x) => {
   //   return List.flatMap(listFromNtoM(1,height))((y) => {
   //     var cell = Pair.cons(x,y);
@@ -231,11 +231,11 @@ var nextGen = (board) => {
   return List.append(survivors(board))(births(board));
 };
 
-expect(
-  PP.print(nextGen(glider))
-).to.eql(
-  "[(4,3),(3,4),(4,4),(3,2),(5,3),nil]"
-);
+// expect(
+//   PP.print(nextGen(glider))
+// ).to.eql(
+//   "[(4,3),(3,4),(4,4),(3,2),(5,3),nil]"
+// );
 // expect(
 //   PP.print(nextGen(List.fromArray([Pair.cons(10,10),
 //                              Pair.cons(9,10),

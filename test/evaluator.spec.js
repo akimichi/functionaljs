@@ -32,24 +32,37 @@ describe('IDモナドによる評価器のテスト', () => {
     );
     next();
   });
-  it('足し算の評価のテスト', (next) => {
-    /* add(1,2) */
-    var addition = I.Exp.add(I.Exp.num(1),I.Exp.num(2));
-    expect(
-      I.evaluate(addition, emptyEnv)
-    ).to.eql(
-      3 
-    );
-    next();
+  describe('演算のテスト', () => {
+      it('足し算の評価のテスト', (next) => {
+          /* add(1,2) */
+          var addition = I.Exp.add(I.Exp.num(1),I.Exp.num(2));
+          expect(
+              I.evaluate(addition, emptyEnv)
+              ).to.eql(
+                  3 
+                  );
+          next();
+      });
+      it('かけ算の評価のテスト', (next) => {
+          /* multiply(1,2) */
+          var multiplication = I.Exp.add(I.Exp.num(2),I.Exp.num(3));
+          expect(
+              I.evaluate(multiplication, emptyEnv)
+              ).to.eql(
+                  5 
+                  );
+          next();
+      });
   });
   describe('関数を評価する', () => {
     it('identity関数を評価する', (next) => {
-      var identity = I.Exp.lambda(I.Exp.variable("x"),
-                                  I.Exp.variable("x"));
+      var identity = I.Exp.app(I.Exp.lambda(I.Exp.variable("x"),
+                                    I.Exp.variable("x")),
+            I.Exp.num(2));
       expect(
-        I.evaluate(identity, emptyEnv)(1)
+        I.evaluate(identity, emptyEnv)
       ).to.eql(
-        1
+        2
       );
       next();
     });

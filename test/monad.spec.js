@@ -1824,6 +1824,9 @@ describe("Maybeと一緒に使う", () => {
 });
 
 // ## <section id='st_monad'>STモナド</section>
+//   
+// STモナドとは、状態の変化を取りこんだモナドのこと。
+// 
 // ### STモナドの定義
 // 
 // [Programming in Haskell(2版)](https://www.amazon.co.jp/Programming-Haskell-Graham-Hutton/dp/1316626229/ref=pd_sim_14_26?_encoding=UTF8&psc=1&refRID=ZT8DRRF420JN97H9H4DW),p.168〜p.172 を参照してください。
@@ -1846,48 +1849,26 @@ describe("Maybeと一緒に使う", () => {
 //   get = S(\s -> (s,s))
 //   put newState = S(\s -> ((), newState))
 // ~~~
-
 //
 var ST = {
+  // **ST#unit**
+  // 
+  // > 第1引数valueの値に第2引数stateという状態を付加する。
   unit: (value) => { 
     return (state) => { 
       return Pair.cons(value,state);
     };
   },
-  get: (_) => {
-    return (state) => {
-      return Pair.cons(state,state);
-    };
-  },
-  put: (newState) => { 
-    return (state) => { 
-      return Pair.cons(Pair.empty(),newState);
-    };
-  },
-  // pop:: State Stack Int
-  pop: (_) => {
-    return ST.flatMap(ST.get())((alist) => {
-      return List.match(alist,{
-        cons: (x,xs) => {
-          return ST.flatMap(ST.put(xs))((_) => {
-            return ST.unit(x);
-          });
-        }
-      });
-    });
-  },
-  // push:: Int -> State Stack ()
-  push: (x) => {
-    return ST.flatMap(ST.get())((xs) => {
-      return ST.put(List.cons(x,xs));
-    }); 
-  },
-  flatMap: (instanceM) => {
-    return (f) => { // f:: ST a
+  // **ST#flatMap**
+  // 
+  // > 第1引数instanceMを実行して、新しい状態state_と計算結果xを得る。
+  // 計算結果xに関数fを適用すると、f(x)というSTモナドインスタンスが得られる。
+  // 最後に、そのf(x)に新しい状態state_を適用して、最終結果を得る。
+  flatMap: (instanceM) => { // instanceM:: ST a
+    return (f) => { // f:: a -> ST b
       expect(f).to.a('function');
       return (state) => {
-        var newState = ST.app(instanceM)(state);
-        // var newState = instanceM(state);
+        var newState = ST.app(instanceM)(state); // instanceM(state)
         return newState.match({
           cons:(x, state_) => {
             return ST.app(f(x))(state_);
@@ -1896,30 +1877,55 @@ var ST = {
       };
     };
   },
-  // ~~~haskell
-  // (<*>) :: ST(a -> b) -> ST a -> ST b
-  // stf <*> stx = S(\s ->
-  //   let (f,s') = app stf s
-  //       (x,s'') = app stx s' 
-  //   in (f x, s'')
-  // ~~~
   app: (st) => {
     return (state) => {
       return st(state);
     };
   },
-  fresh: (state) => {
-    return Pair.cons(state, state + 1);
+  // **ST#get**
+  // > 現在の状態を取ってきて、それを結果として提示する
+  get: (_) => {
+    return (state) => {
+      return Pair.cons(state,state);
+    };
+  },
+  // **ST#put**
+  // > 現在の状態stateを新しい状態newStateに更新する
+  put: (newState) => { 
+    return (state) => { 
+      return Pair.cons(Pair.empty(),newState);
+    };
   }
 };
 
 // ### STモナドのテスト
 describe("STモナドをテストする",() => {
-  describe("Stack",() => {
-    it('push,pop', (next) => {
-      var stackManip = ST.flatMap(ST.push(3))((_) => {
-        return ST.flatMap(ST.pop())((a) => {
-          return ST.pop();
+  // #### スタック操作を実現する 
+  describe("Stackを作る",() => {
+    // **pop関数**の定義
+    /* pop:: State Stack Int */
+    var pop = (_) => {
+      return ST.flatMap(ST.get())((alist) => {
+        return List.match(alist,{
+          cons: (x,xs) => {
+            return ST.flatMap(ST.put(xs))((_) => {
+              return ST.unit(x);
+            });
+          }
+        });
+      });
+    };
+    // **push関数**の定義
+    /* push:: Int -> State Stack () */
+    var push = (x) => {
+      return ST.flatMap(ST.get())((xs) => {
+        return ST.put(List.cons(x,xs));
+      }); 
+    };
+    it('スタックを操作する', (next) => {
+      var stackManip = ST.flatMap(push(3))((_) => {
+        return ST.flatMap(pop())((a) => {
+          return pop();
         });
       });
       expect(
@@ -1990,9 +1996,6 @@ describe("STモナドをテストする",() => {
             }
           });
         };
-      },
-      fresh: (state) => {
-        return Pair.cons(state, state + 1);
       }
     };
     it('Tree.toArray', (next) => {

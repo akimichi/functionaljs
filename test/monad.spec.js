@@ -550,6 +550,11 @@ var List  = {
       };
     });
   },
+  fromArray: (array) => {
+    return array.reduce((accumulator, item) => {
+      return List.append(accumulator)(List.cons(item, List.empty()));
+    }, List.empty());
+  },
   // **List#foldr**
   // ~~~haskell
   // foldr []     z _ = z
@@ -813,6 +818,19 @@ describe('Listモナドのテスト', () => {
         }))
       ).to.eql(
         [1,2]
+      );
+      next();
+    });
+  });
+  // **List#fromArray**で配列をリストに変換する
+  describe("List#toArrayで配列をリストに変換する", () => {
+    it("1段階のリストを配列に変換する", (next) => {
+      expect(
+        List.toArray(
+          List.fromArray([1,2,3])
+        )
+      ).to.eql(
+        [1,2,3]
       );
       next();
     });
@@ -1805,7 +1823,6 @@ describe("Maybeと一緒に使う", () => {
   });
 });
 
-
 // ## <section id='st_monad'>STモナド</section>
 // ### STモナドの定義
 // 
@@ -1825,7 +1842,11 @@ describe("Maybeと一緒に使う", () => {
 //               )
 //   unit :: a -> ST a
 //   unit x = S(\s -> (x,s))
+// 
+//   get = S(\s -> (s,s))
+//   put newState = S(\s -> ((), newState))
 // ~~~
+
 //
 var ST = {
   unit: (value) => { 
@@ -1833,11 +1854,40 @@ var ST = {
       return Pair.cons(value,state);
     };
   },
+  get: (_) => {
+    return (state) => {
+      return Pair.cons(state,state);
+    };
+  },
+  put: (newState) => { 
+    return (state) => { 
+      return Pair.cons(Pair.empty(),newState);
+    };
+  },
+  // pop:: State Stack Int
+  pop: (_) => {
+    return ST.flatMap(ST.get())((alist) => {
+      return List.match(alist,{
+        cons: (x,xs) => {
+          return ST.flatMap(ST.put(xs))((_) => {
+            return ST.unit(x);
+          });
+        }
+      });
+    });
+  },
+  // push:: Int -> State Stack ()
+  push: (x) => {
+    return ST.flatMap(ST.get())((xs) => {
+      return ST.put(List.cons(x,xs));
+    }); 
+  },
   flatMap: (instanceM) => {
     return (f) => { // f:: ST a
       expect(f).to.a('function');
       return (state) => {
         var newState = ST.app(instanceM)(state);
+        // var newState = instanceM(state);
         return newState.match({
           cons:(x, state_) => {
             return ST.app(f(x))(state_);
@@ -1865,6 +1915,38 @@ var ST = {
 
 // ### STモナドのテスト
 describe("STモナドをテストする",() => {
+  describe("Stack",() => {
+    it('push,pop', (next) => {
+      var stackManip = ST.flatMap(ST.push(3))((_) => {
+        return ST.flatMap(ST.pop())((a) => {
+          return ST.pop();
+        });
+      });
+      expect(
+          Pair.left(
+              ST.app(
+                  stackManip
+                  )(
+                      List.fromArray([5,8,2,1])
+                   )
+              )
+          ).to.eql(
+              5
+          );
+    expect(
+        List.toArray(Pair.right(
+                ST.app(
+                    stackManip
+                    )(
+                        List.fromArray([5,8,2,1])
+                     )
+                )
+            )).to.eql(
+               [8,2,1]
+            );
+      next();
+    });
+  });
   describe("Treeの例",() => {
     // ~~~haskell
     // data Tree a = Leaf a | Node (Tree a) (Tree a)
@@ -1992,8 +2074,11 @@ describe("STモナドをテストする",() => {
       }; 
       expect(
         Tree.toArray(
-          Pair.left(ST.app(mlabel(Tree.leaf(1)))(0))
-        )
+          Pair.left(
+              ST.app(
+                    mlabel(Tree.leaf(1))
+                  )(0))
+          )
       ).to.eql(
         0
       );

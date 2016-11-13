@@ -44,6 +44,10 @@ project/
 target/
 .publish/
 
-# vim swap
+# vim 
 *.swp
+Session.vim
+
 draft/
+
+

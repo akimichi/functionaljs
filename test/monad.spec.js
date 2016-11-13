@@ -117,9 +117,11 @@ var Maybe = {
       });
     };
   },
+  // ~~~haskell
   // -- | Promote a function to a monad.
   // liftM :: (Monad m) => (a -> b) -> m a -> m b
   // liftM f m  = do { x <- m1; return (f x) }
+  // ~~~
   liftM: (f) => {
     var self = this;
     return (ma) => {
@@ -128,7 +130,9 @@ var Maybe = {
       });
     };
   },
+  // ~~~haskell
   // (<*>) :: (Monad m) => m (a -> b) -> m a -> m b
+  // ~~~
   apply: (mf) => {
     var self = this;
     return (ma) => {
@@ -1464,7 +1468,7 @@ var Reader = {
       };
     };
   },
-  // **ask**
+  // **Reader#ask**
   // ~~~haskell
   // ask :: Reader r r
   // ask = Reader id
@@ -1476,7 +1480,10 @@ var Reader = {
       }
     };
   },
+  // **Reader#local**
+  // ~~~haskell
   // local f c = Reader $ \e -> runReader c (f e) 
+  // ~~~
   local: (f) => {
     return (reader) => {
       return {
@@ -1718,18 +1725,14 @@ var IO = {
     var self = this;
     return alist.match({
       empty: () => {
-        // return self.unit(null);
         return self.done();
       },
       cons: (head, tail) => {
         return self.flatMap(head)((_) => {
           return self.seqs(tail); 
         }); 
-        // self.run(head);
-        // return self.seqs(tail); 
       }
     });
-    // return List.foldr(alist)(List.empty())(IO.done());
   },
   // **IO#putc**
   /* IO.putc:: CHAR => IO[] */
@@ -2216,12 +2219,14 @@ describe("Contモナドをテストする",() => {
   });
   describe("callCCを利用する",() => {
     it('square using callCC', (next) => {
+      // ~~~haskell
       // -- Without callCC
       // square :: Int -> Cont r Int
       // square n = return (n ˆ 2)
       // -- With callCC
       // squareCCC :: Int -> Cont r Int
       // squareCCC n = callCC $ \k -> k (n ˆ 2) 
+      // ~~~
       var squareCPS = (n) => {
         return Cont.unit(n * n);
       };

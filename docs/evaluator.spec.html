@@ -101,24 +101,37 @@
     );
     next();
   });
-  it(<span class="hljs-string">'足し算の評価のテスト'</span>, (next) =&gt; {
-    <span class="hljs-comment">/* add(1,2) */</span>
-    <span class="hljs-keyword">var</span> addition = I.Exp.add(I.Exp.num(<span class="hljs-number">1</span>),I.Exp.num(<span class="hljs-number">2</span>));
-    expect(
-      I.evaluate(addition, emptyEnv)
-    ).to.eql(
-      <span class="hljs-number">3</span> 
-    );
-    next();
+  describe(<span class="hljs-string">'演算のテスト'</span>, () =&gt; {
+      it(<span class="hljs-string">'足し算の評価のテスト'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* add(1,2) */</span>
+          <span class="hljs-keyword">var</span> addition = I.Exp.add(I.Exp.num(<span class="hljs-number">1</span>),I.Exp.num(<span class="hljs-number">2</span>));
+          expect(
+              I.evaluate(addition, emptyEnv)
+              ).to.eql(
+                  <span class="hljs-number">3</span> 
+                  );
+          next();
+      });
+      it(<span class="hljs-string">'かけ算の評価のテスト'</span>, (next) =&gt; {
+          <span class="hljs-comment">/* multiply(1,2) */</span>
+          <span class="hljs-keyword">var</span> multiplication = I.Exp.add(I.Exp.num(<span class="hljs-number">2</span>),I.Exp.num(<span class="hljs-number">3</span>));
+          expect(
+              I.evaluate(multiplication, emptyEnv)
+              ).to.eql(
+                  <span class="hljs-number">5</span> 
+                  );
+          next();
+      });
   });
   describe(<span class="hljs-string">'関数を評価する'</span>, () =&gt; {
     it(<span class="hljs-string">'identity関数を評価する'</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> identity = I.Exp.lambda(I.Exp.variable(<span class="hljs-string">"x"</span>),
-                                  I.Exp.variable(<span class="hljs-string">"x"</span>));
+      <span class="hljs-keyword">var</span> identity = I.Exp.app(I.Exp.lambda(I.Exp.variable(<span class="hljs-string">"x"</span>),
+                                    I.Exp.variable(<span class="hljs-string">"x"</span>)),
+            I.Exp.num(<span class="hljs-number">2</span>));
       expect(
-        I.evaluate(identity, emptyEnv)(<span class="hljs-number">1</span>)
+        I.evaluate(identity, emptyEnv)
       ).to.eql(
-        <span class="hljs-number">1</span>
+        <span class="hljs-number">2</span>
       );
       next();
     });

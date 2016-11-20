@@ -20,32 +20,39 @@ describe('dentaku.normal', () => {
       ).to.eql(
         3
       );
-      next();
-    });
-    it("expr", (next) => {
       expect(
-        PP.print(Parser.parse(Dentaku.expr())(List.fromString("123")))
+        Dentaku.evaluate("1.2 * 2")
       ).to.eql(
-        '[(123,[]),nil]'
+        2.4
       );
       next();
     });
-    it("factor", (next) => {
-      expect(
-        PP.print(Parser.parse(Dentaku.factor())(List.fromString("123")))
-      ).to.eql(
-        '[(123,[]),nil]'
-      );
-      next();
-    });
-    it("term", (next) => {
-      expect(
-        PP.print(Parser.parse(Dentaku.term())(List.fromString("1 * 2")))
-      ).to.eql(
-        '[(2,[]),nil]'
-      );
-      next();
-    });
-
+    // describe('parser', () => {
+    //     it("expr", (next) => {
+    //         expect(
+    //             PP.print(Parser.parse(Dentaku.expr())(List.fromString("123")))
+    //             // PP.print(Parser.parse(Dentaku.expr())(List.fromString("123")))
+    //             ).to.eql(
+    //                 '[(123,[]),nil]'
+    //                 );
+    //         next();
+    //     });
+    //     it("factor", (next) => {
+    //         expect(
+    //             PP.print(Parser.parse(Dentaku.factor())(List.fromString("123")))
+    //             ).to.eql(
+    //                 '[(123,[]),nil]'
+    //                 );
+    //         next();
+    //     });
+    //     it("term", (next) => {
+    //         expect(
+    //             PP.print(Parser.parse(Dentaku.term())(List.fromString("1 * 2")))
+    //             ).to.eql(
+    //                 '[(2,[]),nil]'
+    //                 );
+    //         next();
+    //     });
+    // });
 });
 

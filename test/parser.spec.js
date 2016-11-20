@@ -237,6 +237,45 @@ describe('パーサーコンビネーター', () => {
     );
     next();
   });
+  it("float", (next) => {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(String.toList("0.1"))
+      )
+    ).to.eql(
+      '[(0.1,[]),nil]'
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(String.toList("0.123"))
+      )
+    ).to.eql(
+      '[(0.123,[]),nil]'
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(String.toList("1.1"))
+      )
+    ).to.eql(
+      '[(1.1,[]),nil]'
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(String.toList("-1.1"))
+      )
+    ).to.eql(
+      '[(-1.1,[]),nil]'
+    );
+    next();
+  });
   describe("トークン", (next) => {
     it("identifier", (next) => {
       expect(
@@ -271,6 +310,27 @@ describe('パーサーコンビネーター', () => {
         )
       ).to.eql(
         '[(-123,[]),nil]'
+      );
+      next();
+    });
+    it("numeric", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.numeric.call(Parser)
+          )(String.toList("   -123   "))
+        )
+      ).to.eql(
+        '[(-123,[]),nil]'
+      );
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.numeric.call(Parser)
+          )(String.toList("   0.123   "))
+        )
+      ).to.eql(
+        '[(0.123,[]),nil]'
       );
       next();
     });

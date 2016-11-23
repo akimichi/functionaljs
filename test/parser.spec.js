@@ -3,13 +3,12 @@
 var expect = require('expect.js');
 var List = require('../lib/list.js');
 var Pair = require('../lib/pair.js');
-var String = require('../lib/string.js');
 var Data = require('../lib/data.js');
 var PP = require('../lib/pprinter.js');
 var Parser = require('../lib/parser.js');
 
 describe('パーサーコンビネーター', () => {
-  var abc = String.toList("abc");
+  var abc = List.fromString("abc");
   describe("parse", (next) => {
     it("pure", (next) => {
       expect(
@@ -26,7 +25,7 @@ describe('パーサーコンビネーター', () => {
         '[]'
       );
       expect(
-        PP.print(Parser.item(String.toList("abc")))
+        PP.print(Parser.item(List.fromString("abc")))
       ).to.eql(
         '[(a,[b,c,nil]),nil]'
       );
@@ -35,7 +34,7 @@ describe('パーサーコンビネーター', () => {
   });
   describe("fmap", (next) => {
     it("toUpper", (next) => {
-      var input = String.toList("abc");
+      var input = List.fromString("abc");
       var toUpper = (s) => {
         return s.toUpperCase();
       };
@@ -51,7 +50,7 @@ describe('パーサーコンビネーター', () => {
   });
   describe("monad", (next) => {
     it("three", (next) => {
-      var input = String.toList("abcdef");
+      var input = List.fromString("abcdef");
       var three = Parser.flatMap(Parser.item)((x) => {
         return Parser.flatMap(Parser.item)((_) => {
           return Parser.flatMap(Parser.item)((z) => {
@@ -66,13 +65,25 @@ describe('パーサーコンビネーター', () => {
       ).to.eql(
         '[((a,c),[d,e,f,nil]),nil]'
       );
-
       next();
+    });
+    it("flapMap", (next) => {
+        var input = List.fromString("  +  ");
+        var add_or_subtract = Parser.alt(Parser.symbol(List.fromString("+")))(Parser.symbol(List.fromString("-")));
+        var parser = Parser.flatMap(add_or_subtract)((operator) => {
+            return Parser.pure(operator);
+        });
+        expect(
+            PP.print(
+                Parser.parse(parser)(input)
+                )
+            ).to.eql('[([+,nil],[]),nil]');
+        next();
     });
   });
   describe("alternative", (next) => {
     it("empty", (next) => {
-      var input = String.toList("abc");
+      var input = List.fromString("abc");
       expect(
         PP.print(
           Parser.parse(Parser.empty)(input)
@@ -83,7 +94,7 @@ describe('パーサーコンビネーター', () => {
       next();
     });
     it("alt", (next) => {
-      var input = String.toList("abc");
+      var input = List.fromString("abc");
       expect(
         PP.print(
           Parser.parse(
@@ -111,7 +122,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.digit.call(Parser)
-          )(String.toList("123"))
+          )(List.fromString("123"))
         )
       ).to.eql(
         '[(1,[2,3,nil]),nil]'
@@ -123,7 +134,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.alphanum.call(Parser)
-          )(String.toList("123"))
+          )(List.fromString("123"))
         )
       ).to.eql(
         '[(1,[2,3,nil]),nil]'
@@ -135,8 +146,8 @@ describe('パーサーコンビネーター', () => {
       expect(
         PP.print(
           Parser.parse(
-            Parser.string(String.toList("abc"))
-          )(String.toList("abcdef"))
+            Parser.string(List.fromString("abc"))
+          )(List.fromString("abcdef"))
         )
       ).to.eql(
         '[([a,b,c,nil],[d,e,f,nil]),nil]'
@@ -151,7 +162,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.many(Parser.digit.call(Parser))
-          )(String.toList("123abc"))
+          )(List.fromString("123abc"))
         )
       ).to.eql(
         '[([1,2,3,nil],[a,b,c,nil]),nil]'
@@ -160,7 +171,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.many(Parser.digit.call(Parser))
-          )(String.toList("abc"))
+          )(List.fromString("abc"))
         )
       ).to.eql(
         '[([],[a,b,c,nil]),nil]'
@@ -172,7 +183,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.some(Parser.digit.call(Parser))
-          )(String.toList("abc"))
+          )(List.fromString("abc"))
         )
       ).to.eql(
         '[]'
@@ -185,7 +196,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.ident.call(Parser)
-        )(String.toList("abc def"))
+        )(List.fromString("abc def"))
       )
     ).to.eql(
       '[([a,b,c,nil],[ ,d,e,f,nil]),nil]'
@@ -197,7 +208,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.nat.call(Parser)
-        )(String.toList("123"))
+        )(List.fromString("123"))
       )
     ).to.eql(
       '[(123,[]),nil]'
@@ -209,7 +220,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.space.call(Parser)
-        )(String.toList("   abc"))
+        )(List.fromString("   abc"))
       )
     ).to.eql(
       '[((),[a,b,c,nil]),nil]'
@@ -221,7 +232,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.int.call(Parser)
-        )(String.toList("-123 abc"))
+        )(List.fromString("-123 abc"))
       )
     ).to.eql(
       '[(-123,[a,b,c,nil]),nil]'
@@ -230,7 +241,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.int.call(Parser)
-        )(String.toList("123 abc"))
+        )(List.fromString("123 abc"))
       )
     ).to.eql(
       '[(123,[a,b,c,nil]),nil]'
@@ -242,7 +253,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.float.call(Parser)
-        )(String.toList("0.1"))
+        )(List.fromString("0.1"))
       )
     ).to.eql(
       '[(0.1,[]),nil]'
@@ -251,7 +262,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.float.call(Parser)
-        )(String.toList("0.123"))
+        )(List.fromString("0.123"))
       )
     ).to.eql(
       '[(0.123,[]),nil]'
@@ -260,7 +271,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.float.call(Parser)
-        )(String.toList("1.1"))
+        )(List.fromString("1.1"))
       )
     ).to.eql(
       '[(1.1,[]),nil]'
@@ -269,7 +280,7 @@ describe('パーサーコンビネーター', () => {
       PP.print(
         Parser.parse(
           Parser.float.call(Parser)
-        )(String.toList("-1.1"))
+        )(List.fromString("-1.1"))
       )
     ).to.eql(
       '[(-1.1,[]),nil]'
@@ -282,7 +293,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.identifier.call(Parser)
-          )(String.toList("   abc"))
+          )(List.fromString("   abc"))
         )
       ).to.eql(
         '[([a,b,c,nil],[]),nil]'
@@ -294,7 +305,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.natural.call(Parser)
-          )(String.toList("   123   "))
+          )(List.fromString("   123   "))
         )
       ).to.eql(
         '[(123,[]),nil]'
@@ -306,7 +317,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.integer.call(Parser)
-          )(String.toList("   -123   "))
+          )(List.fromString("   -123   "))
         )
       ).to.eql(
         '[(-123,[]),nil]'
@@ -318,7 +329,7 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.numeric.call(Parser)
-          )(String.toList("   -123   "))
+          )(List.fromString("   -123   "))
         )
       ).to.eql(
         '[(-123,[]),nil]'
@@ -327,13 +338,24 @@ describe('パーサーコンビネーター', () => {
         PP.print(
           Parser.parse(
             Parser.numeric.call(Parser)
-          )(String.toList("   0.123   "))
+          )(List.fromString("   0.123   "))
         )
       ).to.eql(
         '[(0.123,[]),nil]'
       );
       next();
     });
-    
+    it("symbol", (next) => {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.symbol(List.fromString("+"))
+          )(List.fromString("  +  "))
+        )
+      ).to.eql(
+        '[([+,nil],[]),nil]'
+      );
+      next();
+    });
   });
 });

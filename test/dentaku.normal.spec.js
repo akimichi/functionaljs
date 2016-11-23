@@ -21,6 +21,11 @@ describe('dentaku.normal', () => {
         3
       );
       expect(
+        Dentaku.evaluate("2 - 1")
+      ).to.eql(
+        1
+      );
+      expect(
         Dentaku.evaluate("1.2 * 2")
       ).to.eql(
         2.4

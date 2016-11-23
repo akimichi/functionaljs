@@ -30,6 +30,11 @@ describe('dentaku.normal', () => {
       ).to.eql(
         2.4
       );
+      expect(
+        Dentaku.evaluate("3.9 / 3")
+      ).to.eql(
+        1.3
+      );
       next();
     });
     // describe('parser', () => {

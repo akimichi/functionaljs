@@ -47,13 +47,12 @@
 <span class="hljs-keyword">var</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);
 <span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/list.js'</span>);
 <span class="hljs-keyword">var</span> Pair = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pair.js'</span>);
-<span class="hljs-keyword">var</span> <span class="hljs-built_in">String</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/string.js'</span>);
 <span class="hljs-keyword">var</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/data.js'</span>);
 <span class="hljs-keyword">var</span> PP = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pprinter.js'</span>);
 <span class="hljs-keyword">var</span> Parser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/parser.js'</span>);
 
 describe(<span class="hljs-string">'パーサーコンビネーター'</span>, () =&gt; {
-  <span class="hljs-keyword">var</span> abc = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+  <span class="hljs-keyword">var</span> abc = List.fromString(<span class="hljs-string">"abc"</span>);
   describe(<span class="hljs-string">"parse"</span>, (next) =&gt; {
     it(<span class="hljs-string">"pure"</span>, (next) =&gt; {
       expect(
@@ -70,7 +69,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         <span class="hljs-string">'[]'</span>
       );
       expect(
-        PP.print(Parser.item(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>)))
+        PP.print(Parser.item(List.fromString(<span class="hljs-string">"abc"</span>)))
       ).to.eql(
         <span class="hljs-string">'[(a,[b,c,nil]),nil]'</span>
       );
@@ -79,7 +78,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
   });
   describe(<span class="hljs-string">"fmap"</span>, (next) =&gt; {
     it(<span class="hljs-string">"toUpper"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+      <span class="hljs-keyword">var</span> input = List.fromString(<span class="hljs-string">"abc"</span>);
       <span class="hljs-keyword">var</span> toUpper = (s) =&gt; {
         <span class="hljs-keyword">return</span> s.toUpperCase();
       };
@@ -95,7 +94,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
   });
   describe(<span class="hljs-string">"monad"</span>, (next) =&gt; {
     it(<span class="hljs-string">"three"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abcdef"</span>);
+      <span class="hljs-keyword">var</span> input = List.fromString(<span class="hljs-string">"abcdef"</span>);
       <span class="hljs-keyword">var</span> three = Parser.flatMap(Parser.item)((x) =&gt; {
         <span class="hljs-keyword">return</span> Parser.flatMap(Parser.item)((_) =&gt; {
           <span class="hljs-keyword">return</span> Parser.flatMap(Parser.item)((z) =&gt; {
@@ -110,13 +109,25 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       ).to.eql(
         <span class="hljs-string">'[((a,c),[d,e,f,nil]),nil]'</span>
       );
-
       next();
+    });
+    it(<span class="hljs-string">"flapMap"</span>, (next) =&gt; {
+        <span class="hljs-keyword">var</span> input = List.fromString(<span class="hljs-string">"  +  "</span>);
+        <span class="hljs-keyword">var</span> add_or_subtract = Parser.alt(Parser.symbol(List.fromString(<span class="hljs-string">"+"</span>)))(Parser.symbol(List.fromString(<span class="hljs-string">"-"</span>)));
+        <span class="hljs-keyword">var</span> parser = Parser.flatMap(add_or_subtract)((operator) =&gt; {
+            <span class="hljs-keyword">return</span> Parser.pure(operator);
+        });
+        expect(
+            PP.print(
+                Parser.parse(parser)(input)
+                )
+            ).to.eql(<span class="hljs-string">'[([+,nil],[]),nil]'</span>);
+        next();
     });
   });
   describe(<span class="hljs-string">"alternative"</span>, (next) =&gt; {
     it(<span class="hljs-string">"empty"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+      <span class="hljs-keyword">var</span> input = List.fromString(<span class="hljs-string">"abc"</span>);
       expect(
         PP.print(
           Parser.parse(Parser.empty)(input)
@@ -127,7 +138,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       next();
     });
     it(<span class="hljs-string">"alt"</span>, (next) =&gt; {
-      <span class="hljs-keyword">var</span> input = <span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>);
+      <span class="hljs-keyword">var</span> input = List.fromString(<span class="hljs-string">"abc"</span>);
       expect(
         PP.print(
           Parser.parse(
@@ -155,7 +166,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.digit.call(Parser)
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123"</span>))
+          )(List.fromString(<span class="hljs-string">"123"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[(1,[2,3,nil]),nil]'</span>
@@ -167,7 +178,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.alphanum.call(Parser)
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123"</span>))
+          )(List.fromString(<span class="hljs-string">"123"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[(1,[2,3,nil]),nil]'</span>
@@ -179,8 +190,8 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       expect(
         PP.print(
           Parser.parse(
-            Parser.string(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>))
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abcdef"</span>))
+            Parser.string(List.fromString(<span class="hljs-string">"abc"</span>))
+          )(List.fromString(<span class="hljs-string">"abcdef"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[([a,b,c,nil],[d,e,f,nil]),nil]'</span>
@@ -195,7 +206,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.many(Parser.digit.call(Parser))
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123abc"</span>))
+          )(List.fromString(<span class="hljs-string">"123abc"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[([1,2,3,nil],[a,b,c,nil]),nil]'</span>
@@ -204,7 +215,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.many(Parser.digit.call(Parser))
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>))
+          )(List.fromString(<span class="hljs-string">"abc"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[([],[a,b,c,nil]),nil]'</span>
@@ -216,7 +227,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.some(Parser.digit.call(Parser))
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc"</span>))
+          )(List.fromString(<span class="hljs-string">"abc"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[]'</span>
@@ -229,7 +240,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       PP.print(
         Parser.parse(
           Parser.ident.call(Parser)
-        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"abc def"</span>))
+        )(List.fromString(<span class="hljs-string">"abc def"</span>))
       )
     ).to.eql(
       <span class="hljs-string">'[([a,b,c,nil],[ ,d,e,f,nil]),nil]'</span>
@@ -241,7 +252,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       PP.print(
         Parser.parse(
           Parser.nat.call(Parser)
-        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123"</span>))
+        )(List.fromString(<span class="hljs-string">"123"</span>))
       )
     ).to.eql(
       <span class="hljs-string">'[(123,[]),nil]'</span>
@@ -253,7 +264,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       PP.print(
         Parser.parse(
           Parser.space.call(Parser)
-        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   abc"</span>))
+        )(List.fromString(<span class="hljs-string">"   abc"</span>))
       )
     ).to.eql(
       <span class="hljs-string">'[((),[a,b,c,nil]),nil]'</span>
@@ -265,7 +276,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       PP.print(
         Parser.parse(
           Parser.int.call(Parser)
-        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"-123 abc"</span>))
+        )(List.fromString(<span class="hljs-string">"-123 abc"</span>))
       )
     ).to.eql(
       <span class="hljs-string">'[(-123,[a,b,c,nil]),nil]'</span>
@@ -274,10 +285,49 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
       PP.print(
         Parser.parse(
           Parser.int.call(Parser)
-        )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"123 abc"</span>))
+        )(List.fromString(<span class="hljs-string">"123 abc"</span>))
       )
     ).to.eql(
       <span class="hljs-string">'[(123,[a,b,c,nil]),nil]'</span>
+    );
+    next();
+  });
+  it(<span class="hljs-string">"float"</span>, (next) =&gt; {
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(List.fromString(<span class="hljs-string">"0.1"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(0.1,[]),nil]'</span>
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(List.fromString(<span class="hljs-string">"0.123"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(0.123,[]),nil]'</span>
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(List.fromString(<span class="hljs-string">"1.1"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(1.1,[]),nil]'</span>
+    );
+    expect(
+      PP.print(
+        Parser.parse(
+          Parser.float.call(Parser)
+        )(List.fromString(<span class="hljs-string">"-1.1"</span>))
+      )
+    ).to.eql(
+      <span class="hljs-string">'[(-1.1,[]),nil]'</span>
     );
     next();
   });
@@ -287,7 +337,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.identifier.call(Parser)
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   abc"</span>))
+          )(List.fromString(<span class="hljs-string">"   abc"</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[([a,b,c,nil],[]),nil]'</span>
@@ -299,7 +349,7 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.natural.call(Parser)
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   123   "</span>))
+          )(List.fromString(<span class="hljs-string">"   123   "</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[(123,[]),nil]'</span>
@@ -311,14 +361,46 @@ describe(<span class="hljs-string">'パーサーコンビネーター'</span>, (
         PP.print(
           Parser.parse(
             Parser.integer.call(Parser)
-          )(<span class="hljs-built_in">String</span>.toList(<span class="hljs-string">"   -123   "</span>))
+          )(List.fromString(<span class="hljs-string">"   -123   "</span>))
         )
       ).to.eql(
         <span class="hljs-string">'[(-123,[]),nil]'</span>
       );
       next();
     });
-    
+    it(<span class="hljs-string">"numeric"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.numeric.call(Parser)
+          )(List.fromString(<span class="hljs-string">"   -123   "</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(-123,[]),nil]'</span>
+      );
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.numeric.call(Parser)
+          )(List.fromString(<span class="hljs-string">"   0.123   "</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[(0.123,[]),nil]'</span>
+      );
+      next();
+    });
+    it(<span class="hljs-string">"symbol"</span>, (next) =&gt; {
+      expect(
+        PP.print(
+          Parser.parse(
+            Parser.symbol(List.fromString(<span class="hljs-string">"+"</span>))
+          )(List.fromString(<span class="hljs-string">"  +  "</span>))
+        )
+      ).to.eql(
+        <span class="hljs-string">'[([+,nil],[]),nil]'</span>
+      );
+      next();
+    });
   });
 });</pre></div></div>
             

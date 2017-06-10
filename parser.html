@@ -573,6 +573,30 @@ parse parser input = parser(input)</p>
     )(
       self.nat.call(self)
     );
+  },
+  float: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> minus = self.char(<span class="hljs-string">"-"</span>);
+    <span class="hljs-keyword">var</span> dot = self.char(<span class="hljs-string">"."</span>);
+    <span class="hljs-keyword">return</span> self.alt(
+                self.flatMap(minus)((_) =&gt; {
+                    <span class="hljs-keyword">return</span> self.flatMap(self.nat.call(self))((n) =&gt; {
+                        <span class="hljs-keyword">return</span> self.flatMap(dot)((_) =&gt; {
+                            <span class="hljs-keyword">return</span> self.flatMap(self.nat.call(self))((m) =&gt; {
+                                <span class="hljs-keyword">return</span> self.pure(-n - m * (<span class="hljs-number">1</span> / <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">10</span>, <span class="hljs-built_in">Math</span>.floor(<span class="hljs-number">1</span>+<span class="hljs-built_in">Math</span>.log10(m))) ));
+                            });
+                        });
+                    });
+                })
+            )(
+                self.flatMap(self.nat.call(self))((n) =&gt; {
+                    <span class="hljs-keyword">return</span> self.flatMap(dot)((_) =&gt; {
+                        <span class="hljs-keyword">return</span> self.flatMap(self.nat.call(self))((m) =&gt; {
+                            <span class="hljs-keyword">return</span> self.pure(n + m * (<span class="hljs-number">1</span> / <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">10</span>, <span class="hljs-built_in">Math</span>.floor(<span class="hljs-number">1</span>+<span class="hljs-built_in">Math</span>.log10(m))) ));
+                        });
+                    });
+                })
+             );
   },</pre></div></div>
             
         </li>
@@ -609,6 +633,10 @@ parse parser input = parser(input)</p>
   integer: () =&gt; {
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> self.token(self.int.call(self));
+  },
+  numeric: () =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">return</span> self.token(self.alt(self.float.call(self))(self.int.call(self)));
   },
   symbol: (xs) =&gt; {
     <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;

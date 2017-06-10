@@ -149,6 +149,40 @@
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       }
     });
+  },
+  isEqual: (xs, ys) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">if</span>(self.isEmpty(xs)) {
+        <span class="hljs-keyword">if</span>(self.isEmpty(ys)) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;        
+        }
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span>(self.isEmpty(ys)) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> xs.match({
+                empty: (_) =&gt; {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                },
+                cons: (x, xtail) =&gt; {
+                    <span class="hljs-keyword">return</span> ys.match({
+                        empty: (_) =&gt; {
+                            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                        },
+                        cons: (y, ytail) =&gt; {
+                            <span class="hljs-keyword">if</span>(x === y) {
+                                <span class="hljs-keyword">return</span> self.isEqual(xtail, ytail);
+                            } <span class="hljs-keyword">else</span> {
+                                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                            }
+                        }
+                    });
+                 }
+            });
+        }
+    }
   },</pre></div></div>
             
         </li>
@@ -558,6 +592,17 @@ concat xss = foldr xss [] append</p>
         }
       });
     };
+  },
+  fromString: (str) =&gt; {
+    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+    expect(str).to.a(<span class="hljs-string">'string'</span>);
+    <span class="hljs-keyword">if</span>(str.length === <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">return</span> self.empty();
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">var</span> head = str[<span class="hljs-number">0</span>];
+      <span class="hljs-keyword">var</span> tail = str.substring(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">return</span> self.cons(head, self.fromString(tail));
+    }
   },
 };</pre></div></div>
             

@@ -954,11 +954,11 @@ describe('クロージャーを使う', () => {
         it('カリー化された不変なオブジェクト型', (next) => {
           /* #@range_begin(immutable_object_type_curried) */
           var object = {  // objectモジュール
-            // empty:: STRING => Any
+            /* empty:: STRING => Any */
             empty: (key) => {
               return null;
             },
-            // set:: (STRING,Any) => (STRING => Any) => STRING => Any
+            /* set:: (STRING,Any) => (STRING => Any) => STRING => Any */
             set: (key, value) => {
               return (obj) => {
                 return (queryKey) => {
@@ -970,7 +970,7 @@ describe('クロージャーを使う', () => {
                 };
               };
             },
-            // get:: (STRING) => (STRING => Any) => Any
+            /* get:: (STRING) => (STRING => Any) => Any */
             get: (key) => {
               return (obj) => {
                 return obj(key);
@@ -984,7 +984,7 @@ describe('クロージャーを使う', () => {
             object.set("C3PO", "Star Wars"), // (STRING => Any) => STRING => Any
             object.set("HAL9000","2001: a space odessay") // (STRING => Any) => STRING => Any
           )(object.empty);
-          // )(object.empty()); 
+          /* )(object.empty()); これは適切でない */
 
           expect(
             object.get("HAL9000")(robots)

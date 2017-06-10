@@ -48,6 +48,8 @@
 <span class="hljs-keyword">var</span> Pair = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pair.js'</span>);
 <span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/list.js'</span>);
 <span class="hljs-keyword">var</span> Parser = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/parser.js'</span>); 
+<span class="hljs-keyword">var</span> I = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/evaluator.js'</span>).ID; 
+<span class="hljs-keyword">var</span> Env = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/env.js'</span>);
 <span class="hljs-keyword">var</span> PP = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/pprinter.js'</span>);
 
 <span class="hljs-built_in">module</span>.exports = {</pre></div></div>
@@ -67,13 +69,22 @@
             
             <div class="content"><div class='highlight'><pre>    expr: (_) =&gt; {
         <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
+        <span class="hljs-keyword">var</span> add = List.fromString(<span class="hljs-string">"+"</span>);
+        <span class="hljs-keyword">var</span> subtract = List.fromString(<span class="hljs-string">"-"</span>);
+        <span class="hljs-keyword">var</span> add_or_subtract_parser = Parser.alt(Parser.symbol(add))(Parser.symbol(subtract));
         <span class="hljs-keyword">return</span> Parser.flatMap(self.term())((t) =&gt; {
-            <span class="hljs-keyword">return</span> Parser.alt(Parser.flatMap(Parser.symbol(List.fromString(<span class="hljs-string">"+"</span>)))((_) =&gt; {
-                <span class="hljs-keyword">return</span> Parser.flatMap(self.expr())((e) =&gt; {
-                    <span class="hljs-keyword">return</span> Parser.pure(t + e);
-                });
+            <span class="hljs-keyword">return</span> Parser.alt(Parser.flatMap(add_or_subtract_parser)((operator) =&gt; {
+                <span class="hljs-keyword">if</span>(List.isEqual(operator,add)) {
+                    <span class="hljs-keyword">return</span> Parser.flatMap(self.expr())((e) =&gt; {
+                        <span class="hljs-keyword">return</span> Parser.pure(I.Exp.add(t, e));
+                    });
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(List.isEqual(operator, subtract)) {
+                    <span class="hljs-keyword">return</span> Parser.flatMap(self.expr())((e) =&gt; {
+                        <span class="hljs-keyword">return</span> Parser.pure(I.Exp.subtract(t, e));
+                    });
+                }
             }))(
-            Parser.pure(t)
+                Parser.pure(t)
             );
         });
     },</pre></div></div>
@@ -93,15 +104,23 @@
             
             <div class="content"><div class='highlight'><pre>    term: (_) =&gt; {
         <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-        <span class="hljs-keyword">var</span> multiply = Parser.symbol(List.fromString(<span class="hljs-string">"*"</span>));
+        <span class="hljs-keyword">var</span> multiply = List.fromString(<span class="hljs-string">"*"</span>);
+        <span class="hljs-keyword">var</span> divide = List.fromString(<span class="hljs-string">"/"</span>);
+        <span class="hljs-keyword">var</span> multiply_or_divide_parser = Parser.alt(Parser.symbol(multiply))(Parser.symbol(divide));
         <span class="hljs-keyword">return</span> Parser.flatMap(self.factor())((f) =&gt; {
-            <span class="hljs-keyword">return</span> Parser.alt(Parser.flatMap(multiply)((_) =&gt; {
-                <span class="hljs-keyword">return</span> Parser.flatMap(self.expr())((e) =&gt; {
-                    <span class="hljs-keyword">return</span> Parser.pure(f * e);
-                });
+            <span class="hljs-keyword">return</span> Parser.alt(Parser.flatMap(multiply_or_divide_parser)((operator) =&gt; {
+                <span class="hljs-keyword">if</span>(List.isEqual(operator,multiply)) {
+                    <span class="hljs-keyword">return</span> Parser.flatMap(self.expr())((e) =&gt; {
+                        <span class="hljs-keyword">return</span> Parser.pure(I.Exp.multiply(f, e));
+                    });
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(List.isEqual(operator, divide)) {
+                    <span class="hljs-keyword">return</span> Parser.flatMap(self.expr())((e) =&gt; {
+                        <span class="hljs-keyword">return</span> Parser.pure(I.Exp.divide(f, e));
+                    });
+                }
             }))(
                 Parser.pure(f)
-            )
+            );
         });
     },</pre></div></div>
             
@@ -129,22 +148,26 @@
                 })
             });
         }))(
-            Parser.natural()
+            Parser.flatMap(Parser.numeric())((numeric) =&gt; {
+                <span class="hljs-keyword">return</span> Parser.pure(I.Exp.num(numeric));
+            })
           )
     },
     evaluate: (inputString) =&gt; {
         <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
         <span class="hljs-keyword">var</span> parseResult = Parser.parse(self.expr())(List.fromString(inputString));
+        <span class="hljs-keyword">var</span> env = Env.empty;
+
         <span class="hljs-keyword">return</span> parseResult.match({
             empty: (_) =&gt; {
-                <span class="hljs-keyword">throw</span> <span class="hljs-string">"Invalid input"</span>;
+                <span class="hljs-keyword">return</span> <span class="hljs-string">"Invalid input"</span>;
             },
             cons: (head, tail) =&gt; {
                 <span class="hljs-keyword">return</span> head.match({
-                    cons: (left, remainingInput) =&gt; {
+                    cons: (ast, remainingInput) =&gt; {
                         <span class="hljs-keyword">return</span> remainingInput.match({
                             empty: (_) =&gt; {
-                                <span class="hljs-keyword">return</span> left;
+                                <span class="hljs-keyword">return</span> I.evaluate(ast,env);
                             },
                             cons: (head, tail) =&gt; {
                                 <span class="hljs-keyword">return</span> PP.print(tail);</pre></div></div>

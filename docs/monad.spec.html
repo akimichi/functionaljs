@@ -2254,7 +2254,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
-              <pre><code class="lang-scala">scala&gt; <span class="hljs-keyword">val</span> nestedNumbers = <span class="hljs-type">List</span>(<span class="hljs-type">List</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), <span class="hljs-type">List</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>))
+              <pre><code class="lang-scala">scala&gt; <span class="hljs-function"><span class="hljs-keyword">val</span> <span class="hljs-title">nestedNumbers</span> =</span> <span class="hljs-type">List</span>(<span class="hljs-type">List</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), <span class="hljs-type">List</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>))
 scala&gt; nestedNumbers.flatMap(x =&gt; x.map(_ * <span class="hljs-number">2</span>))
 res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = <span class="hljs-type">List</span>(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">6</span>, <span class="hljs-number">8</span>)
 </code></pre>

@@ -12,8 +12,7 @@
   "homepage": "https://github.com/akimichi/functionaljs",
   "license": "MIT",
   "scripts": {
-    "unit-tests": "mocha -R spec --recursive",
-    "test": "npm run unit-tests"
+    "test": "mocha --harmony -R spec"
   },
   "dependencies": {
     "expect.js": "^0.3.1",

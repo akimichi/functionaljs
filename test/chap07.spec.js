@@ -954,9 +954,11 @@ describe('クロージャーを使う', () => {
         it('カリー化された不変なオブジェクト型', (next) => {
           /* #@range_begin(immutable_object_type_curried) */
           var object = {  // objectモジュール
-            empty: (_) => {
+            // empty:: STRING => Any
+            empty: (key) => {
               return null;
             },
+            // set:: (STRING,Any) => (STRING => Any) => STRING => Any
             set: (key, value) => {
               return (obj) => {
                 return (queryKey) => {
@@ -968,6 +970,7 @@ describe('クロージャーを使う', () => {
                 };
               };
             },
+            // get:: (STRING) => (STRING => Any) => Any
             get: (key) => {
               return (obj) => {
                 return obj(key);
@@ -978,14 +981,26 @@ describe('クロージャーを使う', () => {
           // **リスト7.32** カリー化された不変なオブジェクト型のテスト
           /* #@range_begin(immutable_object_type_curried_test) */
           var robots = compose( // object.setを合成する
-            object.set("C3PO", "Star Wars"),
-            object.set("HAL9000","2001: a space odessay")
-          )(object.empty());
+            object.set("C3PO", "Star Wars"), // (STRING => Any) => STRING => Any
+            object.set("HAL9000","2001: a space odessay") // (STRING => Any) => STRING => Any
+          )(object.empty);
+          // )(object.empty()); 
 
           expect(
             object.get("HAL9000")(robots)
           ).to.eql(
             "2001: a space odessay"
+          );
+          expect(
+            object.get("C3PO")(robots)
+          ).to.eql(
+            "Star Wars"
+          );
+          // 該当するデータがなければ、nullが返る
+          expect(
+            object.get("鉄腕アトム")(robots)
+          ).to.eql(
+            null 
           );
           /* #@range_end(immutable_object_type_curried_test) */
           next();

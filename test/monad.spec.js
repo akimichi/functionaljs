@@ -4,6 +4,11 @@
 // =============
 // ここでは、本書で紹介できなかったさまざまなモナドを紹介します。
 // 参考までに、Haskellでの定義も随時併記しています。
+// 
+// なお、本ページのコードは、書籍で採用された node.js 0.12版では動作しません。
+// できるだけ新しいバージョンのnode.jsで実行してください。
+// 当方の環境では、v8.11.1でテストが成功することを確認しています。
+
 
 // ## 小目次
 // <div class="toc">
@@ -123,10 +128,9 @@ var Maybe = {
   // liftM f m  = do { x <- m1; return (f x) }
   // ~~~
   liftM: (f) => {
-    var self = this;
     return (ma) => {
-      return self.flatMap(ma)((x) => {
-        return self.unit(f(x));
+      return Maybe.flatMap(ma)((x) => {
+        return Maybe.unit(f(x));
       });
     };
   },
@@ -134,11 +138,10 @@ var Maybe = {
   // (<*>) :: (Monad m) => m (a -> b) -> m a -> m b
   // ~~~
   apply: (mf) => {
-    var self = this;
     return (ma) => {
-      return self.flatMap(mf)((f) => {
-        return self.flatMap(ma)((a) => {
-          return self.unit(f(a));
+      return Maybe.flatMap(mf)((f) => {
+        return Maybe.flatMap(ma)((a) => {
+          return Maybe.unit(f(a));
         });
       });
     }; 
@@ -1473,12 +1476,10 @@ var Reader = {
   // ask :: Reader r r
   // ask = Reader id
   // ~~~
-  ask: (x) => {
-    return {
-      run: (env) => {
-        return env;
-      }
-    };
+  ask: {
+    run: (env) => {
+      return env;
+    }
   },
   // **Reader#local**
   // ~~~haskell
@@ -1501,7 +1502,7 @@ describe("Readerモナドをテストする",() => {
   // c.f. "Real World Haskell",p.432
   it("localのテスト", (next) => {
     var myName = (step) => {
-      return Reader.flatMap(Reader.ask())((name) => {
+      return Reader.flatMap(Reader.ask)((name) => {
         return Reader.unit(step + ", I am " + name);
       });
     };
@@ -1527,7 +1528,7 @@ describe("Readerモナドをテストする",() => {
       host: "127.0.0.1",
       port: "27017"
     }; 
-    var connect = Reader.flatMap(Reader.ask())((config) => {
+    var connect = Reader.flatMap(Reader.ask)((config) => {
       return Reader.unit(config.host + ":" + config.port);
     });
     expect(

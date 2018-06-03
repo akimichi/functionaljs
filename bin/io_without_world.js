@@ -1,38 +1,18 @@
 "use strict";
 
+/*
+  外界を明示しないIOモナド
+
+*/
+
+
 var expect = require('expect.js');
 var pair = require('./pair');
-// var pair = {
-//   // pair の代数的データ構造
-//   cons: (left, right) => {
-//     return (pattern) => {
-//       return pattern.cons(left, right);
-//     };
-//   },
-//   match : (data, pattern) => {
-//     return data.call(pair, pattern);
-//   },
-//   // ペアの右側を取得する
-//   right: (tuple) => {
-//     return pair.match(tuple, {
-//       cons: (left, right) => {
-//         return right;
-//       }
-//     });
-//   },
-//   // ペアの左側を取得する
-//   left: (tuple) => {
-//     return pair.match(tuple, {
-//       cons: (left, right) => {
-//         return left;
-//       }
-//     });
-//   }
-// };
 
 module.exports = {
   /* #@range_begin(io_monad_definition_with_world) */
-  // unit:: a -> IO a
+  // unit:: T -> IO T
+  // ただし、IO T は Nothing => T とする。 
   unit: (any) => {
     return (_) =>  {
       return any;
@@ -42,12 +22,12 @@ module.exports = {
   // done:: T -> IO T
   done: (any) => {
     var self = this;
-    return self.unit();
+    return self.unit(any);
   },
-  // flatMap:: IO a -> (a -> IO b) -> IO b
+  // flatMap:: IO T -> (T -> IO S) -> IO S
   flatMap: (instanceA) => {
     var self = this;
-    return (actionAB) => { // actionAB:: a -> IO b
+    return (actionAB) => { // actionAB:: T -> IO S
       return self.unit(self.run(actionAB(self.run(instanceA))));
     };
   },

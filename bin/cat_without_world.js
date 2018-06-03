@@ -1,7 +1,10 @@
 "use strict";
 
 /*
+  外界を明示しないIOモナドを使ったcatプログラム
+ ~~~ 
  $ node --harmony bin/cat.js test/resources/dream.txt
+ ~~~
 */
 
 var pair = require('./pair');
@@ -237,11 +240,19 @@ var IO = {
   /* flatMap:: IO[A] => FUN[A => IO[B]] => IO[B] */
   flatMap: (instanceA) => {
     return (actionAB) => { // actionAB:: A -> IO[B]
-      /* instanceAのIOアクションを実行し、
-         続いて actionABを実行する */
-      return actionAB(IO.run(instanceA)); 
+      return () => {
+        /* instanceAのIOアクションを実行し、
+           続いて actionABを実行する */
+        return IO.run(actionAB(IO.run(instanceA)))
+      };
     };
   },
+  // 間違った定義
+  // flatMap: (instanceA) => {
+  //   return (actionAB) => { // actionAB:: A => IO[B]
+  //     return actionAB(IO.run(instanceA)); 
+  //   };
+  // },
   /* done:: T => IO[T] */
   done: (any) => {
     return IO.unit();

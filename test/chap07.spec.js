@@ -2749,9 +2749,17 @@ describe('モナドを作る', () => {
         /* flatMap:: IO[T] => FUN[T => IO[U]] => IO[U] */
         flatMap : (instanceA) => {
           return (actionAB) => { // actionAB:: a -> IO[b]
-            return IO.unit(IO.run(actionAB(IO.run(instanceA))));
+            return (_) => {
+              return IO.run(actionAB(IO.run(instanceA)));
+            }
           };
         },
+        // 間違った定義
+        // flatMap: (instanceA) => {
+        //   return (actionAB) => { // actionAB:: A => IO[B]
+        //     return actionAB(IO.run(instanceA)); 
+        //   };
+        // },
         /* done:: T => IO[T] */
         done : (any) => {
           return IO.unit();
@@ -2815,7 +2823,7 @@ describe('モナドを作る', () => {
         };
         /* IO.putc:: CHAR => IO[] */
         IO.putc = (character) => {
-          return (io) => {
+          return (_) => {
             process.stdout.write(character);
             return null;
           };
@@ -2868,6 +2876,14 @@ describe('モナドを作る', () => {
           }
         };
         /* #@range_end(string_module) */
+        // it('IO.putcのテスト', (next) => {
+        //   expect(
+        //     IO.putc('a')
+        //   ).to.eql(
+        //     IO.putc('a')
+        //   );
+        //   next();
+        // });
         it('stringのテスト', (next) => {
           expect(
             string.head("abc")

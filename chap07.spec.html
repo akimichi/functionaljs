@@ -4504,10 +4504,31 @@ $$</p>
         <span class="hljs-comment">/* flatMap:: IO[T] =&gt; FUN[T =&gt; IO[U]] =&gt; IO[U] */</span>
         flatMap : (instanceA) =&gt; {
           <span class="hljs-keyword">return</span> (actionAB) =&gt; { <span class="hljs-comment">// actionAB:: a -&gt; IO[b]</span>
-            <span class="hljs-keyword">return</span> IO.unit(IO.run(actionAB(IO.run(instanceA))));
+            <span class="hljs-keyword">return</span> (_) =&gt; {
+              <span class="hljs-keyword">return</span> IO.run(actionAB(IO.run(instanceA)));
+            }
           };
-        },
-        <span class="hljs-comment">/* done:: T =&gt; IO[T] */</span>
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-130">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-130">&#182;</a>
+              </div>
+              <p>間違った定義
+flatMap: (instanceA) =&gt; {
+  return (actionAB) =&gt; { // actionAB:: A =&gt; IO[B]
+    return actionAB(IO.run(instanceA)); 
+  };
+},</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-comment">/* done:: T =&gt; IO[T] */</span>
         done : (any) =&gt; {
           <span class="hljs-keyword">return</span> IO.unit();
         },
@@ -4545,11 +4566,11 @@ $$</p>
         </li>
         
         
-        <li id="section-130">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p><strong>リスト7.100</strong> run関数の利用法</p>
 
@@ -4570,11 +4591,11 @@ $$</p>
         </li>
         
         
-        <li id="section-131">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <h4 id="io-">IOアクションを合成する</h4>
 
@@ -4586,11 +4607,11 @@ $$</p>
         </li>
         
         
-        <li id="section-132">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p><strong>リスト7.102</strong> seq関数の定義</p>
 
@@ -4609,7 +4630,7 @@ $$</p>
         };
         <span class="hljs-comment">/* IO.putc:: CHAR =&gt; IO[] */</span>
         IO.putc = (character) =&gt; {
-          <span class="hljs-keyword">return</span> (io) =&gt; {
+          <span class="hljs-keyword">return</span> (_) =&gt; {
             process.stdout.write(character);
             <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
           };
@@ -4639,11 +4660,11 @@ $$</p>
         </li>
         
         
-        <li id="section-133">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p><strong>リスト7.103</strong> stringモジュール</p>
 
@@ -4673,8 +4694,29 @@ $$</p>
             }
           }
         };
-        <span class="hljs-comment">/* #@range_end(string_module) */</span>
-        it(<span class="hljs-string">'stringのテスト'</span>, (next) =&gt; {
+        <span class="hljs-comment">/* #@range_end(string_module) */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-135">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-135">&#182;</a>
+              </div>
+              <p>it(‘IO.putcのテスト’, (next) =&gt; {
+  expect(
+    IO.putc(‘a’)
+  ).to.eql(
+    IO.putc(‘a’)
+  );
+  next();
+});</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        it(<span class="hljs-string">'stringのテスト'</span>, (next) =&gt; {
           expect(
             string.head(<span class="hljs-string">"abc"</span>)
           ).to.eql(
@@ -4695,11 +4737,11 @@ $$</p>
         </li>
         
         
-        <li id="section-134">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p><a href="index.html">目次に戻る</a> <a href="chap08.spec.html">次章に移る</a> </p>
 

@@ -68,6 +68,9 @@
               </div>
               <p>ここでは、本書で紹介できなかったさまざまなモナドを紹介します。
 参考までに、Haskellでの定義も随時併記しています。</p>
+<p>なお、本ページのコードは、書籍で採用された node.js 0.12版では動作しません。
+できるだけ新しいバージョンのnode.jsで実行してください。
+当方の環境では、v8.11.1でテストが成功することを確認しています。</p>
 
             </div>
             
@@ -351,10 +354,9 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  liftM: (f) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (ma) =&gt; {
-      <span class="hljs-keyword">return</span> self.flatMap(ma)((x) =&gt; {
-        <span class="hljs-keyword">return</span> self.unit(f(x));
+      <span class="hljs-keyword">return</span> Maybe.flatMap(ma)((x) =&gt; {
+        <span class="hljs-keyword">return</span> Maybe.unit(f(x));
       });
     };
   },</pre></div></div>
@@ -374,11 +376,10 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  apply: (mf) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (ma) =&gt; {
-      <span class="hljs-keyword">return</span> self.flatMap(mf)((f) =&gt; {
-        <span class="hljs-keyword">return</span> self.flatMap(ma)((a) =&gt; {
-          <span class="hljs-keyword">return</span> self.unit(f(a));
+      <span class="hljs-keyword">return</span> Maybe.flatMap(mf)((f) =&gt; {
+        <span class="hljs-keyword">return</span> Maybe.flatMap(ma)((a) =&gt; {
+          <span class="hljs-keyword">return</span> Maybe.unit(f(a));
         });
       });
     }; 
@@ -2360,12 +2361,10 @@ res0: <span class="hljs-type">List</span>[<span class="hljs-type">Int</span>] = 
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  ask: (x) =&gt; {
-    <span class="hljs-keyword">return</span> {
-      run: (env) =&gt; {
-        <span class="hljs-keyword">return</span> env;
-      }
-    };
+            <div class="content"><div class='highlight'><pre>  ask: {
+    run: (env) =&gt; {
+      <span class="hljs-keyword">return</span> env;
+    }
   },</pre></div></div>
             
         </li>
@@ -2425,7 +2424,7 @@ c.f. “Real World Haskell”,p.432</p>
             
             <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"localのテスト"</span>, (next) =&gt; {
     <span class="hljs-keyword">var</span> myName = (step) =&gt; {
-      <span class="hljs-keyword">return</span> Reader.flatMap(Reader.ask())((name) =&gt; {
+      <span class="hljs-keyword">return</span> Reader.flatMap(Reader.ask)((name) =&gt; {
         <span class="hljs-keyword">return</span> Reader.unit(step + <span class="hljs-string">", I am "</span> + name);
       });
     };
@@ -2451,7 +2450,7 @@ c.f. “Real World Haskell”,p.432</p>
       host: <span class="hljs-string">"127.0.0.1"</span>,
       port: <span class="hljs-string">"27017"</span>
     }; 
-    <span class="hljs-keyword">var</span> connect = Reader.flatMap(Reader.ask())((config) =&gt; {
+    <span class="hljs-keyword">var</span> connect = Reader.flatMap(Reader.ask)((config) =&gt; {
       <span class="hljs-keyword">return</span> Reader.unit(config.host + <span class="hljs-string">":"</span> + config.port);
     });
     expect(

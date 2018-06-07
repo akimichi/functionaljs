@@ -13,16 +13,16 @@
 // ## 小目次
 // <div class="toc">
 // <ul class="toc">
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#id_monad"> 恒等モナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#maybe_monad"> Maybeモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#either_monad"> Eitherモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#list_monad"> Listモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#stream_monad"> Streamモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#reader_monad"> Readerモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#writer_monad"> Writerモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#io_monad"> IOモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#st_monad"> STモナド</a>
-//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#cont_monad"> Contモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#id_monad"> 恒等モナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#maybe_monad"> Maybeモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#either_monad"> Eitherモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#list_monad"> Listモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#stream_monad"> Streamモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#reader_monad"> Readerモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#writer_monad"> Writerモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#io_monad"> IOモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#st_monad"> STモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monad.spec.html#cont_monad"> Contモナド</a></li>
 // </ul>
 // </div>
 

@@ -537,12 +537,12 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p><strong>Semantics#evaluate</strong>
-evaluate:: Exp -&gt; Reader[Maybe[Value]]</p>
+              <p><strong>Semantics#evaluate</strong></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  evaluate: (anExp) =&gt; {
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* evaluate:: Exp -&gt; Reader[Maybe[Value]] */</span>
+  evaluate: (anExp) =&gt; {
     <span class="hljs-keyword">return</span> Exp.match(anExp,{</pre></div></div>
             
         </li>
@@ -591,12 +591,12 @@ evaluate:: Exp -&gt; Reader[Maybe[Value]]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>関数定義（λ式）の評価
-lambda:: (Var, Exp) -&gt; FUN[VALUE -&gt; Reader[Maybe[Value]]</p>
+              <p>関数定義（λ式）の評価</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      lambda: (identifier, body) =&gt; {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* lambda:: (Var, Exp) -&gt; FUN[VALUE -&gt; Reader[Maybe[Value]] */</span>
+      lambda: (identifier, body) =&gt; {
         <span class="hljs-keyword">return</span> Exp.match(identifier,{
           variable: (name) =&gt; {
             <span class="hljs-keyword">const</span> closure = (actualArg =&gt; {
@@ -620,12 +620,12 @@ lambda:: (Var, Exp) -&gt; FUN[VALUE -&gt; Reader[Maybe[Value]]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>関数適用の評価
-app: (Lambda, Exp) -&gt; Reader[Maybe[Value]]</p>
+              <p>関数適用の評価</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      app: (lambda, arg) =&gt; {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* app: (Lambda, Exp) -&gt; Reader[Maybe[Value]] */</span>
+      app: (lambda, arg) =&gt; {
         <span class="hljs-keyword">const</span> closure = Semantics.evaluate(lambda);
         <span class="hljs-keyword">return</span> Reader.flatMap(Semantics.evaluate(arg))(maybeArg =&gt; {
           <span class="hljs-keyword">return</span> Maybe.flatMap(maybeArg)(actualArg =&gt; {
@@ -643,12 +643,12 @@ app: (Lambda, Exp) -&gt; Reader[Maybe[Value]]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p>Letの評価
-let: (Variable, Exp, Exp) -&gt; Reader[Maybe[Value]]</p>
+              <p>Letの評価</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">let</span>: (variable, declaration, body) =&gt; {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-comment">/* let: (Variable, Exp, Exp) -&gt; Reader[Maybe[Value]] */</span>
+      <span class="hljs-keyword">let</span>: (variable, declaration, body) =&gt; {
         <span class="hljs-comment">/* Let式は、関数適用の糖衣構文にすぎない */</span>
         <span class="hljs-keyword">return</span> Semantics.evaluate(Exp.app(Exp.lambda(variable, body), declaration));
       },</pre></div></div>
@@ -662,7 +662,7 @@ let: (Variable, Exp, Exp) -&gt; Reader[Maybe[Value]]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p> 足し算の評価 </p>
+              <p> 足し算の評価</p>
 
             </div>
             
@@ -762,11 +762,11 @@ let: (Variable, Exp, Exp) -&gt; Reader[Maybe[Value]]</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p><strong>evaluateは、環境の情報に影響を受けない</strong></p>
+              <p><strong>数値の評価は、環境の情報に影響を受けない</strong></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"evaluateは、環境の情報に影響を受けない"</span>,(done) =&gt; {
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"数値の評価は、環境の情報に影響を受けない"</span>,(done) =&gt; {
       <span class="hljs-keyword">const</span> num = Exp.num(<span class="hljs-number">1</span>),
         initialEnv = Env.extend(<span class="hljs-string">'x'</span>,<span class="hljs-number">1</span>)(Env.empty())
 

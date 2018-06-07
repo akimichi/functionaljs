@@ -239,7 +239,7 @@ const Semantics = {
     });
   },
   // **Semantics#evaluate**
-  // evaluate:: Exp -> Reader[Maybe[Value]]
+  /* evaluate:: Exp -> Reader[Maybe[Value]] */
   evaluate: (anExp) => {
     return Exp.match(anExp,{
       // 数値の評価
@@ -254,7 +254,7 @@ const Semantics = {
         });
       },
       // 関数定義（λ式）の評価
-      // lambda:: (Var, Exp) -> FUN[VALUE -> Reader[Maybe[Value]]
+      /* lambda:: (Var, Exp) -> FUN[VALUE -> Reader[Maybe[Value]] */
       lambda: (identifier, body) => {
         return Exp.match(identifier,{
           variable: (name) => {
@@ -270,7 +270,7 @@ const Semantics = {
         });
       },
       // 関数適用の評価
-      // app: (Lambda, Exp) -> Reader[Maybe[Value]]
+      /* app: (Lambda, Exp) -> Reader[Maybe[Value]] */
       app: (lambda, arg) => {
         const closure = Semantics.evaluate(lambda);
         return Reader.flatMap(Semantics.evaluate(arg))(maybeArg => {
@@ -280,12 +280,12 @@ const Semantics = {
         });
       },
       // Letの評価
-      // let: (Variable, Exp, Exp) -> Reader[Maybe[Value]]
+      /* let: (Variable, Exp, Exp) -> Reader[Maybe[Value]] */
       let: (variable, declaration, body) => {
         /* Let式は、関数適用の糖衣構文にすぎない */
         return Semantics.evaluate(Exp.app(Exp.lambda(variable, body), declaration));
       },
-      //  足し算の評価 
+      //  足し算の評価
       add: (expL, expR) => {
         const operator = (operandR, operandL) => {
           return operandR + operandL; 
@@ -322,8 +322,8 @@ describe("Semanticsをテストする",() => {
         }
       })
     });
-    // **evaluateは、環境の情報に影響を受けない**
-    it("evaluateは、環境の情報に影響を受けない",(done) => {
+    // **数値の評価は、環境の情報に影響を受けない**
+    it("数値の評価は、環境の情報に影響を受けない",(done) => {
       const num = Exp.num(1),
         initialEnv = Env.extend('x',1)(Env.empty())
 

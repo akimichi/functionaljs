@@ -11,11 +11,11 @@
 // ## 小目次
 // <div class="toc">
 // <ul class="toc">
-//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#exp> 式の定義</a></li>
-//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#env> 環境の定義</a></li>
-//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#maybe> Maybeモナド</a></li>
-//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#reader> Readerモナド</a></li>
-//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#evaluator> 評価関数の定義</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#exp"> 式の定義</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#env"> 環境の定義</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#maybe"> Maybeモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#reader"> Readerモナド</a></li>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#evaluator"> 評価関数の定義</a></li>
 // </ul>
 // </div>
 

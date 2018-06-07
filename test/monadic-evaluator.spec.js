@@ -8,6 +8,18 @@
 // できるだけ新しいバージョンのnode.jsで実行してください。
 // 当方の環境では、v8.11.1でテストが成功することを確認しています。
 
+// ## 小目次
+// <div class="toc">
+// <ul class="toc">
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#exp> 式の定義</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#env> 環境の定義</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#maybe> Maybeモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#reader> Readerモナド</a>
+//   <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#evaluator> 評価関数の定義</a>
+// </ul>
+// </div>
+
+
 const expect = require('expect.js');
 
 // 拙作 kansuu.jsのコードを利用します
@@ -16,7 +28,7 @@ const kansuu = require('kansuu.js'),
   array = kansuu.array;
 
 
-// ## 式の定義
+// ## <section id='exp'>式の定義</section>
 const Exp = {
   /* 式のパターンマッチ関数 */
   match : (data, pattern) => {
@@ -68,7 +80,7 @@ const Exp = {
 };
 
 
-// ## 環境の定義
+// ## <section id='env'>環境の定義</section>
 //
 // 書籍で紹介した「環境」とは異なる方法で定義しています。
 const Env = {
@@ -139,7 +151,7 @@ describe("環境をテストする",() => {
   });
 });
 
-// ## Maybeモナドの定義
+// ## <section id='maybe'>Maybeモナドの定義</section>
 //
 // 書籍で紹介した「Maybeモナド」とほとんど同じですが、nothingにエラー情報を格納できるよう変更しました。
 const Maybe = {
@@ -176,7 +188,7 @@ const Maybe = {
   }
 };
 
-// ## Readerモナドの定義
+// ## <section id='reader'>Readerモナドの定義</section>
 // 
 //  Readerモナドは、共有された環境から値を読み込む計算を抽象化します。
 //  書籍で紹介された評価器では、全ての評価関数が環境を引数として受けとることになっていました。
@@ -219,7 +231,7 @@ const Reader = {
   }
 };
 
-// ## Semanticsの定義
+// ## <section id='evaluator'>評価関数の定義</section>
 //
 // Semantics.evaluator関数が、評価器となります。
 // この評価器の特徴は、内部に複数のモナドを利用している点です。
@@ -304,8 +316,8 @@ const Semantics = {
 };
 
 
-// ### Semanticsのテスト
-describe("Semanticsをテストする",() => {
+// ### 評価関数のテスト
+describe("評価関数をテストする",() => {
   // ####  数値を評価する
   describe("数値を評価する",() => {
     // **evaluate(1)は、Maybe.just(1)を返す**
@@ -542,3 +554,4 @@ describe("Semanticsをテストする",() => {
     });
   });
 });
+// [目次に戻る](index.html) 

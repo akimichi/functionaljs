@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>monadic-evaluator.spec.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>monadic-evaluator.spec.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="-">モナド的評価器</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>ここでは、書籍で扱かったモナドによる評価器の実装を、さらに発展させます。</p>
+<p>なお、本ページのコードは、書籍で採用された node.js 0.12版では動作しません。
+できるだけ新しいバージョンのnode.jsで実行してください。
+当方の環境では、v8.11.1でテストが成功することを確認しています。</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">const</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>拙作 kansuu.jsのコードを利用します</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> kansuu = <span class="hljs-built_in">require</span>(<span class="hljs-string">'kansuu.js'</span>),
+  pair = kansuu.pair,
+  array = kansuu.array;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="-">式の定義</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> Exp = {
+  <span class="hljs-comment">/* 式のパターンマッチ関数 */</span>
+  match : (data, pattern) =&gt; {
+    <span class="hljs-keyword">return</span> data(pattern);
+  },
+  <span class="hljs-comment">/* 数値の式 */</span>
+  num: (value) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.num(value);
+    };
+  },
+  <span class="hljs-comment">/* 変数の式 */</span>
+  variable : (name) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.variable(name);
+    };
+  },
+  <span class="hljs-comment">/* 関数定義の式(λ式) */</span>
+  lambda: (variable, body) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.lambda(variable, body);
+    };
+  },
+  <span class="hljs-comment">/* 関数適用の式 */</span>
+  app: (lambda, arg) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.app(lambda, arg);
+    };
+  },
+  <span class="hljs-comment">/* Let式 */</span>
+  <span class="hljs-keyword">let</span>: (variable, declaration, body) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.let(variable, declaration, body);
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>演算の定義</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-comment">/* 足し算の式 */</span>
+  add : (expL,expR) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.add(expL, expR);
+    };
+  },
+  <span class="hljs-comment">/* 引き算の式 */</span>
+  subtract: (expL,expR) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.subtract(expL, expR);
+    };
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="-">環境の定義</h2>
+<p>書籍で紹介した「環境」とは異なる方法で定義しています。</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> Env = {
+  empty: () =&gt; {
+    <span class="hljs-keyword">return</span> []; 
+  },
+  <span class="hljs-comment">/* **Env#lookup**
+    lookup:: (STRING) -&gt; Map[String, VALUE] =&gt; Maybe[VALUE] 
+  */</span>
+  lookup : (key) =&gt;  (env) =&gt; {
+    <span class="hljs-keyword">const</span> answer = array.find(aPair =&gt; {
+      <span class="hljs-keyword">return</span> pair.match(aPair, {
+        cons: (left, right) =&gt; {
+          <span class="hljs-keyword">return</span> left === key;
+        }
+      })
+    })(env);
+    <span class="hljs-keyword">if</span>(answer === <span class="hljs-literal">undefined</span>) {
+      <span class="hljs-keyword">return</span> Maybe.nothing(<span class="hljs-string">`変数 <span class="hljs-subst">${key}</span> は未定義です`</span>);
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> Maybe.just(pair.right(answer));
+    }
+  },
+  <span class="hljs-comment">/* 
+  <span class="hljs-comment">/* **Env#extend**
+    extend:: (STRING, VALUE) =&gt; ENV =&gt; ENV 
+    環境を拡張する
+  */</span>
+  extend: (key, value) =&gt; (env) =&gt; { 
+    return array.cons(pair.cons(key, value), env);
+  }
+};
+
+</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="-">環境のテスト</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"環境をテストする"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>Env.empty</strong>をテストする</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"Env.emptyをテストする"</span>,(done) =&gt; {
+    Maybe.match(Env.lookup(<span class="hljs-string">'a'</span>)(Env.empty()),{
+      nothing: (_) =&gt; {
+        expect(<span class="hljs-literal">true</span>).to.be.ok();
+      },
+      just: (value) =&gt; {
+        expect().fail();
+      }
+    })
+    done();
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>Env.extend</strong>をテストする</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"Env.extendをテストする"</span>,(done) =&gt; {
+    <span class="hljs-keyword">const</span> env = Env.extend(<span class="hljs-string">'a'</span>, <span class="hljs-number">1</span>)(Env.empty());
+    expect(
+      pair.left(array.head(env))
+    ).to.eql(<span class="hljs-string">'a'</span>);
+    done(); 
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>Env.lookup</strong>をテストする</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  it(<span class="hljs-string">"Env.lookupをテストする"</span>,(done) =&gt; {
+    <span class="hljs-keyword">const</span> env = Env.extend(<span class="hljs-string">'a'</span>, <span class="hljs-number">1</span>)(Env.empty());
+    Maybe.match(Env.lookup(<span class="hljs-string">'a'</span>)(env),{
+      nothing: (_) =&gt; {
+        expect().fail();
+      },
+      just: (value) =&gt; {
+        expect(value).to.eql(<span class="hljs-number">1</span>);
+      }
+    })
+    done(); 
+  });
+});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h2 id="maybe-">Maybeモナドの定義</h2>
+<p>書籍で紹介した「Maybeモナド」とほとんど同じですが、nothingにエラー情報を格納できるよう変更しました。</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> Maybe = {
+  match: (data, pattern) =&gt; {
+    <span class="hljs-keyword">return</span> data(pattern);
+  },
+  just : (value) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.just(value);
+    };
+  },
+  nothing : (message) =&gt; {
+    <span class="hljs-keyword">return</span> (pattern) =&gt; {
+      <span class="hljs-keyword">return</span> pattern.nothing(message);
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>Maybe#unit</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unit : (value) =&gt; {
+    <span class="hljs-keyword">return</span> Maybe.just(value);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><strong>Maybe#flatMap</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  flatMap : (maybeInstance) =&gt; {
+    <span class="hljs-keyword">return</span> (transform) =&gt; {
+      expect(transform).to.a(<span class="hljs-string">'function'</span>);
+      <span class="hljs-keyword">return</span> Maybe.match(maybeInstance,{
+        just: (value) =&gt; {
+          <span class="hljs-keyword">return</span> transform(value);
+        },
+        nothing: (message) =&gt; {
+          <span class="hljs-keyword">return</span> Maybe.nothing(message);
+        }
+      });
+    };
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h2 id="reader-">Readerモナドの定義</h2>
+<p> Readerモナドは、共有された環境から値を読み込む計算を抽象化します。
+ 書籍で紹介された評価器では、全ての評価関数が環境を引数として受けとることになっていました。
+ Readerモナドを使えば、この引数としての環境を隠蔽できます。</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">const</span> Reader = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p><strong>Reader#unit</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unit: (a) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      run: (_) =&gt; { <span class="hljs-comment">// runReader :: Reader r a -&gt; r -&gt; a</span>
+        <span class="hljs-keyword">return</span> a;
+      }
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p><strong>Reader#flatMap</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  flatMap: (m) =&gt; {
+    expect(m).to.be.an(<span class="hljs-string">'object'</span>)
+    <span class="hljs-keyword">return</span> (f) =&gt; {
+      <span class="hljs-keyword">return</span> {
+        run: (env) =&gt; {
+          <span class="hljs-keyword">return</span> f(m.run(env)).run(env);
+        }
+      };
+    };
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p><strong>Reader#ask</strong>
+環境から値を取りだします。</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  ask: {
+    run: (env) =&gt; {
+      <span class="hljs-keyword">return</span> env;
+    }
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p><strong>Reader#local</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  local: (f) =&gt; (reader) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      run: (env) =&gt; {
+        <span class="hljs-keyword">return</span> reader.run(f(env));
+      }
+    };
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h2 id="semantics-">Semanticsの定義</h2>
+<p>Semantics.evaluator関数が、評価器となります。
+この評価器の特徴は、内部に複数のモナドを利用している点です。
+使われているモナドは、MaybeモナドとReaderモナドです。</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> Semantics = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>2項演算の評価 </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  binary: (operator) =&gt; (expL, expR) =&gt; {
+    <span class="hljs-keyword">return</span> Reader.flatMap(Semantics.evaluate(expL))(maybeL =&gt; {
+      <span class="hljs-keyword">return</span> Reader.flatMap(Semantics.evaluate(expR))(maybeR =&gt; {
+        <span class="hljs-keyword">const</span> maybeAnswer = Maybe.flatMap(maybeL)(valueL =&gt; {
+          <span class="hljs-keyword">return</span> Maybe.flatMap(maybeR)(valueR =&gt; {
+            <span class="hljs-keyword">return</span> Maybe.just(operator(valueL,valueR)); 
+          });
+        });
+        <span class="hljs-keyword">return</span> Reader.unit(maybeAnswer);
+      });
+    });
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><strong>Semantics#evaluate</strong>
+evaluate:: Exp -&gt; Reader[Maybe[Value]]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  evaluate: (anExp) =&gt; {
+    <span class="hljs-keyword">return</span> Exp.match(anExp,{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>数値の評価</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      num: (numericValue) =&gt; {
+        <span class="hljs-keyword">return</span> Reader.unit(Maybe.just(numericValue));
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>変数の評価</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      variable: (name) =&gt; {
+        <span class="hljs-comment">/* Reader.askを使って、現在の環境の情報を取りだす */</span>
+        <span class="hljs-keyword">return</span> Reader.flatMap(Reader.ask)(dictionary =&gt; {
+          <span class="hljs-keyword">return</span> Reader.unit(Env.lookup(name)(dictionary));
+        });
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>関数定義（λ式）の評価
+lambda:: (Var, Exp) -&gt; FUN[VALUE -&gt; Reader[Maybe[Value]]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      lambda: (identifier, body) =&gt; {
+        <span class="hljs-keyword">return</span> Exp.match(identifier,{
+          variable: (name) =&gt; {
+            <span class="hljs-keyword">const</span> closure = (actualArg =&gt; {
+              <span class="hljs-keyword">const</span> localEnv = (env) =&gt; {
+                 <span class="hljs-keyword">return</span> Env.extend(name, actualArg)(env);
+              };
+              <span class="hljs-comment">/* Reader.localを使ってクロージャーで使われるローカルな環境を作りだす */</span>
+              <span class="hljs-keyword">return</span> Reader.local(localEnv)(Semantics.evaluate(body));
+            });
+            <span class="hljs-keyword">return</span> closure; 
+          }
+        });
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>関数適用の評価
+app: (Lambda, Exp) -&gt; Reader[Maybe[Value]]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      app: (lambda, arg) =&gt; {
+        <span class="hljs-keyword">const</span> closure = Semantics.evaluate(lambda);
+        <span class="hljs-keyword">return</span> Reader.flatMap(Semantics.evaluate(arg))(maybeArg =&gt; {
+          <span class="hljs-keyword">return</span> Maybe.flatMap(maybeArg)(actualArg =&gt; {
+            <span class="hljs-keyword">return</span> closure(actualArg); 
+          });
+        });
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Letの評価
+let: (Variable, Exp, Exp) -&gt; Reader[Maybe[Value]]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">let</span>: (variable, declaration, body) =&gt; {
+        <span class="hljs-comment">/* Let式は、関数適用の糖衣構文にすぎない */</span>
+        <span class="hljs-keyword">return</span> Semantics.evaluate(Exp.app(Exp.lambda(variable, body), declaration));
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p> 足し算の評価 </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      add: (expL, expR) =&gt; {
+        <span class="hljs-keyword">const</span> operator = (operandR, operandL) =&gt; {
+          <span class="hljs-keyword">return</span> operandR + operandL; 
+        };
+        <span class="hljs-keyword">return</span> Semantics.binary(operator)(expL, expR);
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>引き算の評価 </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      subtract: (expL, expR) =&gt; {
+        <span class="hljs-keyword">const</span> operator = (operandR, operandL) =&gt; {
+          <span class="hljs-keyword">return</span> operandR - operandL; 
+        };
+        <span class="hljs-keyword">return</span> Semantics.binary(operator)(expL, expR);
+      }
+    });
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h3 id="semantics-">Semanticsのテスト</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Semanticsをテストする"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h4 id="-">数値を評価する</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"数値を評価する"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p><strong>evaluate(1)は、Maybe.just(1)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"evaluate(1)は、Maybe.just(1)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> num = Exp.num(<span class="hljs-number">1</span>);
+
+      Maybe.match(Semantics.evaluate(num).run(Env.empty()),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">1</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p><strong>evaluateは、環境の情報に影響を受けない</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"evaluateは、環境の情報に影響を受けない"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> num = Exp.num(<span class="hljs-number">1</span>),
+        initialEnv = Env.extend(<span class="hljs-string">'x'</span>,<span class="hljs-number">1</span>)(Env.empty())
+
+      Maybe.match(Semantics.evaluate(num).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">1</span>);
+          done(); 
+        }
+      })
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <h4 id="-">変数を評価する</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"変数を評価する"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p><strong>evaluateでMaybe.justを返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"evaluateでMaybe.justを返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> variable = Exp.variable(<span class="hljs-string">'a'</span>);
+      <span class="hljs-keyword">const</span> initialEnv = Env.extend(<span class="hljs-string">'a'</span>,<span class="hljs-number">1</span>)(Env.empty())
+
+      Maybe.match(Semantics.evaluate(variable).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">1</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p><strong>evaluateで、Maybe.nothingを返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"evaluateで、Maybe.nothingを返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> variable = Exp.variable(<span class="hljs-string">'b'</span>),
+        initialEnv = Env.extend(<span class="hljs-string">'a'</span>,<span class="hljs-number">1</span>)(Env.empty())
+
+      Maybe.match(Semantics.evaluate(variable).run(initialEnv),{
+        nothing: (message) =&gt; {
+          expect(message).to.eql(<span class="hljs-string">'変数 b は未定義です'</span>);
+          done(); 
+        },
+        just: (value) =&gt; {
+          expect().fail();
+        }
+      })
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h4 id="-">演算子を評価する</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"演算子を評価する"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p><strong>add(1,2)は、Maybe.just(3)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"add(1,2)は、Maybe.just(3)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> one = Exp.num(<span class="hljs-number">1</span>),
+        two = Exp.num(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">const</span> initialEnv = Env.empty()
+
+      Maybe.match(Semantics.evaluate(Exp.add(one, two)).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">3</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p><strong>add(x,1)で、Maybe.justを返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"add(x,1)で、Maybe.justを返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> x = Exp.variable(<span class="hljs-string">'x'</span>);
+      <span class="hljs-keyword">const</span> one = Exp.num(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">const</span> initialEnv = Env.extend(<span class="hljs-string">'x'</span>,<span class="hljs-number">1</span>)(Env.empty())
+
+      Maybe.match(Semantics.evaluate(Exp.add(x, one)).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">2</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p><strong>add(y,1)は、Maybe.nothingを返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"add(y,1)は、Maybe.nothingを返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> y = Exp.variable(<span class="hljs-string">'y'</span>),
+        one = Exp.num(<span class="hljs-number">1</span>),
+        initialEnv = Env.extend(<span class="hljs-string">'x'</span>,<span class="hljs-number">1</span>)(Env.empty());
+
+      Maybe.match(Semantics.evaluate(Exp.add(y, one)).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect(<span class="hljs-literal">true</span>).to.be.ok();
+          done(); 
+        },
+        just: (value) =&gt; {
+          expect().fail();
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p><strong>subtract(2,1)は、Maybe.just(1)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"subtract(2,1)は、Maybe.just(1)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> one = Exp.num(<span class="hljs-number">1</span>),
+        two = Exp.num(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">const</span> initialEnv = Env.empty()
+
+      Maybe.match(Semantics.evaluate(Exp.subtract(two, one)).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">1</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p><strong>add(subtract(2,1),2)は、Maybe.just(3)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"add(subtract(2,1),2)は、Maybe.just(3)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> one = Exp.num(<span class="hljs-number">1</span>),
+        two = Exp.num(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">const</span> initialEnv = Env.empty()
+
+      <span class="hljs-keyword">const</span> exp = Exp.add(Exp.subtract(two, one),two);
+      Maybe.match(Semantics.evaluate(exp).run(initialEnv),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">3</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p><strong>add(subtract(2,y),2)は、Maybe.nothing()を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"add(subtract(2,y),2)は、Maybe.nothing()を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> y = Exp.variable(<span class="hljs-string">'y'</span>),
+        two = Exp.num(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">const</span> initialEnv = Env.empty()
+
+      <span class="hljs-keyword">const</span> exp = Exp.add(Exp.subtract(two, y),two);
+      Maybe.match(Semantics.evaluate(exp).run(initialEnv),{
+        nothing: (message) =&gt; {
+          expect(message).to.eql(<span class="hljs-string">'変数 y は未定義です'</span>);
+          done(); 
+        },
+        just: (value) =&gt; {
+          expect().fail();
+          done(); 
+        }
+      })
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <h4 id="-">クロージャーを評価する</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"クロージャーを評価する"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p><strong>(x =&gt; (x + 1))(1) は、Maybe.just(2)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"(x =&gt; (x + 1))(1) は、Maybe.just(2)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> x = Exp.variable(<span class="hljs-string">'x'</span>),
+        one = Exp.num(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">const</span> application = Exp.app(Exp.lambda(x, Exp.add(x, one)), one);
+      Maybe.match(Semantics.evaluate(application).run(Env.empty()),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">2</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p><strong>(x =&gt; (x + 1))(1)は、Maybe.just(2)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"(x =&gt; (x + 1))(1)は、Maybe.just(2)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> x = Exp.variable(<span class="hljs-string">'x'</span>),
+        one = Exp.num(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">const</span> application = Exp.app(Exp.lambda(x, Exp.add(x, one)), one);
+      Maybe.match(Semantics.evaluate(application).run(Env.empty()),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">2</span>);
+          done(); 
+        }
+      })
+    });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p><strong>(x =&gt; (x + y))(2)は、Maybe.nothingを返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"(x =&gt; (x + y))(2)は、Maybe.nothingを返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> x = Exp.variable(<span class="hljs-string">'x'</span>),
+        y = Exp.variable(<span class="hljs-string">'y'</span>),
+        two = Exp.num(<span class="hljs-number">2</span>);
+      <span class="hljs-keyword">const</span> application = Exp.app(Exp.lambda(x, Exp.add(x, y)), two);
+      Maybe.match(Semantics.evaluate(application).run(Env.empty()),{
+        nothing: (message) =&gt; {
+          expect(message).to.eql(<span class="hljs-string">'変数 y は未定義です'</span>);
+          done(); 
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">4</span>);
+          done(); 
+        }
+      })
+    });
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <h4 id="let-">Let式を評価する</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  describe(<span class="hljs-string">"Let式を評価する"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p><strong>(let x = 1 in (x + x)は、Maybe.just(2)を返す</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    it(<span class="hljs-string">"(let x = 1 in (x + x)は、Maybe.just(2)を返す"</span>,(done) =&gt; {
+      <span class="hljs-keyword">const</span> x = Exp.variable(<span class="hljs-string">'x'</span>),
+        one = Exp.num(<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">const</span> letExp = Exp.let(x, one, Exp.add(x,x)); 
+      Maybe.match(Semantics.evaluate(letExp).run(Env.empty()),{
+        nothing: (_) =&gt; {
+          expect().fail();
+        },
+        just: (value) =&gt; {
+          expect(value).to.eql(<span class="hljs-number">2</span>);
+          done(); 
+        }
+      })
+    });
+  });
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  <!-- <div id="footer">  目次に戻る。 </div> -->
+  <!-- </div> -->
+</body>
+</html>

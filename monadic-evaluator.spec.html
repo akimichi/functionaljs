@@ -73,9 +73,6 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-<span class="hljs-keyword">const</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
-            
         </li>
         
         
@@ -84,6 +81,32 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="-">小目次</h2>
+<div class="toc">
+<ul class="toc">
+  <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#exp> 式の定義</a>
+  <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#env> 環境の定義</a>
+  <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#maybe> Maybeモナド</a>
+  <li><a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#reader> Readerモナド</a>
+  <li>&lt;a href=”<a href="http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#evaluator&gt;">http://akimichi.github.io/functionaljs/monadic-evaluator.spec.html#evaluator&gt;</a> 評価関数の定義</a>
+</ul>
+</div>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+
+<span class="hljs-keyword">const</span> expect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'expect.js'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>拙作 kansuu.jsのコードを利用します</p>
 
@@ -96,13 +119,13 @@
         </li>
         
         
-        <li id="section-5">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h2 id="-">式の定義</h2>
+              <h2 id="-section-id-exp-section-"><section id='exp'>式の定義</section></h2>
 
             </div>
             
@@ -145,11 +168,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>演算の定義</p>
 
@@ -172,13 +195,13 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h2 id="-">環境の定義</h2>
+              <h2 id="-section-id-env-section-"><section id='env'>環境の定義</section></h2>
 <p>書籍で紹介した「環境」とは異なる方法で定義しています。</p>
 
             </div>
@@ -219,11 +242,11 @@
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <h2 id="-">環境のテスト</h2>
 
@@ -234,11 +257,11 @@
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p><strong>Env.empty</strong>をテストする</p>
 
@@ -259,11 +282,11 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p><strong>Env.extend</strong>をテストする</p>
 
@@ -280,11 +303,11 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p><strong>Env.lookup</strong>をテストする</p>
 
@@ -307,13 +330,13 @@
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <h2 id="maybe-">Maybeモナドの定義</h2>
+              <h2 id="-section-id-maybe-maybe-section-"><section id='maybe'>Maybeモナドの定義</section></h2>
 <p>書籍で紹介した「Maybeモナド」とほとんど同じですが、nothingにエラー情報を格納できるよう変更しました。</p>
 
             </div>
@@ -336,11 +359,11 @@
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p><strong>Maybe#unit</strong></p>
 
@@ -353,11 +376,11 @@
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p><strong>Maybe#flatMap</strong></p>
 
@@ -381,13 +404,13 @@
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <h2 id="reader-">Readerモナドの定義</h2>
+              <h2 id="-section-id-reader-reader-section-"><section id='reader'>Readerモナドの定義</section></h2>
 <p> Readerモナドは、共有された環境から値を読み込む計算を抽象化します。
  書籍で紹介された評価器では、全ての評価関数が環境を引数として受けとることになっていました。
  Readerモナドを使えば、この引数としての環境を隠蔽できます。</p>
@@ -400,11 +423,11 @@
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p><strong>Reader#unit</strong></p>
 
@@ -421,11 +444,11 @@
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p><strong>Reader#flatMap</strong></p>
 
@@ -445,11 +468,11 @@
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p><strong>Reader#ask</strong>
 環境から値を取りだします。</p>
@@ -465,11 +488,11 @@
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p><strong>Reader#local</strong></p>
 
@@ -487,13 +510,13 @@
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <h2 id="semantics-">Semanticsの定義</h2>
+              <h2 id="-section-id-evaluator-section-"><section id='evaluator'>評価関数の定義</section></h2>
 <p>Semantics.evaluator関数が、評価器となります。
 この評価器の特徴は、内部に複数のモナドを利用している点です。
 使われているモナドは、MaybeモナドとReaderモナドです。</p>
@@ -505,11 +528,11 @@
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>2項演算の評価 </p>
 
@@ -531,11 +554,11 @@
         </li>
         
         
-        <li id="section-22">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p><strong>Semantics#evaluate</strong></p>
 
@@ -548,11 +571,11 @@
         </li>
         
         
-        <li id="section-23">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>数値の評価</p>
 
@@ -565,11 +588,11 @@
         </li>
         
         
-        <li id="section-24">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>変数の評価</p>
 
@@ -585,11 +608,11 @@
         </li>
         
         
-        <li id="section-25">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>関数定義（λ式）の評価</p>
 
@@ -614,11 +637,11 @@
         </li>
         
         
-        <li id="section-26">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>関数適用の評価</p>
 
@@ -637,11 +660,11 @@
         </li>
         
         
-        <li id="section-27">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Letの評価</p>
 
@@ -656,11 +679,11 @@
         </li>
         
         
-        <li id="section-28">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p> 足し算の評価</p>
 
@@ -676,11 +699,11 @@
         </li>
         
         
-        <li id="section-29">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>引き算の評価 </p>
 
@@ -699,26 +722,26 @@
         </li>
         
         
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <h3 id="semantics-">Semanticsのテスト</h3>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"Semanticsをテストする"</span>,() =&gt; {</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h3 id="-">評価関数のテスト</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe(<span class="hljs-string">"評価関数をテストする"</span>,() =&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <h4 id="-">数値を評価する</h4>
 
@@ -729,11 +752,11 @@
         </li>
         
         
-        <li id="section-32">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p><strong>evaluate(1)は、Maybe.just(1)を返す</strong></p>
 
@@ -756,11 +779,11 @@
         </li>
         
         
-        <li id="section-33">
+        <li id="section-34">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p><strong>数値の評価は、環境の情報に影響を受けない</strong></p>
 
@@ -785,11 +808,11 @@
         </li>
         
         
-        <li id="section-34">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <h4 id="-">変数を評価する</h4>
 
@@ -800,11 +823,11 @@
         </li>
         
         
-        <li id="section-35">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p><strong>evaluateでMaybe.justを返す</strong></p>
 
@@ -828,11 +851,11 @@
         </li>
         
         
-        <li id="section-36">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p><strong>evaluateで、Maybe.nothingを返す</strong></p>
 
@@ -857,11 +880,11 @@
         </li>
         
         
-        <li id="section-37">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <h4 id="-">演算子を評価する</h4>
 
@@ -872,11 +895,11 @@
         </li>
         
         
-        <li id="section-38">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p><strong>add(1,2)は、Maybe.just(3)を返す</strong></p>
 
@@ -901,11 +924,11 @@
         </li>
         
         
-        <li id="section-39">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p><strong>add(x,1)で、Maybe.justを返す</strong></p>
 
@@ -930,11 +953,11 @@
         </li>
         
         
-        <li id="section-40">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p><strong>add(y,1)は、Maybe.nothingを返す</strong></p>
 
@@ -959,11 +982,11 @@
         </li>
         
         
-        <li id="section-41">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p><strong>subtract(2,1)は、Maybe.just(1)を返す</strong></p>
 
@@ -988,11 +1011,11 @@
         </li>
         
         
-        <li id="section-42">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p><strong>add(subtract(2,1),2)は、Maybe.just(3)を返す</strong></p>
 
@@ -1018,11 +1041,11 @@
         </li>
         
         
-        <li id="section-43">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p><strong>add(subtract(2,y),2)は、Maybe.nothing()を返す</strong></p>
 
@@ -1050,11 +1073,11 @@
         </li>
         
         
-        <li id="section-44">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <h4 id="-">クロージャーを評価する</h4>
 
@@ -1065,11 +1088,11 @@
         </li>
         
         
-        <li id="section-45">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p><strong>(x =&gt; (x + 1))(1) は、Maybe.just(2)を返す</strong></p>
 
@@ -1093,11 +1116,11 @@
         </li>
         
         
-        <li id="section-46">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p><strong>(x =&gt; (x + 1))(1)は、Maybe.just(2)を返す</strong></p>
 
@@ -1121,11 +1144,11 @@
         </li>
         
         
-        <li id="section-47">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p><strong>(x =&gt; (x + y))(2)は、Maybe.nothingを返す</strong></p>
 
@@ -1152,11 +1175,11 @@
         </li>
         
         
-        <li id="section-48">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <h4 id="let-">Let式を評価する</h4>
 
@@ -1167,11 +1190,11 @@
         </li>
         
         
-        <li id="section-49">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p><strong>(let x = 1 in (x + x)は、Maybe.just(2)を返す</strong></p>
 
@@ -1193,6 +1216,19 @@
     });
   });
 });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p><a href="index.html">目次に戻る</a> </p>
+
+            </div>
             
         </li>
         

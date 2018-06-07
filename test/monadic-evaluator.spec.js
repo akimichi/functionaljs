@@ -22,7 +22,7 @@
 
 const expect = require('expect.js');
 
-// 拙作 kansuu.jsのコードを利用します
+/* 拙作 kansuu.jsのコードを利用します */
 const kansuu = require('kansuu.js'),
   pair = kansuu.pair,
   array = kansuu.array;

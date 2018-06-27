@@ -7,6 +7,15 @@
 // なお、本ページのコードは、書籍で採用された node.js 0.12版では動作しません。
 // できるだけ新しいバージョンのnode.jsで実行してください。
 // 当方の環境では、v8.11.1でテストが成功することを確認しています。
+//
+// ~~~
+// > nvm install v8.11.1
+// > nvm use v8.11.1
+// > npm install
+// > npm install mocha -g
+// > mocha test/monadic-evaluator.spec.js
+// ~~~
+
 
 // ## 小目次
 // <div class="toc">

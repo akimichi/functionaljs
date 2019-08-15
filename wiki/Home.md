@@ -340,3 +340,39 @@ var IO = {
 ## 問題-03 Windowsで動かす
 
 
+~~~
+$ nvm install v0.12.0
+~~~
+
+
+### WSLを使う
+
+- [Windows 10でLinuxプログラムを利用可能にするWSLをインストールする（バージョン1803以降対応版）](https://www.atmarkit.co.jp/ait/articles/1608/08/news039.html)
+
+
+~~~
+git clone ...
+
+# nvmをインストール
+curl ...
+source ~/.bashrc
+nvm install v0.12.0
+nvm use
+npm install -g mocha@1.21.5
+npm install -g gulp@3.9.1
+npm install
+~~~
+
+
+いずれも失敗する。
+~~~
+mocha --harmony
+あるいは
+gulp js-test
+~~~
+
+
+
+
+
+

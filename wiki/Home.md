@@ -350,6 +350,14 @@ $ nvm install v0.12.0
 - [Windows 10でLinuxプログラムを利用可能にするWSLをインストールする（バージョン1803以降対応版）](https://www.atmarkit.co.jp/ait/articles/1608/08/news039.html)
 
 
+WSLを起動
+
+日本語環境をインストール
+
+- https://www.atmarkit.co.jp/ait/articles/1806/28/news043.html
+
+
+
 ~~~
 git clone ...
 

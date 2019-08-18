@@ -337,7 +337,8 @@ var IO = {
 * 型は実行の順番までは保証しない
 * 副作用は実行の順番が重要である
 
-## 問題-03 Windowsで動かす
+## 問題-03 Windows10で動かす
+
 
 
 ~~~
@@ -362,13 +363,15 @@ WSLを起動
 git clone ...
 
 # nvmをインストール
-curl ...
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash
 source ~/.bashrc
 nvm install v0.12.0
 nvm use
 npm install -g mocha@1.21.5
 npm install -g gulp@3.9.1
 npm install
+#  おおくのワーニング
+
 ~~~
 
 
@@ -376,7 +379,7 @@ npm install
 ~~~
 mocha --harmony
 あるいは
-gulp js-test
+gulp js-test はシッパイする
 ~~~
 
 

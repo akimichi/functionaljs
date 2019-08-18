@@ -285,14 +285,21 @@ describe('関数型プログラミングの特徴', () => {
         it('Date.now関数は参照透明性を持たない', (next) => {
           var onceUponATime = Date.now();
           /* 時間を1秒進める */
-          var sleep = require('sleep-async')();
-          sleep.sleep(1000, () => {
+          setTimeout(() => {
             expect(
               onceUponATime
             ).to.not.eql( /* 等しくないことをテストしている */
               Date.now()
             );
-          });
+          }, 1000)
+          // var sleep = require('sleep-async')();
+          // sleep.sleep(1000, () => {
+          //   expect(
+          //     onceUponATime
+          //   ).to.not.eql( /* 等しくないことをテストしている */
+          //     Date.now()
+          //   );
+          // });
           next();
         });
         // ファイル入出力が参照透明性を破壊する例

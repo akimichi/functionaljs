@@ -244,8 +244,8 @@ describe('例外捕捉評価器', () => {
       );
       next();
     });
-    it('ブール型を評価する', (next) => {
-      this.timeout(1000);
+    it('ブール型を評価する', async (next) => {
+      // this.timeout(1000);
       /* λx.λy.x */
       var trueFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("x")));
       /* λx.λy.y */
@@ -307,7 +307,7 @@ describe('例外捕捉評価器', () => {
         new Error("z not found")
       );
       next();
-    });
+    }).timeout(1000);
     it('投げられた例外を捕捉する', (next) => {
       /* #@range_begin(continuation_passing_interpreter_trycatch) */
       var tryExpression = exp.tryWith(
@@ -480,9 +480,9 @@ describe('継続渡し評価器', () => {
       );
       next();
     });
-    it('ブール型を評価する', (next) => {
-      this.timeout(1000);
-      /* λx.λy.x */
+    it('ブール型を評価する', async (next) => {
+      // this.timeout(1000);
+      // /* λx.λy.x */
       var trueFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("x")));
       /* λx.λy.y */
       var falseFun = exp.lambda(exp.variable("x"),exp.lambda(exp.variable("y"),exp.variable("y")));
@@ -540,7 +540,7 @@ describe('継続渡し評価器', () => {
         new Error("z not found")
       );
       next();
-    });
+    }).timeout(1000) ;
     it('raiseを使う', (next) => {
       // (λx.raise)(2)
       var applied = exp.app(exp.lambda(exp.variable("x"),exp.raise("exception")),

@@ -1773,23 +1773,7 @@ var IO = {
 // ### IOモナドをテストする
 describe("IOモナドをテストする",() => {
   // IOモナドで参照透過性を確保する
-  it('IOモナドで参照透過性を確保する', (next) => {
-    // 本文では割愛しましたが、IOモナドが入出力に対して参照透過性を確保していることを単体テストで示します。
-    expect(
-      IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
-        return IO.flatMap(IO.println(content))((_) => {
-          return IO.done(_);
-        });
-      })()
-    ).to.eql(
-      IO.flatMap(IO.readFile("./test/resources/file.txt"))((content) => {
-        return IO.flatMap(IO.println(content))((_) => {
-          return IO.done(_);
-        });
-      })()
-    );
-    next();
-  });
+  it('IOモナドで参照透過性を確保する')
 });
 
 

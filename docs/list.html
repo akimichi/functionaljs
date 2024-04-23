@@ -23,6 +23,179 @@
   <div id="container">
     <div id="background"></div>
     
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.html">
+                  dentaku.normal.js
+                </a>
+              
+                
+                <a class="source" href="env.html">
+                  env.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.html">
+                  evaluator.js
+                </a>
+              
+                
+                <a class="source" href="fileio.html">
+                  fileio.js
+                </a>
+              
+                
+                <a class="source" href="list.html">
+                  list.js
+                </a>
+              
+                
+                <a class="source" href="monad.html">
+                  monad.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.html">
+                  monad_transformer.js
+                </a>
+              
+                
+                <a class="source" href="pair.html">
+                  pair.js
+                </a>
+              
+                
+                <a class="source" href="parser.html">
+                  parser.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.html">
+                  pprinter.js
+                </a>
+              
+                
+                <a class="source" href="string.html">
+                  string.js
+                </a>
+              
+                
+                <a class="source" href="turing.html">
+                  turing.js
+                </a>
+              
+                
+                <a class="source" href="chap01.spec.html">
+                  chap01.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap02.spec.html">
+                  chap02.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap03.spec.html">
+                  chap03.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap04.spec.html">
+                  chap04.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap05.spec.html">
+                  chap05.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap06.spec.html">
+                  chap06.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap07.spec.html">
+                  chap07.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap08.spec.html">
+                  chap08.spec.js
+                </a>
+              
+                
+                <a class="source" href="data.spec.html">
+                  data.spec.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.spec.html">
+                  dentaku.normal.spec.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.spec.html">
+                  evaluator.spec.js
+                </a>
+              
+                
+                <a class="source" href="interpreter.spec.html">
+                  interpreter.spec.js
+                </a>
+              
+                
+                <a class="source" href="list.spec.html">
+                  list.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad.spec.html">
+                  monad.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.spec.html">
+                  monad_transformer.spec.js
+                </a>
+              
+                
+                <a class="source" href="pair.spec.html">
+                  pair.spec.js
+                </a>
+              
+                
+                <a class="source" href="parser.spec.html">
+                  parser.spec.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.spec.html">
+                  pprinter.spec.js
+                </a>
+              
+                
+                <a class="source" href="string.spec.html">
+                  string.spec.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
     <ul class="sections">
         
           <li id="title">
@@ -88,8 +261,7 @@
             
             <div class="content"><div class='highlight'><pre>
 
-
-<span class="hljs-built_in">module</span>.exports = {
+<span class="hljs-keyword">const</span> List = {
   type : (pattern) =&gt; {
     <span class="hljs-keyword">return</span> pattern.list();    
   },
@@ -117,8 +289,7 @@
     };
   },
   unit: (value) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">return</span> self.cons(value, self.empty());
+    <span class="hljs-keyword">return</span> List.cons(value, List.empty());
   },
   head: (data) =&gt; {
     <span class="hljs-keyword">return</span> data.match({
@@ -202,13 +373,12 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>  flatten: (instanceMM) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> instanceMM.match({
       empty: (_) =&gt; {
-        <span class="hljs-keyword">return</span> self.empty();
+        <span class="hljs-keyword">return</span> List.empty();
       },
       cons: (head,tail) =&gt; {
-        <span class="hljs-keyword">return</span> self.append(head)(self.flatten(tail));
+        <span class="hljs-keyword">return</span> List.append(head)(List.flatten(tail));
       }
     });
   },</pre></div></div>
@@ -241,7 +411,6 @@ map: (alist) =&gt; {
             </div>
             
             <div class="content"><div class='highlight'><pre>  map: (instanceM) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (transform) =&gt; {</pre></div></div>
             
         </li>
@@ -259,11 +428,11 @@ map: (alist) =&gt; {
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> instanceM.match({
         empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> self.empty();
+          <span class="hljs-keyword">return</span> List.empty();
         },
         cons: (head,tail) =&gt; {
-          <span class="hljs-keyword">return</span> self.cons(transform(head),
-                           self.map(tail)(transform));
+          <span class="hljs-keyword">return</span> List.cons(transform(head),
+                           List.map(tail)(transform));
         }
       });
     };
@@ -283,9 +452,8 @@ map: (alist) =&gt; {
             </div>
             
             <div class="content"><div class='highlight'><pre>  flatMap: (instanceM) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (transform) =&gt; { <span class="hljs-comment">// FUN[T-&gt;LIST[T]]</span>
-      <span class="hljs-keyword">return</span> self.flatten(self.map(instanceM)(transform));
+      <span class="hljs-keyword">return</span> List.flatten(List.map(instanceM)(transform));
     };
   },</pre></div></div>
             
@@ -305,14 +473,13 @@ append (x:xs) ys = x : (xs ++ ys)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  append: (xs) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (ys) =&gt; {
       <span class="hljs-keyword">return</span> xs.match({
         empty: (_) =&gt; {
           <span class="hljs-keyword">return</span> ys;
         },
         cons: (head, tail) =&gt; {
-          <span class="hljs-keyword">return</span> self.cons(head, self.append(tail)(ys)); 
+          <span class="hljs-keyword">return</span> List.cons(head, List.append(tail)(ys)); 
         }
       });
     };
@@ -397,7 +564,6 @@ concat xss = foldr xss [] append</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  foldr: (alist) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (accumulator) =&gt; {
       <span class="hljs-keyword">return</span> (glue) =&gt; {
         expect(glue).to.a(<span class="hljs-string">'function'</span>);</pre></div></div>
@@ -420,7 +586,7 @@ concat xss = foldr xss [] append</p>
             <span class="hljs-keyword">return</span> accumulator;
           },
           cons: (head, tail) =&gt; {
-            <span class="hljs-keyword">return</span> glue(head)(self.foldr(tail)(accumulator)(glue));
+            <span class="hljs-keyword">return</span> glue(head)(List.foldr(tail)(accumulator)(glue));
           }
         });
       };
@@ -439,7 +605,7 @@ concat xss = foldr xss [] append</p>
       });
     };
     <span class="hljs-keyword">return</span> (predicate) =&gt; {
-        <span class="hljs-keyword">return</span> or(self.map(alist)(predicate));
+        <span class="hljs-keyword">return</span> or(List.map(alist)(predicate));
     };</pre></div></div>
             
         </li>
@@ -485,22 +651,20 @@ concat xss = foldr xss [] append</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  elem: (alist) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">var</span> isEqual = (x) =&gt; {
       <span class="hljs-keyword">return</span> (y) =&gt; {
         <span class="hljs-keyword">return</span> x === y;
       };
     };
     <span class="hljs-keyword">return</span> (item) =&gt; {
-      <span class="hljs-keyword">return</span> self.any(alist)(isEqual(item));
+      <span class="hljs-keyword">return</span> List.any(alist)(isEqual(item));
     };
   },
   fromArray: (array) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     expect(array).to.an(<span class="hljs-string">'array'</span>);
     <span class="hljs-keyword">return</span> array.reduce((accumulator, item) =&gt; {
-      <span class="hljs-keyword">return</span> self.append(accumulator)(self.cons(item, self.empty()));
-    }, self.empty());
+      <span class="hljs-keyword">return</span> List.append(accumulator)(List.cons(item, List.empty()));
+    }, List.empty());
   },
   toArray: (alist) =&gt; {
     <span class="hljs-keyword">var</span> toArrayAux = (alist,accumulator) =&gt; {
@@ -577,227 +741,33 @@ concat xss = foldr xss [] append</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  filter: (alist) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     <span class="hljs-keyword">return</span> (predicate) =&gt; {
       <span class="hljs-keyword">return</span> alist.match({
         empty: (_) =&gt; {
-          <span class="hljs-keyword">return</span> self.empty();
+          <span class="hljs-keyword">return</span> List.empty();
         },
         cons: (head,tail) =&gt; {
           <span class="hljs-keyword">if</span>(predicate(head) === <span class="hljs-literal">true</span>){
-            <span class="hljs-keyword">return</span> self.cons(head,self.filter(tail)(predicate));
+            <span class="hljs-keyword">return</span> List.cons(head, List.filter(tail)(predicate));
           } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> self.filter(tail)(predicate);
+            <span class="hljs-keyword">return</span> List.filter(tail)(predicate);
           }
         }
       });
     };
   },
   fromString: (str) =&gt; {
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
     expect(str).to.a(<span class="hljs-string">'string'</span>);
     <span class="hljs-keyword">if</span>(str.length === <span class="hljs-number">0</span>) {
-      <span class="hljs-keyword">return</span> self.empty();
+      <span class="hljs-keyword">return</span> List.empty();
     } <span class="hljs-keyword">else</span> {
       <span class="hljs-keyword">var</span> head = str[<span class="hljs-number">0</span>];
       <span class="hljs-keyword">var</span> tail = str.substring(<span class="hljs-number">1</span>);
-      <span class="hljs-keyword">return</span> self.cons(head, self.fromString(tail));
+      <span class="hljs-keyword">return</span> List.cons(head, List.fromString(tail));
     }
   },
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>  /<em> #@range_begin(list_reverse) </em>/
-  // foldl:: LIST[T] -&gt; T -&gt; FUNC[T -&gt; LIST] -&gt; T
-  // foldl: (alist) =&gt; {
-  //   var self = this;
-  //   return (accumulator) =&gt; {
-  //     return (glue) =&gt; {
-  //       expect(glue).to.a(‘function’);
-  //       return alist.match({
-  //         empty: (_) =&gt; {
-  //           return accumulator;
-  //         },
-  //         cons: (head, tail) =&gt; {
-  //           return glue(head)(self.foldr(tail)(accumulator)(glue));
-  //         }
-  //       });
-  //     };
-  //   };
-  // },
-  /<em> #@range_begin(list_reverse) </em>/
-  reverse: (alist) =&gt; {
-    var self = this;
-    var reverseAux = (alist, accumulator) =&gt; {
-      return this.match(alist, {
-        empty: (_) =&gt; {
-          return accumulator;  // 空のリストの場合は終了
-        },
-        cons: (head, tail) =&gt; {
-          return reverseAux(tail, this.cons(head, accumulator));
-        }
-      });
-    };
-    return reverseAux(alist, this.empty());
-  },
-  /<em> #@range_end(list_reverse) </em>/
-  // list#length
-  length: (alist) =&gt; {
-    return this.match(alist,{
-      empty: (<em>) =&gt; {
-        return 0;
-      },
-      cons: (head,tail) =&gt; {
-        return this.foldr(alist)(0)((item) =&gt; {
-          return (accumulator) =&gt; {
-            return 1 + accumulator;
-          };
-        });
-      }
-    });
-  },
-  toArray: (alist) =&gt; {
-    var toArrayAux = (alist,accumulator) =&gt; {
-      return this.match(alist, {
-        empty: (</em>) =&gt; {
-          return accumulator;  // 空のリストの場合は終了
-        },
-        cons: (head, tail) =&gt; {
-          return toArrayAux(tail, accumulator.concat(head));
-        }
-      });
-    };
-    return toArrayAux(alist, []);
-  },
-  fromArray: (array) =&gt; {
-    var self = this;
-    expect(array).to.an(‘array’);
-    return array.reduce((accumulator, item) =&gt; {
-      return self.append(accumulator)(self.cons(item, self.empty()));
-    }, self.empty());
-  },
-  /<em> #@range_begin(list_fromString) </em>/
-  fromString: (str) =&gt; {
-    var self = this;
-    expect(str).to.a(‘string’);
-    if(string.isEmpty(str)) {
-      return self.empty();
-    } else {
-      return self.cons(string.head(str), self.fromString(string.tail(str)));
-    }
-  },
-  /<em> #@range_end(list_fromString) </em>/
-  at: (alist) =&gt; {
-    return (index) =&gt; {
-      expect(index).to.a(‘number’);
-      expect(index).to.be.greaterThan(-1);
-      if (index === 0) {
-        return this.head(alist);
-      } else {
-          return this.at(this.tail(alist))(index - 1);
-      }
-    };
-  },
-  take: (alist) =&gt; {
-    return (n) =&gt; {
-      expect(n).to.a(‘number’);
-      expect(n).to.be.greaterThan(-1);
-      if (n === 0) {
-        return this.empty();
-      } else {
-        return this.cons(this.head)(this.take(this.tail)(n-1));
-      }
-    };
-  },
-  // ## list#drop
-  // drop :: List =&gt; List
-  drop: function(list){
-    var self = this;
-    return (n) =&gt; {
-      expect(n).to.be.a(‘number’);
-      expect(n).to.be.greaterThan(-1);
-      if (n === 0)
-        return list;
-      else {
-        if(self.this.isEmpty.bind(self)(list))
-          return self.this.empty;
-        else {
-          var tail = this.tail;
-          return self.this.drop.bind(self)(tail)(n-1);
-        }
-      }
-    };
-  },
-  /<em> #@range_begin(list_generate) </em>/
-  generate: (alist) =&gt; {
-    var theList = alist;
-    return (<em>) =&gt; {
-      return this.match(theList,{
-        empty: (</em>) =&gt; {
-          return null; 
-        },
-        cons: (head,tail) =&gt; {
-          theList = tail;
-          return head;
-        }
-      });
-    };
-  },
-  /<em> #@range_end(list_generate) </em>/
-  // lines: (alist) =&gt; {
-  //   var self = this;
-  //   // var alist = self.fromString(astring);
-  //   // self.match(alist,{
-  //   //   empty: (_) =&gt; {
-  //   //   },
-  //   //   cons: (head, tail) =&gt; {
-  //   //     if(head === “\n”) {
-  //   //       return 
-  //   return self.foldr(alist)(self.unit(self.empty()))((item) =&gt; {
-  //     return (accumulator) =&gt; {
-  //       if(item === “\n”) {
-  //         return self.match(alist,{
-  //           empty: () =&gt; {
-  //             return accumulator;
-  //           },
-  //           cons: (head, tail) =&gt; {
-  //             return self.append(accumulator)(self.lines(tail));
-  //           }
-  //         });
-  //       } else {
-  //         return self.match(accumulator,{
-  //           empty: () =&gt; {
-  //             return accumulator;
-  //           },
-  //           cons: (head, tail) =&gt; {
-  //             self.append(self.last(accumulator))(self.unit(item))
-  //           }
-  //         });
-  //       }</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <p>  // }
-};</p>
-
-            </div>
+};
+<span class="hljs-built_in">module</span>.exports = List</pre></div></div>
             
         </li>
         

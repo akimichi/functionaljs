@@ -23,6 +23,179 @@
   <div id="container">
     <div id="background"></div>
     
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.html">
+                  dentaku.normal.js
+                </a>
+              
+                
+                <a class="source" href="env.html">
+                  env.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.html">
+                  evaluator.js
+                </a>
+              
+                
+                <a class="source" href="fileio.html">
+                  fileio.js
+                </a>
+              
+                
+                <a class="source" href="list.html">
+                  list.js
+                </a>
+              
+                
+                <a class="source" href="monad.html">
+                  monad.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.html">
+                  monad_transformer.js
+                </a>
+              
+                
+                <a class="source" href="pair.html">
+                  pair.js
+                </a>
+              
+                
+                <a class="source" href="parser.html">
+                  parser.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.html">
+                  pprinter.js
+                </a>
+              
+                
+                <a class="source" href="string.html">
+                  string.js
+                </a>
+              
+                
+                <a class="source" href="turing.html">
+                  turing.js
+                </a>
+              
+                
+                <a class="source" href="chap01.spec.html">
+                  chap01.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap02.spec.html">
+                  chap02.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap03.spec.html">
+                  chap03.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap04.spec.html">
+                  chap04.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap05.spec.html">
+                  chap05.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap06.spec.html">
+                  chap06.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap07.spec.html">
+                  chap07.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap08.spec.html">
+                  chap08.spec.js
+                </a>
+              
+                
+                <a class="source" href="data.spec.html">
+                  data.spec.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.spec.html">
+                  dentaku.normal.spec.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.spec.html">
+                  evaluator.spec.js
+                </a>
+              
+                
+                <a class="source" href="interpreter.spec.html">
+                  interpreter.spec.js
+                </a>
+              
+                
+                <a class="source" href="list.spec.html">
+                  list.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad.spec.html">
+                  monad.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.spec.html">
+                  monad_transformer.spec.js
+                </a>
+              
+                
+                <a class="source" href="pair.spec.html">
+                  pair.spec.js
+                </a>
+              
+                
+                <a class="source" href="parser.spec.html">
+                  parser.spec.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.spec.html">
+                  pprinter.spec.js
+                </a>
+              
+                
+                <a class="source" href="string.spec.html">
+                  string.spec.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
     <ul class="sections">
         
           <li id="title">
@@ -55,7 +228,7 @@
 <span class="hljs-keyword">var</span> ID = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/monad.js'</span>).ID;
 <span class="hljs-keyword">var</span> Cont = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../lib/monad.js'</span>).Cont;
 
-<span class="hljs-built_in">module</span>.exports = {
+<span class="hljs-keyword">const</span> Evaluator = {
   ID: {
     Exp: {
       <span class="hljs-comment">/* 式のパターンマッチ関数 */</span>
@@ -112,8 +285,7 @@
       }
     },
     evaluate: (anExp, environment) =&gt; {
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">return</span> self.Exp.match(anExp,{</pre></div></div>
+      <span class="hljs-keyword">return</span> Evaluator.ID.Exp.match(anExp,{</pre></div></div>
             
         </li>
         
@@ -150,10 +322,10 @@
         },
         <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
         lambda: (variable, body) =&gt; {   
-          <span class="hljs-keyword">return</span> self.Exp.match(variable,{
+          <span class="hljs-keyword">return</span> Evaluator.ID.Exp.match(variable,{
             variable: (name) =&gt; {
               <span class="hljs-keyword">return</span> ID.unit((actualArg) =&gt; {
-                <span class="hljs-keyword">return</span> self.evaluate(body, 
+                <span class="hljs-keyword">return</span> Evaluator.ID.evaluate(body, 
                                 Env.extend(name, actualArg, environment));
               });
             }
@@ -161,8 +333,8 @@
         },
         <span class="hljs-comment">/* 関数適用の評価 */</span>
         app: (lambda, arg) =&gt; {         
-          <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(lambda, environment))((closure) =&gt; {
-            <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(arg, environment))((actualArg) =&gt; {
+          <span class="hljs-keyword">return</span> ID.flatMap(Evaluator.ID.evaluate(lambda, environment))((closure) =&gt; {
+            <span class="hljs-keyword">return</span> ID.flatMap(Evaluator.ID.evaluate(arg, environment))((actualArg) =&gt; {
               <span class="hljs-keyword">return</span> closure(actualArg); 
             });
           });
@@ -182,8 +354,8 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        add: (expL, expR) =&gt; {          
-          <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(expL, environment))((valueL) =&gt; {
-            <span class="hljs-keyword">return</span> ID.flatMap(self.evaluate(expR, environment))((valueR) =&gt; {
+          <span class="hljs-keyword">return</span> ID.flatMap(Evaluator.ID.evaluate(expL, environment))((valueL) =&gt; {
+            <span class="hljs-keyword">return</span> ID.flatMap(Evaluator.ID.evaluate(expR, environment))((valueR) =&gt; {
               <span class="hljs-keyword">return</span> ID.unit(valueL + valueR); 
             });
           });
@@ -298,8 +470,7 @@
       }
     },
     evaluate: (anExp, environment) =&gt; {
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">return</span> self.Exp.match(anExp,{</pre></div></div>
+      <span class="hljs-keyword">return</span> Evaluator.Cont.Exp.match(anExp,{</pre></div></div>
             
         </li>
         
@@ -349,18 +520,18 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>        add: (expL, expR) =&gt; {          
-          <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(expL, environment))((valueL) =&gt; {
-            <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(expR, environment))((valueR) =&gt; {
+          <span class="hljs-keyword">return</span> Cont.flatMap(Evaluator.Cont.evaluate(expL, environment))((valueL) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.flatMap(Evaluator.Cont.evaluate(expR, environment))((valueR) =&gt; {
               <span class="hljs-keyword">return</span> Cont.unit(valueL + valueR); 
             });
           });
         },
         <span class="hljs-comment">/* 関数定義（λ式）の評価  */</span>
         lambda: (variable, body) =&gt; {   
-          <span class="hljs-keyword">return</span> self.Exp.match(variable,{
+          <span class="hljs-keyword">return</span> Evaluator.Cont.Exp.match(variable,{
             variable: (name) =&gt; {
               <span class="hljs-keyword">return</span> Cont.unit((actualArg) =&gt; {
-                <span class="hljs-keyword">return</span> self.evaluate(body, 
+                <span class="hljs-keyword">return</span> Evaluator.Cont.evaluate(body, 
                                      Env.extend(name, actualArg, environment));
               });
             }
@@ -368,8 +539,8 @@
         },
         <span class="hljs-comment">/* 関数適用の評価 */</span>
         app: (lambda, arg) =&gt; {         
-          <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(lambda, environment))((closure) =&gt; {
-            <span class="hljs-keyword">return</span> Cont.flatMap(self.evaluate(arg, environment))((actualArg) =&gt; {
+          <span class="hljs-keyword">return</span> Cont.flatMap(Evaluator.Cont.evaluate(lambda, environment))((closure) =&gt; {
+            <span class="hljs-keyword">return</span> Cont.flatMap(Evaluator.Cont.evaluate(arg, environment))((actualArg) =&gt; {
               <span class="hljs-keyword">return</span> closure(actualArg); 
             });
           });
@@ -406,7 +577,9 @@
             <div class="content"><div class='highlight'><pre>      });
     }
   }
-};</pre></div></div>
+};
+
+<span class="hljs-built_in">module</span>.exports = Evaluator</pre></div></div>
             
         </li>
         

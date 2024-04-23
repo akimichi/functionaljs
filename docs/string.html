@@ -23,6 +23,179 @@
   <div id="container">
     <div id="background"></div>
     
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.html">
+                  dentaku.normal.js
+                </a>
+              
+                
+                <a class="source" href="env.html">
+                  env.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.html">
+                  evaluator.js
+                </a>
+              
+                
+                <a class="source" href="fileio.html">
+                  fileio.js
+                </a>
+              
+                
+                <a class="source" href="list.html">
+                  list.js
+                </a>
+              
+                
+                <a class="source" href="monad.html">
+                  monad.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.html">
+                  monad_transformer.js
+                </a>
+              
+                
+                <a class="source" href="pair.html">
+                  pair.js
+                </a>
+              
+                
+                <a class="source" href="parser.html">
+                  parser.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.html">
+                  pprinter.js
+                </a>
+              
+                
+                <a class="source" href="string.html">
+                  string.js
+                </a>
+              
+                
+                <a class="source" href="turing.html">
+                  turing.js
+                </a>
+              
+                
+                <a class="source" href="chap01.spec.html">
+                  chap01.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap02.spec.html">
+                  chap02.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap03.spec.html">
+                  chap03.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap04.spec.html">
+                  chap04.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap05.spec.html">
+                  chap05.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap06.spec.html">
+                  chap06.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap07.spec.html">
+                  chap07.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap08.spec.html">
+                  chap08.spec.js
+                </a>
+              
+                
+                <a class="source" href="data.spec.html">
+                  data.spec.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.spec.html">
+                  dentaku.normal.spec.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.spec.html">
+                  evaluator.spec.js
+                </a>
+              
+                
+                <a class="source" href="interpreter.spec.html">
+                  interpreter.spec.js
+                </a>
+              
+                
+                <a class="source" href="list.spec.html">
+                  list.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad.spec.html">
+                  monad.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.spec.html">
+                  monad_transformer.spec.js
+                </a>
+              
+                
+                <a class="source" href="pair.spec.html">
+                  pair.spec.js
+                </a>
+              
+                
+                <a class="source" href="parser.spec.html">
+                  parser.spec.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.spec.html">
+                  pprinter.spec.js
+                </a>
+              
+                
+                <a class="source" href="string.spec.html">
+                  string.spec.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
     <ul class="sections">
         
           <li id="title">
@@ -48,7 +221,7 @@
 <span class="hljs-keyword">var</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./data.js'</span>);
 <span class="hljs-keyword">var</span> List = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./list.js'</span>);
 
-<span class="hljs-built_in">module</span>.exports = {
+<span class="hljs-keyword">const</span> Text = {
   head: (str) =&gt; {
     expect(str).to.a(<span class="hljs-string">'string'</span>);
     <span class="hljs-keyword">return</span> str[<span class="hljs-number">0</span>];
@@ -66,16 +239,16 @@
   <span class="hljs-comment">/* 文字列を文字のリストに変換する */</span>
   toList: (str) =&gt; {
     expect(str).to.a(<span class="hljs-string">'string'</span>);
-    <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-    <span class="hljs-keyword">if</span>(self.isChar(str) === <span class="hljs-literal">true</span>) {
+    <span class="hljs-keyword">if</span>(Text.isChar(str) === <span class="hljs-literal">true</span>) {
       <span class="hljs-keyword">return</span> List.cons(str,
                        List.empty());
     } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">return</span> List.cons(self.head(str), 
-                       self.toList(self.tail(str)));
+      <span class="hljs-keyword">return</span> List.cons(Text.head(str), 
+                       Text.toList(Text.tail(str)));
     }
   }
-};</pre></div></div>
+};
+<span class="hljs-built_in">module</span>.exports = Text</pre></div></div>
             
         </li>
         

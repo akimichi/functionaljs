@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>turing.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  <script type="text/javascript" async
+          src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <!-- <script type="text/x-mathjax-config"> -->
+  <!--   MathJax.Hub.Config({ -->
+  <!--   tex2jax: { -->
+  <!--       inlineMath: [ ['$','$'], ['\\(','\\)'] ], -->
+  <!--       displayMath: [ ['$$','$$'], ["\\[","\\]"] ], -->
+  <!--       processEscapes: true -->
+  <!--   } -->
+  <!--   }); -->
+  <!-- </script> -->
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.html">
+                  dentaku.normal.js
+                </a>
+              
+                
+                <a class="source" href="env.html">
+                  env.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.html">
+                  evaluator.js
+                </a>
+              
+                
+                <a class="source" href="fileio.html">
+                  fileio.js
+                </a>
+              
+                
+                <a class="source" href="list.html">
+                  list.js
+                </a>
+              
+                
+                <a class="source" href="monad.html">
+                  monad.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.html">
+                  monad_transformer.js
+                </a>
+              
+                
+                <a class="source" href="pair.html">
+                  pair.js
+                </a>
+              
+                
+                <a class="source" href="parser.html">
+                  parser.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.html">
+                  pprinter.js
+                </a>
+              
+                
+                <a class="source" href="string.html">
+                  string.js
+                </a>
+              
+                
+                <a class="source" href="turing.html">
+                  turing.js
+                </a>
+              
+                
+                <a class="source" href="chap01.spec.html">
+                  chap01.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap02.spec.html">
+                  chap02.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap03.spec.html">
+                  chap03.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap04.spec.html">
+                  chap04.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap05.spec.html">
+                  chap05.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap06.spec.html">
+                  chap06.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap07.spec.html">
+                  chap07.spec.js
+                </a>
+              
+                
+                <a class="source" href="chap08.spec.html">
+                  chap08.spec.js
+                </a>
+              
+                
+                <a class="source" href="data.spec.html">
+                  data.spec.js
+                </a>
+              
+                
+                <a class="source" href="dentaku.normal.spec.html">
+                  dentaku.normal.spec.js
+                </a>
+              
+                
+                <a class="source" href="evaluator.spec.html">
+                  evaluator.spec.js
+                </a>
+              
+                
+                <a class="source" href="interpreter.spec.html">
+                  interpreter.spec.js
+                </a>
+              
+                
+                <a class="source" href="list.spec.html">
+                  list.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad.spec.html">
+                  monad.spec.js
+                </a>
+              
+                
+                <a class="source" href="monad_transformer.spec.html">
+                  monad_transformer.spec.js
+                </a>
+              
+                
+                <a class="source" href="pair.spec.html">
+                  pair.spec.js
+                </a>
+              
+                
+                <a class="source" href="parser.spec.html">
+                  parser.spec.js
+                </a>
+              
+                
+                <a class="source" href="pprinter.spec.html">
+                  pprinter.spec.js
+                </a>
+              
+                
+                <a class="source" href="string.spec.html">
+                  string.spec.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>turing.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-pi">"use strict"</span>;
+
+<span class="hljs-keyword">var</span> machine = (program,tape,initState, endState) =&gt; {
+  <span class="hljs-comment">/* ヘッドの位置 */</span>
+  <span class="hljs-keyword">var</span> position = <span class="hljs-number">0</span>;
+  <span class="hljs-comment">/* 機械の状態 */</span>
+  <span class="hljs-keyword">var</span> state = initState;
+  <span class="hljs-comment">/* 実行する命令 */</span>
+  <span class="hljs-keyword">var</span> currentInstruction = <span class="hljs-literal">undefined</span>;
+  <span class="hljs-comment">/*
+     以下のwhileループにて、
+     現在の状態が最終状態に到達するまで命令を繰り返す
+  */</span>
+  <span class="hljs-keyword">while</span>(state != endState) {
+    <span class="hljs-keyword">var</span> cell = tape[<span class="hljs-built_in">String</span>(position)];
+    <span class="hljs-keyword">if</span> (cell)
+      currentInstruction = program[state][cell];
+    <span class="hljs-keyword">else</span>
+      currentInstruction = program[state].B;
+    <span class="hljs-keyword">if</span> (!currentInstruction) {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-comment">/* テープに印字する */</span>
+      tape[<span class="hljs-built_in">String</span>(position)] = currentInstruction.write; 
+      <span class="hljs-comment">/* ヘッドを動かす */</span>
+      position += currentInstruction.move;
+      <span class="hljs-comment">/* 次の状態に移る */</span>
+      state = currentInstruction.next;
+    }
+  }
+  <span class="hljs-keyword">return</span> tape;
+};
+
+<span class="hljs-built_in">module</span>.exports = machine;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  <!-- <div id="footer">  目次に戻る。 </div> -->
+  <!-- </div> -->
+</body>
+</html>

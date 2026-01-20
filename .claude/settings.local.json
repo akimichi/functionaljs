@@ -6,7 +6,14 @@
       "Bash(nvm use:*)",
       "Bash(npx tsc:*)",
       "Bash(npm test)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "mcp__serena__find_file",
+      "mcp__serena__search_for_pattern",
+      "Bash(python3:*)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "serena"
+  ]
 }

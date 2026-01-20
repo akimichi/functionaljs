@@ -13,6 +13,7 @@ describe('DRY原則', () => {
 
   // **リスト3.1** 冗長なコード
   it('冗長なコード', () => {
+    /* #@range_begin(redundant_code) */
     const timesForMultiply = (count: number, arg: number, memo: number): number => {
       if (count > 1) {
         return timesForMultiply(count - 1, arg, arg + memo);
@@ -33,6 +34,7 @@ describe('DRY原則', () => {
     const exponential = (n: number, m: number) => {
       return timesForExponential(m, n, 1);
     };
+    /* #@range_end(redundant_code) */
     expect(
       multiply(2, 3)
     ).toEqual(
@@ -47,6 +49,7 @@ describe('DRY原則', () => {
 
   it('DRYを適用する', () => {
     // **リスト3.3** DRYなtimes関数
+    /* #@range_begin(dry_times) */
     const times = (count: number, arg: number, memo: number, fun: (a: number, b: number) => number): number => { // 引数funを追加
       if (count > 1) {
         return times(count - 1, arg, fun(arg, memo), fun);
@@ -54,8 +57,10 @@ describe('DRY原則', () => {
         return fun(arg, memo);
       }
     };
+    /* #@range_end(dry_times) */
 
     // **リスト3.4** DRYなかけ算とべき乗
+    /* #@range_begin(dry_functions) */
     const add = (n: number, m: number) => {
       return n + m;
     };
@@ -67,6 +72,7 @@ describe('DRY原則', () => {
     const exponential = (n: number, m: number) => {
       return times(m, n, 1, multiply);
     };
+    /* #@range_end(dry_functions) */
     expect(
       multiply(2, 3)
     ).toEqual(
@@ -89,9 +95,11 @@ describe('DRY原則', () => {
 describe('抽象化への指向', () => {
   // **リスト3.5** 関数という抽象化
   it('関数という抽象化', () => {
+    /* #@range_begin(function_abstraction_example) */
     const succ = (n: number) => {
       return n + 1;
     };
+    /* #@range_end(function_abstraction_example) */
   });
 
   describe('高階関数による抽象化', () => {
@@ -99,6 +107,7 @@ describe('抽象化への指向', () => {
 
     // **リスト3.6** for文によるsum関数
     it('for文によるsum関数', () => {
+      /* #@range_begin(sum_for) */
       const anArray = [2, 3, 5, 7];
       const sum = (array: number[]) => {
         let result = 0;
@@ -108,6 +117,7 @@ describe('抽象化への指向', () => {
         return result;
       };
       sum(anArray);
+      /* #@range_end(sum_for) */
       expect(
         sum(anArray)
       ).toEqual(
@@ -117,6 +127,7 @@ describe('抽象化への指向', () => {
 
     // **リスト3.7** forEachによるsum関数
     it('forEachによるsum関数', () => {
+      /* #@range_begin(sum_forEach) */
       const sum = (array: number[]) => {
         /* 結果を格納する変数result */
         let result = 0;
@@ -125,6 +136,7 @@ describe('抽象化への指向', () => {
         });
         return result;
       };
+      /* #@range_end(sum_forEach) */
       expect(
         sum(anArray)
       ).toEqual(
@@ -134,11 +146,13 @@ describe('抽象化への指向', () => {
 
     // **リスト3.8** reduceによるsum関数
     it('reduceによるsum関数', () => {
+      /* #@range_begin(sum_reduce) */
       const sum = (array: number[]) => {
         return array.reduce((x, y) => {
           return x + y;
         });
       };
+      /* #@range_end(sum_reduce) */
       expect(
         sum(anArray)
       ).toEqual(
@@ -159,6 +173,7 @@ describe('セマンティクスを意識する', () => {
       for (const attrname in obj2) { mergedObject[attrname] = obj2[attrname]; }
       return mergedObject;
     };
+    /* #@range_begin(environment_example) */
     /* 空の環境 */
     const emptyEnv: { [key: string]: any } = {};
     /* 環境を拡張する */
@@ -171,8 +186,10 @@ describe('セマンティクスを意識する', () => {
     const lookupEnv = (name: string, env: { [key: string]: any }) => {
       return env[name];
     };
+    /* #@range_end(environment_example) */
     expect((() => {
       // **リスト3.11** リスト 3.10のセマンティクス
+      /* #@range_begin(environment_example_usage) */
       /* 空の辞書を作成する */
       const initEnv = emptyEnv;
       /* var a = 1 を実行して、辞書を拡張する */
@@ -182,6 +199,7 @@ describe('セマンティクスを意識する', () => {
       /* 辞書から b の値を参照する */
       lookupEnv("b", secondEnv);
       return lookupEnv("b", secondEnv);
+      /* #@range_end(environment_example_usage) */
     })()).toEqual(
       3
     );
@@ -196,16 +214,20 @@ describe('テストに親しむ', () => {
     //
     // assertライブラリを使う場合
     it('assertによる表明', () => {
+      /* #@range_begin(assert_assertion) */
       assert.equal(1 + 2, 3);
+      /* #@range_end(assert_assertion) */
     });
 
     // expectライブラリを使う場合
     it('expectによる表明', () => {
+      /* #@range_begin(expect_assertion) */
       expect(
         1 + 2
       ).toEqual(
         3
       );
+      /* #@range_end(expect_assertion) */
     });
   });
 });

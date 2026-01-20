@@ -24,6 +24,7 @@ describe('命令型モデル', () => {
     }
 
     // **リスト 1.1 JavaScriptによるチューリング機械 **
+    /* #@range_begin(turing) */
     const machine = (program: Program, tape: Tape, initState: string, endState: string): Tape | false => {
       /* ヘッドの位置 */
       let position = 0;
@@ -54,10 +55,12 @@ describe('命令型モデル', () => {
       }
       return tape;
     };
+    /* #@range_end(turing)  */
 
     // **リスト 1.2 チューリング機械の実行例 **
     describe('チューリング機械の実行例', () => {
       it('チューリング機械でsucc関数を実装する', () => {
+        /* #@range_begin(turing_example_succ) */
         /* 2進法で10、つまり10進法で2を表すテープ */
         const tape: Tape = {
           '0': '1',
@@ -78,19 +81,24 @@ describe('命令型モデル', () => {
             "0": { "write": "0", "move": 1, "next": 'q4' },
             "B": { "write": "B", "move": 1, "next": 'q4' } }
         };
+        /* #@range_end(turing_example_succ) */
         expect(
           // **リスト 1.3 1を加えるチューリング機械の実行 **
+          /* #@range_begin(turing_example_succ_test) */
           machine(program,     // プログラム
             tape,        // テープ
             'q0',        // 初期状態
             'q4')        // 終了状態
+          /* #@range_end(turing_example_succ_test) */
         ).toEqual(
+          /* #@range_begin(turing_example_succ_test_result) */
           {
             '-1': 'B',
             '0': '1',
             '1': '1',
             '2': 'B'
           }
+          /* #@range_end(turing_example_succ_test_result) */
         );
       });
     });
@@ -102,9 +110,11 @@ describe('関数型モデル', () => {
   // ###  <section id='substitution_model'>置換ルール</section>
   describe('置換ルール', () => {
     it('単純なλ式の簡約', () => {
+      /* #@range_begin(succ) */
       const succ = (n: number) => {
         return n + 1;
       };
+      /* #@range_end(succ) */
       expect(
         succ(1)
       ).toEqual(
@@ -114,6 +124,7 @@ describe('関数型モデル', () => {
 
     // **リスト 1.5 add関数 **
     it('add関数', () => {
+      /* #@range_begin(recursive_add) */
       const succ = (n: number) => {
         return n + 1;
       };
@@ -129,6 +140,7 @@ describe('関数型モデル', () => {
           return add(succ(x), prev(y));
         }
       };
+      /* #@range_end(recursive_add) */
       expect(
         add(3, 2)
       ).toEqual(
@@ -139,6 +151,7 @@ describe('関数型モデル', () => {
     // #### コラム 再帰と漸化式
     it('再帰と漸化式', () => {
       // **リスト 1.6 漸化式の例 **
+      /* #@range_begin(recursion) */
       const a = (n: number): number => {
         if (n === 1) {
           return 1; // 初項は1
@@ -146,6 +159,7 @@ describe('関数型モデル', () => {
           return a(n - 1) + 3; // 公差は3
         }
       };
+      /* #@range_end(recursion) */
       expect(
         a(1)
       ).toEqual(
@@ -166,6 +180,7 @@ describe('関数型モデル', () => {
     // **リスト 1.7 while文を利用したadd関数 **
     it('while文を利用したadd関数', () => {
       /* add関数の定義 */
+      /* #@range_begin(imperative_add) */
       const add = (x: number, y: number) => {
         while (y > 0) {  // yが0より大きい間、反復処理を実行する
           x = x + 1;    // 変数xを更新する
@@ -173,6 +188,7 @@ describe('関数型モデル', () => {
         }
         return x;
       };
+      /* #@range_end(imperative_add) */
       expect(
         add(1, 2)
       ).toEqual(
@@ -208,6 +224,7 @@ describe('関数型モデル', () => {
           return add(succ(x), prev(y)); // add関数の再帰呼び出し
         }
       };
+      /* #@range_begin(multiply) */
       const times = (count: number, fun: (a: number, b: number) => number, arg: number, memo: number): number => {
         if (count > 1) {
           /* times関数を再帰呼び出し */
@@ -220,6 +237,7 @@ describe('関数型モデル', () => {
         /* 2番目の引数にadd関数を渡している */
         return times(m, add, n, 0);
       };
+      /* #@range_end(multiply) */
       expect(
         add(2, 3)
       ).toEqual(
@@ -275,9 +293,11 @@ describe('関数型モデル', () => {
       const multiply = (n: number, m: number) => {
         return times(m, add, n, 0);
       };
+      /* #@range_begin(exponential) */
       const exponential = (n: number, m: number) => {
         return times(m, multiply, n, 1);
       };
+      /* #@range_end(exponential) */
       expect(
         exponential(2, 3)
       ).toEqual(

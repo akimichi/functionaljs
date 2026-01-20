@@ -10,6 +10,7 @@ describe('関数型プログラミングの特徴', () => {
   // ### <section id='first-class-object'>ファーストクラスオブジェクトとしての関数</section>
   describe('ファーストクラスオブジェクトとしての関数', () => {
     it('数値はファーストクラスオブジェクトである', () => {
+      /*  #@range_begin(number_as_first_class_citizen) */
       // 値を変数にバインドする
       const zero = 0;
       const name = "Haskell Curry";
@@ -23,27 +24,35 @@ describe('関数型プログラミングの特徴', () => {
       const birthYear = (birthdayObject: { year: number }) => {
         return birthdayObject.year;
       };
+      /* #@range_end(number_as_first_class_citizen) */
       // 値を関数に渡す
+        /* #@range_begin(product_in_array_reduce_test) */
       expect(
         Math.sqrt(2)
       ).toEqual(
         // 関数から値を返す
         1.4142135623730951
       );
+        /* #@range_end(product_in_array_reduce_test)  */
     });
 
     it('関数は変数にバインドできる', () => {
+      /* #@range_begin(function_bound_to_variable) */
       const succ = (n: number) => {
         return n + 1;
       };
+      /* #@range_end(function_bound_to_variable) */
+      /* #@range_begin(expect_example) */
       expect(
         succ(1) // 変数succを用いてλ式を呼びだす
       ).toEqual(
         2
       );
+      /* #@range_end(expect_example) */
     });
 
     it('関数をオブジェクトに埋めこむ', () => {
+      /* #@range_begin(function_embedded_in_object) */
       const math = {
         add: (n: number, m: number) => {
           return n + m;
@@ -54,10 +63,12 @@ describe('関数型プログラミングの特徴', () => {
       ).toEqual(
         3
       );
+      /* #@range_end(function_embedded_in_object) */
     });
 
     // **リスト 2.1** forEach文によるsumの定義
     it('forEach文によるsumの定義', () => {
+      /* #@range_begin(sum_forEach) */
       const sum = (array: number[]) => {
         let result = 0;
         array.forEach((item) => { // forEachに関数を渡す
@@ -65,6 +76,7 @@ describe('関数型プログラミングの特徴', () => {
         });
         return result;
       };
+      /* #@range_end(sum_forEach)  */
       expect(
         sum([1, 2, 3, 4])
       ).toEqual(
@@ -75,11 +87,13 @@ describe('関数型プログラミングの特徴', () => {
     describe('関数を返す', () => {
       // adderを定義する
       it('adderを定義する', () => {
+        /* #@range_begin(adder_definition) */
         const adder = (n: number) => {
           return (m: number) => { // 関数を返す
             return n + m;
           };
         };
+        /* #@range_end(adder_definition) */
         const succ = adder(1);
         expect(
           succ(0)
@@ -141,12 +155,14 @@ describe('関数型プログラミングの特徴', () => {
           expect(
             succ(1) // 1回目の実行
           ).toEqual(
+              /* #@range_begin(strict_evaluation_result) */
             2
           );
           expect(
             succ(1) // 2回目の実行
           ).toEqual(
             2
+              /* #@range_end(strict_evaluation_result) */
           );
         });
       });
@@ -171,11 +187,13 @@ describe('関数型プログラミングの特徴', () => {
 
       // **リスト2.2** 代入が参照透明性を破壊する例
       it('代入が参照透明性を破壊する例', () => {
+        /* #@range_begin(assignment_breaks_referential_transparency) */
         let x = 0;
         const add = (y: number) => {
           x = x + 1; // 代入で変数を更新する
           return x + y;
         };
+        /* #@range_end(assignment_breaks_referential_transparency)  */
         expect(
           add(1)
         ).toEqual(
@@ -185,6 +203,7 @@ describe('関数型プログラミングの特徴', () => {
 
       // **リスト2.3** 命令的な階乗関数
       it('命令的な階乗関数', () => {
+        /* #@range_begin(imperative_factorial) */
         const factorial = (n: number) => {
           /* 変数resultに結果が入る */
           let result = 1;
@@ -199,6 +218,7 @@ describe('関数型プログラミングの特徴', () => {
           }
           return result;
         };
+        /* #@range_end(imperative_factorial) */
         expect(
           factorial(2)
         ).toEqual(
@@ -264,6 +284,7 @@ describe('関数型プログラミングの特徴', () => {
       describe('値の参照透過性を保証する（可変なデータの排除）', () => {
         // ** リスト2.4** 不変なデータ構造としてのオブジェクト型の実装
         it('不変なデータ構造としてのオブジェクト型の実装', () => {
+          /* #@range_begin(immutable_datatype) */
           const empty = (_?: any): null => {
             return null;
           };
@@ -279,6 +300,7 @@ describe('関数型プログラミングの特徴', () => {
               }
             };
           };
+          /* #@range_end(immutable_datatype) */
         });
       });
 
@@ -286,6 +308,7 @@ describe('関数型プログラミングの特徴', () => {
       describe('変数の参照透過性を保証する(代入の排除)', () => {
         // ** リスト2.5** 代入を使った足し算の定義
         it('代入を使った足し算の定義', () => {
+          /* #@range_begin(imperative_addition) */
           const add = (x: number, y: number) => {
             let times = 0;
             let result = x;
@@ -297,6 +320,7 @@ describe('関数型プログラミングの特徴', () => {
             }
             return result;
           };
+          /* #@range_end(imperative_addition) */
           expect(add(2, 1)).toEqual(3);
           expect(add(2, 2)).toEqual(4);
           expect(add(3, 2)).toEqual(5);
@@ -304,6 +328,7 @@ describe('関数型プログラミングの特徴', () => {
 
         // ** リスト2.6** 関数型プログラミングによる足し算の定義
         it('関数型プログラミングによる足し算の定義', () => {
+          /* #@range_begin(functional_addition) */
           const add = (x: number, y: number): number => {
             if (y < 1) {
               return x;
@@ -312,6 +337,7 @@ describe('関数型プログラミングの特徴', () => {
               return add(x + 1, y - 1);
             }
           };
+          /* #@range_end(functional_addition) */
           expect(add(2, 1)).toEqual(3);
           expect(add(2, 2)).toEqual(4);
           expect(add(3, 2)).toEqual(5);
@@ -322,6 +348,7 @@ describe('関数型プログラミングの特徴', () => {
       describe('関数の参照透過性を保証する（副作用の分離）', () => {
         // **リスト2.7** 副作用が分離されていないコード
         it('副作用が分離されていないコード', () => {
+          /* #@range_begin(age_sideeffect) */
           const age = (birthYear: number) => {
             /* todayは現時点の日付データ */
             const today = new Date();
@@ -329,13 +356,16 @@ describe('関数型プログラミングの特徴', () => {
             const thisYear = today.getFullYear();
             return thisYear - birthYear;
           };
+          /* #@range_end(age_sideeffect) */
         });
 
         // **リスト2.8** 副作用が分離されているコード
         it('副作用が分離されているコード', () => {
+          /* #@range_begin(age_without_sideeffect) */
           const age = (birthYear: number, thisYear: number) => {
             return thisYear - birthYear;
           };
+          /* #@range_end(age_without_sideeffect) */
           expect(
             age(1999, (new Date()).getFullYear())
           ).toEqual(
@@ -364,6 +394,7 @@ describe('関数型プログラミングの利点', () => {
       describe('sum関数の定義', () => {
         // ##### forEachメソッドによるsumの定義
         it('forEachメソッドによるsumの定義', () => {
+          /* #@range_begin(sum_in_array_while) */
           const sum = (array: number[]) => {
             /* 結果を格納する変数 */
             let result = 0;
@@ -377,6 +408,7 @@ describe('関数型プログラミングの利点', () => {
             }
             return result;
           };
+          /* #@range_end(sum_in_array_while)  */
           expect(
             sum([1, 2, 3, 4])
           ).toEqual(
@@ -391,12 +423,14 @@ describe('関数型プログラミングの利点', () => {
 
         // ##### reduceメソッドによるsumの定義
         it('reduceメソッドによるsumの定義', () => {
+          /* #@range_begin(sum_in_array_reduce) */
           const sum = (array: number[]) => {
             return array.reduce(/* 第1引数に関数を渡す */
               (accumulator, item) => {
                 return accumulator + item; /* 足し算を実行する */
               }, 0); // 第2引数には、蓄積変数の初期値として0を渡す
           };
+          /* #@range_end(sum_in_array_reduce)  */
           expect(
             sum([1, 2, 3, 4])
           ).toEqual(
@@ -407,11 +441,13 @@ describe('関数型プログラミングの利点', () => {
 
       // **リスト2.10** product関数の定義
       it('product関数の定義', () => {
+        /* #@range_begin(product_in_array_reduce) */
         const product = (array: number[]) => {
           return array.reduce((accumulator, item) => {
             return accumulator * item; /* かけ算を実行する */
           }, 1); // 第2引数には、蓄積変数の初期値として1を渡す
         };
+        /* #@range_end(product_in_array_reduce)  */
         expect(
           product([1, 2, 3, 4])
         ).toEqual(
@@ -424,6 +460,7 @@ describe('関数型プログラミングの利点', () => {
         const succ = (n: number) => {
           return n + 1;
         };
+        /* #@range_begin(map_in_array_reduce) */
         const map = <T, U>(transform: (item: T) => U) => {
           return (array: T[]): U[] => {
             return array.reduce((accumulator: U[], item) => {
@@ -431,6 +468,7 @@ describe('関数型プログラミングの利点', () => {
             }, []); // 蓄積変数の初期値として空の配列[]を指定する
           };
         };
+        /* #@range_end(map_in_array_reduce)  */
         expect(
           map(succ)([1, 2, 3])
         ).toEqual(
@@ -438,9 +476,13 @@ describe('関数型プログラミングの利点', () => {
         );
         expect(
           // **リスト2.12** map関数のテスト
+          /* #@range_begin(map_in_array_reduce_test) */
           map(succ)([1, 3, 5])
+          /* #@range_end(map_in_array_reduce_test) */
         ).toEqual(
+          /* #@range_begin(map_in_array_reduce_test_result) */
           [2, 4, 6]
+          /* #@range_end(map_in_array_reduce_test_result) */
         );
       });
     });
@@ -463,12 +505,14 @@ describe('関数型プログラミングの利点', () => {
         };
 
         // **リスト2.13** constant関数
+        /* #@range_begin(constant) */
         const constant = <T>(any: T) => {
           return (_?: any): T => {
             return any;
           };
         };
         const alwaysOne = constant(1);
+        /* #@range_end(constant) */
 
         // **リスト2.14** map(alwaysOne)で配列の全要素を1に変える
         expect(
@@ -487,9 +531,11 @@ describe('関数型プログラミングの利点', () => {
 
         // **リスト2.15** 関数適用によるlength関数の定義
         it('関数適用によるlength関数の定義', () => {
+          /* #@range_begin(array_length) */
           const length = (array: number[]) => {
             return sum(map(alwaysOne)(array));
           };
+          /* #@range_end(array_length)  */
           expect(
             length([1, 2, 3])
           ).toEqual(
@@ -500,15 +546,19 @@ describe('関数型プログラミングの利点', () => {
         // ##### 関数合成による処理の合成
         describe('関数合成による処理の合成', () => {
           // **リスト2.16** 関数の合成
+          /* #@range_begin(function_compose) */
           const compose = <T, U, V>(f: (arg: U) => V, g: (arg: T) => U) => {
             return (arg: T): V => {
               return f(g(arg));
             };
           };
+          /* #@range_end(function_compose)  */
 
           // **リスト2.17** 関数合成によるlength関数の定義（ポイントフリースタイル）
           it('関数合成によるlength関数の定義（ポイントフリースタイル）', () => {
+            /* #@range_begin(array_length_in_composition_with_point_free_style) */
             const length = compose(sum, map(alwaysOne));
+            /* #@range_end(array_length_in_composition_with_point_free_style)  */
             expect(
               length([1, 2, 3])
             ).toEqual(
@@ -518,9 +568,11 @@ describe('関数型プログラミングの利点', () => {
 
           // **リスト2.18** 関数合成によるlength関数の定義（引数を明示したスタイル）
           it('関数合成によるlength関数の定義（引数を明示したスタイル）', () => {
+            /* #@range_begin(array_length_in_composition) */
             const length = (array: number[]) => { // 引数が配列であることを明示する
               return compose(sum, map(alwaysOne))(array);
             };
+            /* #@range_end(array_length_in_composition)  */
             expect(
               length([1, 2, 3])
             ).toEqual(
@@ -557,7 +609,9 @@ describe('関数型プログラミングの利点', () => {
           // **リスト2.19** 正格評価の例
           it('正格評価の例', () => {
             expect(
+              /* #@range_begin(strict_evaluation) */
               length([1, 1 + 1])
+              /* #@range_end(strict_evaluation) */
             ).toEqual(
               2
             );
@@ -566,11 +620,15 @@ describe('関数型プログラミングの利点', () => {
           // **リスト2.20** 遅延評価の例
           it('遅延評価の例', () => {
             expect(
+              /* #@range_begin(lazy_evaluation) */
               length([1, ((_: any) => {
                 return 1 + 1;
               }) as any])
+              /* #@range_end(lazy_evaluation) */
             ).toEqual(
+              /* #@range_begin(lazy_evaluation_result) */
               2
+              /* #@range_end(lazy_evaluation_result) */
             );
           });
         });
@@ -581,9 +639,11 @@ describe('関数型プログラミングの利点', () => {
 
           // **リスト2.21** ストリームの例
           it('ストリームの例', () => {
+            /* #@range_begin(stream_example) */
             const aStream: [number, () => number] = [1, () => { // 後尾は無名関数で表現する
               return 2;
             }];
+            /* #@range_end(stream_example) */
             expect(
               aStream[0] // ストリームの先頭要素を取得する
             ).toEqual(
@@ -602,20 +662,24 @@ describe('関数型プログラミングの利点', () => {
               return n + 1;
             };
 
+            /* #@range_begin(enumFrom) */
             const enumFrom = (n: number): any => {
               return [n, () => { // ストリームを返す
                 return enumFrom(succ(n));
               }];
             };
+            /* #@range_end(enumFrom) */
 
             // **リスト2.23** 無限の偶数列を作る
             it('無限の偶数列を作る', () => {
+              /* #@range_begin(evenStream) */
               const evenFrom = (n: number): any => {
                 return [n, () => {
                   return evenFrom(n + 2);
                 }];
               };
               const evenStream = evenFrom(2);
+              /* #@range_end(evenStream) */
               const take = (n: number, astream: any): any => {
                 if (n === 1) {
                   return astream[0];
@@ -631,6 +695,7 @@ describe('関数型プログラミングの利点', () => {
             });
 
             // **リスト2.24** iterate関数
+            /* #@range_begin(stream_iterate) */
             const iterate = (init: number) => {  // 先頭の値を渡す
               return (step: (n: number) => number): any => {       // 次の値との差を計算する関数を渡す
                 return [init, () => { // ストリーム型を返す
@@ -638,12 +703,14 @@ describe('関数型プログラミングの利点', () => {
                 }];
               };
             };
+            /* #@range_end(stream_iterate) */
 
             // **リスト2.25** 無限ストリームの例
             it('無限の偶数列', () => {
               const succ = (n: number) => {
                 return n + 1;
               };
+              /* #@range_begin(enumFrom_by_iterate) */
               const enumFrom = (n: number) => {
                 return iterate(n)(succ);
               };
@@ -654,10 +721,12 @@ describe('関数型プログラミングの利点', () => {
                 return n + 2;
               };
               const evenStream = iterate(2)(twoStep);
+              /* #@range_end(enumFrom_by_iterate) */
             });
 
             it('ストリームを加工する', () => {
               // **リスト2.26** ストリームのfilter関数
+              /* #@range_begin(stream_filter) */
               const filter = (predicate: (x: number) => boolean) => {
                 return (aStream: any): any => {
                   /* ストリームの先頭要素を取り出す */
@@ -673,14 +742,18 @@ describe('関数型プログラミングの利点', () => {
                   }
                 };
               };
+              /* #@range_end(stream_filter) */
 
               // **リスト2.27**filter関数で無限の偶数列を作る
+              /* #@range_begin(evenStream_by_filter) */
               const even = (n: number) => {
                 return (n % 2) === 0;
               };
               const evenStream = filter(even)(enumFrom(1));
+              /* #@range_end(evenStream_by_filter) */
 
               // **リスト2.28** ストリームのelemAt関数
+              /* #@range_begin(array_elemAt) */
               const elemAt = (n: number) => {
                 return (aStream: any): any => {
                   if (n === 1) {
@@ -690,14 +763,17 @@ describe('関数型プログラミングの利点', () => {
                   }
                 };
               };
+              /* #@range_end(array_elemAt) */
 
               expect(
+                /* #@range_begin(third_element_of_evenStream) */
                 elemAt(1)(evenStream)
               ).toEqual(
                 2
               );
               expect(
                 elemAt(2)(evenStream)
+                /* #@range_end(third_element_of_evenStream) */
               ).toEqual(
                 4
               );
@@ -705,12 +781,15 @@ describe('関数型プログラミングの利点', () => {
               expect(
                 elemAt(3)(evenStream)
               ).toEqual(
+                /* #@range_begin(third_element_of_evenStream_result) */
                 6
+                /* #@range_end(third_element_of_evenStream_result) */
               );
             });
 
             // **リスト2.30** 配列のelemAt関数
             it('配列のelemAt関数', () => {
+              /* #@range_begin(stream_elemAt) */
               const elemAt = (n: number) => {
                 return (anArray: number[]): number | undefined => {
                   if (n === 1) {
@@ -721,11 +800,16 @@ describe('関数型プログラミングの利点', () => {
                   }
                 };
               };
+              /* #@range_end(stream_elemAt) */
               expect(
                 // **リスト2.31** 4番目の偶数を求める
+                /* #@range_begin(fourth_element_of_evenArray) */
                 elemAt(4)([2, 4, 6])
+                /* #@range_end(fourth_element_of_evenArray) */
               ).toEqual(
+                /* #@range_begin(fourth_element_of_evenArray_result) */
                 undefined
+                /* #@range_end(fourth_element_of_evenArray_result) */
               );
             });
           });
@@ -750,6 +834,7 @@ describe('関数型プログラミングの利点', () => {
 
     // **リスト2.33** 参照透過性のない関数の単体テスト
     it("参照透過性のない関数の単体テスト", () => {
+      /* #@range_begin(winner_with_sideeffect) */
       const winner = (playerL: { name: string; score: number }, playerR: { name: string; score: number }) => {
         if (playerR.score > playerL.score) {
           console.log(playerR.name + "が勝者です");
@@ -759,6 +844,7 @@ describe('関数型プログラミングの利点', () => {
           console.log("引き分けです");
         }
       };
+      /* #@range_end(winner_with_sideeffect) */
       const playerA = {
         name: 'a',
         score: 10
@@ -772,6 +858,7 @@ describe('関数型プログラミングの利点', () => {
     describe('副作用を分離する', () => {
       // **リスト2.34** winner関数の分離
       it("winner関数の分離", () => {
+        /* #@range_begin(winner_without_sideeffect) */
         /* 勝者を判定する */
         const judge = (playerL: { name: string; score: number }, playerR: { name: string; score: number }) => {
           if (playerL.score > playerR.score) {
@@ -794,8 +881,10 @@ describe('関数型プログラミングの利点', () => {
         const displayWinner = (winner: { name: string } | null) => {
           console.log(announce(winner));
         };
+        /* #@range_end(winner_without_sideeffect) */
 
         // **リスト2.35** 副作用のない関数のテスト
+        /* #@range_begin(announce_winner) */
         const socrates = {
           name: 'ソクラテス',
           score: 10
@@ -810,6 +899,7 @@ describe('関数型プログラミングの利点', () => {
         ).toEqual(
           "プラトンが勝者です"
         );
+        /* #@range_end(announce_winner) */
       });
     });
   });
@@ -837,6 +927,7 @@ describe('関数型プログラミングの利点', () => {
 
       it('succ関数の性質テスト', () => {
         // **リスト2.39** プロパティテストのための関数
+        /* #@range_begin(succ_property) */
         /* ストリームのmap関数 */
         const map = (transform: (x: number) => any) => {
           return (aStream: any): any => {
@@ -875,8 +966,10 @@ describe('関数型プログラミングの利点', () => {
         const proposition = (n: number) => {
           return succ(0) + succ(n) === succ(succ(n));
         };
+        /* #@range_end(succ_property) */
 
         // **リスト2.40** succ関数のプロパティテスト
+        /* #@range_begin(succ_property_test) */
         /* 100個の整数について命題が正しいかをテストする */
         expect(
           all(
@@ -887,6 +980,7 @@ describe('関数型プログラミングの利点', () => {
         ).toEqual(
           true
         );
+        /* #@range_end(succ_property_test) */
       });
     });
   });

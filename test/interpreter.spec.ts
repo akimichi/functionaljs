@@ -65,6 +65,7 @@ describe('例外捕捉評価器', () => {
     app?: (variable: any, arg: any) => any;
   }
 
+  /* #@range_begin(continuation_passing_interpreter_expression) */
   const exp = {
     match: (data: any, pattern: ExpPattern): any => {
       return data.call(exp, pattern);
@@ -84,6 +85,7 @@ describe('例外捕捉評価器', () => {
         return pattern.tryWith!(anExp, exception, raisedExp);
       };
     },
+    /* #@range_end(continuation_passing_interpreter_expression) */
     num: (value: number) => {
       expect(typeof value).toBe('number');
       return (pattern: ExpPattern) => {
@@ -111,6 +113,7 @@ describe('例外捕捉評価器', () => {
   }; // exp
 
   // ### 例外捕捉評価器の評価関数
+  /* #@range_begin(continuation_passing_interpreter_evaluate) */
   // evaluateCPS: (EXP, ENV, FUNC[VALUE -> VALUE]) -> VALUE
   const evaluateCPS = (anExp: any, environment: any, continues: (value: any) => any, continuesInFailure: (exception: Error) => any): any => {
     // c.f. Programming Language Concepts, p.208
@@ -166,6 +169,7 @@ describe('例外捕捉評価器', () => {
         return continues(rator(rand));
       }
     });
+    /* #@range_end(continuation_passing_interpreter_evaluate) */
   };
 
   describe('例外捕捉評価器をテストする', () => {
@@ -316,6 +320,7 @@ describe('例外捕捉評価器', () => {
     }, 1000);
 
     it('投げられた例外を捕捉する', () => {
+      /* #@range_begin(continuation_passing_interpreter_trycatch) */
       const tryExpression = exp.tryWith(
         exp.raise(new Error("exception")), // exp
         new Error("exception"), // caughtException
@@ -339,6 +344,7 @@ describe('例外捕捉評価器', () => {
       ).toEqual(
         1
       );
+      /* #@range_end(continuation_passing_interpreter_trycatch) */
     });
   });
 });

@@ -233,20 +233,25 @@ describe('カリー化で関数を渡す', () => {
       }
     };
     // **リスト7.2** multipleOf関数のテスト
+            /* #@range_begin(eratosthenes_sieve_test) */
     expect(
       multipleOf(2, 4)     /* 4は、2の倍数である */
     ).toEqual(
       true
     );
+            /* #@range_end(eratosthenes_sieve_test) */
+      /* #@range_begin(identity_monad_unit_test) */
     expect(
       multipleOf(3, 4)     /* 4は、3の倍数ではない */
     ).toEqual(
       false
     );
+      /* #@range_end(identity_monad_unit_test) */
   });
 
   // **リスト7.3** カリー化されたmultipleOf関数の定義
   it('カリー化されたmultipleOf関数', () => {
+    /* #@range_begin(multipleOf_curried) */
     const multipleOf = (n: number) => { // 外側の関数定義
       return (m: number): boolean => {  // 内側の関数定義
         if (m % n === 0) {
@@ -256,7 +261,9 @@ describe('カリー化で関数を渡す', () => {
         }
       };
     };
+    /* #@range_end(multipleOf_curried) */
     // **リスト7.4** カリー化されたmultipleOf関数のテスト
+      /* #@range_begin(church_numeral_counter) */
     expect(
       multipleOf(2)(4)   /* 関数適用を2回実行する */
     ).toEqual(
@@ -267,17 +274,21 @@ describe('カリー化で関数を渡す', () => {
     ).toEqual(
       false
     );
+      /* #@range_end(church_numeral_counter) */
     // **リスト7.5** multipleOf関数のテスト
+    /* #@range_begin(multipleOf_curried_partilly_applied) */
     const twoFold = multipleOf(2);
     expect(
       twoFold(4)    /* 4は、2の倍数である */
     ).toEqual(
       true
     );
+    /* #@range_end(multipleOf_curried_partilly_applied) */
   });
 
   it('カリー化された指数関数', () => {
     // **リスト7.6** 指数関数の例
+    /* #@range_begin(exponential_curried) */
     const exponential = (base: number) => {
       return (index: number): number => {
         if (index === 0) {
@@ -293,13 +304,17 @@ describe('カリー化で関数を渡す', () => {
     ).toEqual(
       8
     );
+    /* #@range_end(exponential_curried) */
+        /* #@range_begin(identity_monad_laws_right_unit_law) */
     expect(
       exponential(2)(2)
     ).toEqual(
       4
     );
+        /* #@range_end(identity_monad_laws_right_unit_law) */
 
     // **リスト7.7** flip関数の定義
+    /* #@range_begin(flip_definition) */
     const flip = <A, B, C>(fun: (a: A) => (b: B) => C) => {
       return (x: B) => {
         return (y: A): C => {
@@ -307,12 +322,16 @@ describe('カリー化で関数を渡す', () => {
         };
       };
     };
+    /* #@range_end(flip_definition) */
 
     // **リスト7.8** flip関数でexponential関数の引数の順番を変更する
+    /* #@range_begin(flipped_exponential) */
     /* flipで引数を逆転させて、2乗を定義する */
     const square = flip(exponential)(2);
     /* flipで引数を逆転させて、3乗を定義する */
     const cube = flip(exponential)(3);
+    /* #@range_end(flipped_exponential) */
+      /* #@range_begin(flatMap_and_composition) */
     expect(
       square(2)
     ).toEqual(
@@ -323,6 +342,7 @@ describe('カリー化で関数を渡す', () => {
     ).toEqual(
       8 /* 2 * 2 * 2 = 8 */
     );
+      /* #@range_end(flatMap_and_composition) */
   });
 
   // ### コラム： チャーチ数
@@ -336,11 +356,13 @@ describe('カリー化で関数を渡す', () => {
           return x;           // 関数を0回適用する
         };
       };
+      /* #@range_begin(church_one) */
       const one: ChurchNumeral = (f) => {
         return (x) => {
           return f(x);        // 関数を1回適用する
         };
       };
+      /* #@range_end(church_one) */
       const two: ChurchNumeral = (f) => {
         return (x) => {
           return f(f(x));     // 関数を2回適用する
@@ -393,6 +415,7 @@ describe('コンビネータで関数を組み合わせる', () => {
   describe('コンビネータの作り方', () => {
     // **リスト7.10** multipleOf関数の再利用
     it('multipleOf関数の再利用', () => {
+    /* #@range_begin(multipleOf_uncurried) */
       const multipleOf = (n: number) => {
         return (m: number): boolean => {
           if (m % n === 0) {
@@ -401,7 +424,9 @@ describe('コンビネータで関数を組み合わせる', () => {
             return false;
           }
         };
+    /* #@range_end(multipleOf_uncurried) */
       };
+      /* #@range_begin(multipleOf_combinator) */
       const even = multipleOf(2); /* カリー化されたmultipleOf関数を使う */
 
       expect(
@@ -409,6 +434,7 @@ describe('コンビネータで関数を組み合わせる', () => {
       ).toEqual(
         true
       );
+      /* #@range_end(multipleOf_combinator) */
     });
 
     describe('論理コンビネータ', () => {
@@ -425,6 +451,7 @@ describe('コンビネータで関数を組み合わせる', () => {
 
       // **リスト7.13** notコンビネータ
       it('notコンビネータ', () => {
+        /* #@range_begin(not_combinator) */
         /* not:: FUN[NUM => BOOL] => FUN[NUM => BOOL] */
         const not = (predicate: (n: number) => boolean) => { // predicateの型はFUN[NUM => BOOL]
           /* 全体として、FUN[NUM => BOOL]型を返す */
@@ -432,7 +459,9 @@ describe('コンビネータで関数を組み合わせる', () => {
             return !predicate(arg); // !演算子で論理を反転させて、BOOLを返す
           };
         };
+        /* #@range_end(not_combinator) */
         // **リスト7.15** notコンビネータによるodd関数の定義
+        /* #@range_begin(not_combinator_test) */
         const odd = not(even); // notコンビネータでodd関数を定義する
         /******** テスト ********/
         expect(
@@ -445,6 +474,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         ).toEqual(
           false
         );
+        /* #@range_end(not_combinator_test) */
       });
 
       /* 本書では割愛したが、論理和や論理積を実行するコンビネータも同様に定義できる */
@@ -484,12 +514,15 @@ describe('コンビネータで関数を組み合わせる', () => {
   // ### <section id='composing-function'>関数を合成する</section>
   describe('関数を合成する', () => {
     // **リスト7.16** 関数合成の定義
+    /* #@range_begin(compose_definition) */
     const compose = <A, B, C>(f: (b: B) => C, g: (a: A) => B) => {
       return (arg: A): C => {
         return f(g(arg));
       };
     };
+    /* #@range_end(compose_definition) */
     // **リスト7.17** 関数合成のテスト
+    /* #@range_begin(compose_test) */
     const f = (x: number): number => {
       return x * x + 1;
     };
@@ -501,11 +534,13 @@ describe('コンビネータで関数を組み合わせる', () => {
     ).toEqual(
       f(g(2))         // 合成せずに順次実行した場合
     );
+    /* #@range_end(compose_test) */
 
     // #### 関数合成の条件
     describe('関数合成の条件', () => {
       // **リスト7.18** 反数関数の合成
       it('反数関数の合成', () => {
+        /* #@range_begin(composition_example_opposite_twice) */
         /* 反数の定義 */
         const opposite = (n: number): number => {
           return -n;
@@ -516,10 +551,12 @@ describe('コンビネータで関数を組み合わせる', () => {
         ).toEqual(
           2 // -(-2) === 2
         );
+        /* #@range_end(composition_example_opposite_twice) */
       });
 
       // **リスト7.20** カリー化による合成
       it('カリー化による合成', () => {
+        /* #@range_begin(compose_opposite_add_successful) */
         const opposite = (x: number): number => {
           return -x;
         };
@@ -533,6 +570,7 @@ describe('コンビネータで関数を組み合わせる', () => {
         ).toEqual(
           -5
         );
+        /* #@range_end(compose_opposite_add_successful) */
       });
     });
 
@@ -548,6 +586,7 @@ describe('コンビネータで関数を組み合わせる', () => {
     describe('関数合成による抽象化', () => {
       // **リスト7.21** 具体的なlast関数
       it('具体的なlast関数', () => {
+        /* #@range_begin(list_last_recursive) */
         const last = <T>(alist: List<T>): T | null => {
           return list.match(alist, {
             empty: () => { // alistが空の場合
@@ -565,15 +604,18 @@ describe('コンビネータで関数を組み合わせる', () => {
             }
           });
         };
+        /* #@range_end(list_last_recursive) */
         const aList = list.cons(1,
           list.cons(2,
             list.cons(3,
               list.empty<number>())));
+        /* #@range_begin(identity_monad_laws_left_unit_law) */
         expect(
           last(aList)
         ).toEqual(
           3
         );
+        /* #@range_end(identity_monad_laws_left_unit_law) */
       });
 
       // ** リスト7.22** 抽象的なlast関数
@@ -601,6 +643,7 @@ describe('コンビネータで関数を組み合わせる', () => {
 
         // length関数の定義
         it('length関数の定義', () => {
+        /* #@range_begin(foldr_map) */
           const sum = (alist: List<number>): number => {
             const sumHelper = (alist: List<number>, accumulator: number): number => {
               return list.match(alist, {
@@ -623,6 +666,7 @@ describe('コンビネータで関数を組み合わせる', () => {
           ).toEqual(
             3
           );
+        /* #@range_end(foldr_map) */
         });
 
         // last関数の定義
@@ -656,6 +700,7 @@ describe('コンビネータで関数を組み合わせる', () => {
 
         // all関数の定義
         it('all関数の定義', () => {
+      /* #@range_begin(list_foldr) */
           const and = (alist: List<boolean>): boolean => {
             return list.match(alist, {
               empty: () => {
@@ -671,6 +716,8 @@ describe('コンビネータで関数を組み合わせる', () => {
               return compose(and, flip(list.map)(predicate))(alist);
             };
           };
+      /* #@range_end(list_foldr) */
+      /* #@range_begin(identity_monad_flatMap_test) */
           expect(
             all((x) => {
               return x > 0;
@@ -678,10 +725,12 @@ describe('コンビネータで関数を組み合わせる', () => {
           ).toEqual(
             true
           );
+      /* #@range_end(identity_monad_flatMap_test) */
         });
 
         // any関数の定義
         it('any関数の定義', () => {
+        /* #@range_begin(foldr_sum) */
           const or = (alist: List<boolean>): boolean => {
             return list.match(alist, {
               empty: () => {
@@ -692,11 +741,13 @@ describe('コンビネータで関数を組み合わせる', () => {
               }
             });
           };
+        /* #@range_end(foldr_sum) */
           const any = (predicate: (x: number) => boolean) => {
             return (alist: List<number>): boolean => {
               return compose(or, flip(list.map)(predicate))(alist);
             };
           };
+        /* #@range_begin(identity_monad_laws_associative_law) */
           expect(
             any((x) => {
               return x < 2;
@@ -704,6 +755,8 @@ describe('コンビネータで関数を組み合わせる', () => {
           ).toEqual(
             true
           );
+        /* #@range_end(identity_monad_laws_associative_law) */
+        /* #@range_begin(run_println_without_world) */
           expect(
             any((x) => {
               return x < 1;
@@ -711,6 +764,7 @@ describe('コンビネータで関数を組み合わせる', () => {
           ).toEqual(
             false
           );
+        /* #@range_end(run_println_without_world) */
         });
 
         // none関数の定義
@@ -748,6 +802,7 @@ describe('コンビネータで関数を組み合わせる', () => {
 
     // ### コラム: Yコンビネータ
     it('Y combinator', () => {
+      /* #@range_begin(Y_combinator) */
       type Rec<T, R> = (f: (y: T) => R) => (y: T) => R;
       const Y = <T, R>(F: Rec<T, R>): ((y: T) => R) => {
         return ((x: any) => {
@@ -760,7 +815,9 @@ describe('コンビネータで関数を組み合わせる', () => {
           });
         });
       };
+      /* #@range_end(Y_combinator)  */
       // **リスト7.24** Yコンビネータによるfactorial関数の実装
+      /* #@range_begin(Y_combinator_test) */
       const factorial = Y((fact: (n: number) => number) => {
         return (n: number): number => {
           if (n === 0) {
@@ -775,6 +832,7 @@ describe('コンビネータで関数を組み合わせる', () => {
       ).toEqual(
         6
       );
+      /* #@range_end(Y_combinator_test) */
     });
   }); // 関数を合成する
 }); // コンビネータ
@@ -792,18 +850,22 @@ describe('クロージャーを使う', () => {
   describe('クロージャーの仕組み', () => {
     // **リスト7.25** 環境における変数のバインディング
     it('環境における変数のバインディング', () => {
+      /* #@range_begin(variable_binding_in_environment) */
       /* 変数fooに数値1をバインドする */
       const foo = 1;
       /* 変数bar に文字列 "a string" をバインドする */
       const bar = "a string";
+      /* #@range_end(variable_binding_in_environment) */
 
       // **リスト7.26** 環境からバインディングを参照する
+      /* #@range_begin(variable_binding_in_environment_test) */
       /* 環境 <foo |-> 1, bar |-> "a string"> のもとで評価する */
       expect(
         foo  // 上記環境から変数fooの値を取り出す
       ).toEqual(
         1
       );
+      /* #@range_end(variable_binding_in_environment_test) */
     });
 
     // **リスト7.27** 部分適用と環境
@@ -817,18 +879,21 @@ describe('クロージャーを使う', () => {
           }
         };
       };
+      /* #@range_begin(partial_application_with_environment) */
       const twoFold = multipleOf(2);
       expect(
         twoFold(4)
       ).toEqual(
         true
       );
+      /* #@range_end(partial_application_with_environment) */
     });
 
     // ### <section id='encapsulation-with-closure'>クロージャーで状態をカプセル化する</section>
     describe('クロージャーで状態をカプセル化する', () => {
       // **リスト7.28** クロージャーとしてのcounter関数
       it('クロージャーとしてのcounter関数', () => {
+        /* #@range_begin(counter_as_closure) */
         const counter = (init: number) => {
           let countingNumber = init;
           /* countingNumberの環境を持つクロージャーを返す */
@@ -837,7 +902,9 @@ describe('クロージャーを使う', () => {
             return countingNumber;
           };
         };
+        /* #@range_end(counter_as_closure) */
         // **リスト7.29** counter関数の利用法
+        /* #@range_begin(counter_as_closure_test) */
         const counterFromZero = counter(0);
         expect(
           counterFromZero() // 1回目の実行
@@ -849,6 +916,7 @@ describe('クロージャーを使う', () => {
         ).toEqual(
           2
         );
+        /* #@range_end(counter_as_closure_test) */
       });
 
       // #### クロージャーで不変なデータ型を作る
@@ -856,6 +924,7 @@ describe('クロージャーを使う', () => {
         // **リスト7.31** カリー化された不変なオブジェクト型
         it('カリー化された不変なオブジェクト型', () => {
           type ImmutableObject = (key: string) => any;
+          /* #@range_begin(immutable_object_type_curried) */
           const object = {  // objectモジュール
             /* empty:: STRING => Any */
             empty: (key: string): any => {
@@ -880,7 +949,9 @@ describe('クロージャーを使う', () => {
               };
             }
           };
+          /* #@range_end(immutable_object_type_curried) */
           // **リスト7.32** カリー化された不変なオブジェクト型のテスト
+          /* #@range_begin(immutable_object_type_curried_test) */
           const robots = compose(
             object.set("C3PO", "Star Wars"),
             object.set("HAL9000", "2001: a space odessay")
@@ -902,6 +973,7 @@ describe('クロージャーを使う', () => {
           ).toEqual(
             null
           );
+          /* #@range_end(immutable_object_type_curried_test) */
         });
       });
 
@@ -909,6 +981,7 @@ describe('クロージャーを使う', () => {
       describe('クロージャーでジェネレーターを作る', () => {
         // **リスト7.33** ストリームからジェネレータを作る
         describe('ストリームからジェネレータを作る', () => {
+          /* #@range_begin(generator_from_stream) */
           const generate = <T>(aStream: Stream<T>) => {
             /* いったんローカル変数にストリームを格納する */
             let _stream = aStream;
@@ -925,6 +998,7 @@ describe('クロージャーを使う', () => {
               });
             };
           };
+          /* #@range_end(generator_from_stream) */
 
           // **リスト7.34** 整数列のジェネレータ
           it('整数列のジェネレータ', () => {
@@ -933,6 +1007,7 @@ describe('クロージャーを使う', () => {
                 return enumFrom(from + 1);
               });
             };
+            /* #@range_begin(integer_generator) */
             /* 無限の整数列を生成する */
             const integers = enumFrom(0);
             /* 無限ストリームからジェネレータを生成する */
@@ -946,6 +1021,7 @@ describe('クロージャーを使う', () => {
             expect(intGenerator()).toEqual(
               2
             );
+            /* #@range_end(integer_generator) */
           });
 
           it('無限の素数列を作る', () => {
@@ -1025,6 +1101,7 @@ describe('クロージャーを使う', () => {
                 };
               },
               // **リスト7.35** ストリームのfilter関数
+              /* #@range_begin(stream_filter) */
               filter: <T>(predicate: (item: T) => boolean) => {
                 return (aStream: Stream<T>): Stream<T> => {
                   return streamLocal.match(aStream, {
@@ -1043,17 +1120,21 @@ describe('クロージャーを使う', () => {
                   });
                 };
               },
+              /* #@range_end(stream_filter) */
               // **リスト7.36** ストリームのremove関数
+              /* #@range_begin(stream_remove) */
               remove: (predicate: (item: number) => boolean) => {
                 return (aStream: Stream<number>): Stream<number> => {
                   return streamLocal.filter(not(predicate))(aStream);
                 };
               },
+              /* #@range_end(stream_remove) */
               enumFrom: (from: number): Stream<number> => {
                 return streamLocal.cons(from, () => {
                   return streamLocal.enumFrom(from + 1);
                 });
               },
+              /* #@range_begin(stream_generate) */
               generate: <T>(astream: Stream<T>) => {
                 let theStream = astream;
                 return (): T | null => {
@@ -1068,6 +1149,7 @@ describe('クロージャーを使う', () => {
                   });
                 };
               }
+              /* #@range_end(stream_generate) */
             }; // end of 'streamLocal' module
 
             const multipleOf = (n: number) => {
@@ -1081,6 +1163,7 @@ describe('クロージャーを使う', () => {
             };
 
             // **リスト7.37** 素数列の生成
+            /* #@range_begin(eratosthenes_sieve) */
             /* エラトステネスのふるい */
             const sieve = (aStream: Stream<number>): Stream<number> => {
               return streamLocal.match(aStream, {
@@ -1099,6 +1182,7 @@ describe('クロージャーを使う', () => {
               });
             };
             const primes = sieve(streamLocal.enumFrom(2)); // 無限の素数列
+            /* #@range_end(eratosthenes_sieve) */
             expect(
               streamLocal.toArray(streamLocal.take(primes)(10))
             ).toEqual(
@@ -1106,6 +1190,7 @@ describe('クロージャーを使う', () => {
             );
 
             // **リスト7.39** 素数のジェネレータ
+            /* #@range_begin(prime_generator) */
             const primesForGen = sieve(streamLocal.enumFrom(2)); // 無限の素数列
             const primeGenerator = generate(primesForGen);  // 素数のジェネレータ
             /******* テスト ********/
@@ -1118,12 +1203,14 @@ describe('クロージャーを使う', () => {
             expect(primeGenerator()).toEqual(
               5
             );
+            /* #@range_end(prime_generator) */
           }, 4000);
         });
 
         // #### コラム：ECMAScript2015（ES6）におけるジェネレータ
         it('ECMAScript2015（ES6）におけるジェネレータ', () => {
           // **リスト7.40** ECMAScript2015のジェネレータ
+          /* #@range_begin(es6_generator) */
           function* genCounter() {
             yield 1;
             yield 2;
@@ -1140,6 +1227,7 @@ describe('クロージャーを使う', () => {
           ).toEqual(
             2
           );
+          /* #@range_end(es6_generator) */
         });
       });
     }); // クロージャーで状態をカプセル化する
@@ -1179,12 +1267,14 @@ describe('クロージャーを使う', () => {
           return _init;
         };
       };
+      /* #@range_begin(counter_is_not_transparent) */
       const counterFromZero = counter(0);
       expect(
         counterFromZero()
       ).not.toEqual( // notで一致しないことをテストしている
         counterFromZero()
       );
+      /* #@range_end(counter_is_not_transparent) */
     });
 
     // **リスト7.44** カウンターをクロージャーで定義する
@@ -1192,6 +1282,7 @@ describe('クロージャーを使う', () => {
       /* チャーチ数 church numeral */
       type ChurchNumeral = (f: (x?: any) => any) => (x?: any) => any;
 
+      /* #@range_begin(church_numeral) */
       const zero: ChurchNumeral = (f) => {
         return (x) => {
           return x;
@@ -1213,6 +1304,7 @@ describe('クロージャーを使う', () => {
           return f(f(f(x)));
         };
       };
+      /*#@range_end(church_numeral) */
       const succ = (n: ChurchNumeral): ChurchNumeral => {
         return (f) => {
           return (x) => {
@@ -1269,6 +1361,7 @@ describe('関数を渡す', () => {
   describe('コールバックで処理をモジュール化する', () => {
     // **リスト7.47** 直接的な呼び出しの例
     it('直接的な呼び出しの例', () => {
+      /* #@range_begin(direct_call) */
       const succ = (n: number): number => {
         return n + 1;
       };
@@ -1280,6 +1373,7 @@ describe('関数を渡す', () => {
       ).toEqual(
         3
       );
+      /* #@range_end(direct_call) */
     });
 
     // **リスト7.48** 単純なコールバックの例
@@ -1287,6 +1381,7 @@ describe('関数を渡す', () => {
       const succ = (n: number): number => {
         return n + 1;
       };
+      /* #@range_begin(call_callback) */
       const setupCallback = (callback: (n: number) => number) => {
         /* コールバック関数を実行する無名関数を返す */
         return (arg: number): number => {
@@ -1300,10 +1395,12 @@ describe('関数を渡す', () => {
       ).toEqual(
         3
       );
+      /* #@range_end(call_callback) */
     });
 
     it('リストのmap関数', () => {
       // **リスト7.49** リストのmap関数の定義
+      /* #@range_begin(list_map) */
       const map = <T, U>(callback: (item: T) => U) => {
         return (alist: List<T>): List<U> => {
           return list.match(alist, {
@@ -1318,8 +1415,10 @@ describe('関数を渡す', () => {
           });
         };
       };
+      /* #@range_end(list_map) */
 
       // **リスト7.50** map関数のテスト
+      /* #@range_begin(list_map_test) */
       /* map処理の対象となる数値のリスト */
       const numbers = list.cons(1,
         list.cons(2,
@@ -1343,6 +1442,7 @@ describe('関数を渡す', () => {
       ).toEqual(
         [1, 4, 9]
       );
+      /* #@range_end(list_map_test) */
     });
   });
 
@@ -1365,6 +1465,7 @@ describe('関数を渡す', () => {
               return pattern.cons(value, alist);
             };
           },
+          /* #@range_begin(list_sum) */
           sum: (alist: List<number>) => {
             return (accumulator: number): number => {
               return listLocal.match(alist, {
@@ -1377,7 +1478,9 @@ describe('関数を渡す', () => {
               });
             };
           },
+          /* #@range_end(list_sum) */
           // **リスト7.52** コールバック関数を用いたsum関数の再定義
+          /* #@range_begin(list_sum_callback) */
           sumWithCallback: (alist: List<number>) => {
             return (accumulator: number) => {
               return (CALLBACK: (head: number) => (acc: number) => number): number => { // コールバック関数を受け取る
@@ -1394,9 +1497,11 @@ describe('関数を渡す', () => {
               };
             };
           }
+          /* #@range_end(list_sum_callback) */
         };
 
         // **リスト7.53** sumWithCallback関数のテスト
+        /* #@range_begin(list_sum_callback_test) */
         const numbers = listLocal.cons(1,
           listLocal.cons(2,
             listLocal.cons(3,
@@ -1412,6 +1517,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           6  // 1 + 2 + 3 = 6
         );
+        /* #@range_end(list_sum_callback_test) */
         expect(
           listLocal.sum(numbers)(0)
         ).toEqual(
@@ -1435,6 +1541,7 @@ describe('関数を渡す', () => {
               return pattern.cons(value, alist);
             };
           },
+          /* #@range_begin(list_length) */
           length: <T>(alist: List<T>) => {
             return (accumulator: number): number => {
               return listLocal.match(alist, {
@@ -1447,7 +1554,9 @@ describe('関数を渡す', () => {
               });
             };
           },
+          /* #@range_end(list_length) */
           // **リスト7.55** length関数の再定義
+          /* #@range_begin(list_length_callback) */
           lengthWithCallback: <T>(alist: List<T>) => {
             return (accumulator: number) => {
               return (CALLBACK: (head: T) => (acc: number) => number): number => { // コールバック関数を受け取る
@@ -1464,6 +1573,7 @@ describe('関数を渡す', () => {
               };
             };
           }
+          /* #@range_end(list_length_callback) */
         };
         const numbers = listLocal.cons(1,
           listLocal.cons(2,
@@ -1475,6 +1585,7 @@ describe('関数を渡す', () => {
           3
         );
         // **リスト7.56** lengthWithCallback関数でリストの長さをテストする
+        /* #@range_begin(list_length_callback_test) */
         /* lengthWithCallback関数に渡すコールバック関数 */
         const callback = (n: number) => {
           return (m: number): number => {
@@ -1486,6 +1597,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           3
         );
+        /* #@range_end(list_length_callback_test) */
       });
     });
 
@@ -1508,11 +1620,13 @@ describe('関数を渡す', () => {
 
       // ** リスト7.59** foldr関数によるsum関数とlength関数の定義
       it("foldr関数によるsum関数", () => {
+        /* #@range_begin(list_last_compose) */
         const sum = (alist: List<number>): number => {
           return foldr<number, number>(alist)(0)((item: number) => {
             return (accumulator: number): number => {
               return accumulator + item;
             };
+        /* #@range_end(list_last_compose) */
           });
         };
         /* list = [1,2,3,4] */
@@ -1526,6 +1640,7 @@ describe('関数を渡す', () => {
 
       /* foldr関数によるlength関数 */
       it("foldrでlength関数を作る", () => {
+        /* #@range_begin(foldr_length) */
         const length = <T>(alist: List<T>): number => {
           return foldr<T, number>(alist)(0)((item: T) => {
             return (accumulator: number): number => {
@@ -1533,6 +1648,7 @@ describe('関数を渡す', () => {
             };
           });
         };
+        /* #@range_end(foldr_length) */
         /* list = [1,2,3,4] */
         const seq = list.cons(1, list.cons(2, list.cons(3, list.cons(4, list.empty<number>()))));
         expect(
@@ -1545,6 +1661,7 @@ describe('関数を渡す', () => {
       // **表7.2** 反復処理における蓄積変数の初期値とコールバック関数の関係
       describe('反復処理における蓄積変数の初期値とコールバック関数の関係', () => {
         it("foldrでproductを作る", () => {
+          /* #@range_begin(foldr_product) */
           const product = (alist: List<number>): number => {
             return foldr<number, number>(alist)(1)((item: number) => {
               return (accumulator: number): number => {
@@ -1563,6 +1680,7 @@ describe('関数を渡す', () => {
           ).toEqual(
             6 // 1 * 2 * 3 = 6
           );
+          /* #@range_end(foldr_product) */
         });
 
         it("foldrでallを作る", () => {
@@ -1653,6 +1771,7 @@ describe('関数を渡す', () => {
             };
             return toArrayAux(alist, []);
           },
+          /* #@range_begin(foldr_reverse) */
           /* listのappend関数は、2つのリストを連結する */
           append: <T>(xs: List<T>) => {
             return (ys: List<T>): List<T> => {
@@ -1678,6 +1797,7 @@ describe('関数を渡す', () => {
                     cons: (head: U, tail: List<U>) => {
                       return callback(head)(foldrLocal<U, R>(tail)(accumulator)(callback));
                     }
+          /* #@range_end(foldr_reverse) */
                   });
                 };
               };
@@ -1718,6 +1838,7 @@ describe('関数を渡す', () => {
               return pattern.cons(value, alist);
             };
           },
+          /* #@range_begin(foldr_find) */
           /* list.find関数は、条件に合致した要素をリストから探す */
           find: <T>(alist: List<T>) => {
             return (predicate: (item: T) => boolean): T | null => { // 要素を判定する述語関数
@@ -1733,6 +1854,7 @@ describe('関数を渡す', () => {
               });
             };
           }
+          /* #@range_end(foldr_find) */
         };
         /******** テスト *********/
         const numbers = listLocal.cons(1,
@@ -1777,6 +1899,7 @@ describe('関数を渡す', () => {
     describe("コラム：配列の畳み込み関数", () => {
       // **リスト7.62** reduceメソッドによるfromArray関数
       it("reduceメソッドによるfromArray関数", () => {
+        /* #@range_begin(list_fromArray) */
         const fromArray = <T>(array: T[]): List<T> => {
           return array.reduce((accumulator: List<T>, item: T) => {
             return list.append(accumulator)(list.cons(item, list.empty<T>()));
@@ -1789,6 +1912,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           [0, 1, 2, 3]
         );
+        /* #@range_end(list_fromArray) */
       });
     });
   });
@@ -1797,6 +1921,7 @@ describe('関数を渡す', () => {
   describe('非同期処理にコールバック関数を渡す', () => {
     // **リスト7.64** tarai関数の定義
     it("tarai関数の定義", () => {
+      /* #@range_begin(tarai_function) */
       /* たらいまわし関数 */
       const tarai = (x: number, y: number, z: number): number => {
         if (x > y) {
@@ -1812,6 +1937,7 @@ describe('関数を渡す', () => {
       ).toEqual(
         2
       );
+      /* #@range_end(tarai_function) */
     });
   });
 
@@ -1821,16 +1947,19 @@ describe('関数を渡す', () => {
     describe('継続とは何か', () => {
       // **リスト7.67** 継続渡しのsucc関数
       it("継続渡しのsucc関数", () => {
+        /* #@range_begin(succ_cps) */
         /* continues関数は、succ(n)のあとに続く継続 */
         const succ = <R>(n: number, continues: (x: number) => R): R => {
           return continues(n + 1);
         };
+        /* #@range_end(succ_cps) */
 
         // **リスト7.68** 継続渡しのsucc関数をテストする
         const identity = <T>(any: T): T => {
           return any;
         };
 
+        /* #@range_begin(succ_cps_test) */
         /* identity関数を継続として渡すことで、
            succ(1)の結果がそのまま返る */
         expect(
@@ -1838,6 +1967,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           2
         );
+        /* #@range_end(succ_cps_test) */
       });
 
       // **リスト7.70** add(2, succ(3))の継続渡し
@@ -1845,6 +1975,7 @@ describe('関数を渡す', () => {
         const identity = <T>(any: T): T => { // 値をそのまま返すだけの継続
           return any;
         };
+        /* #@range_begin(continuation_in_arithmetic) */
         /* 継続渡しのsucc関数 */
         const succ = <R>(n: number, continues: (x: number) => R): R => {
           return continues(n + 1);
@@ -1862,12 +1993,14 @@ describe('関数を渡す', () => {
         ).toEqual(
           6
         );
+        /* #@range_end(continuation_in_arithmetic) */
       });
     });
 
     describe("継続で未来を選ぶ", () => {
       // **リスト7.71** 継続による反復処理からの脱出
       it("継続による反復処理からの脱出", () => {
+        /* #@range_begin(stream_find_cps) */
         const find = <T>(
           aStream: Stream<T>,
           predicate: (item: T) => boolean,
@@ -1901,12 +2034,14 @@ describe('関数を渡す', () => {
             }
           });
         };
+        /* #@range_end(stream_find_cps) */
 
         // find関数に渡す2つの継続
         const identity = <T>(any: T): T => {
           return any;
         };
         // **リスト7.72** find関数に渡す2つの継続
+        /* #@range_begin(stream_find_continuations) */
         /* 成功継続では、反復処理を脱出する */
         const continuesOnSuccess = identity;
 
@@ -1925,6 +2060,7 @@ describe('関数を渡す', () => {
             escapesFromRecursion
           );
         };
+        /* #@range_end(stream_find_continuations) */
 
         // **リスト7.73** find関数のテスト
         /* upto3変数は、1から3までの有限ストリーム */
@@ -1942,6 +2078,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           null // リスト中に4の要素はないので、nullになります
         );
+        /* #@range_begin(stream_find_cps_test) */
         /* 変数integersは、無限の整数ストリーム */
         const integers = stream.enumFrom(0);
 
@@ -1953,6 +2090,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           100 // 100を見つけて返ってくる
         );
+        /* #@range_end(stream_find_cps_test) */
       });
     });
 
@@ -1972,11 +2110,13 @@ describe('関数を渡す', () => {
           return anExp.call(exp, pattern);
         },
         // **リスト7.75** 非決定計算機の式
+        /* #@range_begin(amb_expression) */
         amb: (alist: List<Exp>): Exp => {
           return (pattern: ExpPattern) => {
             return pattern.amb(alist);
           };
         },
+        /* #@range_end(amb_expression) */
         num: (n: number): Exp => {
           return (pattern: ExpPattern) => {
             return pattern.num(n);
@@ -1989,6 +2129,7 @@ describe('関数を渡す', () => {
         }
       };
 
+      /* #@range_begin(amb_calculate) */
       // <section id='amb_calculate'>非決定性計算機の評価関数</section>
       const calculate = (
         anExp: Exp,
@@ -1998,11 +2139,14 @@ describe('関数を渡す', () => {
         /* 式に対してパターンマッチを実行する */
         return exp.match(anExp, {
           // **リスト7.79** 数値の評価
+          /* #@range_begin(amb_calculate_num) */
           /* 数値を評価する */
           num: (n: number) => {
             return continuesOnSuccess(n, continuesOnFailure);
           },
+          /* #@range_end(amb_calculate_num) */
           // **リスト7.80** 足し算の評価
+          /* #@range_begin(amb_calculate_add) */
           /* 足し算の式を評価する */
           add: (x: Exp, y: Exp) => {
             /* まず引数xを評価する */
@@ -2014,7 +2158,9 @@ describe('関数を渡す', () => {
               }, continuesOnFailureX); /* y の計算に失敗すれば、xの失敗継続を渡す */
             }, continuesOnFailure);    /* x の計算に失敗すれば、おおもとの失敗継続を渡す */
           },
+          /* #@range_end(amb_calculate_add) */
           // **リスト7.81** amb式の評価
+          /* #@range_begin(amb_calculate_amb) */
           /* amb式を評価する */
           amb: (choices: List<Exp>) => {
             const calculateAmb = (choices: List<Exp>): number | null => {
@@ -2040,10 +2186,13 @@ describe('関数を渡す', () => {
             };
             return calculateAmb(choices);
           }
+          /* #@range_end(amb_calculate_amb) */
         });
       };
+      /* #@range_end(amb_calculate) */
 
       // **リスト7.82** 非決定計算機の駆動関数
+      /* #@range_begin(amb_driver) */
       const driver = (expression: Exp) => {
         /* 中断された計算を継続として保存する変数 */
         let suspendedComputation: (() => number | null) | null = null;
@@ -2070,6 +2219,7 @@ describe('関数を渡す', () => {
           }
         };
       };
+      /* #@range_end(amb_driver) */
 
       it("amb[1,2] + 3  = amb[4, 5]", () => {
         const ambExp = exp.add(exp.amb(list.cons(exp.num(1), list.cons(exp.num(2), list.empty<Exp>()))),
@@ -2094,6 +2244,7 @@ describe('関数を渡す', () => {
 
       // **リスト7.83** 非決定計算機のテスト
       it("非決定計算機のテスト", () => {
+        /* #@range_begin(amb_test) */
         /* amb[1,2] + amb[3,4] = amb[4, 5, 5, 6] */
         /* amb[1,2] + amb[3,4] = 4, 5, 5, 6 */
         const ambExp = exp.add(
@@ -2125,6 +2276,7 @@ describe('関数を渡す', () => {
         ).toEqual(
           null // これ以上の候補はないので、計算は終了
         );
+        /* #@range_end(amb_test) */
       });
 
       it("amb[1,2,3] + amb[10,20] = amb[11,21,12,22,13,23]", () => {
@@ -2226,6 +2378,7 @@ describe('モナドを作る', () => {
   describe('恒等モナド', () => {
     // **リスト7.85** 恒等モナドの定義
     const ID = {
+      /* #@range_begin(identity_monad) */
       /* unit:: T => ID[T] */
       unit: <T>(value: T): T => {  // 単なる identity関数と同じ
         return value;
@@ -2236,6 +2389,7 @@ describe('モナドを作る', () => {
           return transform(instanceM); // 単なる関数適用と同じ
         };
       },
+      /* #@range_end(identity_monad) */
       compose: <A, B, C>(f: (a: A) => B, g: (b: B) => C) => {
         return (x: A): C => {
           return ID.flatMap<B, C>(f(x))(g);
@@ -2268,6 +2422,7 @@ describe('モナドを作る', () => {
         return m * 2;
       };
       // **リスト7.88** flatMapと関数合成の類似性
+      /* #@range_begin(multipleOf_is_transparent) */
       expect(
         ID.flatMap(ID.unit(1))((one: number) => {
           /* succ関数を適用する */
@@ -2279,10 +2434,12 @@ describe('モナドを作る', () => {
       ).toEqual(
         compose(double, succ)(1)
       );
+      /* #@range_end(multipleOf_is_transparent) */
     });
 
     // **リスト7.89**  恒等モナドのモナド則
     describe("恒等モナドのモナド則", () => {
+      /* #@range_begin(identity_monad_laws) */
       it("flatMap(instanceM)(unit) === instanceM", () => {
         /* flatMap(instanceM)(unit) === instanceM の一例 */
         const instanceM = ID.unit(1);
@@ -2330,6 +2487,7 @@ describe('モナドを作る', () => {
             return ID.flatMap<number, number>(f(x))(g);
           })
         );
+        /* #@range_end(identity_monad_laws) */
       });
     });
   });
@@ -2346,6 +2504,7 @@ describe('モナドを作る', () => {
       }
 
       // **リスト7.91** Maybeの代数的構造
+      /* #@range_begin(algebraic_type_maybe) */
       const maybe = {
         match: <T, R>(exp: Maybe<T>, pattern: { just: (value: T) => R; nothing: (_?: any) => R }): R => {
           return exp.call(pattern, pattern);
@@ -2361,9 +2520,11 @@ describe('モナドを作る', () => {
           };
         }
       };
+      /* #@range_end(algebraic_type_maybe) */
 
       // **リスト7.92** Maybeモナドの定義
       const MAYBE = {
+        /* #@range_begin(maybe_monad) */
         /* unit:: T => MAYBE[T] */
         unit: <T>(value: T): Maybe<T> => {
           return maybe.just(value);
@@ -2396,10 +2557,12 @@ describe('モナドを作る', () => {
             });
           };
         },
+        /* #@range_end(maybe_monad) */
       };
 
       // **リスト7.93** Maybeモナドの利用法
       it("Maybeモナドの利用法", () => {
+        /* #@range_begin(maybe_monad_add_test) */
         /* 足し算を定義する */
         const add = (maybeA: Maybe<number>, maybeB: Maybe<number>): Maybe<number> => {
           return MAYBE.flatMap<number, number>(maybeA)((a: number) => {
@@ -2421,6 +2584,7 @@ describe('モナドを作る', () => {
         ).toEqual(
           null
         );
+        /* #@range_end(maybe_monad_add_test) */
       });
     });
   });
@@ -2439,6 +2603,7 @@ describe('モナドを作る', () => {
     }
 
     // **リスト7.94** Pair型の定義
+    /* #@range_begin(pair_datatype) */
     const pair = {
       /* pair のデータ構造 */
       cons: <L, R>(left: L, right: R): Pair<L, R> => {
@@ -2463,6 +2628,7 @@ describe('モナドを作る', () => {
         });
       }
     };
+    /* #@range_end(pair_datatype) */
 
     // **リスト7.95** 外界を明示したIOモナドの定義
     describe('外界を明示したIOモナドの定義', () => {
@@ -2470,6 +2636,7 @@ describe('モナドを作る', () => {
       type IO<T> = (world: World) => Pair<T, World>;
 
       const IO = {
+        /* #@range_begin(io_monad_definition_with_world) */
         /* unit:: T => IO[T] */
         unit: <T>(any: T): IO<T> => {
           return (world: World) => {  // worldは現在の外界
@@ -2489,6 +2656,7 @@ describe('モナドを作る', () => {
             };
           };
         },
+        /* #@range_end(io_monad_definition_with_world) */
         // **リスト7.96** IOモナドの補助関数
         /* done:: T => IO[T] */
         done: <T>(any: T): IO<void> => {
@@ -2510,6 +2678,7 @@ describe('モナドを作る', () => {
       }; // IO monad
 
       // **リスト7.98** run関数の利用法
+      /* #@range_begin(run_println) */
       /* 初期の外界に null をバインドする */
       const initialWorld: World = null;
       expect(
@@ -2517,10 +2686,12 @@ describe('モナドを作る', () => {
       ).toEqual(
         null
       );
+      /* #@range_end(run_println) */
     });
 
     describe('外界を引数に持たないIOモナド', () => {
       // **リスト7.99** 外界を明示しないIOモナドの定義
+      /* #@range_begin(io_monad_definition) */
       type IO<T> = () => T;
 
       const IO = {
@@ -2569,19 +2740,23 @@ describe('モナドを作る', () => {
           };
         }
       }; // IO monad
+      /* #@range_end(io_monad_definition) */
 
       // **リスト7.100** run関数の利用法
       it('run関数の利用法', () => {
+    /* #@range_begin(multipleOf_curried_test) */
         expect(
           /* 外界を指定する必要はありません */
           IO.run(IO.println("名前はまだない"))
         ).toEqual(
           null
         );
+    /* #@range_end(multipleOf_curried_test) */
       });
 
       // #### IOアクションを合成する
       describe('IOアクションを合成する', () => {
+        /* #@range_begin(io_monad_is_composable) */
         // **リスト7.102** seq関数の定義
         /* IO.seq:: IO[a] => IO[b] => IO[b] */
         const seq = <A, B>(instanceA: IO<A>) => {
@@ -2611,8 +2786,10 @@ describe('モナドを作る', () => {
             }
           });
         };
+        /* #@range_end(io_monad_is_composable) */
 
         // **リスト7.103** stringモジュール
+        /* #@range_begin(string_module) */
         const string = {
           /* 先頭文字を取得する */
           head: (str: string): string => {
@@ -2636,6 +2813,7 @@ describe('モナドを作る', () => {
             }
           }
         };
+        /* #@range_end(string_module) */
 
         it('stringのテスト', () => {
           expect(

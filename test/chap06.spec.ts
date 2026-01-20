@@ -11,9 +11,12 @@ describe('関数の基本', () => {
   describe('関数を定義する', () => {
     // **リスト6.1** 恒等関数
     it('恒等関数', () => {
+      /* #@range_begin(identity_function_definition) */
       const identity = <T>(any: T): T => {
         return any;
       };
+      /* #@range_end(identity_function_definition) */
+        /* #@range_begin(multiply_lazy_evaluation_test) */
       expect(
         identity(1)
       ).toEqual(
@@ -24,14 +27,18 @@ describe('関数の基本', () => {
       ).toEqual(
         "a"
       );
+        /* #@range_end(multiply_lazy_evaluation_test) */
     });
 
     // **リスト6.2** succ関数
     it('succ関数', () => {
+      /* #@range_begin(succ_function_definition) */
       const succ = (n: number): number => {
         return n + 1;
       };
+      /* #@range_end(succ_function_definition) */
       /* テスト */
+          /* #@range_begin(infinite_ones_test) */
       expect(
         succ(0)  // 0 を引数にsucc関数を適用する
       ).toEqual(
@@ -42,19 +49,24 @@ describe('関数の基本', () => {
       ).toEqual(
         2
       );
+          /* #@range_end(infinite_ones_test) */
+    /* #@range_begin(log_destroys_referential_transparency) */
       expect(
         succ("abc" as any)
       ).toEqual(
         "abc1"
       );
+    /* #@range_end(log_destroys_referential_transparency) */
     });
 
     // **リスト6.3** add関数
     it('add関数', () => {
+      /* #@range_begin(add_function_definition) */
       /* add:: (NUM, NUM) => NUM */
       const add = (n: number, m: number): number => {
         return n + m;
       };
+      /* #@range_end(add_function_definition) */
       /* テスト */
       expect(
         add(0, 1)
@@ -65,17 +77,21 @@ describe('関数の基本', () => {
 
     // **リスト6.5** 関数の変数へのバインド
     it('関数の変数へのバインド', () => {
+      /* #@range_begin(function_bound_to_variable) */
       const succ = (x: number): number => {
         return x + 1;
       };
+      /* #@range_end(function_bound_to_variable) */
       expect(succ(0)).toBe(1);
     });
 
     it('引数を参照しない関数', () => {
       // **リスト6.6** 定数関数
+      /* #@range_begin(constant_one_function) */
       const alwaysOne = (x: any): number => {
         return 1;
       };
+      /* #@range_end(constant_one_function) */
       expect(
         alwaysOne(1)
       ).toEqual(
@@ -88,9 +104,11 @@ describe('関数の基本', () => {
       );
 
       // **リスト6.7** left関数
+      /* #@range_begin(left_function) */
       const left = <T, U>(x: T, y: U): T => {
         return x;
       };
+      /* #@range_end(left_function) */
       expect(
         left(1, 2)
       ).toEqual(
@@ -103,6 +121,7 @@ describe('関数の基本', () => {
   describe('関数を適用する', () => {
     // **リスト6.8** succ関数のテスト
     it('succ関数のテスト', () => {
+      /* #@range_begin(succ_function_test) */
       const succ = (n: number): number => { // nは仮引数
         return n + 1;
       };
@@ -111,6 +130,7 @@ describe('関数の基本', () => {
       ).toEqual(
         2
       );
+      /* #@range_end(succ_function_test) */
     });
 
     // #### 関数の評価戦略
@@ -131,6 +151,7 @@ describe('関数の基本', () => {
 
       // **リスト6.9** JavaScriptにおける正格評価
       it('JavaScriptにおける正格評価', () => {
+        /* #@range_begin(strict_evaluation_in_javascript) */
         const left = <T, U>(x: T, y: U): T => {
           return x;
         };
@@ -144,10 +165,12 @@ describe('関数の基本', () => {
            1
          )
          */
+        /* #@range_end(strict_evaluation_in_javascript) */
       });
 
       // **リスト6.10** 条件文と遅延評価
       it('条件文と遅延評価', () => {
+        /* #@range_begin(conditional_is_nonstrict) */
         const infiniteLoop = (): never => {
           return infiniteLoop();
         };
@@ -165,6 +188,7 @@ describe('関数の基本', () => {
         ).toEqual(
           true // 無限ループに陥ることなく計算に成功する
         );
+        /* #@range_end(conditional_is_nonstrict) */
       });
 
       it('乗算の遅延評価', () => {
@@ -173,6 +197,7 @@ describe('関数の基本', () => {
         };
 
         // **リスト6.11** 遅延評価で定義したmultiply関数
+        /* #@range_begin(multiply_lazy_evaluation) */
         const lazyMultiply = (funX: () => number, funY: () => number): number => {
           const x = funX();
 
@@ -182,8 +207,10 @@ describe('関数の基本', () => {
             return x * funY(); // ここで初めてfunYを評価する
           }
         };
+        /* #@range_end(multiply_lazy_evaluation) */
 
         // **リスト6.12** 遅延評価で定義したmultiply関数のテスト
+          /* #@range_begin(infinite_integer_test) */
         expect(
           lazyMultiply(() => {    // 値を関数でラッピングする
             return 0;
@@ -193,6 +220,7 @@ describe('関数の基本', () => {
         ).toEqual(
           0
         );
+          /* #@range_end(infinite_integer_test) */
       });
     });
 
@@ -207,6 +235,7 @@ describe('関数の基本', () => {
       }
 
       // **リスト6.14** サンクによるストリーム型の定義
+      /* #@range_begin(stream_with_thunk) */
       const stream = {
         match: <T, R>(data: Stream<T>, pattern: { empty: () => R; cons: (head: T, tailThunk: () => Stream<T>) => R }): R => {
           return data(pattern as any);
@@ -238,9 +267,11 @@ describe('関数の基本', () => {
           });
         }
       };
+      /* #@range_end(stream_with_thunk) */
 
       // **リスト6.16** ストリーム型のテスト
       it("ストリーム型のテスト", () => {
+        /* #@range_begin(stream_with_thunk_test) */
         const theStream = stream.cons(1, () => { // 第2引数にサンクを渡す
           return stream.cons(2, () => {         // 第2引数にサンクを渡す
             return stream.empty<number>();
@@ -251,6 +282,7 @@ describe('関数の基本', () => {
         ).toEqual(
           1
         );
+        /* #@range_end(stream_with_thunk_test) */
       });
 
       describe("無限ストリームを作る", () => {
@@ -295,10 +327,12 @@ describe('関数の基本', () => {
 
         it("無限の整数列を作る", () => {
           // **リスト6.17** 無限に1が続く数列
+          /* #@range_begin(infinite_ones) */
           /* ones = 1,1,1,1,... */
           const ones: Stream<number> = streamInternal.cons(1, () => {
             return ones; // onesを再帰的に呼び出す
           });
+          /* #@range_end(infinite_ones) */
           expect(
             streamInternal.head(ones) // 最初の要素を取りだす
           ).toEqual(
@@ -311,11 +345,13 @@ describe('関数の基本', () => {
           );
 
           // **リスト6.19** 無限に連続する整数列を生成するenumFrom関数
+          /* #@range_begin(infinite_integer) */
           const enumFrom = (n: number): Stream<number> => {
             return streamInternal.cons(n, () => {
               return enumFrom(n + 1);
             });
           };
+          /* #@range_end(infinite_integer) */
           expect(
             streamInternal.head(enumFrom(1)) // 最初の要素を取りだす
           ).toEqual(
@@ -350,6 +386,7 @@ describe('関数の基本', () => {
                 return pattern.cons(value, alist);
               };
             },
+            /* #@range_begin(list_toArray) */
             toArray: <T>(alist: List<T>): T[] => {
               const toArrayHelper = (alist: List<T>, accumulator: T[]): T[] => {
                 return list.match(alist, {
@@ -363,11 +400,14 @@ describe('関数の基本', () => {
               };
               return toArrayHelper(alist, []);
             }
+            /* #@range_end(list_toArray) */
           };
 
           const streamWithTake = {
             ...streamInternal,
             // **リスト6.21** ストリームのtake関数
+            /* #@range_begin(stream_take) */
+            /* take:: (STREAM[T], NUM) => LIST[T] */
             take: <T>(astream: Stream<T>, n: number): List<T> => {
               return match(astream, {
                 empty: () => {              // ストリームが空のケース
@@ -383,6 +423,7 @@ describe('関数の基本', () => {
                 }
               });
             }
+            /* #@range_end(stream_take) */
           };
 
           expect(
@@ -397,6 +438,7 @@ describe('関数の基本', () => {
           );
 
           // **リスト6.23** 無限の整数列をテストする
+          /* #@range_begin(stream_filter_test) */
           expect(
             list.toArray( // ストリームを配列に変換する
               streamWithTake.take(enumFrom(1), 4) // 無限の整数列から4個の要素を取り出す
@@ -404,13 +446,16 @@ describe('関数の基本', () => {
           ).toEqual(
             [1, 2, 3, 4]
           );
+          /* #@range_end(stream_filter_test) */
 
+    /* #@range_begin(succ_has_referential_transparency) */
           expect(
             /* 無限の整数列から最初の4つの要素を取り出し、それを配列に変換する */
             list.toArray(streamWithTake.take(enumFrom(1), 4))
           ).toEqual(
             [1, 2, 3, 4]
           );
+    /* #@range_end(succ_has_referential_transparency) */
         }, 3000);
       });
     }); // サンクで無限を表現する
@@ -434,6 +479,7 @@ describe('関数と参照透過性', () => {
 
   // **リスト6.26** ファイル操作は参照透過性を破壊する
   it('ファイル操作は参照透過性を破壊する', () => {
+    /* #@range_begin(fileio_destroys_referential_transparency) */
     /* テストの実行前にあらかじめ "This is a test."
        という文字列をファイルに書き込んでおく */
     fs.writeFileSync('test/resources/file.txt', "This is a test.");
@@ -454,6 +500,7 @@ describe('関数と参照透過性', () => {
     ).toEqual(/* 最初の readFileSync関数の結果と異なっている */
       "This is another test."
     );
+    /* #@range_end(fileio_destroys_referential_transparency) */
   });
 
   it('画面出力が参照透過性を損なうこと', () => {
@@ -468,16 +515,19 @@ describe('関数と参照透過性', () => {
   describe('副作用への対処', () => {
     describe('tap関数', () => {
       // **リスト6.27** tap関数
+      /* #@range_begin(tap_combinator) */
       const tap = <T>(target: T, sideEffect: (t: T) => void): T => {
         sideEffect(target); // 副作用を実行する
         return target;
       };
+      /* #@range_end(tap_combinator) */
 
       // **リスト6.28** tap関数によるconsole.logのテスト
       it('tap関数によるconsole.logのテスト', () => {
         const succ = (n: number): number => {
           return n + 1;
         };
+        /* #@range_begin(tap_combinator_test_in_console) */
         /* 画面出力という副作用を実行する関数 */
         const consoleSideEffect = (any: any): void => {
           console.log(any);
@@ -487,10 +537,12 @@ describe('関数と参照透過性', () => {
         ).toEqual(
           tap(succ(1), consoleSideEffect)
         );
+        /* #@range_end(tap_combinator_test_in_console) */
       });
 
       // **リスト6.29** tap関数によるファイル入出力のテスト
       it('tap関数によるファイル入出力のテスト', () => {
+        /* #@range_begin(tap_combinator_test_in_fileio) */
         /* あらかじめ文字列をファイルに書き込んでおく */
         fs.writeFileSync('test/resources/file.txt', "This is a test.");
 
@@ -508,6 +560,7 @@ describe('関数と参照透過性', () => {
           tap(fs.readFileSync("test/resources/file.txt", 'utf8'),
             IOSideEffect)
         );
+        /* #@range_end(tap_combinator_test_in_fileio) */
       });
     });
   });

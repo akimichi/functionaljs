@@ -225,6 +225,7 @@ const stream = {
 describe('カリー化で関数を渡す', () => {
   // **リスト7.1** multipleOf関数の定義
   it('multipleOf関数の定義', () => {
+    /* #@range_begin(multipleOf_uncurried) */
     const multipleOf = (n: number, m: number): boolean => {
       if (m % n === 0) { /* m / n の余りが 0 かどうか */
         return true;
@@ -232,21 +233,20 @@ describe('カリー化で関数を渡す', () => {
         return false;
       }
     };
+    /* #@range_end(multipleOf_uncurried) */
     // **リスト7.2** multipleOf関数のテスト
-            /* #@range_begin(eratosthenes_sieve_test) */
+    /* #@range_begin(multipleOf_uncurried_test) */
     expect(
       multipleOf(2, 4)     /* 4は、2の倍数である */
     ).toEqual(
       true
     );
-            /* #@range_end(eratosthenes_sieve_test) */
-      /* #@range_begin(identity_monad_unit_test) */
+    /* #@range_end(multipleOf_uncurried_test) */
     expect(
       multipleOf(3, 4)     /* 4は、3の倍数ではない */
     ).toEqual(
       false
     );
-      /* #@range_end(identity_monad_unit_test) */
   });
 
   // **リスト7.3** カリー化されたmultipleOf関数の定義
@@ -415,7 +415,6 @@ describe('コンビネータで関数を組み合わせる', () => {
   describe('コンビネータの作り方', () => {
     // **リスト7.10** multipleOf関数の再利用
     it('multipleOf関数の再利用', () => {
-    /* #@range_begin(multipleOf_uncurried) */
       const multipleOf = (n: number) => {
         return (m: number): boolean => {
           if (m % n === 0) {
@@ -424,7 +423,6 @@ describe('コンビネータで関数を組み合わせる', () => {
             return false;
           }
         };
-    /* #@range_end(multipleOf_uncurried) */
       };
       /* #@range_begin(multipleOf_combinator) */
       const even = multipleOf(2); /* カリー化されたmultipleOf関数を使う */

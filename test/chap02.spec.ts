@@ -515,11 +515,13 @@ describe('関数型プログラミングの利点', () => {
         /* #@range_end(constant) */
 
         // **リスト2.14** map(alwaysOne)で配列の全要素を1に変える
+        /* #@range_begin(map_alwaysOne) */
         expect(
           map(alwaysOne)([1, 2, 3])
         ).toEqual(
           [1, 1, 1]
         );
+        /* #@range_end(map_alwaysOne) */
 
         const flip = <T, U, V>(fun: (x: U) => (y: T) => V) => {
           return (x: T) => {

@@ -331,7 +331,7 @@ describe('カリー化で関数を渡す', () => {
     /* flipで引数を逆転させて、3乗を定義する */
     const cube = flip(exponential)(3);
     /* #@range_end(flipped_exponential) */
-      /* #@range_begin(flatMap_and_composition) */
+      /* #@range_begin(flipped_exponential_test) */
     expect(
       square(2)
     ).toEqual(
@@ -342,7 +342,7 @@ describe('カリー化で関数を渡す', () => {
     ).toEqual(
       8 /* 2 * 2 * 2 = 8 */
     );
-      /* #@range_end(flatMap_and_composition) */
+      /* #@range_end(flipped_exponential_test) */
   });
 
   // ### コラム： チャーチ数
@@ -2397,11 +2397,13 @@ describe('モナドを作る', () => {
 
     // **リスト7.86** 恒等モナドunit関数のテスト
     it("恒等モナドunit関数のテスト", () => {
+      /* #@range_begin(identity_monad_unit_test) */
       expect(
         ID.unit(1)
       ).toEqual(
         1
       );
+      /* #@range_end(identity_monad_unit_test) */
     });
 
     // **リスト7.87** 恒等モナドflatMap関数のテスト
@@ -2421,6 +2423,7 @@ describe('モナドを作る', () => {
       };
       // **リスト7.88** flatMapと関数合成の類似性
       /* #@range_begin(multipleOf_is_transparent) */
+      /* #@range_begin(flatMap_and_composition) */
       expect(
         ID.flatMap(ID.unit(1))((one: number) => {
           /* succ関数を適用する */
@@ -2432,6 +2435,7 @@ describe('モナドを作る', () => {
       ).toEqual(
         compose(double, succ)(1)
       );
+      /* #@range_end(flatMap_and_composition) */
       /* #@range_end(multipleOf_is_transparent) */
     });
 
